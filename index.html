@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Surf A Coruña</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a1628;
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 0 20px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: #8899aa;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .semaforo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px auto;
+      background: #111e33;
+      border-radius: 16px;
+      padding: 20px 28px;
+      max-width: 420px;
+    }
+
+    .semaforo-circulo {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .semaforo-texto h2 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .semaforo-texto p {
+      font-size: 13px;
+      color: #8899aa;
+      margin-top: 2px;
+    }
+
+    .resumen {
+      background: #111e33;
+      border-radius: 16px;
+      padding: 18px 20px;
+      max-width: 420px;
+      margin: 0 auto 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #cce0ff;
+      font-style: italic;
+    }
+
+    .datos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 420px;
+      margin: 0 auto 24px;
+    }
+
+    .dato-card {
+      background: #111e33;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .dato-card .label {
+      font-size: 12px;
+      color: #8899aa;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .dato-card .valor {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .dato-card .unidad {
+      font-size: 13px;
+      color: #8899aa;
+      margin-top: 2px;
+    }
+
+    .ola-container {
+      max-width: 420px;
+      margin: 0 auto 24px;
+      height: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ola-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .actualizando {
+      text-align: center;
+      font-size: 13px;
+      color: #8899aa;
+      padding: 40px;
+    }
+
+    .error {
+      text-align: center;
+      color: #ff6b6b;
+      font-size: 14px;
+      padding: 20px;
+      background: #1a1020;
+      border-radius: 12px;
+      max-width: 420px;
+      margin: 20px auto;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #445566;
+      padding: 20px 0 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🌊 Surf A Coruña</h1>
+  <p id="ultima-actualizacion">Cargando datos...</p>
+</header>
+
+<div id="contenido">
+  <p class="actualizando">Consultando el mar...</p>
+</div>
+
+<footer>
+  Datos: Open-Meteo Marine API · A Coruña (43.37°N, 8.40°W)
+</footer>
+
+<script>
+  const LAT = 43.37;
+  const LON = -8.40;
+  const API = `https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LON}&current=wave_height,wave_period,wave_direction,wind_wave_height&wind_speed_unit=kn&timeformat=unixtime`;
+
+  function clasificar(altura) {
+    if (altura < 0.5) return { color: '#ff4444', texto: 'Sin olas', emoji: '😴' };
+    if (altura < 0.8) return { color: '#ffaa00', texto: 'Flojo', emoji: '🤙' };
+    if (altura < 1.5) return { color: '#44cc44', texto: '¡Buenas olas!', emoji: '🤙' };
+    if (altura < 2.5) return { color: '#44cc44', texto: '¡Muy bueno!', emoji: '🔥' };
+    return { color: '#ff4444', texto: 'Demasiado grande', emoji: '⚠️' };
+  }
+
+  function direccionTexto(grados) {
+    const dirs = ['N','NE','E','SE','S','SO','O','NO'];
+    return dirs[Math.round(grados / 45) % 8];
+  }
+
+  function resumenNatural(altura, periodo, direccion) {
+    const dir = direccionTexto(direccion);
+    const cal = clasificar(altura);
+    if (altura < 0.5) return `El mar está en calma ahora mismo. No merece la pena salir.`;
+    if (altura < 0.8) return `Olas pequeñas de ${altura.toFixed(1)}m con período de ${Math.round(periodo)}s. Bueno para iniciarse.`;
+    if (altura < 1.5) return `${altura.toFixed(1)}m de ola, período ${Math.round(periodo)}s, swell del ${dir}. Vale la pena salir.`;
+    if (altura < 2.5) return `Sesión de categoría: ${altura.toFixed(1)}m, ${Math.round(periodo)}s de período. Swell del ${dir}. ¡No te lo pierdas!`;
+    return `Mar bravo: ${altura.toFixed(1)}m con ${Math.round(periodo)}s. Solo para expertos.`;
+  }
+
+  function olaAnimadaSVG(altura) {
+    const amp = Math.min(altura * 20, 40);
+    return `
+    <svg class="ola-svg" viewBox="0 0 420 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a6faa" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#0a1628" stop-opacity="0.1"/>
+        </linearGradient>
+      </defs>
+      <path id="ola" fill="url(#grad)">
+        <animate attributeName="d" dur="3s" repeatCount="indefinite"
+          values="
+            M0,${60 - amp} C70,${60 - amp - 15} 140,${60 - amp + 15} 210,${60 - amp} C280,${60 - amp - 15} 350,${60 - amp + 15} 420,${60 - amp} L420,100 L0,100 Z;
+            M0,${60 - amp} C70,${60 - amp + 15} 140,${60 - amp - 15} 210,${60 - amp} C280,${60 - amp + 15} 350,${60 - amp - 15} 420,${60 - amp} L420,100 L0,100 Z;
+            M0,${60 - amp} C70,${60 - amp - 15} 140,${60 - amp + 15} 210,${60 - amp} C280,${60 - amp - 15} 350,${60 - amp + 15} 420,${60 - amp} L420,100 L0,100 Z
+          "/>
+      </path>
+    </svg>`;
+  }
+
+  async function cargarDatos() {
+    try {
+      const res = await fetch(API);
+      const data = await res.json();
+      const c = data.current;
+
+      const altura = c.wave_height;
+      const periodo = c.wave_period;
+      const direccion = c.wave_direction;
+      const estado = clasificar(altura);
+
+      const ahora = new Date();
+      document.getElementById('ultima-actualizacion').textContent =
+        `Actualizado: ${ahora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})}`;
+
+      document.getElementById('contenido').innerHTML = `
+        <div class="semaforo">
+          <div class="semaforo-circulo" style="background: ${estado.color}; box-shadow: 0 0 18px ${estado.color}88;"></div>
+          <div class="semaforo-texto">
+            <h2>${estado.emoji} ${estado.texto}</h2>
+            <p>Condiciones actuales</p>
+          </div>
+        </div>
+
+        <div class="resumen">
+          "${resumenNatural(altura, periodo, direccion)}"
+        </div>
+
+        <div class="ola-container">
+          ${olaAnimadaSVG(altura)}
+        </div>
+
+        <div class="datos-grid">
+          <div class="dato-card">
+            <div class="label">Altura</div>
+            <div class="valor" style="color:#4db8ff">${altura.toFixed(1)}</div>
+            <div class="unidad">metros</div>
+          </div>
+          <div class="dato-card">
+            <div class="label">Período</div>
+            <div class="valor" style="color:#44ddaa">${Math.round(periodo)}</div>
+            <div class="unidad">segundos</div>
+          </div>
+          <div class="dato-card">
+            <div class="label">Dirección</div>
+            <div class="valor" style="color:#ffcc44">${direccionTexto(direccion)}</div>
+            <div class="unidad">${Math.round(direccion)}°</div>
+          </div>
+          <div class="dato-card">
+            <div class="label">Ola de viento</div>
+            <div class="valor" style="color:#ff8866">${c.wind_wave_height.toFixed(1)}</div>
+            <div class="unidad">metros</div>
+          </div>
+        </div>
+      `;
+
+    } catch (err) {
+      document.getElementById('contenido').innerHTML =
+        `<div class="error">No se pudieron cargar los datos del mar.<br>Comprueba tu conexión.</div>`;
+    }
+  }
+
+  cargarDatos();
+  setInterval(cargarDatos, 10 * 60 * 1000);
+</script>
+
+</body>
+</html>
