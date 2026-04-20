@@ -3,43 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Surf A Coruña</title>
+  <title>Salitre</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0a1628;
       color: #ffffff;
       min-height: 100vh;
-      padding: 20px;
+      padding-bottom: 70px;
+      transition: background 2s ease;
     }
 
+    /* FONDO ANIMADO */
+    #fondo-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .pantalla {
+      position: relative;
+      z-index: 1;
+      display: none;
+      padding: 20px;
+    }
+    .pantalla.activa { display: block; }
+
+    /* MENÚ */
+    .nav-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 65px;
+      background: linear-gradient(135deg, #0d2137cc 0%, #0a3050cc 100%);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid #1a4a6e;
+      display: flex;
+      z-index: 1000;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      color: #4a7a9b;
+      font-size: 11px;
+      border: none;
+      background: none;
+      transition: color 0.2s;
+    }
+
+    .nav-item.activo { color: #4db8ff; }
+    .nav-item .icono { font-size: 22px; }
+
+    /* INICIO */
     header {
       text-align: center;
-      padding: 30px 0 20px;
+      padding: 40px 0 10px;
     }
 
     header h1 {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.4);
     }
 
-    header p {
-      color: #8899aa;
-      font-size: 14px;
-      margin-top: 4px;
-    }
+    header p { color: #aabccc; font-size: 14px; margin-top: 4px; }
 
     .semaforo {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
-      margin: 20px auto;
-      background: #111e33;
-      border-radius: 16px;
+      margin: 24px auto;
+      background: rgba(10,22,40,0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
       padding: 20px 28px;
       max-width: 420px;
     }
@@ -49,21 +98,16 @@
       height: 52px;
       border-radius: 50%;
       flex-shrink: 0;
+      transition: background 1s ease, box-shadow 1s ease;
     }
 
-    .semaforo-texto h2 {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .semaforo-texto p {
-      font-size: 13px;
-      color: #8899aa;
-      margin-top: 2px;
-    }
+    .semaforo-texto h2 { font-size: 22px; font-weight: 700; }
+    .semaforo-texto p { font-size: 13px; color: #8899aa; margin-top: 2px; }
 
     .resumen {
-      background: #111e33;
+      background: rgba(10,22,40,0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px;
       padding: 18px 20px;
       max-width: 420px;
@@ -83,7 +127,9 @@
     }
 
     .dato-card {
-      background: #111e33;
+      background: rgba(10,22,40,0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 14px;
       padding: 16px;
       text-align: center;
@@ -97,185 +143,389 @@
       margin-bottom: 6px;
     }
 
-    .dato-card .valor {
-      font-size: 26px;
-      font-weight: 700;
-    }
-
-    .dato-card .unidad {
-      font-size: 13px;
-      color: #8899aa;
-      margin-top: 2px;
-    }
-
-    .ola-container {
-      max-width: 420px;
-      margin: 0 auto 24px;
-      height: 100px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ola-svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .actualizando {
-      text-align: center;
-      font-size: 13px;
-      color: #8899aa;
-      padding: 40px;
-    }
-
-    .error {
-      text-align: center;
-      color: #ff6b6b;
-      font-size: 14px;
-      padding: 20px;
-      background: #1a1020;
-      border-radius: 12px;
-      max-width: 420px;
-      margin: 20px auto;
-    }
+    .dato-card .valor { font-size: 26px; font-weight: 700; }
+    .dato-card .unidad { font-size: 13px; color: #8899aa; margin-top: 2px; }
 
     footer {
       text-align: center;
       font-size: 12px;
-      color: #445566;
-      padding: 20px 0 10px;
+      color: rgba(255,255,255,0.25);
+      padding: 10px 0 20px;
     }
+
+    .actualizando {
+      text-align: center;
+      font-size: 14px;
+      color: #8899aa;
+      padding: 60px 20px;
+    }
+
+    /* MAPA */
+    .mapa-header {
+      padding: 24px 0 16px;
+      text-align: center;
+    }
+
+    .mapa-header h1 { font-size: 24px; font-weight: 700; }
+    .mapa-header p { font-size: 13px; color: #8899aa; margin-top: 4px; }
+
+    .selector-estilo {
+      display: flex;
+      gap: 10px;
+      max-width: 420px;
+      margin: 0 auto 16px;
+    }
+
+    .btn-estilo {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #1a4a6e;
+      background: rgba(10,22,40,0.6);
+      color: #8899aa;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-estilo.activo {
+      background: #0a3050;
+      border-color: #4db8ff;
+      color: #4db8ff;
+    }
+
+    #mapa {
+      height: 420px;
+      border-radius: 16px;
+      overflow: hidden;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .popup-playa { font-family: -apple-system, sans-serif; min-width: 180px; }
+    .popup-playa h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #0a1628; }
+    .popup-playa .popup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .popup-playa .popup-dato { background: #f0f4f8; border-radius: 8px; padding: 8px; text-align: center; }
+    .popup-playa .popup-dato .pl { font-size: 10px; color: #667788; text-transform: uppercase; }
+    .popup-playa .popup-dato .pv { font-size: 16px; font-weight: 700; color: #0a1628; }
+    .popup-playa .popup-estado { margin-top: 8px; text-align: center; font-size: 13px; font-weight: 600; padding: 6px; border-radius: 8px; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>🌊 Surf A Coruña</h1>
-  <p id="ultima-actualizacion">Cargando datos...</p>
-</header>
+<canvas id="fondo-canvas"></canvas>
 
-<div id="contenido">
-  <p class="actualizando">Consultando el mar...</p>
+<!-- INICIO -->
+<div id="pantalla-inicio" class="pantalla activa">
+  <header>
+    <h1>🌊 Salitre</h1>
+    <p id="ultima-actualizacion">Cargando datos...</p>
+  </header>
+  <div id="contenido-inicio">
+    <p class="actualizando">Consultando el mar...</p>
+  </div>
+  <footer>Open-Meteo Marine · A Coruña</footer>
 </div>
 
-<footer>
-  Datos: Open-Meteo Marine API · A Coruña (43.37°N, 8.40°W)
-</footer>
+<!-- MAPA -->
+<div id="pantalla-mapa" class="pantalla">
+  <div class="mapa-header">
+    <h1>🗺️ Playas</h1>
+    <p>Condiciones en tiempo real</p>
+  </div>
+  <div class="selector-estilo">
+    <button class="btn-estilo activo" onclick="cambiarEstilo('oscuro', this)">🌑 Oscuro</button>
+    <button class="btn-estilo" onclick="cambiarEstilo('satelite', this)">🛰️ Satélite</button>
+  </div>
+  <div id="mapa"></div>
+</div>
+
+<!-- MENÚ -->
+<nav class="nav-bar">
+  <button class="nav-item activo" onclick="irA('inicio', this)">
+    <span class="icono">🌊</span>
+    <span>Inicio</span>
+  </button>
+  <button class="nav-item" onclick="irA('mapa', this)">
+    <span class="icono">🗺️</span>
+    <span>Mapa</span>
+  </button>
+</nav>
 
 <script>
-  const LAT = 43.37;
-  const LON = -8.40;
-  const API = `https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LON}&current=wave_height,wave_period,wave_direction,wind_wave_height&wind_speed_unit=kn&timeformat=unixtime`;
+// ── FONDO ANIMADO ──
+const canvas = document.getElementById('fondo-canvas');
+const ctx = canvas.getContext('2d');
 
-  function clasificar(altura) {
-    if (altura < 0.5) return { color: '#ff4444', texto: 'Sin olas', emoji: '😴' };
-    if (altura < 0.8) return { color: '#ffaa00', texto: 'Flojo', emoji: '🤙' };
-    if (altura < 1.5) return { color: '#44cc44', texto: '¡Buenas olas!', emoji: '🤙' };
-    if (altura < 2.5) return { color: '#44cc44', texto: '¡Muy bueno!', emoji: '🔥' };
-    return { color: '#ff4444', texto: 'Demasiado grande', emoji: '⚠️' };
+let fondoConfig = {
+  colorTop: '#0a1628',
+  colorMid: '#0d2137',
+  colorBot: '#061020',
+  velocidad: 0.008,
+  amplitud: 30,
+};
+
+let olas = [
+  { offset: 0, speed: 1.0, amp: 1.0, y: 0.55, alpha: 0.18 },
+  { offset: 2.1, speed: 0.7, amp: 0.7, y: 0.65, alpha: 0.13 },
+  { offset: 4.3, speed: 0.5, amp: 0.5, y: 0.75, alpha: 0.09 },
+  { offset: 1.2, speed: 1.3, amp: 0.4, y: 0.45, alpha: 0.07 },
+];
+
+let t = 0;
+let colorOla = '#1a6faa';
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function actualizarFondo(altura) {
+  if (altura < 0.5) {
+    fondoConfig = { colorTop: '#1a1a2e', colorMid: '#2a2a3e', colorBot: '#0f0f1e', velocidad: 0.003, amplitud: 10 };
+    colorOla = '#334466';
+  } else if (altura < 0.8) {
+    fondoConfig = { colorTop: '#0a1a2e', colorMid: '#0d2540', colorBot: '#061525', velocidad: 0.005, amplitud: 18 };
+    colorOla = '#1a5a88';
+  } else if (altura < 1.5) {
+    fondoConfig = { colorTop: '#0a1628', colorMid: '#0d2a4a', colorBot: '#061020', velocidad: 0.008, amplitud: 30 };
+    colorOla = '#1a7aaa';
+  } else if (altura < 2.5) {
+    fondoConfig = { colorTop: '#051528', colorMid: '#0a2545', colorBot: '#030d18', velocidad: 0.014, amplitud: 45 };
+    colorOla = '#0a8acc';
+  } else {
+    fondoConfig = { colorTop: '#1a0a10', colorMid: '#2a0d18', colorBot: '#0f0508', velocidad: 0.022, amplitud: 60 };
+    colorOla = '#aa2244';
   }
+}
 
-  function direccionTexto(grados) {
-    const dirs = ['N','NE','E','SE','S','SO','O','NO'];
-    return dirs[Math.round(grados / 45) % 8];
-  }
+function dibujar() {
+  if (document.hidden) return;
+  const w = canvas.width;
+  const h = canvas.height;
+  t += fondoConfig.velocidad;
 
-  function resumenNatural(altura, periodo, direccion) {
-    const dir = direccionTexto(direccion);
-    const cal = clasificar(altura);
-    if (altura < 0.5) return `El mar está en calma ahora mismo. No merece la pena salir.`;
-    if (altura < 0.8) return `Olas pequeñas de ${altura.toFixed(1)}m con período de ${Math.round(periodo)}s. Bueno para iniciarse.`;
-    if (altura < 1.5) return `${altura.toFixed(1)}m de ola, período ${Math.round(periodo)}s, swell del ${dir}. Vale la pena salir.`;
-    if (altura < 2.5) return `Sesión de categoría: ${altura.toFixed(1)}m, ${Math.round(periodo)}s de período. Swell del ${dir}. ¡No te lo pierdas!`;
-    return `Mar bravo: ${altura.toFixed(1)}m con ${Math.round(periodo)}s. Solo para expertos.`;
-  }
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, fondoConfig.colorTop);
+  grad.addColorStop(0.5, fondoConfig.colorMid);
+  grad.addColorStop(1, fondoConfig.colorBot);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
 
-  function olaAnimadaSVG(altura) {
-    const amp = Math.min(altura * 20, 40);
-    return `
-    <svg class="ola-svg" viewBox="0 0 420 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1a6faa" stop-opacity="0.8"/>
-          <stop offset="100%" stop-color="#0a1628" stop-opacity="0.1"/>
-        </linearGradient>
-      </defs>
-      <path id="ola" fill="url(#grad)">
-        <animate attributeName="d" dur="3s" repeatCount="indefinite"
-          values="
-            M0,${60 - amp} C70,${60 - amp - 15} 140,${60 - amp + 15} 210,${60 - amp} C280,${60 - amp - 15} 350,${60 - amp + 15} 420,${60 - amp} L420,100 L0,100 Z;
-            M0,${60 - amp} C70,${60 - amp + 15} 140,${60 - amp - 15} 210,${60 - amp} C280,${60 - amp + 15} 350,${60 - amp - 15} 420,${60 - amp} L420,100 L0,100 Z;
-            M0,${60 - amp} C70,${60 - amp - 15} 140,${60 - amp + 15} 210,${60 - amp} C280,${60 - amp - 15} 350,${60 - amp + 15} 420,${60 - amp} L420,100 L0,100 Z
-          "/>
-      </path>
-    </svg>`;
-  }
-
-  async function cargarDatos() {
-    try {
-      const res = await fetch(API);
-      const data = await res.json();
-      const c = data.current;
-
-      const altura = c.wave_height;
-      const periodo = c.wave_period;
-      const direccion = c.wave_direction;
-      const estado = clasificar(altura);
-
-      const ahora = new Date();
-      document.getElementById('ultima-actualizacion').textContent =
-        `Actualizado: ${ahora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})}`;
-
-      document.getElementById('contenido').innerHTML = `
-        <div class="semaforo">
-          <div class="semaforo-circulo" style="background: ${estado.color}; box-shadow: 0 0 18px ${estado.color}88;"></div>
-          <div class="semaforo-texto">
-            <h2>${estado.emoji} ${estado.texto}</h2>
-            <p>Condiciones actuales</p>
-          </div>
-        </div>
-
-        <div class="resumen">
-          "${resumenNatural(altura, periodo, direccion)}"
-        </div>
-
-        <div class="ola-container">
-          ${olaAnimadaSVG(altura)}
-        </div>
-
-        <div class="datos-grid">
-          <div class="dato-card">
-            <div class="label">Altura</div>
-            <div class="valor" style="color:#4db8ff">${altura.toFixed(1)}</div>
-            <div class="unidad">metros</div>
-          </div>
-          <div class="dato-card">
-            <div class="label">Período</div>
-            <div class="valor" style="color:#44ddaa">${Math.round(periodo)}</div>
-            <div class="unidad">segundos</div>
-          </div>
-          <div class="dato-card">
-            <div class="label">Dirección</div>
-            <div class="valor" style="color:#ffcc44">${direccionTexto(direccion)}</div>
-            <div class="unidad">${Math.round(direccion)}°</div>
-          </div>
-          <div class="dato-card">
-            <div class="label">Ola de viento</div>
-            <div class="valor" style="color:#ff8866">${c.wind_wave_height.toFixed(1)}</div>
-            <div class="unidad">metros</div>
-          </div>
-        </div>
-      `;
-
-    } catch (err) {
-      document.getElementById('contenido').innerHTML =
-        `<div class="error">No se pudieron cargar los datos del mar.<br>Comprueba tu conexión.</div>`;
+  for (const ola of olas) {
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    const baseY = h * ola.y;
+    const amp = fondoConfig.amplitud * ola.amp;
+    for (let x = 0; x <= w; x += 4) {
+      const y = baseY + Math.sin((x / w) * Math.PI * 3 + t * ola.speed + ola.offset) * amp
+                      + Math.sin((x / w) * Math.PI * 5 + t * ola.speed * 0.7 + ola.offset) * amp * 0.4;
+      ctx.lineTo(x, y);
     }
+    ctx.lineTo(w, h);
+    ctx.closePath();
+
+    const og = ctx.createLinearGradient(0, baseY - amp, 0, h);
+    og.addColorStop(0, colorOla + Math.round(ola.alpha * 255).toString(16).padStart(2,'0'));
+    og.addColorStop(1, colorOla + '00');
+    ctx.fillStyle = og;
+    ctx.fill();
   }
 
-  cargarDatos();
-  setInterval(cargarDatos, 10 * 60 * 1000);
-</script>
+  requestAnimationFrame(dibujar);
+}
 
+window.addEventListener('resize', resize);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) requestAnimationFrame(dibujar);
+});
+resize();
+dibujar();
+
+// ── HELPERS ──
+const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).toFixed(dec);
+const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : Math.round(v);
+
+// ── DATOS ──
+const LAT = 43.37, LON = -8.40;
+
+const PLAYAS = [
+  { nombre: 'Riazor',  lat: 43.3713, lon: -8.4194 },
+  { nombre: 'Orzán',   lat: 43.3728, lon: -8.4089 },
+  { nombre: 'Baldaio', lat: 43.3167, lon: -8.6333 },
+  { nombre: 'Razo',    lat: 43.2833, lon: -8.6833 },
+  { nombre: 'Carnota', lat: 42.8833, lon: -9.1000 },
+];
+
+function clasificar(h) {
+  if (h < 0.5) return { color: '#ff4444', texto: 'Sin olas',        bg: '#fff0f0' };
+  if (h < 0.8) return { color: '#ffaa00', texto: 'Flojo',           bg: '#fff8e0' };
+  if (h < 1.5) return { color: '#44cc44', texto: '¡Buenas olas!',   bg: '#f0fff0' };
+  if (h < 2.5) return { color: '#44cc44', texto: '¡Muy bueno!',     bg: '#f0fff0' };
+  return             { color: '#ff4444', texto: 'Demasiado grande', bg: '#fff0f0' };
+}
+
+function dirTxt(g) {
+  if (g == null || Number.isNaN(g)) return '—';
+  const i = ((Math.round(g / 45) % 8) + 8) % 8;
+  return ['N','NE','E','SE','S','SO','O','NO'][i];
+}
+
+function resumen(h, p, d) {
+  const dir = dirTxt(d);
+  if (h < 0.5) return 'El mar está en calma. No merece salir.';
+  if (h < 0.8) return `Olas pequeñas de ${h.toFixed(1)}m, período ${Math.round(p)}s. Bueno para iniciarse.`;
+  if (h < 1.5) return `${h.toFixed(1)}m de ola, período ${Math.round(p)}s, swell del ${dir}. Vale la pena salir.`;
+  if (h < 2.5) return `Sesión de categoría: ${h.toFixed(1)}m, ${Math.round(p)}s. Swell del ${dir}. ¡No te lo pierdas!`;
+  return `Mar bravo: ${h.toFixed(1)}m, ${Math.round(p)}s. Solo para expertos.`;
+}
+
+// ── PANTALLA INICIO ──
+async function cargarInicio() {
+  try {
+    const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LON}&current=wave_height,wave_period,wave_direction,wind_wave_height&timeformat=unixtime`);
+    const data = await res.json();
+    const c = data.current;
+    const h = c.wave_height, p = c.wave_period, d = c.wave_direction;
+    const estado = clasificar(h);
+
+    actualizarFondo(h);
+
+    const ahora = new Date();
+    document.getElementById('ultima-actualizacion').textContent =
+      `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
+
+    document.getElementById('contenido-inicio').innerHTML = `
+      <div class="semaforo">
+        <div class="semaforo-circulo" style="background:${estado.color};box-shadow:0 0 20px ${estado.color}99;"></div>
+        <div class="semaforo-texto">
+          <h2>${estado.texto}</h2>
+          <p>Riazor · ahora</p>
+        </div>
+      </div>
+      <div class="resumen">"${resumen(h, p, d)}"</div>
+      <div class="datos-grid">
+        <div class="dato-card">
+          <div class="label">Altura</div>
+          <div class="valor" style="color:#4db8ff">${fmt(h)}</div>
+          <div class="unidad">metros</div>
+        </div>
+        <div class="dato-card">
+          <div class="label">Período</div>
+          <div class="valor" style="color:#44ddaa">${rnd(p)}</div>
+          <div class="unidad">segundos</div>
+        </div>
+        <div class="dato-card">
+          <div class="label">Dirección</div>
+          <div class="valor" style="color:#ffcc44">${dirTxt(d)}</div>
+          <div class="unidad">${rnd(d)}°</div>
+        </div>
+        <div class="dato-card">
+          <div class="label">Ola de viento</div>
+          <div class="valor" style="color:#ff8866">${fmt(c.wind_wave_height)}</div>
+          <div class="unidad">metros</div>
+        </div>
+      </div>`;
+  } catch(e) {
+    document.getElementById('ultima-actualizacion').textContent =
+      'Error de conexión · reintentando en 10 min';
+    document.getElementById('contenido-inicio').innerHTML =
+      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudieron cargar los datos.<br><span style="color:#8899aa;font-size:13px;">Revisá tu conexión.</span></p>`;
+  }
+}
+
+// ── MAPA ──
+let mapa = null, mapaIniciado = false, capaActual = null, capaMarcadores = null;
+
+const capas = {
+  oscuro: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution:'© CARTO', maxZoom:19 }),
+  satelite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution:'© Esri', maxZoom:19 }),
+};
+
+function crearIcono(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`,
+    iconSize: [22,22], iconAnchor: [11,11], popupAnchor: [0,-14]
+  });
+}
+
+async function cargarDatosPlaya(playa) {
+  const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction&timeformat=unixtime`);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  return { playa, c: data.current };
+}
+
+function renderMarcador(playa, c) {
+  const h = c?.wave_height, p = c?.wave_period, d = c?.wave_direction;
+  const estado = (h == null) ? { color: '#888', texto: 'Sin datos', bg: '#eee' } : clasificar(h);
+  return L.marker([playa.lat, playa.lon], { icon: crearIcono(estado.color) })
+    .bindPopup(`
+      <div class="popup-playa">
+        <h3>🏄 ${playa.nombre}</h3>
+        <div class="popup-grid">
+          <div class="popup-dato"><div class="pl">Altura</div><div class="pv" style="color:#1a6faa">${fmt(h)}m</div></div>
+          <div class="popup-dato"><div class="pl">Período</div><div class="pv" style="color:#0a8a5a">${rnd(p)}s</div></div>
+          <div class="popup-dato"><div class="pl">Dirección</div><div class="pv">${dirTxt(d)}</div></div>
+          <div class="popup-dato"><div class="pl">Grados</div><div class="pv">${rnd(d)}°</div></div>
+        </div>
+        <div class="popup-estado" style="background:${estado.bg};color:${estado.color};">${estado.texto}</div>
+      </div>`, { maxWidth: 220 });
+}
+
+async function refrescarMarcadores() {
+  if (capaMarcadores) capaMarcadores.clearLayers();
+  else capaMarcadores = L.layerGroup().addTo(mapa);
+
+  const resultados = await Promise.allSettled(PLAYAS.map(cargarDatosPlaya));
+  resultados.forEach((r, i) => {
+    const playa = PLAYAS[i];
+    if (r.status === 'fulfilled') {
+      renderMarcador(playa, r.value.c).addTo(capaMarcadores);
+    } else {
+      console.warn('Error', playa.nombre, r.reason);
+      renderMarcador(playa, null).addTo(capaMarcadores);
+    }
+  });
+}
+
+async function iniciarMapa() {
+  mapaIniciado = true;
+  mapa = L.map('mapa').setView([43.25, -8.7], 9);
+  capaActual = capas.oscuro;
+  capaActual.addTo(mapa);
+  await refrescarMarcadores();
+}
+
+function cambiarEstilo(estilo, btn) {
+  document.querySelectorAll('.btn-estilo').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  if (capaActual) mapa.removeLayer(capaActual);
+  capaActual = capas[estilo];
+  capaActual.addTo(mapa);
+}
+
+function irA(pantalla, btn) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('activo'));
+  document.getElementById('pantalla-' + pantalla).classList.add('activa');
+  btn.classList.add('activo');
+  if (pantalla === 'mapa' && !mapaIniciado) iniciarMapa();
+}
+
+cargarInicio();
+setInterval(() => {
+  cargarInicio();
+  if (mapaIniciado) refrescarMarcadores();
+}, 10 * 60 * 1000);
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    cargarInicio();
+    if (mapaIniciado) refrescarMarcadores();
+  }
+});
+</script>
 </body>
 </html>
