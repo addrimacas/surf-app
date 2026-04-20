@@ -9,33 +9,29 @@
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#fff; min-height:100vh; padding-bottom:70px; }
-
     #fondo-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
-
     .pantalla { position:relative; z-index:1; display:none; padding:20px; }
     .pantalla.activa { display:block; }
-
     .nav-bar { position:fixed; bottom:0; left:0; right:0; height:65px; background:linear-gradient(135deg,#0d2137cc,#0a3050cc); backdrop-filter:blur(12px); border-top:1px solid #1a4a6e; display:flex; z-index:1000; }
     .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; color:#4a7a9b; font-size:11px; border:none; background:none; transition:color 0.2s; }
     .nav-item.activo { color:#4db8ff; }
     .nav-item .icono { font-size:22px; }
-
     header { text-align:center; padding:40px 0 10px; }
     header h1 { font-size:32px; font-weight:800; letter-spacing:-1px; text-shadow:0 2px 20px rgba(0,0,0,0.4); }
     header p { color:#aabccc; font-size:14px; margin-top:4px; }
 
+    .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; }
+    .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
+    .dato-card .label { font-size:11px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+    .dato-card .valor { font-size:24px; font-weight:700; }
+    .dato-card .sub { font-size:12px; color:#8899aa; margin-top:3px; }
+
     .semaforo { display:flex; align-items:center; justify-content:center; gap:12px; margin:24px auto; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px 28px; max-width:420px; }
-    .semaforo-circulo { width:52px; height:52px; border-radius:50%; flex-shrink:0; transition:background 1s ease,box-shadow 1s ease; }
+    .semaforo-circulo { width:52px; height:52px; border-radius:50%; flex-shrink:0; }
     .semaforo-texto h2 { font-size:22px; font-weight:700; }
     .semaforo-texto p { font-size:13px; color:#8899aa; margin-top:2px; }
 
     .resumen { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px 20px; max-width:420px; margin:0 auto 20px; font-size:15px; line-height:1.6; color:#cce0ff; font-style:italic; }
-
-    .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; }
-    .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; text-align:center; }
-    .dato-card .label { font-size:12px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
-    .dato-card .valor { font-size:26px; font-weight:700; }
-    .dato-card .unidad { font-size:13px; color:#8899aa; margin-top:2px; }
 
     /* PREVISIÓN */
     .prevision { max-width:420px; margin:0 auto 24px; }
@@ -43,8 +39,6 @@
     .prev-tabs { display:flex; gap:8px; margin-bottom:14px; }
     .prev-tab { flex:1; padding:8px; border-radius:10px; border:1px solid #1a4a6e; background:transparent; color:#4a7a9b; font-size:13px; cursor:pointer; transition:all 0.2s; }
     .prev-tab.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
-
-    /* HOY - scroll horizontal */
     .prev-hoy { overflow-x:auto; padding-bottom:8px; }
     .prev-hoy-inner { display:flex; gap:8px; width:max-content; }
     .prev-card { width:78px; background:rgba(255,255,255,0.04); border-radius:12px; padding:10px 6px; text-align:center; border:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
@@ -54,8 +48,6 @@
     .prev-card .pc-semaforo { width:10px; height:10px; border-radius:50%; margin:0 auto 6px; }
     .prev-card .pc-altura { font-size:14px; font-weight:700; color:#4db8ff; }
     .prev-card .pc-detalle { font-size:10px; color:#6688aa; margin-top:3px; }
-
-    /* 3 DÍAS - vertical */
     .prev-dias { display:flex; flex-direction:column; gap:8px; }
     .prev-dia-bloque { background:rgba(255,255,255,0.04); border-radius:12px; border:1px solid rgba(255,255,255,0.06); overflow:hidden; }
     .prev-dia-header { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:12px; font-weight:600; color:#aabbcc; }
@@ -66,8 +58,6 @@
     .prev-franja .pf-semaforo { width:8px; height:8px; border-radius:50%; margin:0 auto 4px; }
     .prev-franja .pf-altura { font-size:13px; font-weight:700; color:#4db8ff; }
     .prev-franja .pf-detalle { font-size:10px; color:#6688aa; margin-top:2px; }
-
-    /* 10 DÍAS - lista */
     .prev-lista { display:flex; flex-direction:column; gap:6px; }
     .prev-fila { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px; border:1px solid rgba(255,255,255,0.06); }
     .prev-fila .pfi-dia { width:52px; font-size:12px; color:#aabbcc; font-weight:600; flex-shrink:0; }
@@ -79,12 +69,11 @@
     footer { text-align:center; font-size:12px; color:rgba(255,255,255,0.25); padding:10px 0 20px; }
     .actualizando { text-align:center; font-size:14px; color:#8899aa; padding:60px 20px; }
 
-    /* MAPA */
     .mapa-header { padding:24px 0 16px; text-align:center; }
     .mapa-header h1 { font-size:24px; font-weight:700; }
     .mapa-header p { font-size:13px; color:#8899aa; margin-top:4px; }
     .selector-estilo { display:flex; gap:10px; max-width:420px; margin:0 auto 16px; }
-    .btn-estilo { flex:1; padding:10px; border-radius:10px; border:1px solid #1a4a6e; background:rgba(10,22,40,0.6); color:#8899aa; font-size:13px; cursor:pointer; transition:all 0.2s; }
+    .btn-estilo { flex:1; padding:10px; border-radius:10px; border:1px solid #1a4a6e; background:rgba(10,22,40,0.6); color:#8899aa; font-size:13px; cursor:pointer; }
     .btn-estilo.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
     #mapa { height:420px; border-radius:16px; overflow:hidden; max-width:420px; margin:0 auto; }
     .popup-playa { font-family:-apple-system,sans-serif; min-width:180px; }
@@ -97,7 +86,6 @@
   </style>
 </head>
 <body>
-
 <canvas id="fondo-canvas"></canvas>
 
 <div id="pantalla-inicio" class="pantalla activa">
@@ -106,14 +94,11 @@
     <p id="ultima-actualizacion">Cargando datos...</p>
   </header>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
-  <footer>Open-Meteo Marine · A Coruña</footer>
+  <footer>Open-Meteo · Meteogalicia · A Coruña</footer>
 </div>
 
 <div id="pantalla-mapa" class="pantalla">
-  <div class="mapa-header">
-    <h1>🗺️ Playas</h1>
-    <p>Condiciones en tiempo real</p>
-  </div>
+  <div class="mapa-header"><h1>🗺️ Playas</h1><p>Condiciones en tiempo real</p></div>
   <div class="selector-estilo">
     <button class="btn-estilo activo" onclick="cambiarEstilo('oscuro',this)">🌑 Oscuro</button>
     <button class="btn-estilo" onclick="cambiarEstilo('satelite',this)">🛰️ Satélite</button>
@@ -122,19 +107,14 @@
 </div>
 
 <nav class="nav-bar">
-  <button class="nav-item activo" onclick="irA('inicio',this)">
-    <span class="icono">🌊</span><span>Inicio</span>
-  </button>
-  <button class="nav-item" onclick="irA('mapa',this)">
-    <span class="icono">🗺️</span><span>Mapa</span>
-  </button>
+  <button class="nav-item activo" onclick="irA('inicio',this)"><span class="icono">🌊</span><span>Inicio</span></button>
+  <button class="nav-item" onclick="irA('mapa',this)"><span class="icono">🗺️</span><span>Mapa</span></button>
 </nav>
 
 <script>
-// ── SVG ICONOS ──
-const SVG_AMANECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="28" x2="20" y2="22" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const SVG_DIA = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="5" stroke="#FFD700" stroke-width="1.5"/><line x1="20" y1="10" x2="20" y2="13" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="27" x2="20" y2="30" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="20" x2="13" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="20" x2="30" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="13" x2="15" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="25" y1="25" x2="27" y2="27" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="13" x2="25" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="27" x2="15" y2="25" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const SVG_ATARDECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="28" x2="20" y2="22" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const SVG_AMANECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><line x1="20" y1="28" x2="20" y2="22" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const SVG_DIA = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="5" stroke="#FFD700" stroke-width="1.5"/><line x1="20" y1="10" x2="20" y2="13" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="27" x2="20" y2="30" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="20" x2="13" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="20" x2="30" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="13" x2="15" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="25" y1="25" x2="27" y2="27" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="13" x2="25" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="27" x2="15" y2="25" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const SVG_ATARDECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><line x1="20" y1="28" x2="20" y2="22" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 
 function iconoPorHora(h) {
   if (h >= 7 && h < 9) return SVG_AMANECER;
@@ -142,55 +122,47 @@ function iconoPorHora(h) {
   return SVG_ATARDECER;
 }
 
-// ── FONDO ANIMADO ──
+// FONDO ANIMADO
 const canvas = document.getElementById('fondo-canvas');
 const ctx = canvas.getContext('2d');
 let fondoConfig = { colorTop:'#0a1628', colorMid:'#0d2137', colorBot:'#061020', velocidad:0.008, amplitud:30 };
 let colorOla = '#1a6faa';
 let t = 0;
 const olas = [
-  { offset:0,   speed:1.0, amp:1.0, y:0.55, alpha:0.18 },
-  { offset:2.1, speed:0.7, amp:0.7, y:0.65, alpha:0.13 },
-  { offset:4.3, speed:0.5, amp:0.5, y:0.75, alpha:0.09 },
-  { offset:1.2, speed:1.3, amp:0.4, y:0.45, alpha:0.07 },
+  {offset:0,speed:1.0,amp:1.0,y:0.55,alpha:0.18},
+  {offset:2.1,speed:0.7,amp:0.7,y:0.65,alpha:0.13},
+  {offset:4.3,speed:0.5,amp:0.5,y:0.75,alpha:0.09},
+  {offset:1.2,speed:1.3,amp:0.4,y:0.45,alpha:0.07},
 ];
-
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-
+function resize() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 function actualizarFondo(altura) {
-  if (altura < 0.5)      { fondoConfig = { colorTop:'#1a1a2e', colorMid:'#2a2a3e', colorBot:'#0f0f1e', velocidad:0.003, amplitud:10  }; colorOla='#334466'; }
-  else if (altura < 0.8) { fondoConfig = { colorTop:'#0a1a2e', colorMid:'#0d2540', colorBot:'#061525', velocidad:0.005, amplitud:18  }; colorOla='#1a5a88'; }
-  else if (altura < 1.5) { fondoConfig = { colorTop:'#0a1628', colorMid:'#0d2a4a', colorBot:'#061020', velocidad:0.008, amplitud:30  }; colorOla='#1a7aaa'; }
-  else if (altura < 2.5) { fondoConfig = { colorTop:'#051528', colorMid:'#0a2545', colorBot:'#030d18', velocidad:0.014, amplitud:45  }; colorOla='#0a8acc'; }
-  else                   { fondoConfig = { colorTop:'#1a0a10', colorMid:'#2a0d18', colorBot:'#0f0508', velocidad:0.022, amplitud:60  }; colorOla='#aa2244'; }
+  if (altura<0.5)      {fondoConfig={colorTop:'#1a1a2e',colorMid:'#2a2a3e',colorBot:'#0f0f1e',velocidad:0.003,amplitud:10};colorOla='#334466';}
+  else if (altura<0.8) {fondoConfig={colorTop:'#0a1a2e',colorMid:'#0d2540',colorBot:'#061525',velocidad:0.005,amplitud:18};colorOla='#1a5a88';}
+  else if (altura<1.5) {fondoConfig={colorTop:'#0a1628',colorMid:'#0d2a4a',colorBot:'#061020',velocidad:0.008,amplitud:30};colorOla='#1a7aaa';}
+  else if (altura<2.5) {fondoConfig={colorTop:'#051528',colorMid:'#0a2545',colorBot:'#030d18',velocidad:0.014,amplitud:45};colorOla='#0a8acc';}
+  else                 {fondoConfig={colorTop:'#1a0a10',colorMid:'#2a0d18',colorBot:'#0f0508',velocidad:0.022,amplitud:60};colorOla='#aa2244';}
 }
-
 function dibujar() {
   if (document.hidden) return;
-  const w = canvas.width, h = canvas.height;
-  t += fondoConfig.velocidad;
-  const grad = ctx.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0, fondoConfig.colorTop);
-  grad.addColorStop(0.5, fondoConfig.colorMid);
-  grad.addColorStop(1, fondoConfig.colorBot);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,w,h);
+  const w=canvas.width,h=canvas.height;
+  t+=fondoConfig.velocidad;
+  const grad=ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,fondoConfig.colorTop);
+  grad.addColorStop(0.5,fondoConfig.colorMid);
+  grad.addColorStop(1,fondoConfig.colorBot);
+  ctx.fillStyle=grad; ctx.fillRect(0,0,w,h);
   for (const ola of olas) {
-    ctx.beginPath();
-    ctx.moveTo(0,h);
-    const baseY = h * ola.y;
-    const amp = fondoConfig.amplitud * ola.amp;
-    for (let x=0; x<=w; x+=4) {
-      const y = baseY + Math.sin((x/w)*Math.PI*3 + t*ola.speed + ola.offset)*amp
-                      + Math.sin((x/w)*Math.PI*5 + t*ola.speed*0.7 + ola.offset)*amp*0.4;
+    ctx.beginPath(); ctx.moveTo(0,h);
+    const baseY=h*ola.y, amp=fondoConfig.amplitud*ola.amp;
+    for (let x=0;x<=w;x+=4) {
+      const y=baseY+Math.sin((x/w)*Math.PI*3+t*ola.speed+ola.offset)*amp+Math.sin((x/w)*Math.PI*5+t*ola.speed*0.7+ola.offset)*amp*0.4;
       ctx.lineTo(x,y);
     }
     ctx.lineTo(w,h); ctx.closePath();
-    const og = ctx.createLinearGradient(0,baseY-amp,0,h);
-    og.addColorStop(0, colorOla + Math.round(ola.alpha*255).toString(16).padStart(2,'0'));
-    og.addColorStop(1, colorOla + '00');
-    ctx.fillStyle = og;
-    ctx.fill();
+    const og=ctx.createLinearGradient(0,baseY-amp,0,h);
+    og.addColorStop(0,colorOla+Math.round(ola.alpha*255).toString(16).padStart(2,'0'));
+    og.addColorStop(1,colorOla+'00');
+    ctx.fillStyle=og; ctx.fill();
   }
   requestAnimationFrame(dibujar);
 }
@@ -200,8 +172,7 @@ document.addEventListener('visibilitychange', () => {
 });
 resize(); dibujar();
 
-// ── DATOS ──
-// Cargados desde playas.json al arrancar (ver init()).
+// DATOS — cargados desde playas.json al arrancar (ver init())
 let PLAYAS = [];
 let PLAYA_INICIO = null;
 
@@ -221,22 +192,17 @@ function angleDiff(a, b) {
   return d > 180 ? 360 - d : d;
 }
 
-function clasificar(h) {
+function clasificar(h, direccion, playa) {
   if (h == null || Number.isNaN(h)) return { color:'#888',    texto:'Sin datos',        bg:'#eeeeee' };
-  if (h < 0.5) return                     { color:'#ff4444', texto:'Sin olas',          bg:'#fff0f0' };
-  if (h < 0.8) return                     { color:'#FF6B00', texto:'Flojo',             bg:'#fff4ee' };
-  if (h < 1.5) return                     { color:'#44cc44', texto:'¡Buenas olas!',     bg:'#f0fff0' };
-  if (h < 2.5) return                     { color:'#44cc44', texto:'¡Muy bueno!',       bg:'#f0fff0' };
-  return                                  { color:'#ff4444', texto:'Demasiado grande',  bg:'#fff0f0' };
-}
-
-function clasificarReal(waveHeight, wavePeriod, waveDirection, playa) {
-  if (waveDirection != null && !Number.isNaN(waveDirection) && playa && playa.orient != null) {
-    if (angleDiff(waveDirection, playa.orient) > playa.tol) {
-      return { color:'#ff4444', texto:'Swell desfavorable', bg:'#fff0f0', fueraRango:true };
-    }
+  if (playa && direccion != null && !Number.isNaN(direccion)) {
+    if (angleDiff(direccion, playa.orient) > playa.tol)
+      return { color:'#ff4444', texto:'Swell desfavorable', bg:'#fff0f0' };
   }
-  return clasificar(waveHeight);
+  if (h < 0.5) return { color:'#ff4444', texto:'Sin olas',         bg:'#fff0f0' };
+  if (h < 0.8) return { color:'#FF6B00', texto:'Flojo',            bg:'#fff4ee' };
+  if (h < 1.5) return { color:'#44cc44', texto:'¡Buenas olas!',    bg:'#f0fff0' };
+  if (h < 2.5) return { color:'#44cc44', texto:'¡Muy bueno!',      bg:'#f0fff0' };
+  return             { color:'#ff4444', texto:'Demasiado grande',  bg:'#fff0f0' };
 }
 
 function dirTxt(g) {
@@ -263,10 +229,8 @@ function resumen(h, p, d, playa) {
 function fmtFecha(ts) {
   const d = new Date(ts * 1000);
   const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  const h = d.getHours().toString().padStart(2,'0');
-  return `${dias[d.getDay()]} ${d.getDate()} · ${h}:00`;
+  return `${dias[d.getDay()]} ${d.getDate()} · ${d.getHours().toString().padStart(2,'0')}:00`;
 }
-
 function fmtDia(ts) {
   const d = new Date(ts * 1000);
   const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -274,27 +238,84 @@ function fmtDia(ts) {
   return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
 }
 
-// ── PANTALLA INICIO ──
+function vientoFavorable(dir, playa) {
+  if (dir == null || Number.isNaN(dir) || !playa) return false;
+  return angleDiff(dir, (playa.orient + 180) % 360) < 45;
+}
+
+function cielo(codigo) {
+  if (codigo == null || codigo <= 1) return { icono:'☀️', texto:'Despejado' };
+  if (codigo <= 3)  return { icono:'⛅',  texto:'Nublado' };
+  if (codigo <= 48) return { icono:'🌫️', texto:'Niebla' };
+  if (codigo <= 67) return { icono:'🌧️', texto:'Lluvia' };
+  if (codigo <= 77) return { icono:'🌨️', texto:'Nieve' };
+  if (codigo <= 82) return { icono:'🌦️', texto:'Chubascos' };
+  return                  { icono:'⛈️', texto:'Tormenta' };
+}
+
+function marea(datos) {
+  if (!datos || !datos.mareas) return null;
+  const ahora = Date.now();
+  const mareas = datos.mareas;
+  let anterior = null, siguiente = null;
+  for (const m of mareas) {
+    const ts = new Date(m.hora).getTime();
+    if (ts < ahora) anterior = m;
+    else if (!siguiente) siguiente = m;
+  }
+  return { anterior, siguiente, actual: datos.alturaActual };
+}
+
+// CARGA PRINCIPAL
 async function cargarInicio() {
   try {
-    const base = `https://marine-api.open-meteo.com/v1/marine?latitude=${PLAYA_INICIO.lat}&longitude=${PLAYA_INICIO.lon}`;
-    const [resActual, resPrev] = await Promise.all([
-      fetch(`${base}&current=wave_height,wave_period,wave_direction,wind_wave_height&timeformat=unixtime`),
-      fetch(`${base}&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`).catch(() => null),
+    const lat = PLAYA_INICIO.lat, lon = PLAYA_INICIO.lon;
+    const [resMarine, resAtmo, resMareas] = await Promise.all([
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code&wind_speed_unit=kn`),
+      fetch(`https://servizos.meteogalicia.gal/apiv2/getTidesInfo?coord=${lon},${lat}&API_KEY=undefined`).catch(()=>null)
     ]);
-    if (!resActual.ok) throw new Error('HTTP ' + resActual.status);
-    const actual = await resActual.json();
-    const prev = (resPrev && resPrev.ok) ? await resPrev.json().catch(() => null) : null;
-    const c = actual.current;
-    const h = c.wave_height, p = c.wave_period, d = c.wave_direction;
-    const estado = clasificarReal(h, p, d, PLAYA_INICIO);
-    actualizarFondo(h);
 
+    const marine = await resMarine.json();
+    const atmo = await resAtmo.json();
+    const c = marine.current;
+    const a = atmo.current;
+
+    const altura    = c.wave_height;
+    const periodo   = c.wave_period;
+    const dirSwell  = c.wave_direction;
+    const tempAgua  = c.sea_surface_temperature;
+    const tempAire  = a.temperature_2m;
+    const velViento = a.wind_speed_10m;
+    const dirViento = a.wind_direction_10m;
+    const codigoCielo = a.weather_code;
+    const energia   = (altura != null && periodo != null) ? Math.round(altura * altura * periodo) : null;
+    const estado    = clasificar(altura, dirSwell, PLAYA_INICIO);
+    const vientoBueno = vientoFavorable(dirViento, PLAYA_INICIO);
+    const cieloActual = cielo(codigoCielo);
+
+    actualizarFondo(altura);
     const ahora = new Date();
     document.getElementById('ultima-actualizacion').textContent =
       `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
 
-    const prevHtml = prev ? renderPrevision(prev, ahora) : '';
+    // Mareas
+    let mareaHtml = `<div style="font-size:20px;font-weight:700;color:#4db8ff;">--</div><div class="sub">Sin datos</div>`;
+    if (resMareas) {
+      try {
+        const mdata = await resMareas.json();
+        const m = marea(mdata);
+        if (m && m.siguiente) {
+          const tipo = m.siguiente.tipo === 'alta' ? '▲ Pleamar' : '▼ Bajamar';
+          const hora = new Date(m.siguiente.hora).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+          mareaHtml = `
+            <div style="font-size:18px;font-weight:700;color:#44ddaa;">${m.actual?.toFixed(1) ?? '--'}m</div>
+            <div class="sub">Próx: ${tipo} ${hora}</div>`;
+        }
+      } catch(e) {}
+    }
+
+    const prevHtml = marine.hourly ? renderPrevision(marine, ahora) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
       <div class="semaforo">
@@ -304,31 +325,45 @@ async function cargarInicio() {
           <p>${PLAYA_INICIO.nombre} · ahora</p>
         </div>
       </div>
-      <div class="resumen">"${resumen(h, p, d, PLAYA_INICIO)}"</div>
+      <div class="resumen">"${resumen(altura, periodo, dirSwell, PLAYA_INICIO)}"</div>
+
       <div class="datos-grid">
         <div class="dato-card">
+          <div class="label">Swell</div>
+          <div class="valor" style="color:#4db8ff;">${dirTxt(dirSwell)} ${fmt(altura)}m</div>
+          <div class="sub">Energía ${rnd(energia)} kJ · ${rnd(periodo)}s</div>
+        </div>
+        <div class="dato-card">
+          <div class="label">Viento</div>
+          <div class="valor" style="color:${vientoBueno?'#44cc44':'#ff4444'};">
+            ${dirTxt(dirViento)} ${rnd(velViento)}kn
+          </div>
+          <div class="sub">${vientoBueno ? '✓ Favorable' : '✗ Desfavorable'}</div>
+        </div>
+        <div class="dato-card">
           <div class="label">Altura</div>
-          <div class="valor" style="color:#4db8ff">${fmt(h)}</div>
-          <div class="unidad">metros</div>
+          <div class="valor" style="color:#4db8ff;">${fmt(altura)}</div>
+          <div class="sub">metros</div>
         </div>
         <div class="dato-card">
           <div class="label">Período</div>
-          <div class="valor" style="color:#44ddaa">${rnd(p)}</div>
-          <div class="unidad">segundos</div>
+          <div class="valor" style="color:#44ddaa;">${rnd(periodo)}</div>
+          <div class="sub">segundos</div>
         </div>
         <div class="dato-card">
-          <div class="label">Dirección</div>
-          <div class="valor" style="color:#ffcc44">${dirTxt(d)}</div>
-          <div class="unidad">${rnd(d)}°</div>
+          <div class="label">Marea · ${tempAgua?.toFixed(1) ?? '--'}°C agua</div>
+          ${mareaHtml}
         </div>
         <div class="dato-card">
-          <div class="label">Ola de viento</div>
-          <div class="valor" style="color:#ff8866">${fmt(c.wind_wave_height)}</div>
-          <div class="unidad">metros</div>
+          <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
+          <div style="font-size:24px;margin-bottom:4px;">${cieloActual.icono}</div>
+          <div class="sub">${cieloActual.texto}</div>
         </div>
       </div>
+
       ${prevHtml}`;
   } catch(e) {
+    console.error(e);
     document.getElementById('ultima-actualizacion').textContent =
       'Error de conexión · reintentando en 10 min';
     document.getElementById('contenido-inicio').innerHTML =
@@ -336,88 +371,84 @@ async function cargarInicio() {
   }
 }
 
-function renderPrevision(prev, ahora) {
-  if (!prev?.hourly?.time) return '';
-  const tiempos = prev.hourly.time;
-  const alturas = prev.hourly.wave_height;
-  const periodos = prev.hourly.wave_period;
-  const dirs = prev.hourly.wave_direction;
+function renderPrevision(marine, ahora) {
+  if (!marine?.hourly?.time) return '';
+  const tiempos = marine.hourly.time;
+  const alturas = marine.hourly.wave_height;
+  const periodos = marine.hourly.wave_period;
+  const dirs = marine.hourly.wave_direction;
 
-  // HOY — ±8h, solo 07-22, franjas de 2h
   const hoyItems = [];
-  for (let i=0; i<tiempos.length; i++) {
-    const t = new Date(tiempos[i] * 1000);
-    const hora = t.getHours();
-    const diffH = (t - ahora) / 3600000;
-    if (hora < 7 || hora > 22) continue;
-    if (hora % 2 !== 0) continue;
-    if (diffH < -8 || diffH > 8) continue;
-    const esActual = Math.abs(diffH) < 1.5;
-    const estado = clasificar(alturas[i]);
+  for (let i=0;i<tiempos.length;i++) {
+    const tt=new Date(tiempos[i] * 1000);
+    const hora=tt.getHours();
+    const diffH=(tt-ahora)/3600000;
+    if(hora<7||hora>22||hora%2!==0) continue;
+    if(diffH<-8||diffH>8) continue;
+    const esActual=Math.abs(diffH)<1.5;
+    const estado=clasificar(alturas[i],dirs[i],PLAYA_INICIO);
     hoyItems.push(`
-      <div class="prev-card ${esActual ? 'actual' : ''}">
+      <div class="prev-card ${esActual?'actual':''}">
         <div style="margin-bottom:4px;">${iconoPorHora(hora)}</div>
         <div class="pc-fecha">${fmtFecha(tiempos[i])}</div>
         <div class="pc-semaforo" style="background:${estado.color};box-shadow:0 0 6px ${estado.color}88;"></div>
         <div class="pc-altura">${fmt(alturas[i])}m</div>
-        <div class="pc-detalle">${Math.round(periodos[i])}s · ${dirTxt(dirs[i])}</div>
+        <div class="pc-detalle">${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
       </div>`);
   }
 
-  // 3 DÍAS
-  const diasMap = {};
-  for (let i=0; i<tiempos.length; i++) {
-    const t = new Date(tiempos[i] * 1000);
-    const hora = t.getHours();
-    const key = t.toDateString();
-    const diffDias = (t - ahora) / 86400000;
-    if (diffDias < 0 || diffDias > 3) continue;
-    if (![8,14,20].includes(hora)) continue;
-    if (!diasMap[key]) diasMap[key] = { label: fmtDia(tiempos[i]), franjas: {} };
-    const franja = hora === 8 ? 'Mañana' : hora === 14 ? 'Tarde' : 'Atardecer';
-    const icono = hora === 8 ? SVG_AMANECER : hora === 14 ? SVG_DIA : SVG_ATARDECER;
-    const estado = clasificar(alturas[i]);
-    diasMap[key].franjas[franja] = `
+  const diasMap={};
+  for(let i=0;i<tiempos.length;i++){
+    const tt=new Date(tiempos[i] * 1000);
+    const hora=tt.getHours();
+    const key=tt.toDateString();
+    const diffDias=(tt-ahora)/86400000;
+    if(diffDias<0||diffDias>3) continue;
+    if(![8,14,20].includes(hora)) continue;
+    if(!diasMap[key]) diasMap[key]={label:fmtDia(tiempos[i]),franjas:{}};
+    const franja=hora===8?'Mañana':hora===14?'Tarde':'Atardecer';
+    const icono=hora===8?SVG_AMANECER:hora===14?SVG_DIA:SVG_ATARDECER;
+    const estado=clasificar(alturas[i],dirs[i],PLAYA_INICIO);
+    diasMap[key].franjas[franja]=`
       <div class="prev-franja">
         <div style="margin-bottom:3px;">${icono}</div>
         <div class="pf-label">${franja}</div>
         <div class="pf-semaforo" style="background:${estado.color};"></div>
         <div class="pf-altura">${fmt(alturas[i])}m</div>
-        <div class="pf-detalle">${Math.round(periodos[i])}s · ${dirTxt(dirs[i])}</div>
+        <div class="pf-detalle">${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
       </div>`;
   }
-  const tresItems = Object.values(diasMap).map(dia => `
+  const tresItems=Object.values(diasMap).map(dia=>`
     <div class="prev-dia-bloque">
       <div class="prev-dia-header">${dia.label}</div>
       <div class="prev-dia-franjas">
-        ${dia.franjas['Mañana'] || ''}
-        ${dia.franjas['Tarde'] || ''}
-        ${dia.franjas['Atardecer'] || ''}
+        ${dia.franjas['Mañana']||''}
+        ${dia.franjas['Tarde']||''}
+        ${dia.franjas['Atardecer']||''}
       </div>
     </div>`).join('');
 
-  // 10 DÍAS — una fila por día, altura máxima
-  const diezMap = {};
-  for (let i=0; i<tiempos.length; i++) {
-    const t = new Date(tiempos[i] * 1000);
-    const key = t.toDateString();
-    const diffDias = (t - ahora) / 86400000;
-    if (diffDias < 0 || diffDias > 10) continue;
-    if (!diezMap[key]) diezMap[key] = { label: fmtDia(tiempos[i]), maxH:0, periodo:0, dir:0 };
-    if ((alturas[i]||0) > diezMap[key].maxH) {
-      diezMap[key].maxH = alturas[i];
-      diezMap[key].periodo = periodos[i];
-      diezMap[key].dir = dirs[i];
+  const diezMap={};
+  for(let i=0;i<tiempos.length;i++){
+    const tt=new Date(tiempos[i] * 1000);
+    const key=tt.toDateString();
+    const diffDias=(tt-ahora)/86400000;
+    if(diffDias<0||diffDias>10) continue;
+    if(!diezMap[key]) diezMap[key]={label:fmtDia(tiempos[i]),maxH:0,periodo:0,dir:0};
+    if((alturas[i]||0)>diezMap[key].maxH){
+      diezMap[key].maxH=alturas[i];
+      diezMap[key].periodo=periodos[i];
+      diezMap[key].dir=dirs[i];
     }
   }
-  const diezItems = Object.values(diezMap).map(dia => {
-    const estado = clasificar(dia.maxH);
+  const diezItems=Object.values(diezMap).map(dia=>{
+    const estado=clasificar(dia.maxH,dia.dir,PLAYA_INICIO);
     return `
       <div class="prev-fila">
         <div class="pfi-dia">${dia.label}</div>
         <div class="pfi-semaforo" style="background:${estado.color};box-shadow:0 0 6px ${estado.color}88;"></div>
         <div class="pfi-altura">${fmt(dia.maxH)}m</div>
-        <div class="pfi-detalle">${Math.round(dia.periodo)}s · ${dirTxt(dia.dir)}</div>
+        <div class="pfi-detalle">${rnd(dia.periodo)}s · ${dirTxt(dia.dir)}</div>
         <div class="pfi-estado" style="color:${estado.color};">${estado.texto}</div>
       </div>`;
   }).join('');
@@ -436,40 +467,32 @@ function renderPrevision(prev, ahora) {
     </div>`;
 }
 
-function cambiarPrevTab(tab, btn) {
-  ['hoy','3d','10d'].forEach(t => {
-    document.getElementById('prev-'+t).style.display = t === tab ? (t==='hoy'?'block':'flex') : 'none';
+function cambiarPrevTab(tab,btn){
+  ['hoy','3d','10d'].forEach(t=>{
+    document.getElementById('prev-'+t).style.display=t===tab?(t==='hoy'?'block':'flex'):'none';
   });
-  document.querySelectorAll('.prev-tab').forEach(b => b.classList.remove('activo'));
+  document.querySelectorAll('.prev-tab').forEach(b=>b.classList.remove('activo'));
   btn.classList.add('activo');
 }
 
-// ── MAPA ──
+// MAPA
 let mapa = null, mapaIniciado = false, capaActual = null, capaMarcadores = null;
-
 const capas = {
-  oscuro:   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution:'© CARTO', maxZoom:19 }),
+  oscuro:   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',   { attribution:'© CARTO', maxZoom:19 }),
   satelite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution:'© Esri', maxZoom:19 }),
 };
-
 function crearIcono(color) {
-  return L.divIcon({
-    className: '',
-    html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`,
-    iconSize:[22,22], iconAnchor:[11,11], popupAnchor:[0,-14]
-  });
+  return L.divIcon({ className:'', html:`<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`, iconSize:[22,22], iconAnchor:[11,11], popupAnchor:[0,-14] });
 }
-
 async function cargarDatosPlaya(playa) {
   const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction`);
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
   return { playa, c: data.current };
 }
-
 function renderMarcador(playa, c) {
   const h = c?.wave_height, p = c?.wave_period, d = c?.wave_direction;
-  const estado = clasificarReal(h, p, d, playa);
+  const estado = clasificar(h, d, playa);
   return L.marker([playa.lat, playa.lon], { icon: crearIcono(estado.color) })
     .bindPopup(`
       <div class="popup-playa">
@@ -478,27 +501,23 @@ function renderMarcador(playa, c) {
           <div class="popup-dato"><div class="pl">Altura</div><div class="pv" style="color:#1a6faa">${fmt(h)}m</div></div>
           <div class="popup-dato"><div class="pl">Período</div><div class="pv" style="color:#0a8a5a">${rnd(p)}s</div></div>
           <div class="popup-dato"><div class="pl">Dirección</div><div class="pv">${dirTxt(d)}</div></div>
-          <div class="popup-dato"><div class="pl">Grados</div><div class="pv">${rnd(d)}°</div></div>
+          <div class="popup-dato"><div class="pl">Estado</div><div class="pv" style="color:${estado.color};font-size:12px;">${estado.texto}</div></div>
         </div>
         <div class="popup-estado" style="background:${estado.bg};color:${estado.color};">${estado.texto}</div>
-      </div>`, { maxWidth: 220 });
+      </div>`, { maxWidth:220 });
 }
-
 async function refrescarMarcadores() {
+  if (!mapa) return;
   if (capaMarcadores) capaMarcadores.clearLayers();
-  else capaMarcadores = L.layerGroup().addTo(mapa);
+  else { capaMarcadores = L.layerGroup(); capaMarcadores.addTo(mapa); }
   const resultados = await Promise.allSettled(PLAYAS.map(cargarDatosPlaya));
   resultados.forEach((r, i) => {
     const playa = PLAYAS[i];
-    if (r.status === 'fulfilled') {
-      renderMarcador(playa, r.value.c).addTo(capaMarcadores);
-    } else {
-      console.warn('Error', playa.nombre, r.reason);
-      renderMarcador(playa, null).addTo(capaMarcadores);
-    }
+    const c = r.status === 'fulfilled' ? r.value.c : null;
+    if (r.status === 'rejected') console.warn('Error marcador', playa.nombre, r.reason);
+    renderMarcador(playa, c).addTo(capaMarcadores);
   });
 }
-
 async function iniciarMapa() {
   mapaIniciado = true;
   mapa = L.map('mapa').setView([43.25, -8.7], 9);
@@ -506,47 +525,36 @@ async function iniciarMapa() {
   capaActual.addTo(mapa);
   await refrescarMarcadores();
 }
-
-function cambiarEstilo(estilo, btn) {
-  document.querySelectorAll('.btn-estilo').forEach(b => b.classList.remove('activo'));
+function cambiarEstilo(estilo,btn){
+  document.querySelectorAll('.btn-estilo').forEach(b=>b.classList.remove('activo'));
   btn.classList.add('activo');
-  if (capaActual) mapa.removeLayer(capaActual);
-  capaActual = capas[estilo];
-  capaActual.addTo(mapa);
+  if(capaActual) mapa.removeLayer(capaActual);
+  capaActual=capas[estilo]; capaActual.addTo(mapa);
 }
-
-function irA(pantalla, btn) {
-  document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('activo'));
+function irA(pantalla,btn){
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('activo'));
   document.getElementById('pantalla-'+pantalla).classList.add('activa');
   btn.classList.add('activo');
-  if (pantalla === 'mapa' && !mapaIniciado) iniciarMapa();
+  if(pantalla==='mapa'&&!mapaIniciado) iniciarMapa();
 }
 
 async function init() {
   try {
     await cargarPlayas();
   } catch(e) {
-    document.getElementById('ultima-actualizacion').textContent = 'Error cargando playas';
+    console.error('Error cargando playas.json:', e);
     document.getElementById('contenido-inicio').innerHTML =
-      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudo cargar <code>playas.json</code>.<br>
-       <span style="color:#8899aa;font-size:13px;">Abrí con un servidor HTTP: <code>python3 -m http.server</code></span></p>`;
-    console.error(e);
+      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudo cargar playas.json.<br><span style="color:#8899aa;font-size:13px;">Abrí la app desde un servidor HTTP.</span></p>`;
     return;
   }
   cargarInicio();
-  setInterval(() => {
-    cargarInicio();
-    if (mapaIniciado) refrescarMarcadores();
-  }, 10 * 60 * 1000);
+  const INTERVALO = 10 * 60 * 1000;
+  setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, INTERVALO);
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      cargarInicio();
-      if (mapaIniciado) refrescarMarcadores();
-    }
+    if (!document.hidden) { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }
   });
 }
-
 init();
 </script>
 </body>
