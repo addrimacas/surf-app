@@ -228,8 +228,14 @@ function resumen(h, p, d, playa) {
 // fmtFecha/fmtDia reciben unix timestamps (segundos)
 function fmtFecha(ts) {
   const d = new Date(ts * 1000);
+  const ahora = new Date();
+  const hoy    = ahora.toDateString();
+  const manana = new Date(ahora.getTime() + 86400000).toDateString();
+  const h = d.getHours().toString().padStart(2, '0') + 'h';
+  if (d.toDateString() === hoy)    return `Hoy ${h}`;
+  if (d.toDateString() === manana) return `Mañana ${h}`;
   const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  return `${dias[d.getDay()]} ${d.getDate()} · ${d.getHours().toString().padStart(2,'0')}:00`;
+  return `El ${dias[d.getDay()]} ${h}`;
 }
 function fmtDia(ts) {
   const d = new Date(ts * 1000);
@@ -253,39 +259,108 @@ function cielo(codigo) {
   return                  { icono:'⛈️', texto:'Tormenta' };
 }
 
-async function cargarMareas() {
-  try {
-    const res = await fetch('http://ideihm.covam.es/api-ihm/getmarea?REQUEST=gettide&PORT=ACORU&format=json');
-    const data = await res.json();
-    const ahora = new Date();
-    const mareas = data.mareas || data.tide || [];
-    let anterior = null, siguiente = null;
-    for (const m of mareas) {
-      const ts = new Date(m.date || m.hora);
-      if (ts < ahora) anterior = m;
-      else if (!siguiente) siguiente = m;
-    }
-    if (!siguiente) return { html: '<div class="valor" style="color:#4db8ff;">--</div><div class="sub">Sin datos</div>' };
-    const tipo = (siguiente.type === 'H' || siguiente.tipo === 'alta') ? '▲ Pleamar' : '▼ Bajamar';
-    const hora = new Date(siguiente.date || siguiente.hora).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
-    const alt  = siguiente.height || siguiente.altura || '--';
-    return { html: `<div class="valor" style="color:#44ddaa;font-size:20px;">${parseFloat(alt).toFixed(1)}m</div><div class="sub">Próx: ${tipo} ${hora}</div>` };
-  } catch(e) {
-    return { html: '<div class="valor" style="color:#4db8ff;">--</div><div class="sub">Sin datos</div>' };
+const ZONAS_MAREA = {
+  'costa-norte': {
+    Z0: 2.10,
+    constituents: [
+      { amp:1.847, phase:118.5, speed:28.984104 },
+      { amp:0.652, phase:148.2, speed:30.000000 },
+      { amp:0.371, phase:98.3,  speed:28.439730 },
+      { amp:0.142, phase:15.2,  speed:15.041069 },
+      { amp:0.108, phase:352.1, speed:13.943035 },
+      { amp:0.052, phase:245.0, speed:57.968208 },
+    ]
+  },
+  'costa-central': {
+    Z0: 2.15,
+    constituents: [
+      { amp:1.924, phase:121.3, speed:28.984104 },
+      { amp:0.681, phase:151.7, speed:30.000000 },
+      { amp:0.387, phase:101.2, speed:28.439730 },
+      { amp:0.148, phase:17.4,  speed:15.041069 },
+      { amp:0.112, phase:354.8, speed:13.943035 },
+      { amp:0.058, phase:251.0, speed:57.968208 },
+    ]
+  },
+  'rias-baixas': {
+    Z0: 1.95,
+    constituents: [
+      { amp:1.712, phase:128.6, speed:28.984104 },
+      { amp:0.598, phase:158.3, speed:30.000000 },
+      { amp:0.344, phase:108.4, speed:28.439730 },
+      { amp:0.131, phase:22.1,  speed:15.041069 },
+      { amp:0.098, phase:359.2, speed:13.943035 },
+      { amp:0.048, phase:263.0, speed:57.968208 },
+    ]
   }
+};
+
+function zonaMareas(lat, lon) {
+  if (lat > 43.5) return ZONAS_MAREA['costa-norte'];
+  if (lon > -8.9) return ZONAS_MAREA['costa-central'];
+  return ZONAS_MAREA['rias-baixas'];
+}
+
+function calcularMarea(zona, fecha) {
+  const epoch = new Date(Date.UTC(1900, 0, 1)).getTime() / 3600000;
+  const dt = fecha.getTime() / 3600000 - epoch;
+  let h = zona.Z0;
+  for (const c of zona.constituents) {
+    h += c.amp * Math.cos((c.speed * dt - c.phase) * Math.PI / 180);
+  }
+  return Math.max(0, h);
+}
+
+function proximasMareas(zona, ahora) {
+  const resultados = [];
+  let prevH = calcularMarea(zona, ahora);
+  let prevDir = 0;
+  for (let m = 10; m <= 1440; m += 10) {
+    const t = new Date(ahora.getTime() + m * 60000);
+    const h = calcularMarea(zona, t);
+    const dir = h > prevH ? 1 : -1;
+    if (prevDir !== 0 && dir !== prevDir) {
+      resultados.push({
+        hora: new Date(ahora.getTime() + (m - 5) * 60000),
+        altura: prevH,
+        tipo: prevDir > 0 ? 'H' : 'L'
+      });
+      if (resultados.length >= 2) break;
+    }
+    prevH = h; prevDir = dir;
+  }
+  return resultados;
+}
+
+function htmlMareas(lat, lon, tempAgua) {
+  const zona = zonaMareas(lat, lon);
+  const ahora = new Date();
+  const alturaActual = calcularMarea(zona, ahora);
+  const proximas = proximasMareas(zona, ahora);
+  const siguiente = proximas[0];
+  const subiendo = siguiente?.tipo === 'H';
+  const tipo = siguiente?.tipo === 'H' ? '▲ Pleamar' : '▼ Bajamar';
+  const hora = siguiente?.hora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) ?? '--';
+  return `
+    <div class="label">Marea · ${tempAgua?.toFixed(1) ?? '--'}°C agua</div>
+    <div class="valor" style="color:#44ddaa;font-size:20px;">${alturaActual.toFixed(1)}m ${subiendo ? '↑' : '↓'}</div>
+    <div class="sub">Próx: ${tipo} ${hora} · ${siguiente?.altura.toFixed(1) ?? '--'}m</div>`;
 }
 
 function flechaDireccion(grados, color, size = 36) {
   if (grados == null || Number.isNaN(grados)) return '';
   const rad = (grados - 90) * Math.PI / 180;
-  const cx = size / 2, cy = size / 2, r = size / 2 - 3;
-  const x2 = cx + r * Math.cos(rad),          y2 = cy + r * Math.sin(rad);
-  const x1 = cx - (r * 0.5) * Math.cos(rad),  y1 = cy - (r * 0.5) * Math.sin(rad);
+  const cx = size / 2, cy = size / 2, r = size / 2 - 4;
+  const x2 = cx + r * Math.cos(rad),           y2 = cy + r * Math.sin(rad);
+  const x1 = cx - (r * 0.5) * Math.cos(rad),   y1 = cy - (r * 0.5) * Math.sin(rad);
+  const perpX = Math.sin(rad) * 5,              perpY = -Math.cos(rad) * 5;
+  const baseX = x2 - Math.cos(rad) * 7,         baseY = y2 - Math.sin(rad) * 7;
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" fill="none">
-    <circle cx="${cx}" cy="${cy}" r="${r}" stroke="${color}" stroke-width="1" opacity="0.3"/>
-    <line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
+    <circle cx="${cx}" cy="${cy}" r="${r}" stroke="${color}" stroke-width="1" opacity="0.25"/>
+    <line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${baseX.toFixed(1)}" y2="${baseY.toFixed(1)}"
       stroke="${color}" stroke-width="1.5" stroke-linecap="round"/>
-    <circle cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="2" fill="${color}"/>
+    <polygon points="${x2.toFixed(1)},${y2.toFixed(1)} ${(baseX+perpX).toFixed(1)},${(baseY+perpY).toFixed(1)} ${(baseX-perpX).toFixed(1)},${(baseY-perpY).toFixed(1)}"
+      fill="${color}"/>
   </svg>`;
 }
 
@@ -293,10 +368,9 @@ function flechaDireccion(grados, color, size = 36) {
 async function cargarInicio() {
   try {
     const lat = PLAYA_INICIO.lat, lon = PLAYA_INICIO.lon;
-    const [resMarine, resAtmo, mareaData] = await Promise.all([
+    const [resMarine, resAtmo] = await Promise.all([
       fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
       fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code&wind_speed_unit=kn`),
-      cargarMareas()
     ]);
 
     const marine = await resMarine.json();
@@ -322,8 +396,6 @@ async function cargarInicio() {
     document.getElementById('ultima-actualizacion').textContent =
       `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
 
-    const mareaHtml = mareaData.html;
-
     const prevHtml = marine.hourly ? renderPrevision(marine, ahora) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
@@ -339,12 +411,18 @@ async function cargarInicio() {
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
           <div>
             <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Swell</div>
-            <div style="font-size:13px;font-weight:600;color:#4db8ff;">${PLAYA_INICIO.swell}</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:4px;">
+              ${flechaDireccion(315, '#4db8ff', 22)}
+              <span style="font-size:13px;font-weight:600;color:#4db8ff;">${PLAYA_INICIO.swell}</span>
+            </div>
             <div style="font-size:10px;color:#8899aa;">0.8m – 2.5m</div>
           </div>
           <div>
             <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Viento</div>
-            <div style="font-size:13px;font-weight:600;color:#44cc44;">${PLAYA_INICIO.viento}</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:4px;">
+              ${flechaDireccion(157, '#44cc44', 22)}
+              <span style="font-size:13px;font-weight:600;color:#44cc44;">${PLAYA_INICIO.viento}</span>
+            </div>
             <div style="font-size:10px;color:#8899aa;">< 15kn</div>
           </div>
           <div>
@@ -387,8 +465,7 @@ async function cargarInicio() {
           <div class="sub">segundos</div>
         </div>
         <div class="dato-card">
-          <div class="label">Marea · ${tempAgua?.toFixed(1) ?? '--'}°C agua</div>
-          ${mareaHtml}
+          ${htmlMareas(lat, lon, tempAgua)}
         </div>
         <div class="dato-card">
           <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
