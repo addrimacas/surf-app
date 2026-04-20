@@ -347,22 +347,43 @@ const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).t
 const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : Math.round(v);
 
 // ── DATOS ──
-const LAT = 43.37, LON = -8.40;
+// Se cargan desde playas.json al iniciar la app (ver init()).
+let PLAYAS = [];
+let PLAYA_INICIO = null;
 
-const PLAYAS = [
-  { nombre: 'Riazor',  lat: 43.3713, lon: -8.4194 },
-  { nombre: 'Orzán',   lat: 43.3728, lon: -8.4089 },
-  { nombre: 'Baldaio', lat: 43.3167, lon: -8.6333 },
-  { nombre: 'Razo',    lat: 43.2833, lon: -8.6833 },
-  { nombre: 'Carnota', lat: 42.8833, lon: -9.1000 },
-];
+async function cargarPlayas() {
+  const res = await fetch('playas.json');
+  if (!res.ok) throw new Error('No se pudo cargar playas.json (' + res.status + ')');
+  const config = await res.json();
+  PLAYAS = config.playas;
+  PLAYA_INICIO = PLAYAS.find(p => p.nombre === config.playaInicio) || PLAYAS[0];
+}
 
 function clasificar(h) {
-  if (h < 0.5) return { color: '#ff4444', texto: 'Sin olas',        bg: '#fff0f0' };
-  if (h < 0.8) return { color: '#ffaa00', texto: 'Flojo',           bg: '#fff8e0' };
-  if (h < 1.5) return { color: '#44cc44', texto: '¡Buenas olas!',   bg: '#f0fff0' };
-  if (h < 2.5) return { color: '#44cc44', texto: '¡Muy bueno!',     bg: '#f0fff0' };
-  return             { color: '#ff4444', texto: 'Demasiado grande', bg: '#fff0f0' };
+  if (h == null || Number.isNaN(h)) return { color: '#888',    texto: 'Sin datos',        bg: '#eeeeee' };
+  if (h < 0.5) return                     { color: '#ff4444', texto: 'Sin olas',         bg: '#fff0f0' };
+  if (h < 0.8) return                     { color: '#ffaa00', texto: 'Flojo',            bg: '#fff8e0' };
+  if (h < 1.5) return                     { color: '#44cc44', texto: '¡Buenas olas!',    bg: '#f0fff0' };
+  if (h < 2.5) return                     { color: '#44cc44', texto: '¡Muy bueno!',      bg: '#f0fff0' };
+  return                                  { color: '#ff4444', texto: 'Demasiado grande', bg: '#fff0f0' };
+}
+
+// Diferencia angular circular (0–180°) entre dos rumbos en grados.
+function angleDiff(a, b) {
+  const d = (((a - b) % 360) + 360) % 360;
+  return d > 180 ? 360 - d : d;
+}
+
+// Semáforo real: si el swell viene fuera del rango orient±tol de la playa,
+// se marca rojo aunque haya altura. Si está dentro, delega en clasificar(h).
+function clasificarReal(waveHeight, wavePeriod, waveDirection, playa) {
+  if (waveDirection != null && !Number.isNaN(waveDirection) && playa && playa.orient != null) {
+    const diff = angleDiff(waveDirection, playa.orient);
+    if (diff > playa.tol) {
+      return { color: '#ff4444', texto: 'Swell desfavorable', bg: '#fff0f0', fueraRango: true };
+    }
+  }
+  return clasificar(waveHeight);
 }
 
 function dirTxt(g) {
@@ -371,8 +392,13 @@ function dirTxt(g) {
   return ['N','NE','E','SE','S','SO','O','NO'][i];
 }
 
-function resumen(h, p, d) {
+function resumen(h, p, d, playa) {
   const dir = dirTxt(d);
+  if (playa && d != null && !Number.isNaN(d) && playa.orient != null
+      && angleDiff(d, playa.orient) > playa.tol) {
+    return `Swell del ${dir} fuera de rango para ${playa.nombre} (mira ${playa.swell}). Mejor buscar otro spot.`;
+  }
+  if (h == null || Number.isNaN(h)) return 'Sin datos del mar ahora mismo.';
   if (h < 0.5) return 'El mar está en calma. No merece salir.';
   if (h < 0.8) return `Olas pequeñas de ${h.toFixed(1)}m, período ${Math.round(p)}s. Bueno para iniciarse.`;
   if (h < 1.5) return `${h.toFixed(1)}m de ola, período ${Math.round(p)}s, swell del ${dir}. Vale la pena salir.`;
@@ -383,11 +409,11 @@ function resumen(h, p, d) {
 // ── PANTALLA INICIO ──
 async function cargarInicio() {
   try {
-    const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LON}&current=wave_height,wave_period,wave_direction,wind_wave_height&timeformat=unixtime`);
+    const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${PLAYA_INICIO.lat}&longitude=${PLAYA_INICIO.lon}&current=wave_height,wave_period,wave_direction,wind_wave_height&timeformat=unixtime`);
     const data = await res.json();
     const c = data.current;
     const h = c.wave_height, p = c.wave_period, d = c.wave_direction;
-    const estado = clasificar(h);
+    const estado = clasificarReal(h, p, d, PLAYA_INICIO);
 
     actualizarFondo(h);
 
@@ -400,10 +426,10 @@ async function cargarInicio() {
         <div class="semaforo-circulo" style="background:${estado.color};box-shadow:0 0 20px ${estado.color}99;"></div>
         <div class="semaforo-texto">
           <h2>${estado.texto}</h2>
-          <p>Riazor · ahora</p>
+          <p>${PLAYA_INICIO.nombre} · ahora</p>
         </div>
       </div>
-      <div class="resumen">"${resumen(h, p, d)}"</div>
+      <div class="resumen">"${resumen(h, p, d, PLAYA_INICIO)}"</div>
       <div class="datos-grid">
         <div class="dato-card">
           <div class="label">Altura</div>
@@ -459,7 +485,7 @@ async function cargarDatosPlaya(playa) {
 
 function renderMarcador(playa, c) {
   const h = c?.wave_height, p = c?.wave_period, d = c?.wave_direction;
-  const estado = (h == null) ? { color: '#888', texto: 'Sin datos', bg: '#eee' } : clasificar(h);
+  const estado = clasificarReal(h, p, d, playa);
   return L.marker([playa.lat, playa.lon], { icon: crearIcono(estado.color) })
     .bindPopup(`
       <div class="popup-playa">
@@ -514,18 +540,34 @@ function irA(pantalla, btn) {
   if (pantalla === 'mapa' && !mapaIniciado) iniciarMapa();
 }
 
-cargarInicio();
-setInterval(() => {
-  cargarInicio();
-  if (mapaIniciado) refrescarMarcadores();
-}, 10 * 60 * 1000);
+async function init() {
+  try {
+    await cargarPlayas();
+  } catch (e) {
+    document.getElementById('ultima-actualizacion').textContent = 'Error cargando playas';
+    document.getElementById('contenido-inicio').innerHTML =
+      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudo cargar <code>playas.json</code>.<br>
+       <span style="color:#8899aa;font-size:13px;">Si estás abriendo el archivo directo (file://), tenés que servirlo con un HTTP server.<br>
+       Ej: <code>python3 -m http.server</code> y abrir http://localhost:8000</span></p>`;
+    console.error(e);
+    return;
+  }
 
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
+  cargarInicio();
+  setInterval(() => {
     cargarInicio();
     if (mapaIniciado) refrescarMarcadores();
-  }
-});
+  }, 10 * 60 * 1000);
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      cargarInicio();
+      if (mapaIniciado) refrescarMarcadores();
+    }
+  });
+}
+
+init();
 </script>
 </body>
 </html>

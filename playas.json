@@ -1,0 +1,23 @@
+{
+  "playaInicio": "Riazor",
+  "playas": [
+    { "nombre": "Riazor",          "lat": 43.3683, "lon": -8.4089, "orient": 315, "tol": 50, "swell": "NO-N",    "viento": "SE-S",  "nivel": "todos" },
+    { "nombre": "Orzán",           "lat": 43.3721, "lon": -8.4201, "orient": 300, "tol": 50, "swell": "NO-O",    "viento": "SE-S",  "nivel": "todos" },
+    { "nombre": "Santa Cristina",  "lat": 43.3950, "lon": -8.3200, "orient": 350, "tol": 40, "swell": "N-NE",    "viento": "SO-S",  "nivel": "todos" },
+    { "nombre": "Bastiagueiro",    "lat": 43.3980, "lon": -8.3050, "orient": 350, "tol": 40, "swell": "N-NE",    "viento": "SO-S",  "nivel": "todos" },
+    { "nombre": "Baldaio",         "lat": 43.3167, "lon": -8.6333, "orient": 280, "tol": 50, "swell": "O-NO",    "viento": "SE-S",  "nivel": "intermedio" },
+    { "nombre": "Razo",            "lat": 43.2833, "lon": -8.6833, "orient": 275, "tol": 55, "swell": "O-NO",    "viento": "SE-S",  "nivel": "todos" },
+    { "nombre": "Rebordelo",       "lat": 43.2600, "lon": -8.7500, "orient": 270, "tol": 45, "swell": "O",       "viento": "SE",    "nivel": "intermedio" },
+    { "nombre": "Nemiña",          "lat": 43.1000, "lon": -9.0500, "orient": 255, "tol": 50, "swell": "OSO-O",   "viento": "NE-SE", "nivel": "intermedio" },
+    { "nombre": "Carnota",         "lat": 42.8833, "lon": -9.1000, "orient": 245, "tol": 45, "swell": "SO-OSO",  "viento": "NE",    "nivel": "pro" },
+    { "nombre": "Lariño",          "lat": 42.8667, "lon": -9.1167, "orient": 250, "tol": 45, "swell": "SO-O",    "viento": "NE",    "nivel": "pro" },
+    { "nombre": "Louro",           "lat": 42.7667, "lon": -8.9833, "orient": 240, "tol": 40, "swell": "SO",      "viento": "NE",    "nivel": "pro" },
+    { "nombre": "Área (Viveiro)",  "lat": 43.6667, "lon": -7.6000, "orient": 340, "tol": 45, "swell": "N-NO",    "viento": "SO-S",  "nivel": "todos" },
+    { "nombre": "Llas",            "lat": 43.7000, "lon": -7.5500, "orient": 345, "tol": 40, "swell": "N-NO",    "viento": "SO",    "nivel": "intermedio" },
+    { "nombre": "Esteiro",         "lat": 43.6500, "lon": -7.6500, "orient": 335, "tol": 45, "swell": "N-NO",    "viento": "SO-SE", "nivel": "todos" },
+    { "nombre": "Pantín",          "lat": 43.7167, "lon": -7.7000, "orient": 350, "tol": 40, "swell": "N-NNO",   "viento": "SO-S",  "nivel": "pro" },
+    { "nombre": "Frouxeira",       "lat": 43.6833, "lon": -7.8833, "orient": 340, "tol": 45, "swell": "N-NO",    "viento": "SO-S",  "nivel": "intermedio" },
+    { "nombre": "Langosteira",     "lat": 43.1833, "lon": -8.9000, "orient": 260, "tol": 50, "swell": "O-OSO",   "viento": "NE-SE", "nivel": "todos" },
+    { "nombre": "Rostro",          "lat": 43.0500, "lon": -9.1833, "orient": 250, "tol": 40, "swell": "OSO-SO",  "viento": "NE",    "nivel": "pro" }
+  ]
+}
