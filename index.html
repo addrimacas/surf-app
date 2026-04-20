@@ -7,459 +7,201 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#fff; min-height:100vh; padding-bottom:70px; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      color: #ffffff;
-      min-height: 100vh;
-      padding-bottom: 70px;
-      transition: background 2s ease;
-    }
+    #fondo-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 
-    /* FONDO ANIMADO */
-    #fondo-canvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
+    .pantalla { position:relative; z-index:1; display:none; padding:20px; }
+    .pantalla.activa { display:block; }
 
-    .pantalla {
-      position: relative;
-      z-index: 1;
-      display: none;
-      padding: 20px;
-    }
-    .pantalla.activa { display: block; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; height:65px; background:linear-gradient(135deg,#0d2137cc,#0a3050cc); backdrop-filter:blur(12px); border-top:1px solid #1a4a6e; display:flex; z-index:1000; }
+    .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; color:#4a7a9b; font-size:11px; border:none; background:none; transition:color 0.2s; }
+    .nav-item.activo { color:#4db8ff; }
+    .nav-item .icono { font-size:22px; }
 
-    /* MENÚ */
-    .nav-bar {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 65px;
-      background: linear-gradient(135deg, #0d2137cc 0%, #0a3050cc 100%);
-      backdrop-filter: blur(12px);
-      border-top: 1px solid #1a4a6e;
-      display: flex;
-      z-index: 1000;
-    }
+    header { text-align:center; padding:40px 0 10px; }
+    header h1 { font-size:32px; font-weight:800; letter-spacing:-1px; text-shadow:0 2px 20px rgba(0,0,0,0.4); }
+    header p { color:#aabccc; font-size:14px; margin-top:4px; }
 
-    .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      color: #4a7a9b;
-      font-size: 11px;
-      border: none;
-      background: none;
-      transition: color 0.2s;
-    }
+    .semaforo { display:flex; align-items:center; justify-content:center; gap:12px; margin:24px auto; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px 28px; max-width:420px; }
+    .semaforo-circulo { width:52px; height:52px; border-radius:50%; flex-shrink:0; transition:background 1s ease,box-shadow 1s ease; }
+    .semaforo-texto h2 { font-size:22px; font-weight:700; }
+    .semaforo-texto p { font-size:13px; color:#8899aa; margin-top:2px; }
 
-    .nav-item.activo { color: #4db8ff; }
-    .nav-item .icono { font-size: 22px; }
+    .resumen { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px 20px; max-width:420px; margin:0 auto 20px; font-size:15px; line-height:1.6; color:#cce0ff; font-style:italic; }
 
-    /* INICIO */
-    header {
-      text-align: center;
-      padding: 40px 0 10px;
-    }
-
-    header h1 {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.4);
-    }
-
-    header p { color: #aabccc; font-size: 14px; margin-top: 4px; }
-
-    .semaforo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin: 24px auto;
-      background: rgba(10,22,40,0.6);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
-      padding: 20px 28px;
-      max-width: 420px;
-    }
-
-    .semaforo-circulo {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      transition: background 1s ease, box-shadow 1s ease;
-    }
-
-    .semaforo-texto h2 { font-size: 22px; font-weight: 700; }
-    .semaforo-texto p { font-size: 13px; color: #8899aa; margin-top: 2px; }
-
-    .resumen {
-      background: rgba(10,22,40,0.6);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 18px 20px;
-      max-width: 420px;
-      margin: 0 auto 20px;
-      font-size: 15px;
-      line-height: 1.6;
-      color: #cce0ff;
-      font-style: italic;
-    }
-
-    .datos-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      max-width: 420px;
-      margin: 0 auto 24px;
-    }
-
-    .dato-card {
-      background: rgba(10,22,40,0.6);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-    }
-
-    .dato-card .label {
-      font-size: 12px;
-      color: #8899aa;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-
-    .dato-card .valor { font-size: 26px; font-weight: 700; }
-    .dato-card .unidad { font-size: 13px; color: #8899aa; margin-top: 2px; }
-
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: rgba(255,255,255,0.25);
-      padding: 10px 0 20px;
-    }
-
-    .actualizando {
-      text-align: center;
-      font-size: 14px;
-      color: #8899aa;
-      padding: 60px 20px;
-    }
-
-    /* MAPA */
-    .mapa-header {
-      padding: 24px 0 16px;
-      text-align: center;
-    }
-
-    .mapa-header h1 { font-size: 24px; font-weight: 700; }
-    .mapa-header p { font-size: 13px; color: #8899aa; margin-top: 4px; }
-
-    .selector-estilo {
-      display: flex;
-      gap: 10px;
-      max-width: 420px;
-      margin: 0 auto 16px;
-    }
-
-    .btn-estilo {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #1a4a6e;
-      background: rgba(10,22,40,0.6);
-      color: #8899aa;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-estilo.activo {
-      background: #0a3050;
-      border-color: #4db8ff;
-      color: #4db8ff;
-    }
-
-    #mapa {
-      height: 420px;
-      border-radius: 16px;
-      overflow: hidden;
-      max-width: 420px;
-      margin: 0 auto;
-    }
-
-    .popup-playa { font-family: -apple-system, sans-serif; min-width: 180px; }
-    .popup-playa h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #0a1628; }
-    .popup-playa .popup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .popup-playa .popup-dato { background: #f0f4f8; border-radius: 8px; padding: 8px; text-align: center; }
-    .popup-playa .popup-dato .pl { font-size: 10px; color: #667788; text-transform: uppercase; }
-    .popup-playa .popup-dato .pv { font-size: 16px; font-weight: 700; color: #0a1628; }
-    .popup-playa .popup-estado { margin-top: 8px; text-align: center; font-size: 13px; font-weight: 600; padding: 6px; border-radius: 8px; }
+    .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; }
+    .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; text-align:center; }
+    .dato-card .label { font-size:12px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .dato-card .valor { font-size:26px; font-weight:700; }
+    .dato-card .unidad { font-size:13px; color:#8899aa; margin-top:2px; }
 
     /* PREVISIÓN */
-    .prevision {
-      max-width: 420px;
-      margin: 0 auto 24px;
-    }
+    .prevision { max-width:420px; margin:0 auto 24px; }
+    .prevision-titulo { font-size:12px; color:#8899aa; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px; }
+    .prev-tabs { display:flex; gap:8px; margin-bottom:14px; }
+    .prev-tab { flex:1; padding:8px; border-radius:10px; border:1px solid #1a4a6e; background:transparent; color:#4a7a9b; font-size:13px; cursor:pointer; transition:all 0.2s; }
+    .prev-tab.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
 
-    .prevision-label {
-      font-size: 12px;
-      color: #8899aa;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
-    }
+    /* HOY - scroll horizontal */
+    .prev-hoy { overflow-x:auto; padding-bottom:8px; }
+    .prev-hoy-inner { display:flex; gap:8px; width:max-content; }
+    .prev-card { width:78px; background:rgba(255,255,255,0.04); border-radius:12px; padding:10px 6px; text-align:center; border:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
+    .prev-card.actual { background:rgba(30,80,140,0.4); border:2px solid #4db8ff; }
+    .prev-card .pc-fecha { font-size:10px; color:#6688aa; margin-bottom:6px; line-height:1.4; }
+    .prev-card.actual .pc-fecha { color:#aaccff; }
+    .prev-card .pc-semaforo { width:10px; height:10px; border-radius:50%; margin:0 auto 6px; }
+    .prev-card .pc-altura { font-size:14px; font-weight:700; color:#4db8ff; }
+    .prev-card .pc-detalle { font-size:10px; color:#6688aa; margin-top:3px; }
 
-    .prevision-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+    /* 3 DÍAS - vertical */
+    .prev-dias { display:flex; flex-direction:column; gap:8px; }
+    .prev-dia-bloque { background:rgba(255,255,255,0.04); border-radius:12px; border:1px solid rgba(255,255,255,0.06); overflow:hidden; }
+    .prev-dia-header { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:12px; font-weight:600; color:#aabbcc; }
+    .prev-dia-franjas { display:flex; }
+    .prev-franja { flex:1; padding:10px 6px; text-align:center; border-right:1px solid rgba(255,255,255,0.06); }
+    .prev-franja:last-child { border-right:none; }
+    .prev-franja .pf-label { font-size:10px; color:#6688aa; margin-bottom:4px; }
+    .prev-franja .pf-semaforo { width:8px; height:8px; border-radius:50%; margin:0 auto 4px; }
+    .prev-franja .pf-altura { font-size:13px; font-weight:700; color:#4db8ff; }
+    .prev-franja .pf-detalle { font-size:10px; color:#6688aa; margin-top:2px; }
 
-    .tab-btn {
-      flex: 1;
-      padding: 9px 0;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(10,22,40,0.5);
-      color: #4a7a9b;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+    /* 10 DÍAS - lista */
+    .prev-lista { display:flex; flex-direction:column; gap:6px; }
+    .prev-fila { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px; border:1px solid rgba(255,255,255,0.06); }
+    .prev-fila .pfi-dia { width:52px; font-size:12px; color:#aabbcc; font-weight:600; flex-shrink:0; }
+    .prev-fila .pfi-semaforo { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .prev-fila .pfi-altura { font-size:14px; font-weight:700; color:#4db8ff; flex:1; }
+    .prev-fila .pfi-detalle { font-size:11px; color:#6688aa; width:60px; text-align:right; flex-shrink:0; }
+    .prev-fila .pfi-estado { font-size:11px; font-weight:600; width:80px; text-align:right; flex-shrink:0; }
 
-    .tab-btn.activo {
-      background: rgba(13,48,80,0.85);
-      border-color: #4db8ff;
-      color: #4db8ff;
-    }
+    footer { text-align:center; font-size:12px; color:rgba(255,255,255,0.25); padding:10px 0 20px; }
+    .actualizando { text-align:center; font-size:14px; color:#8899aa; padding:60px 20px; }
 
-    .tl-panel { display: block; overflow: hidden; }
-
-    .timeline {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 4px 2px 10px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .timeline::-webkit-scrollbar { display: none; }
-
-    .tl-card {
-      flex-shrink: 0;
-      width: 76px;
-      background: rgba(10,22,40,0.6);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 10px 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      text-align: center;
-    }
-
-    .tl-card.tl-activa {
-      border-color: #4db8ff;
-      background: rgba(13,48,80,0.9);
-      box-shadow: 0 0 14px rgba(77,184,255,0.2);
-    }
-
-    .tl-hora {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      font-size: 11px;
-      color: #8899aa;
-      line-height: 1.3;
-    }
-
-    .tl-activa .tl-hora { color: #aaccee; }
-
-    .tl-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .tl-h {
-      font-size: 17px;
-      font-weight: 700;
-      color: #4db8ff;
-      line-height: 1;
-    }
-
-    .tl-p { font-size: 12px; color: #44ddaa; }
-
-    .tl-dir {
-      font-size: 12px;
-      color: #ffcc44;
-      font-weight: 600;
-    }
-
-    .tl-u {
-      font-size: 10px;
-      font-weight: 400;
-      color: #8899aa;
-    }
+    /* MAPA */
+    .mapa-header { padding:24px 0 16px; text-align:center; }
+    .mapa-header h1 { font-size:24px; font-weight:700; }
+    .mapa-header p { font-size:13px; color:#8899aa; margin-top:4px; }
+    .selector-estilo { display:flex; gap:10px; max-width:420px; margin:0 auto 16px; }
+    .btn-estilo { flex:1; padding:10px; border-radius:10px; border:1px solid #1a4a6e; background:rgba(10,22,40,0.6); color:#8899aa; font-size:13px; cursor:pointer; transition:all 0.2s; }
+    .btn-estilo.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
+    #mapa { height:420px; border-radius:16px; overflow:hidden; max-width:420px; margin:0 auto; }
+    .popup-playa { font-family:-apple-system,sans-serif; min-width:180px; }
+    .popup-playa h3 { font-size:15px; font-weight:700; margin-bottom:8px; color:#0a1628; }
+    .popup-playa .popup-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .popup-playa .popup-dato { background:#f0f4f8; border-radius:8px; padding:8px; text-align:center; }
+    .popup-playa .popup-dato .pl { font-size:10px; color:#667788; text-transform:uppercase; }
+    .popup-playa .popup-dato .pv { font-size:16px; font-weight:700; color:#0a1628; }
+    .popup-playa .popup-estado { margin-top:8px; text-align:center; font-size:13px; font-weight:600; padding:6px; border-radius:8px; }
   </style>
 </head>
 <body>
 
 <canvas id="fondo-canvas"></canvas>
 
-<!-- INICIO -->
 <div id="pantalla-inicio" class="pantalla activa">
   <header>
     <h1>🌊 Salitre</h1>
     <p id="ultima-actualizacion">Cargando datos...</p>
   </header>
-  <div id="contenido-inicio">
-    <p class="actualizando">Consultando el mar...</p>
-  </div>
+  <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer>Open-Meteo Marine · A Coruña</footer>
 </div>
 
-<!-- MAPA -->
 <div id="pantalla-mapa" class="pantalla">
   <div class="mapa-header">
     <h1>🗺️ Playas</h1>
     <p>Condiciones en tiempo real</p>
   </div>
   <div class="selector-estilo">
-    <button class="btn-estilo activo" onclick="cambiarEstilo('oscuro', this)">🌑 Oscuro</button>
-    <button class="btn-estilo" onclick="cambiarEstilo('satelite', this)">🛰️ Satélite</button>
+    <button class="btn-estilo activo" onclick="cambiarEstilo('oscuro',this)">🌑 Oscuro</button>
+    <button class="btn-estilo" onclick="cambiarEstilo('satelite',this)">🛰️ Satélite</button>
   </div>
   <div id="mapa"></div>
 </div>
 
-<!-- MENÚ -->
 <nav class="nav-bar">
-  <button class="nav-item activo" onclick="irA('inicio', this)">
-    <span class="icono">🌊</span>
-    <span>Inicio</span>
+  <button class="nav-item activo" onclick="irA('inicio',this)">
+    <span class="icono">🌊</span><span>Inicio</span>
   </button>
-  <button class="nav-item" onclick="irA('mapa', this)">
-    <span class="icono">🗺️</span>
-    <span>Mapa</span>
+  <button class="nav-item" onclick="irA('mapa',this)">
+    <span class="icono">🗺️</span><span>Mapa</span>
   </button>
 </nav>
 
 <script>
+// ── SVG ICONOS ──
+const SVG_AMANECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="28" x2="20" y2="22" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const SVG_DIA = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="5" stroke="#FFD700" stroke-width="1.5"/><line x1="20" y1="10" x2="20" y2="13" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="27" x2="20" y2="30" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="20" x2="13" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="20" x2="30" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="13" x2="15" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="25" y1="25" x2="27" y2="27" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="13" x2="25" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="27" x2="15" y2="25" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const SVG_ATARDECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="28" x2="20" y2="22" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FF4500" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FF6B00" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+
+function iconoPorHora(h) {
+  if (h >= 7 && h < 9) return SVG_AMANECER;
+  if (h >= 9 && h < 20) return SVG_DIA;
+  return SVG_ATARDECER;
+}
+
 // ── FONDO ANIMADO ──
 const canvas = document.getElementById('fondo-canvas');
 const ctx = canvas.getContext('2d');
-
-let fondoConfig = {
-  colorTop: '#0a1628',
-  colorMid: '#0d2137',
-  colorBot: '#061020',
-  velocidad: 0.008,
-  amplitud: 30,
-};
-
-let olas = [
-  { offset: 0, speed: 1.0, amp: 1.0, y: 0.55, alpha: 0.18 },
-  { offset: 2.1, speed: 0.7, amp: 0.7, y: 0.65, alpha: 0.13 },
-  { offset: 4.3, speed: 0.5, amp: 0.5, y: 0.75, alpha: 0.09 },
-  { offset: 1.2, speed: 1.3, amp: 0.4, y: 0.45, alpha: 0.07 },
+let fondoConfig = { colorTop:'#0a1628', colorMid:'#0d2137', colorBot:'#061020', velocidad:0.008, amplitud:30 };
+let colorOla = '#1a6faa';
+let t = 0;
+const olas = [
+  { offset:0,   speed:1.0, amp:1.0, y:0.55, alpha:0.18 },
+  { offset:2.1, speed:0.7, amp:0.7, y:0.65, alpha:0.13 },
+  { offset:4.3, speed:0.5, amp:0.5, y:0.75, alpha:0.09 },
+  { offset:1.2, speed:1.3, amp:0.4, y:0.45, alpha:0.07 },
 ];
 
-let t = 0;
-let colorOla = '#1a6faa';
-
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 
 function actualizarFondo(altura) {
-  if (altura < 0.5) {
-    fondoConfig = { colorTop: '#1a1a2e', colorMid: '#2a2a3e', colorBot: '#0f0f1e', velocidad: 0.003, amplitud: 10 };
-    colorOla = '#334466';
-  } else if (altura < 0.8) {
-    fondoConfig = { colorTop: '#0a1a2e', colorMid: '#0d2540', colorBot: '#061525', velocidad: 0.005, amplitud: 18 };
-    colorOla = '#1a5a88';
-  } else if (altura < 1.5) {
-    fondoConfig = { colorTop: '#0a1628', colorMid: '#0d2a4a', colorBot: '#061020', velocidad: 0.008, amplitud: 30 };
-    colorOla = '#1a7aaa';
-  } else if (altura < 2.5) {
-    fondoConfig = { colorTop: '#051528', colorMid: '#0a2545', colorBot: '#030d18', velocidad: 0.014, amplitud: 45 };
-    colorOla = '#0a8acc';
-  } else {
-    fondoConfig = { colorTop: '#1a0a10', colorMid: '#2a0d18', colorBot: '#0f0508', velocidad: 0.022, amplitud: 60 };
-    colorOla = '#aa2244';
-  }
+  if (altura < 0.5)      { fondoConfig = { colorTop:'#1a1a2e', colorMid:'#2a2a3e', colorBot:'#0f0f1e', velocidad:0.003, amplitud:10  }; colorOla='#334466'; }
+  else if (altura < 0.8) { fondoConfig = { colorTop:'#0a1a2e', colorMid:'#0d2540', colorBot:'#061525', velocidad:0.005, amplitud:18  }; colorOla='#1a5a88'; }
+  else if (altura < 1.5) { fondoConfig = { colorTop:'#0a1628', colorMid:'#0d2a4a', colorBot:'#061020', velocidad:0.008, amplitud:30  }; colorOla='#1a7aaa'; }
+  else if (altura < 2.5) { fondoConfig = { colorTop:'#051528', colorMid:'#0a2545', colorBot:'#030d18', velocidad:0.014, amplitud:45  }; colorOla='#0a8acc'; }
+  else                   { fondoConfig = { colorTop:'#1a0a10', colorMid:'#2a0d18', colorBot:'#0f0508', velocidad:0.022, amplitud:60  }; colorOla='#aa2244'; }
 }
 
 function dibujar() {
   if (document.hidden) return;
-  const w = canvas.width;
-  const h = canvas.height;
+  const w = canvas.width, h = canvas.height;
   t += fondoConfig.velocidad;
-
-  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  const grad = ctx.createLinearGradient(0,0,0,h);
   grad.addColorStop(0, fondoConfig.colorTop);
   grad.addColorStop(0.5, fondoConfig.colorMid);
   grad.addColorStop(1, fondoConfig.colorBot);
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, w, h);
-
+  ctx.fillRect(0,0,w,h);
   for (const ola of olas) {
     ctx.beginPath();
-    ctx.moveTo(0, h);
+    ctx.moveTo(0,h);
     const baseY = h * ola.y;
     const amp = fondoConfig.amplitud * ola.amp;
-    for (let x = 0; x <= w; x += 4) {
-      const y = baseY + Math.sin((x / w) * Math.PI * 3 + t * ola.speed + ola.offset) * amp
-                      + Math.sin((x / w) * Math.PI * 5 + t * ola.speed * 0.7 + ola.offset) * amp * 0.4;
-      ctx.lineTo(x, y);
+    for (let x=0; x<=w; x+=4) {
+      const y = baseY + Math.sin((x/w)*Math.PI*3 + t*ola.speed + ola.offset)*amp
+                      + Math.sin((x/w)*Math.PI*5 + t*ola.speed*0.7 + ola.offset)*amp*0.4;
+      ctx.lineTo(x,y);
     }
-    ctx.lineTo(w, h);
-    ctx.closePath();
-
-    const og = ctx.createLinearGradient(0, baseY - amp, 0, h);
-    og.addColorStop(0, colorOla + Math.round(ola.alpha * 255).toString(16).padStart(2,'0'));
+    ctx.lineTo(w,h); ctx.closePath();
+    const og = ctx.createLinearGradient(0,baseY-amp,0,h);
+    og.addColorStop(0, colorOla + Math.round(ola.alpha*255).toString(16).padStart(2,'0'));
     og.addColorStop(1, colorOla + '00');
     ctx.fillStyle = og;
     ctx.fill();
   }
-
   requestAnimationFrame(dibujar);
 }
-
 window.addEventListener('resize', resize);
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) requestAnimationFrame(dibujar);
 });
-resize();
-dibujar();
-
-// ── HELPERS ──
-const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).toFixed(dec);
-const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : Math.round(v);
+resize(); dibujar();
 
 // ── DATOS ──
-// Se cargan desde playas.json al iniciar la app (ver init()).
+// Cargados desde playas.json al arrancar (ver init()).
 let PLAYAS = [];
 let PLAYA_INICIO = null;
 
@@ -471,28 +213,27 @@ async function cargarPlayas() {
   PLAYA_INICIO = PLAYAS.find(p => p.nombre === config.playaInicio) || PLAYAS[0];
 }
 
-function clasificar(h) {
-  if (h == null || Number.isNaN(h)) return { color: '#888',    texto: 'Sin datos',        bg: '#eeeeee' };
-  if (h < 0.5) return                     { color: '#ff4444', texto: 'Sin olas',         bg: '#fff0f0' };
-  if (h < 0.8) return                     { color: '#ffaa00', texto: 'Flojo',            bg: '#fff8e0' };
-  if (h < 1.5) return                     { color: '#44cc44', texto: '¡Buenas olas!',    bg: '#f0fff0' };
-  if (h < 2.5) return                     { color: '#44cc44', texto: '¡Muy bueno!',      bg: '#f0fff0' };
-  return                                  { color: '#ff4444', texto: 'Demasiado grande', bg: '#fff0f0' };
-}
+const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).toFixed(dec);
+const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : String(Math.round(v));
 
-// Diferencia angular circular (0–180°) entre dos rumbos en grados.
 function angleDiff(a, b) {
   const d = (((a - b) % 360) + 360) % 360;
   return d > 180 ? 360 - d : d;
 }
 
-// Semáforo real: si el swell viene fuera del rango orient±tol de la playa,
-// se marca rojo aunque haya altura. Si está dentro, delega en clasificar(h).
+function clasificar(h) {
+  if (h == null || Number.isNaN(h)) return { color:'#888',    texto:'Sin datos',        bg:'#eeeeee' };
+  if (h < 0.5) return                     { color:'#ff4444', texto:'Sin olas',          bg:'#fff0f0' };
+  if (h < 0.8) return                     { color:'#FF6B00', texto:'Flojo',             bg:'#fff4ee' };
+  if (h < 1.5) return                     { color:'#44cc44', texto:'¡Buenas olas!',     bg:'#f0fff0' };
+  if (h < 2.5) return                     { color:'#44cc44', texto:'¡Muy bueno!',       bg:'#f0fff0' };
+  return                                  { color:'#ff4444', texto:'Demasiado grande',  bg:'#fff0f0' };
+}
+
 function clasificarReal(waveHeight, wavePeriod, waveDirection, playa) {
   if (waveDirection != null && !Number.isNaN(waveDirection) && playa && playa.orient != null) {
-    const diff = angleDiff(waveDirection, playa.orient);
-    if (diff > playa.tol) {
-      return { color: '#ff4444', texto: 'Swell desfavorable', bg: '#fff0f0', fueraRango: true };
+    if (angleDiff(waveDirection, playa.orient) > playa.tol) {
+      return { color:'#ff4444', texto:'Swell desfavorable', bg:'#fff0f0', fueraRango:true };
     }
   }
   return clasificar(waveHeight);
@@ -518,108 +259,42 @@ function resumen(h, p, d, playa) {
   return `Mar bravo: ${h.toFixed(1)}m, ${Math.round(p)}s. Solo para expertos.`;
 }
 
-// ── PREVISIÓN ──
-let tabActiva = 'hoy';
-
-function mostrarTab(tab) {
-  tabActiva = tab;
-  document.querySelectorAll('.tl-panel').forEach(p => { p.style.display = 'none'; });
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
-  const panel = document.getElementById('tl-' + tab);
-  if (panel) panel.style.display = 'block';
-  const btn = document.querySelector('[data-tab="' + tab + '"]');
-  if (btn) btn.classList.add('activo');
-  const activa = panel && panel.querySelector('.tl-activa');
-  if (activa) {
-    setTimeout(() => activa.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 50);
-  }
+// fmtFecha/fmtDia reciben unix timestamps (segundos)
+function fmtFecha(ts) {
+  const d = new Date(ts * 1000);
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const h = d.getHours().toString().padStart(2,'0');
+  return `${dias[d.getDay()]} ${d.getDate()} · ${h}:00`;
 }
 
-function buildPrevisionHTML(hourly) {
-  if (!hourly || !hourly.hourly) return '';
-  const times   = hourly.hourly.time;
-  const heights = hourly.hourly.wave_height;
-  const periods = hourly.hourly.wave_period;
-  const dirs    = hourly.hourly.wave_direction;
-
-  // Índice más cercano a ahora
-  const nowMs = Date.now();
-  let nowIdx = 0, bestDiff = Infinity;
-  for (let i = 0; i < times.length; i++) {
-    const diff = Math.abs(times[i] * 1000 - nowMs);
-    if (diff < bestDiff) { bestDiff = diff; nowIdx = i; }
-  }
-
-  function makeCard(i) {
-    const fecha  = new Date(times[i] * 1000);
-    const h = heights[i], p = periods[i], d = dirs[i];
-    const estado   = clasificar(h);
-    const esCurrent = i === nowIdx;
-    const esHoy    = fecha.toDateString() === new Date().toDateString();
-    const hora     = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    const horaHTML = esHoy
-      ? `<span>${hora}</span>`
-      : `<span>${fecha.toLocaleDateString('es-ES', { weekday: 'short' })} ${fecha.getDate()}</span><span>${hora}</span>`;
-    return `<div class="tl-card${esCurrent ? ' tl-activa' : ''}">
-      <div class="tl-hora">${horaHTML}</div>
-      <div class="tl-dot" style="background:${estado.color};box-shadow:0 0 6px ${estado.color}88"></div>
-      <div class="tl-h">${fmt(h)}<span class="tl-u">m</span></div>
-      <div class="tl-p">${rnd(p)}<span class="tl-u">s</span></div>
-      <div class="tl-dir">${dirTxt(d)}</div>
-    </div>`;
-  }
-
-  // Hoy: ±8 h alrededor de ahora, paso 2 h, alineado a nowIdx
-  const hoyIdx = [];
-  for (let i = Math.max(0, nowIdx - 8); i <= Math.min(times.length - 1, nowIdx + 8); i++) {
-    if ((i - nowIdx) % 2 === 0) hoyIdx.push(i);
-  }
-
-  // 3 días: próximas 72 h, paso 4 h
-  const tresDiasIdx = [];
-  for (let i = nowIdx; i < Math.min(times.length, nowIdx + 73); i += 4) tresDiasIdx.push(i);
-
-  // 10 días: todo lo restante, paso 6 h
-  const diezDiasIdx = [];
-  for (let i = nowIdx; i < times.length; i += 6) diezDiasIdx.push(i);
-
-  const tl = idxs => `<div class="timeline">${idxs.map(makeCard).join('')}</div>`;
-
-  return `<div class="prevision">
-    <div class="prevision-label">Previsión</div>
-    <div class="prevision-tabs">
-      <button class="tab-btn" data-tab="hoy"    onclick="mostrarTab('hoy')">Hoy</button>
-      <button class="tab-btn" data-tab="3dias"  onclick="mostrarTab('3dias')">3 días</button>
-      <button class="tab-btn" data-tab="10dias" onclick="mostrarTab('10dias')">10 días</button>
-    </div>
-    <div id="tl-hoy"    class="tl-panel">${tl(hoyIdx)}</div>
-    <div id="tl-3dias"  class="tl-panel" style="display:none">${tl(tresDiasIdx)}</div>
-    <div id="tl-10dias" class="tl-panel" style="display:none">${tl(diezDiasIdx)}</div>
-  </div>`;
+function fmtDia(ts) {
+  const d = new Date(ts * 1000);
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
 }
 
 // ── PANTALLA INICIO ──
 async function cargarInicio() {
   try {
     const base = `https://marine-api.open-meteo.com/v1/marine?latitude=${PLAYA_INICIO.lat}&longitude=${PLAYA_INICIO.lon}`;
-    const [resCurrent, resHourly] = await Promise.all([
+    const [resActual, resPrev] = await Promise.all([
       fetch(`${base}&current=wave_height,wave_period,wave_direction,wind_wave_height&timeformat=unixtime`),
-      fetch(`${base}&hourly=wave_height,wave_period,wave_direction&forecast_days=10&past_days=1&timeformat=unixtime`).catch(() => null),
+      fetch(`${base}&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`).catch(() => null),
     ]);
-
-    if (!resCurrent.ok) throw new Error('HTTP ' + resCurrent.status);
-    const dataCurrent = await resCurrent.json();
-    const hourlyData  = (resHourly && resHourly.ok) ? await resHourly.json().catch(() => null) : null;
-
-    const c = dataCurrent.current;
+    if (!resActual.ok) throw new Error('HTTP ' + resActual.status);
+    const actual = await resActual.json();
+    const prev = (resPrev && resPrev.ok) ? await resPrev.json().catch(() => null) : null;
+    const c = actual.current;
     const h = c.wave_height, p = c.wave_period, d = c.wave_direction;
     const estado = clasificarReal(h, p, d, PLAYA_INICIO);
-
     actualizarFondo(h);
 
     const ahora = new Date();
     document.getElementById('ultima-actualizacion').textContent =
       `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
+
+    const prevHtml = prev ? renderPrevision(prev, ahora) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
       <div class="semaforo">
@@ -652,9 +327,7 @@ async function cargarInicio() {
           <div class="unidad">metros</div>
         </div>
       </div>
-      ${hourlyData ? buildPrevisionHTML(hourlyData) : ''}`;
-
-    if (hourlyData) mostrarTab(tabActiva);
+      ${prevHtml}`;
   } catch(e) {
     document.getElementById('ultima-actualizacion').textContent =
       'Error de conexión · reintentando en 10 min';
@@ -663,11 +336,119 @@ async function cargarInicio() {
   }
 }
 
+function renderPrevision(prev, ahora) {
+  if (!prev?.hourly?.time) return '';
+  const tiempos = prev.hourly.time;
+  const alturas = prev.hourly.wave_height;
+  const periodos = prev.hourly.wave_period;
+  const dirs = prev.hourly.wave_direction;
+
+  // HOY — ±8h, solo 07-22, franjas de 2h
+  const hoyItems = [];
+  for (let i=0; i<tiempos.length; i++) {
+    const t = new Date(tiempos[i] * 1000);
+    const hora = t.getHours();
+    const diffH = (t - ahora) / 3600000;
+    if (hora < 7 || hora > 22) continue;
+    if (hora % 2 !== 0) continue;
+    if (diffH < -8 || diffH > 8) continue;
+    const esActual = Math.abs(diffH) < 1.5;
+    const estado = clasificar(alturas[i]);
+    hoyItems.push(`
+      <div class="prev-card ${esActual ? 'actual' : ''}">
+        <div style="margin-bottom:4px;">${iconoPorHora(hora)}</div>
+        <div class="pc-fecha">${fmtFecha(tiempos[i])}</div>
+        <div class="pc-semaforo" style="background:${estado.color};box-shadow:0 0 6px ${estado.color}88;"></div>
+        <div class="pc-altura">${fmt(alturas[i])}m</div>
+        <div class="pc-detalle">${Math.round(periodos[i])}s · ${dirTxt(dirs[i])}</div>
+      </div>`);
+  }
+
+  // 3 DÍAS
+  const diasMap = {};
+  for (let i=0; i<tiempos.length; i++) {
+    const t = new Date(tiempos[i] * 1000);
+    const hora = t.getHours();
+    const key = t.toDateString();
+    const diffDias = (t - ahora) / 86400000;
+    if (diffDias < 0 || diffDias > 3) continue;
+    if (![8,14,20].includes(hora)) continue;
+    if (!diasMap[key]) diasMap[key] = { label: fmtDia(tiempos[i]), franjas: {} };
+    const franja = hora === 8 ? 'Mañana' : hora === 14 ? 'Tarde' : 'Atardecer';
+    const icono = hora === 8 ? SVG_AMANECER : hora === 14 ? SVG_DIA : SVG_ATARDECER;
+    const estado = clasificar(alturas[i]);
+    diasMap[key].franjas[franja] = `
+      <div class="prev-franja">
+        <div style="margin-bottom:3px;">${icono}</div>
+        <div class="pf-label">${franja}</div>
+        <div class="pf-semaforo" style="background:${estado.color};"></div>
+        <div class="pf-altura">${fmt(alturas[i])}m</div>
+        <div class="pf-detalle">${Math.round(periodos[i])}s · ${dirTxt(dirs[i])}</div>
+      </div>`;
+  }
+  const tresItems = Object.values(diasMap).map(dia => `
+    <div class="prev-dia-bloque">
+      <div class="prev-dia-header">${dia.label}</div>
+      <div class="prev-dia-franjas">
+        ${dia.franjas['Mañana'] || ''}
+        ${dia.franjas['Tarde'] || ''}
+        ${dia.franjas['Atardecer'] || ''}
+      </div>
+    </div>`).join('');
+
+  // 10 DÍAS — una fila por día, altura máxima
+  const diezMap = {};
+  for (let i=0; i<tiempos.length; i++) {
+    const t = new Date(tiempos[i] * 1000);
+    const key = t.toDateString();
+    const diffDias = (t - ahora) / 86400000;
+    if (diffDias < 0 || diffDias > 10) continue;
+    if (!diezMap[key]) diezMap[key] = { label: fmtDia(tiempos[i]), maxH:0, periodo:0, dir:0 };
+    if ((alturas[i]||0) > diezMap[key].maxH) {
+      diezMap[key].maxH = alturas[i];
+      diezMap[key].periodo = periodos[i];
+      diezMap[key].dir = dirs[i];
+    }
+  }
+  const diezItems = Object.values(diezMap).map(dia => {
+    const estado = clasificar(dia.maxH);
+    return `
+      <div class="prev-fila">
+        <div class="pfi-dia">${dia.label}</div>
+        <div class="pfi-semaforo" style="background:${estado.color};box-shadow:0 0 6px ${estado.color}88;"></div>
+        <div class="pfi-altura">${fmt(dia.maxH)}m</div>
+        <div class="pfi-detalle">${Math.round(dia.periodo)}s · ${dirTxt(dia.dir)}</div>
+        <div class="pfi-estado" style="color:${estado.color};">${estado.texto}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="prevision">
+      <div class="prevision-titulo">Previsión</div>
+      <div class="prev-tabs">
+        <button class="prev-tab activo" onclick="cambiarPrevTab('hoy',this)">Hoy</button>
+        <button class="prev-tab" onclick="cambiarPrevTab('3d',this)">3 días</button>
+        <button class="prev-tab" onclick="cambiarPrevTab('10d',this)">10 días</button>
+      </div>
+      <div id="prev-hoy" class="prev-hoy"><div class="prev-hoy-inner">${hoyItems.join('')}</div></div>
+      <div id="prev-3d" class="prev-dias" style="display:none;">${tresItems}</div>
+      <div id="prev-10d" class="prev-lista" style="display:none;">${diezItems}</div>
+    </div>`;
+}
+
+function cambiarPrevTab(tab, btn) {
+  ['hoy','3d','10d'].forEach(t => {
+    document.getElementById('prev-'+t).style.display = t === tab ? (t==='hoy'?'block':'flex') : 'none';
+  });
+  document.querySelectorAll('.prev-tab').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+}
+
 // ── MAPA ──
 let mapa = null, mapaIniciado = false, capaActual = null, capaMarcadores = null;
 
 const capas = {
-  oscuro: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution:'© CARTO', maxZoom:19 }),
+  oscuro:   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution:'© CARTO', maxZoom:19 }),
   satelite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution:'© Esri', maxZoom:19 }),
 };
 
@@ -675,12 +456,12 @@ function crearIcono(color) {
   return L.divIcon({
     className: '',
     html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`,
-    iconSize: [22,22], iconAnchor: [11,11], popupAnchor: [0,-14]
+    iconSize:[22,22], iconAnchor:[11,11], popupAnchor:[0,-14]
   });
 }
 
 async function cargarDatosPlaya(playa) {
-  const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction&timeformat=unixtime`);
+  const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction`);
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
   return { playa, c: data.current };
@@ -706,7 +487,6 @@ function renderMarcador(playa, c) {
 async function refrescarMarcadores() {
   if (capaMarcadores) capaMarcadores.clearLayers();
   else capaMarcadores = L.layerGroup().addTo(mapa);
-
   const resultados = await Promise.allSettled(PLAYAS.map(cargarDatosPlaya));
   resultados.forEach((r, i) => {
     const playa = PLAYAS[i];
@@ -738,7 +518,7 @@ function cambiarEstilo(estilo, btn) {
 function irA(pantalla, btn) {
   document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('activo'));
-  document.getElementById('pantalla-' + pantalla).classList.add('activa');
+  document.getElementById('pantalla-'+pantalla).classList.add('activa');
   btn.classList.add('activo');
   if (pantalla === 'mapa' && !mapaIniciado) iniciarMapa();
 }
@@ -746,22 +526,19 @@ function irA(pantalla, btn) {
 async function init() {
   try {
     await cargarPlayas();
-  } catch (e) {
+  } catch(e) {
     document.getElementById('ultima-actualizacion').textContent = 'Error cargando playas';
     document.getElementById('contenido-inicio').innerHTML =
       `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudo cargar <code>playas.json</code>.<br>
-       <span style="color:#8899aa;font-size:13px;">Si estás abriendo el archivo directo (file://), tenés que servirlo con un HTTP server.<br>
-       Ej: <code>python3 -m http.server</code> y abrir http://localhost:8000</span></p>`;
+       <span style="color:#8899aa;font-size:13px;">Abrí con un servidor HTTP: <code>python3 -m http.server</code></span></p>`;
     console.error(e);
     return;
   }
-
   cargarInicio();
   setInterval(() => {
     cargarInicio();
     if (mapaIniciado) refrescarMarcadores();
   }, 10 * 60 * 1000);
-
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       cargarInicio();
