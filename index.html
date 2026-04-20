@@ -253,27 +253,50 @@ function cielo(codigo) {
   return                  { icono:'⛈️', texto:'Tormenta' };
 }
 
-function marea(datos) {
-  if (!datos || !datos.mareas) return null;
-  const ahora = Date.now();
-  const mareas = datos.mareas;
-  let anterior = null, siguiente = null;
-  for (const m of mareas) {
-    const ts = new Date(m.hora).getTime();
-    if (ts < ahora) anterior = m;
-    else if (!siguiente) siguiente = m;
+async function cargarMareas() {
+  try {
+    const res = await fetch('http://ideihm.covam.es/api-ihm/getmarea?REQUEST=gettide&PORT=ACORU&format=json');
+    const data = await res.json();
+    const ahora = new Date();
+    const mareas = data.mareas || data.tide || [];
+    let anterior = null, siguiente = null;
+    for (const m of mareas) {
+      const ts = new Date(m.date || m.hora);
+      if (ts < ahora) anterior = m;
+      else if (!siguiente) siguiente = m;
+    }
+    if (!siguiente) return { html: '<div class="valor" style="color:#4db8ff;">--</div><div class="sub">Sin datos</div>' };
+    const tipo = (siguiente.type === 'H' || siguiente.tipo === 'alta') ? '▲ Pleamar' : '▼ Bajamar';
+    const hora = new Date(siguiente.date || siguiente.hora).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+    const alt  = siguiente.height || siguiente.altura || '--';
+    return { html: `<div class="valor" style="color:#44ddaa;font-size:20px;">${parseFloat(alt).toFixed(1)}m</div><div class="sub">Próx: ${tipo} ${hora}</div>` };
+  } catch(e) {
+    return { html: '<div class="valor" style="color:#4db8ff;">--</div><div class="sub">Sin datos</div>' };
   }
-  return { anterior, siguiente, actual: datos.alturaActual };
+}
+
+function flechaDireccion(grados, color, size = 36) {
+  if (grados == null || Number.isNaN(grados)) return '';
+  const rad = (grados - 90) * Math.PI / 180;
+  const cx = size / 2, cy = size / 2, r = size / 2 - 3;
+  const x2 = cx + r * Math.cos(rad),          y2 = cy + r * Math.sin(rad);
+  const x1 = cx - (r * 0.5) * Math.cos(rad),  y1 = cy - (r * 0.5) * Math.sin(rad);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" fill="none">
+    <circle cx="${cx}" cy="${cy}" r="${r}" stroke="${color}" stroke-width="1" opacity="0.3"/>
+    <line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
+      stroke="${color}" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="2" fill="${color}"/>
+  </svg>`;
 }
 
 // CARGA PRINCIPAL
 async function cargarInicio() {
   try {
     const lat = PLAYA_INICIO.lat, lon = PLAYA_INICIO.lon;
-    const [resMarine, resAtmo, resMareas] = await Promise.all([
+    const [resMarine, resAtmo, mareaData] = await Promise.all([
       fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
       fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code&wind_speed_unit=kn`),
-      fetch(`https://servizos.meteogalicia.gal/apiv2/getTidesInfo?coord=${lon},${lat}&API_KEY=undefined`).catch(()=>null)
+      cargarMareas()
     ]);
 
     const marine = await resMarine.json();
@@ -299,21 +322,7 @@ async function cargarInicio() {
     document.getElementById('ultima-actualizacion').textContent =
       `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
 
-    // Mareas
-    let mareaHtml = `<div style="font-size:20px;font-weight:700;color:#4db8ff;">--</div><div class="sub">Sin datos</div>`;
-    if (resMareas) {
-      try {
-        const mdata = await resMareas.json();
-        const m = marea(mdata);
-        if (m && m.siguiente) {
-          const tipo = m.siguiente.tipo === 'alta' ? '▲ Pleamar' : '▼ Bajamar';
-          const hora = new Date(m.siguiente.hora).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-          mareaHtml = `
-            <div style="font-size:18px;font-weight:700;color:#44ddaa;">${m.actual?.toFixed(1) ?? '--'}m</div>
-            <div class="sub">Próx: ${tipo} ${hora}</div>`;
-        }
-      } catch(e) {}
-    }
+    const mareaHtml = mareaData.html;
 
     const prevHtml = marine.hourly ? renderPrevision(marine, ahora) : '';
 
@@ -325,20 +334,47 @@ async function cargarInicio() {
           <p>${PLAYA_INICIO.nombre} · ahora</p>
         </div>
       </div>
-      <div class="resumen">"${resumen(altura, periodo, dirSwell, PLAYA_INICIO)}"</div>
+      <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;max-width:420px;margin:0 auto 16px;">
+        <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Condiciones ideales · ${PLAYA_INICIO.nombre}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+          <div>
+            <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Swell</div>
+            <div style="font-size:13px;font-weight:600;color:#4db8ff;">${PLAYA_INICIO.swell}</div>
+            <div style="font-size:10px;color:#8899aa;">0.8m – 2.5m</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Viento</div>
+            <div style="font-size:13px;font-weight:600;color:#44cc44;">${PLAYA_INICIO.viento}</div>
+            <div style="font-size:10px;color:#8899aa;">< 15kn</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Período</div>
+            <div style="font-size:13px;font-weight:600;color:#44ddaa;">> 9s</div>
+            <div style="font-size:10px;color:#8899aa;">óptimo 12s+</div>
+          </div>
+        </div>
+      </div>
 
       <div class="datos-grid">
         <div class="dato-card">
           <div class="label">Swell</div>
-          <div class="valor" style="color:#4db8ff;">${dirTxt(dirSwell)} ${fmt(altura)}m</div>
-          <div class="sub">Energía ${rnd(energia)} kJ · ${rnd(periodo)}s</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${flechaDireccion(dirSwell, '#4db8ff')}
+            <div>
+              <div class="valor" style="color:#4db8ff;">${dirTxt(dirSwell)} ${fmt(altura)}m</div>
+              <div class="sub">Energía ${rnd(energia)} kJ · ${rnd(periodo)}s</div>
+            </div>
+          </div>
         </div>
         <div class="dato-card">
           <div class="label">Viento</div>
-          <div class="valor" style="color:${vientoBueno?'#44cc44':'#ff4444'};">
-            ${dirTxt(dirViento)} ${rnd(velViento)}kn
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${flechaDireccion(dirViento, vientoBueno ? '#44cc44' : '#ff4444')}
+            <div>
+              <div class="valor" style="color:${vientoBueno?'#44cc44':'#ff4444'};">${dirTxt(dirViento)} ${rnd(velViento)}kn</div>
+              <div class="sub">${vientoBueno ? '✓ Favorable' : '✗ Desfavorable'}</div>
+            </div>
           </div>
-          <div class="sub">${vientoBueno ? '✓ Favorable' : '✗ Desfavorable'}</div>
         </div>
         <div class="dato-card">
           <div class="label">Altura</div>
