@@ -172,17 +172,36 @@ document.addEventListener('visibilitychange', () => {
 });
 resize(); dibujar();
 
-// DATOS — cargados desde playas.json al arrancar (ver init())
-let PLAYAS = [];
-let PLAYA_INICIO = null;
+// DATOS
+const SPOTS = {
+  'España': {
+    'Galicia': [
+      { nombre:'Riazor',         lat:43.3683, lon:-8.4089, orient:315, tol:50, swell:'NO-N',   viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9  },
+      { nombre:'Orzán',          lat:43.3721, lon:-8.4201, orient:300, tol:50, swell:'NO-O',   viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9  },
+      { nombre:'Santa Cristina', lat:43.3950, lon:-8.3200, orient:350, tol:40, swell:'N-NE',   viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8  },
+      { nombre:'Bastiagueiro',   lat:43.3980, lon:-8.3050, orient:350, tol:40, swell:'N-NE',   viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8  },
+      { nombre:'Baldaio',        lat:43.3167, lon:-8.6333, orient:280, tol:50, swell:'O-NO',   viento:'SE-S',  hMin:0.8, hMax:3.0, pMin:10 },
+      { nombre:'Razo',           lat:43.2833, lon:-8.6833, orient:275, tol:55, swell:'O-NO',   viento:'SE-S',  hMin:0.8, hMax:3.0, pMin:9  },
+      { nombre:'Rebordelo',      lat:43.2600, lon:-8.7500, orient:270, tol:45, swell:'O',      viento:'SE',    hMin:1.0, hMax:3.0, pMin:10 },
+      { nombre:'Nemiña',         lat:43.1000, lon:-9.0500, orient:255, tol:50, swell:'OSO-O',  viento:'NE-SE', hMin:0.8, hMax:2.5, pMin:9  },
+      { nombre:'Carnota',        lat:42.8833, lon:-9.1000, orient:245, tol:45, swell:'SO-OSO', viento:'NE',    hMin:1.0, hMax:3.5, pMin:11 },
+      { nombre:'Lariño',         lat:42.8667, lon:-9.1167, orient:250, tol:45, swell:'SO-O',   viento:'NE',    hMin:1.0, hMax:3.0, pMin:10 },
+      { nombre:'Louro',          lat:42.7667, lon:-8.9833, orient:240, tol:40, swell:'SO',     viento:'NE',    hMin:1.2, hMax:3.5, pMin:11 },
+      { nombre:'Área (Viveiro)', lat:43.6667, lon:-7.6000, orient:340, tol:45, swell:'N-NO',   viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8  },
+      { nombre:'Llas',           lat:43.7000, lon:-7.5500, orient:345, tol:40, swell:'N-NO',   viento:'SO',    hMin:0.6, hMax:2.0, pMin:8  },
+      { nombre:'Esteiro',        lat:43.6500, lon:-7.6500, orient:335, tol:45, swell:'N-NO',   viento:'SO-SE', hMin:0.6, hMax:2.0, pMin:8  },
+      { nombre:'Pantín',         lat:43.7167, lon:-7.7000, orient:350, tol:40, swell:'N-NNO',  viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:10 },
+      { nombre:'Frouxeira',      lat:43.6833, lon:-7.8833, orient:340, tol:45, swell:'N-NO',   viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:9  },
+      { nombre:'Langosteira',    lat:43.1833, lon:-8.9000, orient:260, tol:50, swell:'O-OSO',  viento:'NE-SE', hMin:0.8, hMax:2.5, pMin:9  },
+      { nombre:'Rostro',         lat:43.0500, lon:-9.1833, orient:250, tol:40, swell:'OSO-SO', viento:'NE',    hMin:1.0, hMax:3.0, pMin:10 },
+    ]
+  }
+};
 
-async function cargarPlayas() {
-  const res = await fetch('playas.json');
-  if (!res.ok) throw new Error('No se pudo cargar playas.json (' + res.status + ')');
-  const config = await res.json();
-  PLAYAS = config.playas;
-  PLAYA_INICIO = PLAYAS.find(p => p.nombre === config.playaInicio) || PLAYAS[0];
-}
+let playaActiva = SPOTS['España']['Galicia'][0];
+
+// Lista plana para los marcadores del mapa
+const PLAYAS = Object.values(SPOTS).flatMap(pais => Object.values(pais).flat());
 
 const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).toFixed(dec);
 const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : String(Math.round(v));
@@ -257,6 +276,52 @@ function cielo(codigo) {
   if (codigo <= 77) return { icono:'🌨️', texto:'Nieve' };
   if (codigo <= 82) return { icono:'🌦️', texto:'Chubascos' };
   return                  { icono:'⛈️', texto:'Tormenta' };
+}
+
+// SELECTOR DE PLAYA
+function renderSelector() {
+  const playas = SPOTS['España']['Galicia'];
+  const favId = localStorage.getItem('salitre_favorita');
+  return `
+    <div style="max-width:420px;margin:0 auto 16px;position:relative;">
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px 16px;">
+        <div style="flex:1;">
+          <div style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">España · Galicia</div>
+          <select id="selector-playa" onchange="cambiarPlaya(this.value)"
+            style="background:transparent;border:none;color:#ffffff;font-size:16px;font-weight:600;width:100%;outline:none;cursor:pointer;appearance:none;">
+            ${playas.map((p, i) => `<option value="${i}" ${p.nombre === playaActiva.nombre ? 'selected' : ''} style="background:#0a1628;color:#fff;">${p.nombre}</option>`).join('')}
+          </select>
+        </div>
+        <button onclick="toggleFavorita()" id="btn-estrella"
+          style="background:none;border:none;font-size:22px;cursor:pointer;padding:4px;line-height:1;">
+          ${favId === playaActiva.nombre ? '★' : '☆'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function cambiarPlaya(idx) {
+  playaActiva = SPOTS['España']['Galicia'][idx];
+  cargarInicio();
+}
+
+function toggleFavorita() {
+  const favActual = localStorage.getItem('salitre_favorita');
+  if (favActual === playaActiva.nombre) {
+    localStorage.removeItem('salitre_favorita');
+    document.getElementById('btn-estrella').textContent = '☆';
+  } else {
+    localStorage.setItem('salitre_favorita', playaActiva.nombre);
+    document.getElementById('btn-estrella').textContent = '★';
+  }
+}
+
+function iniciarPlayaFavorita() {
+  const favId = localStorage.getItem('salitre_favorita');
+  if (favId) {
+    const fav = SPOTS['España']['Galicia'].find(p => p.nombre === favId);
+    if (fav) playaActiva = fav;
+  }
 }
 
 const ZONAS_MAREA = {
@@ -390,7 +455,7 @@ function flechaDireccion(grados, color, size = 36) {
 // CARGA PRINCIPAL
 async function cargarInicio() {
   try {
-    const lat = PLAYA_INICIO.lat, lon = PLAYA_INICIO.lon;
+    const lat = playaActiva.lat, lon = playaActiva.lon;
     const [resMarine, resAtmo] = await Promise.all([
       fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
       fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code&wind_speed_unit=kmh`),
@@ -412,8 +477,8 @@ async function cargarInicio() {
     const energia   = (altura != null && periodo != null)
       ? Math.round((1025 * 9.81 * 9.81 * periodo * altura * altura) / (64 * Math.PI))
       : null;
-    const estado    = clasificar(altura, dirSwell, PLAYA_INICIO);
-    const vientoBueno = vientoFavorable(dirViento, PLAYA_INICIO);
+    const estado    = clasificar(altura, dirSwell, playaActiva);
+    const vientoBueno = vientoFavorable(dirViento, playaActiva);
     const cieloActual = cielo(codigoCielo);
 
     actualizarFondo(altura);
@@ -424,36 +489,37 @@ async function cargarInicio() {
     const prevHtml = marine.hourly ? renderPrevision(marine, ahora) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
+      ${renderSelector()}
       <div class="semaforo">
         <div class="semaforo-circulo" style="background:${estado.color};box-shadow:0 0 20px ${estado.color}99;"></div>
         <div class="semaforo-texto">
           <h2>${estado.texto}</h2>
-          <p>${PLAYA_INICIO.nombre} · ahora</p>
+          <p>${playaActiva.nombre} · ahora</p>
         </div>
       </div>
       <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;max-width:420px;margin:0 auto 16px;">
-        <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Condiciones ideales · ${PLAYA_INICIO.nombre}</div>
+        <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Condiciones ideales · ${playaActiva.nombre}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;align-items:center;">
           <div>
             <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Swell</div>
             <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-              ${flechaDireccion(315, '#4db8ff', 28)}
-              <span style="font-size:16px;font-weight:600;color:#4db8ff;">${PLAYA_INICIO.swell}</span>
+              ${flechaDireccion(playaActiva.orient, '#4db8ff', 28)}
+              <span style="font-size:16px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
             </div>
-            <div style="font-size:12px;color:#8899aa;margin-top:3px;">0.8m – 2.5m</div>
+            <div style="font-size:12px;color:#8899aa;margin-top:3px;">${playaActiva.hMin}m – ${playaActiva.hMax}m</div>
           </div>
           <div>
             <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Viento</div>
             <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-              ${flechaDireccion(157, '#44cc44', 28)}
-              <span style="font-size:16px;font-weight:600;color:#44cc44;">${PLAYA_INICIO.viento}</span>
+              ${flechaDireccion((playaActiva.orient + 180) % 360, '#44cc44', 28)}
+              <span style="font-size:16px;font-weight:600;color:#44cc44;">${playaActiva.viento}</span>
             </div>
             <div style="font-size:12px;color:#8899aa;margin-top:3px;">< 28 km/h</div>
           </div>
           <div>
             <div style="font-size:10px;color:#8899aa;margin-bottom:4px;">Período</div>
-            <div style="font-size:16px;font-weight:600;color:#44ddaa;">> 9s</div>
-            <div style="font-size:12px;color:#8899aa;margin-top:3px;">óptimo 12s+</div>
+            <div style="font-size:16px;font-weight:600;color:#44ddaa;">> ${playaActiva.pMin}s</div>
+            <div style="font-size:12px;color:#8899aa;margin-top:3px;">óptimo ${playaActiva.pMin + 3}s+</div>
           </div>
         </div>
       </div>
@@ -524,7 +590,7 @@ function renderPrevision(marine, ahora) {
     if(hora<7||hora>22||hora%2!==0) continue;
     if(diffH<-8||diffH>8) continue;
     const esActual=Math.abs(diffH)<1.5;
-    const estado=clasificar(alturas[i],dirs[i],PLAYA_INICIO);
+    const estado=clasificar(alturas[i],dirs[i],playaActiva);
     hoyItems.push(`
       <div class="prev-card ${esActual?'actual':''}">
         <div style="margin-bottom:4px;">${iconoPorHora(hora)}</div>
@@ -546,7 +612,7 @@ function renderPrevision(marine, ahora) {
     if(!diasMap[key]) diasMap[key]={label:fmtDia(tiempos[i]),franjas:{}};
     const franja=hora===8?'Mañana':hora===14?'Tarde':'Atardecer';
     const icono=hora===8?SVG_AMANECER:hora===14?SVG_DIA:SVG_ATARDECER;
-    const estado=clasificar(alturas[i],dirs[i],PLAYA_INICIO);
+    const estado=clasificar(alturas[i],dirs[i],playaActiva);
     diasMap[key].franjas[franja]=`
       <div class="prev-franja">
         <div style="margin-bottom:3px;">${icono}</div>
@@ -580,7 +646,7 @@ function renderPrevision(marine, ahora) {
     }
   }
   const diezItems=Object.values(diezMap).map(dia=>{
-    const estado=clasificar(dia.maxH,dia.dir,PLAYA_INICIO);
+    const estado=clasificar(dia.maxH,dia.dir,playaActiva);
     return `
       <div class="prev-fila">
         <div class="pfi-dia">${dia.label}</div>
@@ -677,15 +743,8 @@ function irA(pantalla,btn){
   if(pantalla==='mapa'&&!mapaIniciado) iniciarMapa();
 }
 
-async function init() {
-  try {
-    await cargarPlayas();
-  } catch(e) {
-    console.error('Error cargando playas.json:', e);
-    document.getElementById('contenido-inicio').innerHTML =
-      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudo cargar playas.json.<br><span style="color:#8899aa;font-size:13px;">Abrí la app desde un servidor HTTP.</span></p>`;
-    return;
-  }
+function init() {
+  iniciarPlayaFavorita();
   cargarInicio();
   const INTERVALO = 10 * 60 * 1000;
   setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, INTERVALO);
