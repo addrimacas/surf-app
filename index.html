@@ -723,56 +723,51 @@ async function mejoresOlasCerca() {
   btn.textContent = 'Buscando...';
   btn.disabled = true;
 
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const { latitude: uLat, longitude: uLon } = pos.coords;
-    const playas = SPOTS['España']['Galicia'];
-    const resultados = [];
+  const uLat = playaActiva.lat;
+  const uLon = playaActiva.lon;
+  const playas = SPOTS['España']['Galicia'];
+  const resultados = [];
 
-    for (const playa of playas) {
-      try {
-        const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction&timeformat=iso8601`);
-        const data = await res.json();
-        const c = data.current;
-        const estado = clasificar(c.wave_height, c.wave_direction, playa);
-        const km = haversine(uLat, uLon, playa.lat, playa.lon);
-        if (estado.color !== '#ff4444') {
-          resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
-        }
-      } catch(e) {}
-    }
+  for (const playa of playas) {
+    try {
+      const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction&timeformat=iso8601`);
+      const data = await res.json();
+      const c = data.current;
+      const estado = clasificar(c.wave_height, c.wave_direction, playa);
+      const km = haversine(uLat, uLon, playa.lat, playa.lon);
+      if (estado.color !== '#ff4444') {
+        resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
+      }
+    } catch(e) {}
+  }
 
-    resultados.sort((a, b) => {
-      if (a.estado.color === '#44cc44' && b.estado.color !== '#44cc44') return -1;
-      if (b.estado.color === '#44cc44' && a.estado.color !== '#44cc44') return 1;
-      return b.altura - a.altura;
-    });
-
-    const top3 = resultados.slice(0, 3);
-    const contenedor = document.getElementById('resultado-mejores');
-
-    if (top3.length === 0) {
-      contenedor.innerHTML = `<p style="color:#8899aa;font-size:13px;text-align:center;padding:12px;">No hay buenas condiciones cerca ahora mismo.</p>`;
-    } else {
-      contenedor.innerHTML = top3.map((r, i) => `
-        <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
-          style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
-          <div style="font-size:18px;font-weight:700;color:#8899aa;width:20px;">${i + 1}</div>
-          <div style="width:10px;height:10px;border-radius:50%;background:${r.estado.color};flex-shrink:0;"></div>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:600;">${r.playa.nombre}</div>
-            <div style="font-size:12px;color:#8899aa;">${r.altura.toFixed(1)}m · ${Math.round(r.periodo)}s · ${Math.round(r.km)}km</div>
-          </div>
-          <div style="font-size:12px;color:${r.estado.color};font-weight:600;">${r.estado.texto}</div>
-        </div>`).join('');
-    }
-
-    btn.textContent = '🔍 Mejores olas cerca';
-    btn.disabled = false;
-  }, () => {
-    btn.textContent = '🔍 Mejores olas cerca';
-    btn.disabled = false;
-    document.getElementById('resultado-mejores').innerHTML = `<p style="color:#ff6b6b;font-size:13px;text-align:center;padding:12px;">Activa la ubicación para usar esta función.</p>`;
+  resultados.sort((a, b) => {
+    if (a.estado.color === '#44cc44' && b.estado.color !== '#44cc44') return -1;
+    if (b.estado.color === '#44cc44' && a.estado.color !== '#44cc44') return 1;
+    return b.altura - a.altura;
   });
+
+  const top3 = resultados.slice(0, 3);
+  const contenedor = document.getElementById('resultado-mejores');
+
+  if (top3.length === 0) {
+    contenedor.innerHTML = `<p style="color:#8899aa;font-size:13px;text-align:center;padding:12px;">No hay buenas condiciones cerca ahora mismo.</p>`;
+  } else {
+    contenedor.innerHTML = top3.map((r, i) => `
+      <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
+        style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
+        <div style="font-size:18px;font-weight:700;color:#8899aa;width:20px;">${i + 1}</div>
+        <div style="width:10px;height:10px;border-radius:50%;background:${r.estado.color};flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;">${r.playa.nombre}</div>
+          <div style="font-size:12px;color:#8899aa;">${r.altura.toFixed(1)}m · ${Math.round(r.periodo)}s · ${Math.round(r.km)} km</div>
+        </div>
+        <div style="font-size:12px;color:${r.estado.color};font-weight:600;">${r.estado.texto}</div>
+      </div>`).join('');
+  }
+
+  btn.textContent = '🔍 Mejores olas cerca';
+  btn.disabled = false;
 }
 
 function seleccionarPlayaPorNombre(nombre) {
