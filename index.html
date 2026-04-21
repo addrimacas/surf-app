@@ -339,6 +339,7 @@ function seleccionarPlaya(idx) {
   playaActiva = SPOTS['España']['Galicia'][idx];
   document.getElementById('dropdown-playas').style.display = 'none';
   cargarInicio();
+  cargarMejoresOlas();
 }
 
 function toggleFavorita() {
@@ -416,33 +417,44 @@ function calcularMarea(zona, fecha) {
 }
 
 function proximasMareas(zona, ahora) {
-  const resultados = [];
-  let prevH = calcularMarea(zona, ahora);
+  const anterior  = { hora: null, altura: null, tipo: null };
+  const siguiente = { hora: null, altura: null, tipo: null };
+  let prevH = calcularMarea(zona, new Date(ahora.getTime() - 12 * 60 * 60000));
   let prevDir = 0;
-  for (let m = 10; m <= 1440; m += 10) {
+
+  for (let m = -720; m <= 1440; m += 10) {
     const t = new Date(ahora.getTime() + m * 60000);
     const h = calcularMarea(zona, t);
     const dir = h > prevH ? 1 : -1;
     if (prevDir !== 0 && dir !== prevDir) {
-      resultados.push({
-        hora: new Date(ahora.getTime() + (m - 5) * 60000),
+      const marea = {
+        hora:   new Date(ahora.getTime() + (m - 5) * 60000),
         altura: prevH,
-        tipo: prevDir > 0 ? 'H' : 'L'
-      });
-      if (resultados.length >= 2) break;
+        tipo:   prevDir > 0 ? 'H' : 'L'
+      };
+      if (m <= 0 && !anterior.hora) {
+        anterior.hora   = marea.hora;
+        anterior.altura = marea.altura;
+        anterior.tipo   = marea.tipo;
+      } else if (m > 0 && !siguiente.hora) {
+        siguiente.hora   = marea.hora;
+        siguiente.altura = marea.altura;
+        siguiente.tipo   = marea.tipo;
+      }
+      if (anterior.hora && siguiente.hora) break;
     }
     prevH = h; prevDir = dir;
   }
-  return resultados;
+  return [anterior, siguiente];
 }
 
 function htmlMareas(lat, lon, tempAgua) {
   const zona = zonaMareas(lat, lon);
   const ahora = new Date();
   const alturaActual = calcularMarea(zona, ahora);
-  const proximas = proximasMareas(zona, ahora);
-  const anterior  = proximas.find(m => new Date(m.hora) < ahora) || null;
-  const siguiente = proximas.find(m => new Date(m.hora) > ahora) || null;
+  const proximas  = proximasMareas(zona, ahora);
+  const anterior  = proximas[0]?.hora ? proximas[0] : null;
+  const siguiente = proximas[1]?.hora ? proximas[1] : null;
   const subiendo  = siguiente?.tipo === 'H';
   const labelSig = siguiente?.tipo === 'H' ? '▲ Pleamar' : '▼ Bajamar';
   const horaSig  = siguiente?.hora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) ?? '--';
@@ -604,7 +616,7 @@ async function cargarInicio() {
         <div class="dato-card" style="text-align:center;">
           <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
           <div style="text-align:center;padding:8px 0;">
-            <div style="display:flex;justify-content:center;margin-bottom:8px;">${iconoCielo(codigoCielo, 44)}</div>
+            <div style="display:flex;justify-content:center;margin-bottom:8px;">${iconoCielo(codigoCielo, 56)}</div>
             <div style="font-size:15px;font-weight:600;">${cieloActual.texto}</div>
             <div style="font-size:12px;color:#8899aa;margin-top:4px;">↑ ${fmt(tempMax, 0)}° · ↓ ${fmt(tempMin, 0)}°</div>
           </div>
@@ -792,7 +804,7 @@ async function cargarMejoresOlas() {
 function seleccionarPlayaPorNombre(nombre) {
   const playas = SPOTS['España']['Galicia'];
   const idx = playas.findIndex(p => p.nombre === nombre);
-  if (idx >= 0) { playaActiva = playas[idx]; cargarInicio(); }
+  if (idx >= 0) { playaActiva = playas[idx]; cargarInicio(); cargarMejoresOlas(); }
 }
 
 // MAPA

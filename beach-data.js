@@ -69,6 +69,7 @@ async function inicializarExposicion() {
             playa.profundidad = d.profundidad;
             playa.fetch       = d.fetch;
             playa.exposicion  = d.exposicion;
+            console.log(`[exposición] ${playa.nombre}: exp=${d.exposicion?.toFixed(3)} prof=${d.profundidad?.toFixed(1)}m fetch=${d.fetch}km`);
           }
         }
       }
@@ -88,6 +89,7 @@ async function inicializarExposicion() {
           playa.fetch       = fetchKm;
           playa.exposicion  = exposicion;
           resultado[playa.nombre] = { profundidad, fetch: fetchKm, exposicion };
+          console.log(`[exposición] ${playa.nombre}: exp=${exposicion.toFixed(3)} prof=${profundidad.toFixed(1)}m fetch=${fetchKm}km`);
         } catch (e) {
           playa.exposicion = 0.5;
         }
