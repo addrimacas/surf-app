@@ -278,41 +278,65 @@ function cielo(codigo) {
   return                  { icono:'⛈️', texto:'Tormenta' };
 }
 
-// SELECTOR DE PLAYA
-function renderSelector() {
-  const playas = SPOTS['España']['Galicia'];
+// CABECERA — selector + semáforo fusionados
+function renderCabecera(playa, estado) {
   const favId = localStorage.getItem('salitre_favorita');
+  const esFav = favId === playa.nombre;
+  const playas = SPOTS['España']['Galicia'];
   return `
-    <div style="max-width:420px;margin:0 auto 16px;position:relative;">
-      <div style="display:flex;align-items:center;gap:8px;background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px 16px;">
-        <div style="flex:1;">
-          <div style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">España · Galicia</div>
-          <select id="selector-playa" onchange="cambiarPlaya(this.value)"
-            style="background:transparent;border:none;color:#ffffff;font-size:16px;font-weight:600;width:100%;outline:none;cursor:pointer;appearance:none;">
-            ${playas.map((p, i) => `<option value="${i}" ${p.nombre === playaActiva.nombre ? 'selected' : ''} style="background:#0a1628;color:#fff;">${p.nombre}</option>`).join('')}
-          </select>
+    <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:16px 18px;max-width:420px;margin:16px auto 16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="position:relative;">
+          <button onclick="toggleSelector()" id="btn-selector"
+            style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11px;color:#8899aa;font-weight:400;">España · Galicia</span>
+            &nbsp;${playa.nombre}
+          </button>
+          <div id="dropdown-playas" style="display:none;position:absolute;top:38px;left:0;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:100;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+            ${playas.map((p, i) => `
+              <div onclick="seleccionarPlaya(${i})"
+                style="padding:10px 16px;font-size:14px;color:${p.nombre === playa.nombre ? '#4db8ff' : '#ccddee'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+                ${p.nombre}
+              </div>`).join('')}
+          </div>
         </div>
         <button onclick="toggleFavorita()" id="btn-estrella"
-          style="background:none;border:none;font-size:22px;cursor:pointer;padding:4px;line-height:1;">
-          ${favId === playaActiva.nombre ? '★' : '☆'}
+          style="background:none;border:none;font-size:22px;cursor:pointer;color:${esFav ? '#ffcc00' : '#445566'};">
+          ${esFav ? '★' : '☆'}
         </button>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div id="semaforo-circulo" style="width:44px;height:44px;border-radius:50%;background:${estado.color};box-shadow:0 0 18px ${estado.color}99;flex-shrink:0;"></div>
+        <div>
+          <div style="font-size:20px;font-weight:700;">${estado.texto}</div>
+          <div style="font-size:13px;color:#8899aa;margin-top:2px;" id="resumen-texto"></div>
+        </div>
       </div>
     </div>`;
 }
 
-function cambiarPlaya(idx) {
+function toggleSelector() {
+  const dd = document.getElementById('dropdown-playas');
+  dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+
+function seleccionarPlaya(idx) {
   playaActiva = SPOTS['España']['Galicia'][idx];
+  document.getElementById('dropdown-playas').style.display = 'none';
   cargarInicio();
 }
 
 function toggleFavorita() {
   const favActual = localStorage.getItem('salitre_favorita');
+  const btn = document.getElementById('btn-estrella');
   if (favActual === playaActiva.nombre) {
     localStorage.removeItem('salitre_favorita');
-    document.getElementById('btn-estrella').textContent = '☆';
+    btn.textContent = '☆';
+    btn.style.color = '#445566';
   } else {
     localStorage.setItem('salitre_favorita', playaActiva.nombre);
-    document.getElementById('btn-estrella').textContent = '★';
+    btn.textContent = '★';
+    btn.style.color = '#ffcc00';
   }
 }
 
@@ -489,14 +513,7 @@ async function cargarInicio() {
     const prevHtml = marine.hourly ? renderPrevision(marine, ahora) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
-      ${renderSelector()}
-      <div class="semaforo">
-        <div class="semaforo-circulo" style="background:${estado.color};box-shadow:0 0 20px ${estado.color}99;"></div>
-        <div class="semaforo-texto">
-          <h2>${estado.texto}</h2>
-          <p>${playaActiva.nombre} · ahora</p>
-        </div>
-      </div>
+      ${renderCabecera(playaActiva, estado)}
       <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px 16px;max-width:420px;margin:0 auto 16px;">
         <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Condiciones ideales · ${playaActiva.nombre}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;align-items:center;">
@@ -566,6 +583,7 @@ async function cargarInicio() {
       </div>
 
       ${prevHtml}`;
+    document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
   } catch(e) {
     console.error(e);
     document.getElementById('ultima-actualizacion').textContent =
@@ -750,6 +768,12 @@ function init() {
   setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, INTERVALO);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }
+  });
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('dropdown-playas');
+    if (dd && !e.target.closest('#btn-selector') && !e.target.closest('#dropdown-playas')) {
+      dd.style.display = 'none';
+    }
   });
 }
 init();
