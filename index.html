@@ -339,6 +339,7 @@ function seleccionarPlaya(idx) {
   playaActiva = SPOTS['España']['Galicia'][idx];
   document.getElementById('dropdown-playas').style.display = 'none';
   cargarInicio();
+  cargarMejoresOlas();
 }
 
 function toggleFavorita() {
@@ -813,7 +814,11 @@ async function cargarMejoresOlas() {
 function seleccionarPlayaPorNombre(nombre) {
   const playas = SPOTS['España']['Galicia'];
   const idx = playas.findIndex(p => p.nombre === nombre);
-  if (idx >= 0) { playaActiva = playas[idx]; cargarInicio(); }
+  if (idx >= 0) {
+    playaActiva = playas[idx];
+    cargarInicio();
+    cargarMejoresOlas();
+  }
 }
 
 // MAPA
@@ -880,16 +885,15 @@ function irA(pantalla,btn){
   if(pantalla==='mapa'&&!mapaIniciado) iniciarMapa();
 }
 
-async function init() {
-  iniciarPlayaFavorita();
+(async () => {
   await inicializarExposicion();
   console.log('=== BATIMETRÍA ===');
   SPOTS['España']['Galicia'].forEach(p =>
     console.log(p.nombre, '→ exposicion:', p.exposicion ?? 'NO CALCULADA', '| fetch:', p.fetch ?? '-', '| prof:', p.profundidad ?? '-')
   );
+  iniciarPlayaFavorita();
   cargarInicio();
-  const INTERVALO = 10 * 60 * 1000;
-  setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, INTERVALO);
+  setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, 10 * 60 * 1000);
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }
   });
@@ -899,8 +903,7 @@ async function init() {
       dd.style.display = 'none';
     }
   });
-}
-init();
+})();
 </script>
 </body>
 </html>
