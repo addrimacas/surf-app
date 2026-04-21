@@ -364,145 +364,88 @@ function iniciarPlayaFavorita() {
   }
 }
 
-const ZONAS_MAREA = {
-  'costa-norte': {
-    Z0: 2.10,
-    constituents: [
-      { amp:1.847, phase:118.5, speed:28.984104 },
-      { amp:0.652, phase:148.2, speed:30.000000 },
-      { amp:0.371, phase:98.3,  speed:28.439730 },
-      { amp:0.142, phase:15.2,  speed:15.041069 },
-      { amp:0.108, phase:352.1, speed:13.943035 },
-      { amp:0.052, phase:245.0, speed:57.968208 },
-    ]
-  },
-  'costa-central': {
-    Z0: 2.15,
-    constituents: [
-      { amp:1.924, phase:121.3, speed:28.984104 },
-      { amp:0.681, phase:151.7, speed:30.000000 },
-      { amp:0.387, phase:101.2, speed:28.439730 },
-      { amp:0.148, phase:17.4,  speed:15.041069 },
-      { amp:0.112, phase:354.8, speed:13.943035 },
-      { amp:0.058, phase:251.0, speed:57.968208 },
-    ]
-  },
-  'rias-baixas': {
-    Z0: 1.95,
-    constituents: [
-      { amp:1.712, phase:128.6, speed:28.984104 },
-      { amp:0.598, phase:158.3, speed:30.000000 },
-      { amp:0.344, phase:108.4, speed:28.439730 },
-      { amp:0.131, phase:22.1,  speed:15.041069 },
-      { amp:0.098, phase:359.2, speed:13.943035 },
-      { amp:0.048, phase:263.0, speed:57.968208 },
-    ]
-  }
-};
+async function htmlMareas(playa, tempAgua) {
+  const port = playa.portIHM || 'coruna';
+  const hoy = new Date();
+  const fecha = hoy.toISOString().slice(0,10).replace(/-/g,'');
 
-function zonaMareas(lat, lon) {
-  if (lat > 43.5) return ZONAS_MAREA['costa-norte'];
-  if (lon > -8.9) return ZONAS_MAREA['costa-central'];
-  return ZONAS_MAREA['rias-baixas'];
-}
+  try {
+    const res = await fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fecha}`);
+    const data = await res.json();
+    const mareas = data.mareas?.datos?.marea ?? [];
+    const ahora = hoy.getHours() * 60 + hoy.getMinutes();
 
-function calcularMarea(zona, fecha) {
-  const epoch = new Date(Date.UTC(1900, 0, 1)).getTime() / 3600000;
-  const dt = fecha.getTime() / 3600000 - epoch;
-  let h = zona.Z0;
-  for (const c of zona.constituents) {
-    h += c.amp * Math.cos((c.speed * dt - c.phase) * Math.PI / 180);
-  }
-  return Math.max(0, h);
-}
-
-function proximasMareas(zona, ahora) {
-  const anterior  = { hora: null, altura: null, tipo: null };
-  const siguiente = { hora: null, altura: null, tipo: null };
-  let prevH = calcularMarea(zona, new Date(ahora.getTime() - 12 * 60 * 60000));
-  let prevDir = 0;
-
-  for (let m = -720; m <= 1440; m += 10) {
-    const t = new Date(ahora.getTime() + m * 60000);
-    const h = calcularMarea(zona, t);
-    const dir = h > prevH ? 1 : -1;
-    if (prevDir !== 0 && dir !== prevDir) {
-      const marea = {
-        hora:   new Date(ahora.getTime() + (m - 5) * 60000),
-        altura: prevH,
-        tipo:   prevDir > 0 ? 'H' : 'L'
-      };
-      if (m <= 0 && !anterior.hora) {
-        anterior.hora   = marea.hora;
-        anterior.altura = marea.altura;
-        anterior.tipo   = marea.tipo;
-      } else if (m > 0 && !siguiente.hora) {
-        siguiente.hora   = marea.hora;
-        siguiente.altura = marea.altura;
-        siguiente.tipo   = marea.tipo;
-      }
-      if (anterior.hora && siguiente.hora) break;
+    let anterior = null, siguiente = null;
+    for (const m of mareas) {
+      const [h, min] = m.hora.split(':').map(Number);
+      const t = h * 60 + min;
+      if (t <= ahora) anterior = m;
+      else if (!siguiente) siguiente = m;
     }
-    prevH = h; prevDir = dir;
-  }
-  return [anterior, siguiente];
-}
 
-function generarOndaMareal(zona, ahora) {
-  const W = 200, H = 50;
-  const ventanaHoras = 12;
-  const pasos = 48;
-  const inicio = new Date(ahora.getTime() - 6 * 3600000);
-  const alturas = [];
-  for (let i = 0; i <= pasos; i++) {
-    const t = new Date(inicio.getTime() + (i / pasos) * ventanaHoras * 3600000);
-    alturas.push(calcularMarea(zona, t));
-  }
-  const minH = Math.min(...alturas);
-  const maxH = Math.max(...alturas);
-  const rango = maxH - minH || 1;
-  const normalizar = h => H - 6 - ((h - minH) / rango) * (H - 12);
-  const puntos = alturas.map((h, i) => `${(i / pasos * W).toFixed(1)},${normalizar(h).toFixed(1)}`);
-  const path = 'M ' + puntos.join(' L ');
-  const alturaActual = calcularMarea(zona, ahora);
-  const px = W / 2;
-  const py = normalizar(alturaActual);
-  return { path, px, py };
-}
+    const subiendo = siguiente?.tipo === 'pleamar';
+    const alturaActual = anterior && siguiente ? (() => {
+      const [ah, am] = anterior.hora.split(':').map(Number);
+      const [sh, sm] = siguiente.hora.split(':').map(Number);
+      const tAnt = ah * 60 + am;
+      const tSig = sh * 60 + sm;
+      const ratio = (ahora - tAnt) / (tSig - tAnt);
+      return parseFloat(anterior.altura) + ratio * (parseFloat(siguiente.altura) - parseFloat(anterior.altura));
+    })() : parseFloat(anterior?.altura ?? siguiente?.altura ?? 0);
 
-function htmlMareas(lat, lon, tempAgua) {
-  const zona = zonaMareas(lat, lon);
-  const ahora = new Date();
-  const alturaActual = calcularMarea(zona, ahora);
-  const proximas  = proximasMareas(zona, ahora);
-  const anterior  = proximas[0]?.hora ? proximas[0] : null;
-  const siguiente = proximas[1]?.hora ? proximas[1] : null;
-  const subiendo  = siguiente?.tipo === 'H';
-  const horaSig  = siguiente?.hora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) ?? '--';
-  const horaAnt  = anterior?.hora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) ?? '--';
+    const W = 200, H = 50;
+    const toMin = hora => { const [h,m] = hora.split(':').map(Number); return h*60+m; };
+    const alturas = mareas.map(m => parseFloat(m.altura));
+    const minH = Math.min(...alturas) - 0.2;
+    const maxH = Math.max(...alturas) + 0.2;
+    const norm = h => H - 4 - ((h - minH) / (maxH - minH)) * (H - 8);
+    const totalMin = 24 * 60;
+    const puntos = [];
+    for (let x = 0; x <= W; x += 2) {
+      const t = (x / W) * totalMin;
+      let h = alturas[0];
+      for (let i = 0; i < mareas.length - 1; i++) {
+        const t1 = toMin(mareas[i].hora);
+        const t2 = toMin(mareas[i+1].hora);
+        if (t >= t1 && t <= t2) {
+          const r = (t - t1) / (t2 - t1);
+          const smooth = (1 - Math.cos(r * Math.PI)) / 2;
+          h = parseFloat(mareas[i].altura) + smooth * (parseFloat(mareas[i+1].altura) - parseFloat(mareas[i].altura));
+        }
+      }
+      puntos.push(`${x},${norm(h).toFixed(1)}`);
+    }
+    const path = 'M ' + puntos.join(' L ');
+    const px = (ahora / totalMin) * W;
+    const py = norm(alturaActual);
 
-  const { path, px, py } = generarOndaMareal(zona, ahora);
+    const labelAnt = anterior?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
+    const labelSig = siguiente?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
 
-  return `
-    <div class="label">Marea · ${tempAgua?.toFixed(1) ?? '--'}°C agua</div>
-    <div style="text-align:center;font-size:18px;font-weight:700;color:#44ddaa;margin-bottom:4px;">
-      ${alturaActual.toFixed(1)}m ${subiendo ? '↑' : '↓'}
-      <span style="font-size:12px;font-weight:400;color:#8899aa;">${subiendo ? 'subiendo' : 'bajando'}</span>
-    </div>
-    <svg width="100%" height="50" viewBox="0 0 200 50" preserveAspectRatio="none" style="margin:4px 0;">
-      <path d="${path}" fill="none" stroke="#44ddaa" stroke-width="1.5" opacity="0.6"/>
-      <circle cx="${px}" cy="${py.toFixed(1)}" r="4" fill="#44ddaa"/>
-    </svg>
-    <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
-      <div style="color:#8899aa;">
-        <div>${anterior?.tipo === 'H' ? '▲ Pleamar' : '▼ Bajamar'}</div>
-        <div>${horaAnt} · ${anterior?.altura.toFixed(1) ?? '--'}m</div>
+    return `
+      <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
+      <div style="text-align:center;font-size:16px;font-weight:700;color:#44ddaa;margin-bottom:4px;">
+        ${alturaActual.toFixed(1)}m ${subiendo?'↑':'↓'}
+        <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
-      <div style="color:#8899aa;text-align:right;">
-        <div>${siguiente?.tipo === 'H' ? '▲ Pleamar' : '▼ Bajamar'}</div>
-        <div>${horaSig} · ${siguiente?.altura.toFixed(1) ?? '--'}m</div>
-      </div>
-    </div>`;
+      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="margin:4px 0;">
+        <path d="${path}" fill="none" stroke="#44ddaa" stroke-width="1.5" opacity="0.6"/>
+        <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="#44ddaa"/>
+      </svg>
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
+        <div style="color:#8899aa;">
+          <div>${labelAnt}</div>
+          <div>${anterior?.hora??'--'} · ${parseFloat(anterior?.altura??0).toFixed(1)}m</div>
+        </div>
+        <div style="color:#8899aa;text-align:right;">
+          <div>${labelSig}</div>
+          <div>${siguiente?.hora??'--'} · ${parseFloat(siguiente?.altura??0).toFixed(1)}m</div>
+        </div>
+      </div>`;
+  } catch(e) {
+    return `<div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
+      <div style="color:#8899aa;font-size:13px;text-align:center;padding:12px;">Sin datos de marea</div>`;
+  }
 }
 
 function flechaDireccion(grados, color, size = 36) {
@@ -621,7 +564,7 @@ async function cargarInicio() {
           <div class="sub">segundos</div>
         </div>
         <div class="dato-card">
-          ${htmlMareas(lat, lon, tempAgua)}
+          ${await htmlMareas(playaActiva, tempAgua)}
         </div>
         <div class="dato-card" style="text-align:center;">
           <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
