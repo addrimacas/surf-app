@@ -114,6 +114,7 @@
 <!-- Dropdown fuera de cualquier contenedor con backdrop-filter para evitar problemas de z-index -->
 <div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
 
+<script src="beach-data.js"></script>
 <script>
 const SVG_AMANECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><line x1="20" y1="28" x2="20" y2="22" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const SVG_DIA = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="5" stroke="#FFD700" stroke-width="1.5"/><line x1="20" y1="10" x2="20" y2="13" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="27" x2="20" y2="30" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="20" x2="13" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="20" x2="30" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="13" x2="15" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="25" y1="25" x2="27" y2="27" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="13" x2="25" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="27" x2="15" y2="25" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/></svg>`;
@@ -176,31 +177,6 @@ document.addEventListener('visibilitychange', () => {
 resize(); dibujar();
 
 // DATOS
-const SPOTS = {
-  'España': {
-    'Galicia': [
-      { nombre:'Riazor',         lat:43.3683, lon:-8.4089, orient:315, tol:50, swell:'NO-N',   viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9  },
-      { nombre:'Orzán',          lat:43.3721, lon:-8.4201, orient:300, tol:50, swell:'NO-O',   viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9  },
-      { nombre:'Santa Cristina', lat:43.3950, lon:-8.3200, orient:350, tol:40, swell:'N-NE',   viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8  },
-      { nombre:'Bastiagueiro',   lat:43.3980, lon:-8.3050, orient:350, tol:40, swell:'N-NE',   viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8  },
-      { nombre:'Baldaio',        lat:43.3167, lon:-8.6333, orient:280, tol:50, swell:'O-NO',   viento:'SE-S',  hMin:0.8, hMax:3.0, pMin:10 },
-      { nombre:'Razo',           lat:43.2833, lon:-8.6833, orient:275, tol:55, swell:'O-NO',   viento:'SE-S',  hMin:0.8, hMax:3.0, pMin:9  },
-      { nombre:'Rebordelo',      lat:43.2600, lon:-8.7500, orient:270, tol:45, swell:'O',      viento:'SE',    hMin:1.0, hMax:3.0, pMin:10 },
-      { nombre:'Nemiña',         lat:43.1000, lon:-9.0500, orient:255, tol:50, swell:'OSO-O',  viento:'NE-SE', hMin:0.8, hMax:2.5, pMin:9  },
-      { nombre:'Carnota',        lat:42.8833, lon:-9.1000, orient:245, tol:45, swell:'SO-OSO', viento:'NE',    hMin:1.0, hMax:3.5, pMin:11 },
-      { nombre:'Lariño',         lat:42.8667, lon:-9.1167, orient:250, tol:45, swell:'SO-O',   viento:'NE',    hMin:1.0, hMax:3.0, pMin:10 },
-      { nombre:'Louro',          lat:42.7667, lon:-8.9833, orient:240, tol:40, swell:'SO',     viento:'NE',    hMin:1.2, hMax:3.5, pMin:11 },
-      { nombre:'Área (Viveiro)', lat:43.6667, lon:-7.6000, orient:340, tol:45, swell:'N-NO',   viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8  },
-      { nombre:'Llas',           lat:43.7000, lon:-7.5500, orient:345, tol:40, swell:'N-NO',   viento:'SO',    hMin:0.6, hMax:2.0, pMin:8  },
-      { nombre:'Esteiro',        lat:43.6500, lon:-7.6500, orient:335, tol:45, swell:'N-NO',   viento:'SO-SE', hMin:0.6, hMax:2.0, pMin:8  },
-      { nombre:'Pantín',         lat:43.7167, lon:-7.7000, orient:350, tol:40, swell:'N-NNO',  viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:10 },
-      { nombre:'Frouxeira',      lat:43.6833, lon:-7.8833, orient:340, tol:45, swell:'N-NO',   viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:9  },
-      { nombre:'Langosteira',    lat:43.1833, lon:-8.9000, orient:260, tol:50, swell:'O-OSO',  viento:'NE-SE', hMin:0.8, hMax:2.5, pMin:9  },
-      { nombre:'Rostro',         lat:43.0500, lon:-9.1833, orient:250, tol:40, swell:'OSO-SO', viento:'NE',    hMin:1.0, hMax:3.0, pMin:10 },
-    ]
-  }
-};
-
 let playaActiva = SPOTS['España']['Galicia'][0];
 
 // Lista plana para los marcadores del mapa
@@ -216,23 +192,23 @@ function angleDiff(a, b) {
 
 function clasificar(h, direccion, playa) {
   if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee' };
+  const exp         = playa?.exposicion ?? 0.5;
+  const hMinEfectiva = (playa?.hMin ?? 0.8) / (0.5 + exp * 0.5);
+  const hMaxEfectiva = (playa?.hMax ?? 2.5) * (0.5 + exp * 0.5);
+  let penalizacionDir = 0;
   if (playa && direccion != null && !Number.isNaN(direccion)) {
     const diff = angleDiff(direccion, playa.orient);
-    if (diff > playa.tol) {
-      // fuera de tolerancia: si está cerca del límite → naranja, si lejos → rojo
-      return diff - playa.tol < 15
-        ? { color:'#FF6B00', texto:'Dirección límite', bg:'#fff4ee' }
-        : { color:'#ff4444', texto:'Dirección mala',   bg:'#fff0f0' };
-    }
-    // dentro de tolerancia pero en el último 25% del rango → naranja
-    if (diff > playa.tol * 0.75)
-      return { color:'#FF6B00', texto:'Dirección límite', bg:'#fff4ee' };
+    if (diff > playa.tol + 20) return { color:'#ff4444', texto:'Swell desfavorable', bg:'#fff0f0' };
+    if (diff > playa.tol)      penalizacionDir = 1;
+    else if (diff > playa.tol * 0.8) penalizacionDir = 1;
   }
-  if (h < 0.5) return { color:'#ff4444', texto:'Sin olas',        bg:'#fff0f0' };
-  if (h < 0.8) return { color:'#FF6B00', texto:'Flojo',           bg:'#fff4ee' };
-  if (h < 1.5) return { color:'#44cc44', texto:'¡Buenas olas!',   bg:'#f0fff0' };
-  if (h < 2.5) return { color:'#44cc44', texto:'¡Muy bueno!',     bg:'#f0fff0' };
-  return             { color:'#ff4444', texto:'Demasiado grande', bg:'#fff0f0' };
+  if (h < 0.3)           return { color:'#ff4444', texto:'Sin olas',         bg:'#fff0f0' };
+  if (h < hMinEfectiva)  return { color:'#FF6B00', texto:'Flojo',            bg:'#fff4ee' };
+  if (h <= hMaxEfectiva) {
+    if (penalizacionDir) return { color:'#FF6B00', texto:'Condiciones límite', bg:'#fff4ee' };
+    return                      { color:'#44cc44', texto:'¡Buenas olas!',     bg:'#f0fff0' };
+  }
+  return                        { color:'#ff4444', texto:'Demasiado grande',  bg:'#fff0f0' };
 }
 
 function dirTxt(g) {
@@ -869,8 +845,9 @@ function irA(pantalla,btn){
   if(pantalla==='mapa'&&!mapaIniciado) iniciarMapa();
 }
 
-function init() {
+async function init() {
   iniciarPlayaFavorita();
+  await inicializarExposicion();
   cargarInicio();
   const INTERVALO = 10 * 60 * 1000;
   setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, INTERVALO);
