@@ -339,7 +339,6 @@ function seleccionarPlaya(idx) {
   playaActiva = SPOTS['España']['Galicia'][idx];
   document.getElementById('dropdown-playas').style.display = 'none';
   cargarInicio();
-  cargarMejoresOlas();
 }
 
 function toggleFavorita() {
@@ -814,7 +813,7 @@ async function cargarMejoresOlas() {
 function seleccionarPlayaPorNombre(nombre) {
   const playas = SPOTS['España']['Galicia'];
   const idx = playas.findIndex(p => p.nombre === nombre);
-  if (idx >= 0) { playaActiva = playas[idx]; cargarInicio(); cargarMejoresOlas(); }
+  if (idx >= 0) { playaActiva = playas[idx]; cargarInicio(); }
 }
 
 // MAPA
@@ -884,6 +883,10 @@ function irA(pantalla,btn){
 async function init() {
   iniciarPlayaFavorita();
   await inicializarExposicion();
+  console.log('=== BATIMETRÍA ===');
+  SPOTS['España']['Galicia'].forEach(p =>
+    console.log(p.nombre, '→ exposicion:', p.exposicion ?? 'NO CALCULADA', '| fetch:', p.fetch ?? '-', '| prof:', p.profundidad ?? '-')
+  );
   cargarInicio();
   const INTERVALO = 10 * 60 * 1000;
   setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, INTERVALO);
