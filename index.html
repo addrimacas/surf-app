@@ -448,6 +448,28 @@ function proximasMareas(zona, ahora) {
   return [anterior, siguiente];
 }
 
+function generarOndaMareal(zona, ahora) {
+  const W = 200, H = 50;
+  const ventanaHoras = 12;
+  const pasos = 48;
+  const inicio = new Date(ahora.getTime() - 6 * 3600000);
+  const alturas = [];
+  for (let i = 0; i <= pasos; i++) {
+    const t = new Date(inicio.getTime() + (i / pasos) * ventanaHoras * 3600000);
+    alturas.push(calcularMarea(zona, t));
+  }
+  const minH = Math.min(...alturas);
+  const maxH = Math.max(...alturas);
+  const rango = maxH - minH || 1;
+  const normalizar = h => H - 6 - ((h - minH) / rango) * (H - 12);
+  const puntos = alturas.map((h, i) => `${(i / pasos * W).toFixed(1)},${normalizar(h).toFixed(1)}`);
+  const path = 'M ' + puntos.join(' L ');
+  const alturaActual = calcularMarea(zona, ahora);
+  const px = W / 2;
+  const py = normalizar(alturaActual);
+  return { path, px, py };
+}
+
 function htmlMareas(lat, lon, tempAgua) {
   const zona = zonaMareas(lat, lon);
   const ahora = new Date();
@@ -456,22 +478,10 @@ function htmlMareas(lat, lon, tempAgua) {
   const anterior  = proximas[0]?.hora ? proximas[0] : null;
   const siguiente = proximas[1]?.hora ? proximas[1] : null;
   const subiendo  = siguiente?.tipo === 'H';
-  const labelSig = siguiente?.tipo === 'H' ? '▲ Pleamar' : '▼ Bajamar';
   const horaSig  = siguiente?.hora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) ?? '--';
-  const labelAnt = anterior?.tipo  === 'H' ? '▲ Pleamar' : '▼ Bajamar';
   const horaAnt  = anterior?.hora.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}) ?? '--';
 
-  const W = 200, H = 50;
-  const ciclo = 6.2;
-  const puntos = [];
-  for (let x = 0; x <= W; x += 2) {
-    const t = (x / W) * ciclo * 2;
-    const y = H / 2 - Math.sin(t * Math.PI / ciclo) * (H / 2 - 6);
-    puntos.push(`${x},${y.toFixed(1)}`);
-  }
-  const path = 'M ' + puntos.join(' L ');
-  const px = W / 2;
-  const py = H / 2 - Math.sin(Math.PI) * (H / 2 - 6);
+  const { path, px, py } = generarOndaMareal(zona, ahora);
 
   return `
     <div class="label">Marea · ${tempAgua?.toFixed(1) ?? '--'}°C agua</div>
