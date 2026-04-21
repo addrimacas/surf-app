@@ -190,25 +190,42 @@ function angleDiff(a, b) {
   return d > 180 ? 360 - d : d;
 }
 
-function clasificar(h, direccion, playa) {
-  if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee' };
-  const exp         = playa?.exposicion ?? 0.5;
-  const hMinEfectiva = (playa?.hMin ?? 0.8) / (0.5 + exp * 0.5);
-  const hMaxEfectiva = (playa?.hMax ?? 2.5) * (0.5 + exp * 0.5);
-  let penalizacionDir = 0;
+function calcularPuntuacion(h, direccion, periodo, playa) {
+  if (h == null || Number.isNaN(h)) return 1;
+  let score = 0;
+  const exp  = playa?.exposicion ?? 0.5;
+  const hMin = (playa?.hMin ?? 0.8) / (0.5 + exp * 0.5);
+  const hMax = (playa?.hMax ?? 2.5) * (0.5 + exp * 0.5);
+  const pMin = playa?.pMin ?? 9;
+
+  // Dirección (0-4 puntos)
   if (playa && direccion != null && !Number.isNaN(direccion)) {
     const diff = angleDiff(direccion, playa.orient);
-    if (diff > playa.tol + 20) return { color:'#ff4444', texto:'Swell desfavorable', bg:'#fff0f0' };
-    if (diff > playa.tol)      penalizacionDir = 1;
-    else if (diff > playa.tol * 0.8) penalizacionDir = 1;
-  }
-  if (h < 0.3)           return { color:'#ff4444', texto:'Sin olas',         bg:'#fff0f0' };
-  if (h < hMinEfectiva)  return { color:'#FF6B00', texto:'Flojo',            bg:'#fff4ee' };
-  if (h <= hMaxEfectiva) {
-    if (penalizacionDir) return { color:'#FF6B00', texto:'Condiciones límite', bg:'#fff4ee' };
-    return                      { color:'#44cc44', texto:'¡Buenas olas!',     bg:'#f0fff0' };
-  }
-  return                        { color:'#ff4444', texto:'Demasiado grande',  bg:'#fff0f0' };
+    if (diff <= playa.tol * 0.6)  score += 4;
+    else if (diff <= playa.tol)   score += 2;
+    else if (diff <= playa.tol + 20) score += 1;
+    else return 1;
+  } else score += 2;
+
+  // Altura (0-4 puntos)
+  if (h >= hMin && h <= hMax)              score += 4;
+  else if (h >= hMin * 0.7 && h < hMin)   score += 2;
+  else if (h > hMax && h <= hMax * 1.3)   score += 2;
+
+  // Período (0-2 puntos)
+  if (periodo >= pMin + 3)     score += 2;
+  else if (periodo >= pMin)    score += 1;
+
+  return Math.max(1, Math.min(10, score));
+}
+
+function clasificar(h, direccion, playa, periodo) {
+  if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score: 0 };
+  const score = calcularPuntuacion(h, direccion, periodo ?? 8, playa);
+  if (score <= 3) return { color:'#ff4444', texto: score <= 1 ? 'Sin olas' : 'Malo',    bg:'#fff0f0', score };
+  if (score <= 6) return { color:'#FF6B00', texto: score <= 4 ? 'Flojo'    : 'Aceptable', bg:'#fff4ee', score };
+  if (score <= 8) return { color:'#44cc44', texto:'¡Buenas olas!', bg:'#f0fff0', score };
+  return                 { color:'#44cc44', texto:'¡Perfecto!',    bg:'#f0fff0', score };
 }
 
 function dirTxt(g) {
@@ -294,7 +311,9 @@ function renderCabecera(playa, estado) {
         </button>
       </div>
       <div style="display:flex;align-items:center;gap:14px;">
-        <div id="semaforo-circulo" style="width:44px;height:44px;border-radius:50%;background:${estado.color};box-shadow:0 0 18px ${estado.color}99;flex-shrink:0;"></div>
+        <div style="width:52px;height:52px;border-radius:50%;background:${estado.color};box-shadow:0 0 20px ${estado.color}99;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="font-size:22px;font-weight:800;color:white;">${estado.score}</span>
+        </div>
         <div>
           <div style="font-size:20px;font-weight:700;">${estado.texto}</div>
           <div style="font-size:13px;color:#8899aa;margin-top:2px;" id="resumen-texto"></div>
@@ -444,14 +463,23 @@ function htmlMareas(lat, lon, tempAgua) {
 
   return `
     <div class="label">Marea · ${tempAgua?.toFixed(1) ?? '--'}°C agua</div>
-    <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="margin:8px 0;">
+    <div style="text-align:center;font-size:18px;font-weight:700;color:#44ddaa;margin-bottom:4px;">
+      ${alturaActual.toFixed(1)}m ${subiendo ? '↑' : '↓'}
+      <span style="font-size:12px;font-weight:400;color:#8899aa;">${subiendo ? 'subiendo' : 'bajando'}</span>
+    </div>
+    <svg width="100%" height="50" viewBox="0 0 ${W} 50" preserveAspectRatio="none" style="margin:4px 0;">
       <path d="${path}" fill="none" stroke="#44ddaa" stroke-width="1.5" opacity="0.6"/>
       <circle cx="${px}" cy="${py.toFixed(1)}" r="4" fill="#44ddaa"/>
     </svg>
-    <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:6px;">
-      <div style="color:#8899aa;">${labelAnt}<br>${horaAnt} · ${anterior?.altura.toFixed(1) ?? '--'}m</div>
-      <div style="color:#44ddaa;font-weight:600;text-align:center;">${alturaActual.toFixed(1)}m<br>${subiendo ? '↑ subiendo' : '↓ bajando'}</div>
-      <div style="color:#8899aa;text-align:right;">${labelSig}<br>${horaSig} · ${siguiente?.altura.toFixed(1) ?? '--'}m</div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
+      <div style="color:#8899aa;">
+        <div>${anterior?.tipo === 'H' ? '▲ Pleamar' : '▼ Bajamar'}</div>
+        <div>${horaAnt} · ${anterior?.altura.toFixed(1) ?? '--'}m</div>
+      </div>
+      <div style="color:#8899aa;text-align:right;">
+        <div>${siguiente?.tipo === 'H' ? '▲ Pleamar' : '▼ Bajamar'}</div>
+        <div>${horaSig} · ${siguiente?.altura.toFixed(1) ?? '--'}m</div>
+      </div>
     </div>`;
 }
 
@@ -499,7 +527,7 @@ async function cargarInicio() {
     const energia   = (altura != null && periodo != null)
       ? Math.round((1025 * 9.81 * 9.81 * periodo * altura * altura) / (64 * Math.PI * 1000))
       : null;
-    const estado    = clasificar(altura, dirSwell, playaActiva);
+    const estado    = clasificar(altura, dirSwell, playaActiva, periodo);
     const vientoBueno = vientoFavorable(dirViento, playaActiva);
     const cieloActual = cielo(codigoCielo);
 
@@ -574,15 +602,18 @@ async function cargarInicio() {
           ${htmlMareas(lat, lon, tempAgua)}
         </div>
         <div class="dato-card" style="text-align:center;">
-          <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C</div>
-          <div style="display:flex;justify-content:center;margin:6px 0 4px;">${iconoCielo(codigoCielo, 44)}</div>
-          <div class="sub">${cieloActual.texto}</div>
-          <div style="font-size:11px;color:#8899aa;margin-top:4px;">${fmt(tempMin, 0)}° / ${fmt(tempMax, 0)}°</div>
+          <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
+          <div style="text-align:center;padding:8px 0;">
+            <div style="display:flex;justify-content:center;margin-bottom:8px;">${iconoCielo(codigoCielo, 44)}</div>
+            <div style="font-size:15px;font-weight:600;">${cieloActual.texto}</div>
+            <div style="font-size:12px;color:#8899aa;margin-top:4px;">↑ ${fmt(tempMax, 0)}° · ↓ ${fmt(tempMin, 0)}°</div>
+          </div>
         </div>
       </div>
 
       ${prevHtml}`;
     document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
+    cargarMejoresOlas();
     // Actualizar dropdown (vive en el body, fuera del contenido dinámico)
     document.getElementById('dropdown-playas').innerHTML =
       SPOTS['España']['Galicia'].map((p, i) => `
@@ -693,12 +724,9 @@ function renderPrevision(marine, ahora) {
       <div id="prev-3d" class="prev-dias" style="display:none;">${tresItems}</div>
       <div id="prev-10d" class="prev-lista" style="display:none;">${diezItems}</div>
     </div>
-    <div style="max-width:420px;margin:16px auto 0;">
-      <button id="btn-mejores" onclick="mejoresOlasCerca()"
-        style="width:100%;padding:14px;background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:#4db8ff;font-size:14px;font-weight:600;cursor:pointer;">
-        🔍 Mejores olas cerca
-      </button>
-      <div id="resultado-mejores" style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:0 16px;margin-top:8px;"></div>
+    <div style="max-width:420px;margin:16px auto 0;background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;">
+      <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Mejores olas cerca</div>
+      <div id="mejores-olas"></div>
     </div>`;
 }
 
@@ -718,14 +746,13 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.asin(Math.sqrt(a));
 }
 
-async function mejoresOlasCerca() {
-  const btn = document.getElementById('btn-mejores');
-  btn.textContent = 'Buscando...';
-  btn.disabled = true;
-
+async function cargarMejoresOlas() {
+  const contenedor = document.getElementById('mejores-olas');
+  if (!contenedor) return;
+  contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando mejores olas...</div>`;
   const uLat = playaActiva.lat;
   const uLon = playaActiva.lon;
-  const playas = SPOTS['España']['Galicia'];
+  const playas = SPOTS['España']['Galicia'].filter(p => p.nombre !== playaActiva.nombre);
   const resultados = [];
 
   for (const playa of playas) {
@@ -733,41 +760,33 @@ async function mejoresOlasCerca() {
       const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction&timeformat=iso8601`);
       const data = await res.json();
       const c = data.current;
-      const estado = clasificar(c.wave_height, c.wave_direction, playa);
-      const km = haversine(uLat, uLon, playa.lat, playa.lon);
-      if (estado.color !== '#ff4444') {
+      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period);
+      const km = Math.round(haversine(uLat, uLon, playa.lat, playa.lon));
+      if (estado.score >= 4) {
         resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
       }
     } catch(e) {}
   }
 
-  resultados.sort((a, b) => {
-    if (a.estado.color === '#44cc44' && b.estado.color !== '#44cc44') return -1;
-    if (b.estado.color === '#44cc44' && a.estado.color !== '#44cc44') return 1;
-    return b.altura - a.altura;
-  });
-
+  resultados.sort((a, b) => b.estado.score - a.estado.score);
   const top3 = resultados.slice(0, 3);
-  const contenedor = document.getElementById('resultado-mejores');
 
   if (top3.length === 0) {
-    contenedor.innerHTML = `<p style="color:#8899aa;font-size:13px;text-align:center;padding:12px;">No hay buenas condiciones cerca ahora mismo.</p>`;
-  } else {
-    contenedor.innerHTML = top3.map((r, i) => `
-      <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
-        style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="font-size:18px;font-weight:700;color:#8899aa;width:20px;">${i + 1}</div>
-        <div style="width:10px;height:10px;border-radius:50%;background:${r.estado.color};flex-shrink:0;"></div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:600;">${r.playa.nombre}</div>
-          <div style="font-size:12px;color:#8899aa;">${r.altura.toFixed(1)}m · ${Math.round(r.periodo)}s · ${Math.round(r.km)} km</div>
-        </div>
-        <div style="font-size:12px;color:${r.estado.color};font-weight:600;">${r.estado.texto}</div>
-      </div>`).join('');
+    contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:12px;">Sin buenas condiciones cerca ahora mismo.</div>`;
+    return;
   }
-
-  btn.textContent = '🔍 Mejores olas cerca';
-  btn.disabled = false;
+  contenedor.innerHTML = top3.map((r, i) => `
+    <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
+      style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
+      <div style="width:36px;height:36px;border-radius:50%;background:${r.estado.color};box-shadow:0 0 10px ${r.estado.color}88;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-size:14px;font-weight:800;color:white;">${r.estado.score}</span>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:600;">${r.playa.nombre}</div>
+        <div style="font-size:12px;color:#8899aa;">${r.altura.toFixed(1)}m · ${Math.round(r.periodo)}s · ${r.km} km</div>
+      </div>
+      <div style="font-size:11px;color:${r.estado.color};font-weight:600;">${r.estado.texto}</div>
+    </div>`).join('');
 }
 
 function seleccionarPlayaPorNombre(nombre) {
