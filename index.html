@@ -111,6 +111,9 @@
   <button class="nav-item" onclick="irA('mapa',this)"><span class="icono">🗺️</span><span>Mapa</span></button>
 </nav>
 
+<!-- Dropdown fuera de cualquier contenedor con backdrop-filter para evitar problemas de z-index -->
+<div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
+
 <script>
 const SVG_AMANECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><line x1="20" y1="28" x2="20" y2="22" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const SVG_DIA = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="5" stroke="#FFD700" stroke-width="1.5"/><line x1="20" y1="10" x2="20" y2="13" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="27" x2="20" y2="30" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="20" x2="13" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="20" x2="30" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="13" x2="15" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="25" y1="25" x2="27" y2="27" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="13" x2="25" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="27" x2="15" y2="25" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/></svg>`;
@@ -304,20 +307,11 @@ function renderCabecera(playa, estado) {
   return `
     <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:16px 18px;max-width:420px;margin:16px auto 16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-        <div style="position:relative;">
-          <button onclick="toggleSelector()" id="btn-selector"
-            style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
-            <span style="font-size:11px;color:#8899aa;font-weight:400;">España · Galicia</span>
-            &nbsp;${playa.nombre}
-          </button>
-          <div id="dropdown-playas" style="display:none;position:absolute;top:38px;left:0;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:100;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.4);">
-            ${playas.map((p, i) => `
-              <div onclick="seleccionarPlaya(${i})"
-                style="padding:10px 16px;font-size:14px;color:${p.nombre === playa.nombre ? '#4db8ff' : '#ccddee'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
-                ${p.nombre}
-              </div>`).join('')}
-          </div>
-        </div>
+        <button onclick="toggleSelector()" id="btn-selector"
+          style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;color:#8899aa;font-weight:400;">España · Galicia</span>
+          &nbsp;${playa.nombre}
+        </button>
         <button onclick="toggleFavorita()" id="btn-estrella"
           style="background:none;border:none;font-size:22px;cursor:pointer;color:${esFav ? '#ffcc00' : '#445566'};">
           ${esFav ? '★' : '☆'}
@@ -334,8 +328,16 @@ function renderCabecera(playa, estado) {
 }
 
 function toggleSelector() {
-  const dd = document.getElementById('dropdown-playas');
-  dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  const dd  = document.getElementById('dropdown-playas');
+  const btn = document.getElementById('btn-selector');
+  if (dd.style.display === 'none' || dd.style.display === '') {
+    const rect = btn.getBoundingClientRect();
+    dd.style.top  = (rect.bottom + 8) + 'px';
+    dd.style.left = rect.left + 'px';
+    dd.style.display = 'block';
+  } else {
+    dd.style.display = 'none';
+  }
 }
 
 function seleccionarPlaya(idx) {
@@ -605,6 +607,13 @@ async function cargarInicio() {
 
       ${prevHtml}`;
     document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
+    // Actualizar dropdown (vive en el body, fuera del contenido dinámico)
+    document.getElementById('dropdown-playas').innerHTML =
+      SPOTS['España']['Galicia'].map((p, i) => `
+        <div onclick="seleccionarPlaya(${i})"
+          style="padding:10px 16px;font-size:14px;color:${p.nombre === playaActiva.nombre ? '#4db8ff' : '#ccddee'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+          ${p.nombre}
+        </div>`).join('');
   } catch(e) {
     console.error(e);
     document.getElementById('ultima-actualizacion').textContent =
