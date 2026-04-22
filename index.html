@@ -428,18 +428,22 @@ async function htmlMareas(playa, tempAgua) {
     const puntos = [];
     for (let x = 0; x <= W; x += 2) {
       const r = x / W;
-      const s = r < 0.5
-        ? 8 * r * r * r * r
-        : 1 - Math.pow(-2 * r + 2, 4) / 2;
-      const h = hAnt + s * (hSig - hAnt);
+      // Sigmoide: plano en extremos, curva pronunciada en el centro
+      const s = 1 / (1 + Math.exp(-10 * (r - 0.5)));
+      // Normalizar entre 0 y 1
+      const sMin = 1 / (1 + Math.exp(5));
+      const sMax = 1 / (1 + Math.exp(-5));
+      const sNorm = (s - sMin) / (sMax - sMin);
+      const h = hAnt + sNorm * (hSig - hAnt);
       puntos.push(`${x},${norm(h).toFixed(1)}`);
     }
 
     const px = Math.min(ratio * W, W - 4);
-    const s = ratio < 0.5
-      ? 8 * ratio * ratio * ratio * ratio
-      : 1 - Math.pow(-2 * ratio + 2, 4) / 2;
-    const hPunto = hAnt + s * (hSig - hAnt);
+    const sSig = 1 / (1 + Math.exp(-10 * (ratio - 0.5)));
+    const sMin = 1 / (1 + Math.exp(5));
+    const sMax = 1 / (1 + Math.exp(-5));
+    const sNorm = (sSig - sMin) / (sMax - sMin);
+    const hPunto = hAnt + sNorm * (hSig - hAnt);
     const py = norm(hPunto);
     const labelAnt = anterior
       ? (anterior.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar')
