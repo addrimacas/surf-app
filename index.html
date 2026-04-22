@@ -414,32 +414,36 @@ async function htmlMareas(playa, tempAgua) {
       return parseFloat(anterior.altura) + smooth * (parseFloat(siguiente.altura) - parseFloat(anterior.altura));
     })() : parseFloat((anterior ?? siguiente)?.altura ?? 0);
 
-    const W = 200, H = 50;
+    // Curva: solo el tramo anterior→siguiente, con puntos ancla para curva suave
+    const W = 200, H = 70;
+    const toMin = hora => { const [h,m] = hora.split(':').map(Number); return h*60+m; };
+
+    const tAnt = anterior ? toMin(anterior.hora) : 0;
+    const tSig = siguiente ? toMin(siguiente.hora) : 1440;
+    const hAnt = parseFloat(anterior?.altura ?? mareas[0].altura);
+    const hSig = parseFloat(siguiente?.altura ?? mareas[mareas.length-1].altura);
+
+    const minH = Math.min(hAnt, hSig) - 0.3;
+    const maxH = Math.max(hAnt, hSig) + 0.3;
+    const norm = h => H - 4 - ((h - minH) / (maxH - minH)) * (H - 8);
+
+    const puntos = [];
+    for (let x = 0; x <= W; x += 2) {
+      const r = x / W;
+      const smooth = (1 - Math.cos(r * Math.PI)) / 2;
+      const h = hAnt + smooth * (hSig - hAnt);
+      puntos.push(`${x},${norm(h).toFixed(1)}`);
+    }
+
+    const path = 'M ' + puntos.join(' L ');
+    const ratio = Math.min((ahora - tAnt) / (tSig - tAnt), 1);
+    const px = Math.min(ratio * W, W - 4);
+    const smoothRatio = (1 - Math.cos(ratio * Math.PI)) / 2;
+    const hActual = hAnt + smoothRatio * (hSig - hAnt);
+    const py = norm(hActual);
+
     const labelAnt = anterior?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
     const labelSig = siguiente?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
-
-    let path = '', px = W / 2, py = H / 2;
-    if (anterior && siguiente) {
-      const [ah, am] = anterior.hora.split(':').map(Number);
-      const [sh, sm] = siguiente.hora.split(':').map(Number);
-      const tAnt = ah * 60 + am;
-      const tSig = sh * 60 + sm;
-      const hAnt = parseFloat(anterior.altura);
-      const hSig = parseFloat(siguiente.altura);
-      const minH = Math.min(hAnt, hSig) - 0.2;
-      const maxH = Math.max(hAnt, hSig) + 0.2;
-      const norm = v => H - 4 - ((v - minH) / (maxH - minH)) * (H - 8);
-      const puntos = [];
-      for (let x = 0; x <= W; x += 2) {
-        const r = x / W;
-        const smooth = (1 - Math.cos(r * Math.PI)) / 2;
-        puntos.push(`${x},${norm(hAnt + smooth * (hSig - hAnt)).toFixed(1)}`);
-      }
-      path = 'M ' + puntos.join(' L ');
-      const ratio = Math.max(0, Math.min(1, (ahora - tAnt) / (tSig - tAnt)));
-      px = ratio * W;
-      py = norm(alturaActual);
-    }
 
     return `
       <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
