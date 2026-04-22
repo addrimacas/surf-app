@@ -281,14 +281,14 @@ function etiquetaViento(dirViento, velViento, playa) {
   if (velViento == null || Number.isNaN(velViento) || !playa)
     return { label:'—', desc:'', color:'#8899aa' };
   if (velViento < 5)
-    return { label:'GLASSY',    desc:'Sin viento — superficie de espejo',  color:'#44cc44' };
+    return { label:'GLASSY',    desc:'Sin viento',                  color:'#44cc44' };
   const offshoreDir = (playa.orient + 180) % 360;
   const diff = angleDiff(dirViento, offshoreDir);
-  if (diff <  36) return { label:'OFFSHORE',  desc:'Viento de tierra — pared perfecta',  color:'#44cc44' };
-  if (diff <  72) return { label:'CROSS-OFF', desc:'Cruzado, tirando a offshore',         color:'#FF6B00' };
-  if (diff < 108) return { label:'CROSS',     desc:'Viento cruzado — surfeable',          color:'#FF6B00' };
-  if (diff < 144) return { label:'CROSS-ON',  desc:'Cruzado, tirando a onshore',          color:'#ff4444' };
-  return               { label:'ONSHORE',   desc:'Viento del mar — olas feas',           color:'#ff4444' };
+  if (diff <  36) return { label:'OFFSHORE',  desc:'Viento de tierra',              color:'#44cc44' };
+  if (diff <  72) return { label:'CROSS-OFF', desc:'Cruzado, tirando a offshore',   color:'#FF6B00' };
+  if (diff < 108) return { label:'CROSS',     desc:'Viento cruzado',                color:'#FF6B00' };
+  if (diff < 144) return { label:'CROSS-ON',  desc:'Cruzado, tirando a onshore',    color:'#ff4444' };
+  return               { label:'ONSHORE',   desc:'Viento del mar',                color:'#ff4444' };
 }
 
 function cielo(codigo) {
