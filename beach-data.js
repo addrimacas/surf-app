@@ -21,7 +21,7 @@ const SPOTS = {
         { nombre:'Lanzada',      lat:42.4401, lon:-8.8723, orient:275, tol:55, swell:'O',     viento:'NE-E',  hMin:0.8, hMax:3.0, pMin:9,  portIHM:'vilagarcia', exposicion:0.75 },
       ],
 
-      'Costa da Morte': [
+      'Costa de Barbanza': [
         { nombre:'Vilar',        lat:42.5530, lon:-9.0300, orient:238, tol:40, swell:'SO-O',  viento:'NE',    hMin:0.8, hMax:2.0, pMin:9,  portIHM:'portosin',   exposicion:0.40 },
         { nombre:'Ladeira',      lat:42.5780, lon:-9.0589, orient:260, tol:45, swell:'O',     viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.60 },
         { nombre:'Balieiros',    lat:42.5805, lon:-9.0783, orient:262, tol:45, swell:'O',     viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.62 },
@@ -32,6 +32,9 @@ const SPOTS = {
         { nombre:'Baroña',       lat:42.6912, lon:-9.0278, orient:260, tol:40, swell:'O',     viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.65 },
         { nombre:'Fonforrón',    lat:42.7178, lon:-9.0081, orient:272, tol:45, swell:'O',     viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.70 },
         { nombre:'Aguieira',     lat:42.7402, lon:-8.9746, orient:275, tol:45, swell:'O',     viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.72 },
+      ],
+
+      'Costa da Morte': [
         { nombre:'Ancoradoiro',  lat:42.7558, lon:-9.1007, orient:255, tol:45, swell:'O-SO',  viento:'NE',    hMin:1.0, hMax:3.0, pMin:10, portIHM:'portosin',   exposicion:0.75 },
         { nombre:'Lariño',       lat:42.7706, lon:-9.1228, orient:250, tol:45, swell:'O-SO',  viento:'NE',    hMin:1.0, hMax:3.0, pMin:10, portIHM:'portosin',   exposicion:0.85 },
         { nombre:'Carnota',      lat:42.8292, lon:-9.1051, orient:245, tol:55, swell:'SO-O',  viento:'NE',    hMin:1.0, hMax:3.5, pMin:11, portIHM:'portosin',   exposicion:0.90 },
@@ -59,7 +62,7 @@ const SPOTS = {
         { nombre:'Bastiagueiro',  lat:43.3408, lon:-8.3635, orient:358, tol:40, swell:'N-NO',  viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8,  portIHM:'sada',       exposicion:0.28 },
       ],
 
-      'Rías Altas': [
+      'Ferrolterra': [
         { nombre:'Doniños',    lat:43.5001, lon:-8.3188, orient:335, tol:45, swell:'N-NO',  viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'ferrol',  exposicion:0.65 },
         { nombre:'San Jorge',  lat:43.5321, lon:-8.2972, orient:338, tol:45, swell:'N-NO',  viento:'SO',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'ferrol',  exposicion:0.68 },
         { nombre:'Santa Comba',lat:43.5562, lon:-8.2908, orient:340, tol:45, swell:'N-NO',  viento:'SO',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'ferrol',  exposicion:0.70 },

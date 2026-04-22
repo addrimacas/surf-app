@@ -192,6 +192,11 @@ function angleDiff(a, b) {
 
 function calcularPuntuacion(h, direccion, periodo, playa) {
   if (h == null || Number.isNaN(h)) return 1;
+
+  // Swell del E/NE/SE (45°–180°) es físicamente imposible en la costa gallega:
+  // hay tierra continental al este. Penalización máxima inmediata.
+  if (direccion != null && !Number.isNaN(direccion) && direccion > 45 && direccion < 180) return 1;
+
   let score = 0;
   const exp  = playa?.exposicion ?? 0.5;
   const hMin = (playa?.hMin ?? 0.8) / (0.5 + exp * 0.5);
