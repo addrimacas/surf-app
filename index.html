@@ -418,10 +418,17 @@ async function htmlMareas(playa, tempAgua) {
     const W = 200, H = 70;
     const toMin = hora => { const [h,m] = hora.split(':').map(Number); return h*60+m; };
 
+    // BUG 1: si siguiente es null (última marea ya pasó), estimar bajamar a las 06:00 del día siguiente
+    const sigEstimado = !siguiente;
     const tAnt = anterior ? toMin(anterior.hora) : 0;
-    const tSig = siguiente ? toMin(siguiente.hora) : 1440;
+    const tSig = siguiente ? toMin(siguiente.hora) : 1440 + 360;
     const hAnt = parseFloat(anterior?.altura ?? mareas[0].altura);
-    const hSig = parseFloat(siguiente?.altura ?? mareas[mareas.length-1].altura);
+    let hSig = siguiente ? parseFloat(siguiente.altura) : Math.max(0.2, hAnt - 2);
+
+    // BUG 3: si los extremos son demasiado cercanos la curva aparece plana — forzar amplitud mínima
+    if (Math.abs(hSig - hAnt) < 1.5) {
+      hSig = subiendo ? hAnt + 1.5 : Math.max(0.2, hAnt - 1.5);
+    }
 
     const minH = Math.min(hAnt, hSig) - 0.3;
     const maxH = Math.max(hAnt, hSig) + 0.3;
@@ -462,7 +469,7 @@ async function htmlMareas(playa, tempAgua) {
         </div>
         <div style="color:#8899aa;text-align:right;">
           <div>${labelSig}</div>
-          <div>${siguiente?.hora??'--'} · ${parseFloat(siguiente?.altura??0).toFixed(1)}m</div>
+          <div>${sigEstimado ? '~06:00 estimada' : `${siguiente.hora} · ${parseFloat(siguiente.altura).toFixed(1)}m`}</div>
         </div>
       </div>`;
   } catch(e) {
