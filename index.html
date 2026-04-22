@@ -200,7 +200,7 @@ function calcularPuntuacion(h, direccion, periodo, playa) {
   let score = 0;
   const exp  = playa?.exposicion ?? 0.5;
   const hMin = (playa?.hMin ?? 0.8) / (0.5 + exp * 0.5);
-  const hMax = (playa?.hMax ?? 2.5) * (0.5 + exp * 0.5);
+  const hMax = (playa?.hMax ?? 2.5) * (0.5 + exp);
   const pMin = playa?.pMin ?? 9;
 
   // Dirección (0-4 puntos)
@@ -227,10 +227,10 @@ function calcularPuntuacion(h, direccion, periodo, playa) {
 function clasificar(h, direccion, playa, periodo) {
   if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score: 0 };
   const score = calcularPuntuacion(h, direccion, periodo ?? 8, playa);
-  if (score <= 3) return { color:'#ff4444', texto: score <= 1 ? 'Sin olas' : 'Malo',    bg:'#fff0f0', score };
-  if (score <= 6) return { color:'#FF6B00', texto: score <= 4 ? 'Flojo'    : 'Aceptable', bg:'#fff4ee', score };
+  if (score <= 3) return { color:'#ff4444', texto: score <= 1 ? 'Sin olas' : 'No merece la pena', bg:'#fff0f0', score };
+  if (score <= 6) return { color:'#FF6B00', texto: score <= 4 ? 'Flojo, pero surfeable' : 'Condiciones aceptables', bg:'#fff4ee', score };
   if (score <= 8) return { color:'#44cc44', texto:'¡Buenas olas!', bg:'#f0fff0', score };
-  return                 { color:'#44cc44', texto:'¡Perfecto!',    bg:'#f0fff0', score };
+  return                 { color:'#00cc88', texto:'¡Perfecto, no te lo pierdas!', bg:'#f0fff8', score };
 }
 
 function dirTxt(g) {
