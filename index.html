@@ -277,6 +277,20 @@ function vientoFavorable(dir, playa) {
   return angleDiff(dir, (playa.orient + 180) % 360) < 45;
 }
 
+function etiquetaViento(dirViento, velViento, playa) {
+  if (velViento == null || Number.isNaN(velViento) || !playa)
+    return { label:'—', desc:'', color:'#8899aa' };
+  if (velViento < 5)
+    return { label:'GLASSY',    desc:'Sin viento — superficie de espejo',  color:'#44cc44' };
+  const offshoreDir = (playa.orient + 180) % 360;
+  const diff = angleDiff(dirViento, offshoreDir);
+  if (diff <  36) return { label:'OFFSHORE',  desc:'Viento de tierra — pared perfecta',  color:'#44cc44' };
+  if (diff <  72) return { label:'CROSS-OFF', desc:'Cruzado, tirando a offshore',         color:'#FF6B00' };
+  if (diff < 108) return { label:'CROSS',     desc:'Viento cruzado — surfeable',          color:'#FF6B00' };
+  if (diff < 144) return { label:'CROSS-ON',  desc:'Cruzado, tirando a onshore',          color:'#ff4444' };
+  return               { label:'ONSHORE',   desc:'Viento del mar — olas feas',           color:'#ff4444' };
+}
+
 function cielo(codigo) {
   if (codigo == null || codigo <= 1) return { texto:'Despejado' };
   if (codigo <= 3)  return { texto:'Nublado' };
@@ -512,6 +526,7 @@ async function cargarInicio() {
       : null;
     const estado    = clasificar(altura, dirSwell, playaActiva, periodo);
     const vientoBueno = vientoFavorable(dirViento, playaActiva);
+    const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
     const cieloActual = cielo(codigoCielo);
 
     actualizarFondo(altura);
@@ -553,35 +568,20 @@ async function cargarInicio() {
       <div class="datos-grid">
         <div class="dato-card">
           <div class="label">Swell</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            ${flechaDireccion(dirSwell, '#4db8ff')}
-            <div>
-              <div class="valor" style="color:#4db8ff;">${dirTxt(dirSwell)} ${fmt(altura)}m</div>
-              <div class="sub">${rnd(periodo)}s</div>
-            </div>
+          <div style="display:flex;align-items:center;gap:10px;margin:8px 0;">
+            ${flechaDireccion(dirSwell, '#4db8ff', 44)}
+            <div style="font-size:26px;font-weight:700;color:#4db8ff;line-height:1;">${dirTxt(dirSwell)}&nbsp;${fmt(altura)}m</div>
           </div>
+          <div style="font-size:13px;color:#8899aa;">${rnd(periodo)}s &nbsp;·&nbsp; ${energia ?? '--'} kW/m</div>
         </div>
         <div class="dato-card">
           <div class="label">Viento</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            ${flechaDireccion(dirViento, vientoBueno ? '#44cc44' : '#ff4444')}
-            <div>
-              <div class="valor" style="color:${vientoBueno?'#44cc44':'#ff4444'};">${dirTxt(dirViento)} ${rnd(velViento)} km/h</div>
-              <div class="sub">${vientoBueno ? '✓ Favorable' : '✗ Desfavorable'}</div>
-            </div>
+          <div style="display:flex;align-items:center;gap:10px;margin:6px 0 8px;">
+            ${flechaDireccion(dirViento, etViento.color, 44)}
+            <div style="font-size:18px;font-weight:700;color:${etViento.color};line-height:1;">${dirTxt(dirViento)}&nbsp;${rnd(velViento)}&nbsp;km/h</div>
           </div>
-        </div>
-        <div class="dato-card">
-          <div class="label">Energía de ola</div>
-          <div style="font-size:28px;font-weight:700;color:#4db8ff;line-height:1;">
-            ${energia ?? '--'}<span style="font-size:14px;font-weight:400;color:#8899aa;"> kW/m</span>
-          </div>
-          <div class="sub">${fmt(altura)}m · ${rnd(periodo)}s</div>
-        </div>
-        <div class="dato-card">
-          <div class="label">Período</div>
-          <div class="valor" style="color:#44ddaa;">${rnd(periodo)}</div>
-          <div class="sub">segundos</div>
+          <div style="font-size:19px;font-weight:800;letter-spacing:1px;color:${etViento.color};margin-bottom:3px;">${etViento.label}</div>
+          <div style="font-size:11px;color:#8899aa;">${etViento.desc}</div>
         </div>
         <div class="dato-card">
           ${await htmlMareas(playaActiva, tempAgua)}
