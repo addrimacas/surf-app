@@ -421,10 +421,8 @@ async function htmlMareas(playa, tempAgua) {
     const maxH = Math.max(hAnt, hSig) + 0.8;
     const norm = v => H - 6 - ((v - minH) / (maxH - minH)) * (H - 12);
 
-    const curvaS = r => {
-      if (r < 0.5) return (1 - Math.cos(r * 2 * Math.PI)) / 4;
-      else return 0.5 + (1 - Math.cos((r - 0.5) * 2 * Math.PI)) / 4;
-    };
+    // Curva coseno: S real — plana en extremos, máxima pendiente en el centro
+    const curvaS = r => (1 - Math.cos(r * Math.PI)) / 2;
 
     const puntos = [];
     for (let x = 0; x <= W; x += 2) {
