@@ -375,6 +375,8 @@ async function htmlMareas(playa, tempAgua) {
     const mareas = data.mareas?.datos?.marea ?? [];
     const ahora = hoy.getHours() * 60 + hoy.getMinutes();
 
+    if (mareas.length === 0) throw new Error('sin datos');
+
     let anterior = null, siguiente = null;
     for (const m of mareas) {
       const [h, min] = m.hora.split(':').map(Number);
@@ -390,33 +392,45 @@ async function htmlMareas(playa, tempAgua) {
       const tAnt = ah * 60 + am;
       const tSig = sh * 60 + sm;
       const ratio = (ahora - tAnt) / (tSig - tAnt);
-      return parseFloat(anterior.altura) + ratio * (parseFloat(siguiente.altura) - parseFloat(anterior.altura));
-    })() : parseFloat(anterior?.altura ?? siguiente?.altura ?? 0);
+      const smooth = (1 - Math.cos(ratio * Math.PI)) / 2;
+      return parseFloat(anterior.altura) + smooth * (parseFloat(siguiente.altura) - parseFloat(anterior.altura));
+    })() : parseFloat((anterior ?? siguiente)?.altura ?? 0);
 
     const W = 200, H = 50;
     const toMin = hora => { const [h,m] = hora.split(':').map(Number); return h*60+m; };
     const alturas = mareas.map(m => parseFloat(m.altura));
-    const minH = Math.min(...alturas) - 0.2;
-    const maxH = Math.max(...alturas) + 0.2;
+    const minH = Math.min(...alturas) - 0.3;
+    const maxH = Math.max(...alturas) + 0.3;
     const norm = h => H - 4 - ((h - minH) / (maxH - minH)) * (H - 8);
     const totalMin = 24 * 60;
+
+    // Puntos extendidos: ancla al inicio (0 min) y al final (1440 min) para
+    // evitar picos verticales cuando el tramo actual no tiene siguiente marea
+    const puntosMareas = [
+      { t: 0,         h: parseFloat(mareas[0].altura) },
+      ...mareas.map(m => ({ t: toMin(m.hora), h: parseFloat(m.altura) })),
+      { t: totalMin,  h: parseFloat(mareas[mareas.length - 1].altura) }
+    ];
+
     const puntos = [];
     for (let x = 0; x <= W; x += 2) {
       const t = (x / W) * totalMin;
-      let h = alturas[0];
-      for (let i = 0; i < mareas.length - 1; i++) {
-        const t1 = toMin(mareas[i].hora);
-        const t2 = toMin(mareas[i+1].hora);
+      let h = puntosMareas[0].h;
+      for (let i = 0; i < puntosMareas.length - 1; i++) {
+        const t1 = puntosMareas[i].t;
+        const t2 = puntosMareas[i+1].t;
         if (t >= t1 && t <= t2) {
           const r = (t - t1) / (t2 - t1);
           const smooth = (1 - Math.cos(r * Math.PI)) / 2;
-          h = parseFloat(mareas[i].altura) + smooth * (parseFloat(mareas[i+1].altura) - parseFloat(mareas[i].altura));
+          h = puntosMareas[i].h + smooth * (puntosMareas[i+1].h - puntosMareas[i].h);
+          break;
         }
       }
       puntos.push(`${x},${norm(h).toFixed(1)}`);
     }
+
     const path = 'M ' + puntos.join(' L ');
-    const px = (ahora / totalMin) * W;
+    const px = Math.min((ahora / totalMin) * W, W - 4);
     const py = norm(alturaActual);
 
     const labelAnt = anterior?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
@@ -539,7 +553,7 @@ async function cargarInicio() {
             ${flechaDireccion(dirSwell, '#4db8ff')}
             <div>
               <div class="valor" style="color:#4db8ff;">${dirTxt(dirSwell)} ${fmt(altura)}m</div>
-              <div class="sub">Energía ${rnd(energia)} kJ · ${rnd(periodo)}s</div>
+              <div class="sub">${rnd(periodo)}s</div>
             </div>
           </div>
         </div>
@@ -554,9 +568,11 @@ async function cargarInicio() {
           </div>
         </div>
         <div class="dato-card">
-          <div class="label">Altura</div>
-          <div class="valor" style="color:#4db8ff;">${fmt(altura)}</div>
-          <div class="sub">metros</div>
+          <div class="label">Energía de ola</div>
+          <div style="font-size:28px;font-weight:700;color:#4db8ff;line-height:1;">
+            ${energia ?? '--'}<span style="font-size:14px;font-weight:400;color:#8899aa;"> kW/m</span>
+          </div>
+          <div class="sub">${fmt(altura)}m · ${rnd(periodo)}s</div>
         </div>
         <div class="dato-card">
           <div class="label">Período</div>
@@ -733,7 +749,11 @@ async function cargarMejoresOlas() {
     } catch(e) {}
   }
 
-  resultados.sort((a, b) => b.estado.score - a.estado.score);
+  resultados.sort((a, b) => {
+    const scoreA = b.estado.score - (b.km / 50) * 0.5;
+    const scoreB = a.estado.score - (a.km / 50) * 0.5;
+    return scoreA - scoreB;
+  });
   const top3 = resultados.slice(0, 3);
 
   if (top3.length === 0) {
