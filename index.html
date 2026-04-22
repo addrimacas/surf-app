@@ -404,50 +404,41 @@ async function htmlMareas(playa, tempAgua) {
 
     const tAnt = anterior ? toMin(anterior.hora) : 0;
     const hAnt = parseFloat(anterior?.altura ?? mareas[0].altura);
-    const tSig = siguiente ? toMin(siguiente.hora) : 1440 + 360;
+    const tSig = siguiente ? toMin(siguiente.hora) : tAnt + 360;
     const hSig = siguiente ? parseFloat(siguiente.altura) : Math.max(0.2, hAnt - 2.5);
-    const labelSig = siguiente
-      ? (siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar')
-      : '▼ Bajamar';
-    const horaSig = siguiente ? siguiente.hora : '~06:00';
-    const alturaSigLabel = siguiente ? `${parseFloat(siguiente.altura).toFixed(1)}m` : 'estimada';
-
     const subiendo = hSig > hAnt;
 
-    // Altura actual interpolada con coseno
     const ratio = Math.max(0, Math.min(1, (ahora - tAnt) / (tSig - tAnt)));
-    const smooth = (1 - Math.cos(ratio * Math.PI)) / 2;
-    const alturaActual = hAnt + smooth * (hSig - hAnt);
 
-    // SVG
+    // Coseno: empieza plano, curva en el centro, termina plano
+    // Igual que la imagen de referencia
+    const curva = r => (1 - Math.cos(r * Math.PI)) / 2;
+    const alturaActual = hAnt + curva(ratio) * (hSig - hAnt);
+
     const W = 200, H = 70;
-    const minH = Math.min(hAnt, hSig) - 0.2;
-    const maxH = Math.max(hAnt, hSig) + 0.2;
-    const norm = v => H - 4 - ((v - minH) / (maxH - minH)) * (H - 8);
+    // Padding vertical generoso para que la S se vea bien
+    const minH = Math.min(hAnt, hSig) - 0.8;
+    const maxH = Math.max(hAnt, hSig) + 0.8;
+    const norm = v => H - 6 - ((v - minH) / (maxH - minH)) * (H - 12);
 
     const puntos = [];
     for (let x = 0; x <= W; x += 2) {
       const r = x / W;
-      // Sigmoide: plano en extremos, curva pronunciada en el centro
-      const s = 1 / (1 + Math.exp(-10 * (r - 0.5)));
-      // Normalizar entre 0 y 1
-      const sMin = 1 / (1 + Math.exp(5));
-      const sMax = 1 / (1 + Math.exp(-5));
-      const sNorm = (s - sMin) / (sMax - sMin);
-      const h = hAnt + sNorm * (hSig - hAnt);
+      const h = hAnt + curva(r) * (hSig - hAnt);
       puntos.push(`${x},${norm(h).toFixed(1)}`);
     }
 
-    const px = Math.min(ratio * W, W - 4);
-    const sSig = 1 / (1 + Math.exp(-10 * (ratio - 0.5)));
-    const sMin = 1 / (1 + Math.exp(5));
-    const sMax = 1 / (1 + Math.exp(-5));
-    const sNorm = (sSig - sMin) / (sMax - sMin);
-    const hPunto = hAnt + sNorm * (hSig - hAnt);
-    const py = norm(hPunto);
-    const labelAnt = anterior
-      ? (anterior.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar')
+    const px = ratio * W;
+    const py = norm(alturaActual);
+
+    const labelAnt = anterior?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
+    const labelSig = siguiente
+      ? (siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar')
       : '▼ Bajamar';
+    const horaSig = siguiente ? siguiente.hora : '~06:00';
+    const altSig = siguiente
+      ? `${parseFloat(siguiente.altura).toFixed(1)}m`
+      : 'estimada';
 
     return `
       <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
@@ -466,7 +457,7 @@ async function htmlMareas(playa, tempAgua) {
         </div>
         <div style="color:#8899aa;text-align:right;">
           <div>${labelSig}</div>
-          <div>${horaSig} · ${alturaSigLabel}</div>
+          <div>${horaSig} · ${altSig}</div>
         </div>
       </div>`;
   } catch(e) {
