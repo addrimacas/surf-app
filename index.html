@@ -177,10 +177,10 @@ document.addEventListener('visibilitychange', () => {
 resize(); dibujar();
 
 // DATOS
-let playaActiva = SPOTS['España']['Galicia'][0];
+let playaActiva = todasLasPlayas()[0];
 
 // Lista plana para los marcadores del mapa
-const PLAYAS = Object.values(SPOTS).flatMap(pais => Object.values(pais).flat());
+const PLAYAS = todasLasPlayas();
 
 const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).toFixed(dec);
 const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : String(Math.round(v));
@@ -296,7 +296,6 @@ function iconoCielo(codigo, size = 36) {
 function renderCabecera(playa, estado) {
   const favId = localStorage.getItem('salitre_favorita');
   const esFav = favId === playa.nombre;
-  const playas = SPOTS['España']['Galicia'];
   return `
     <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:16px 18px;max-width:420px;margin:16px auto 16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
@@ -336,7 +335,7 @@ function toggleSelector() {
 }
 
 function seleccionarPlaya(idx) {
-  playaActiva = SPOTS['España']['Galicia'][idx];
+  playaActiva = todasLasPlayas()[idx];
   document.getElementById('dropdown-playas').style.display = 'none';
   cargarInicio();
   cargarMejoresOlas();
@@ -359,7 +358,7 @@ function toggleFavorita() {
 function iniciarPlayaFavorita() {
   const favId = localStorage.getItem('salitre_favorita');
   if (favId) {
-    const fav = SPOTS['España']['Galicia'].find(p => p.nombre === favId);
+    const fav = todasLasPlayas().find(p => p.nombre === favId);
     if (fav) playaActiva = fav;
   }
 }
@@ -597,11 +596,13 @@ async function cargarInicio() {
     cargarMejoresOlas();
     // Actualizar dropdown (vive en el body, fuera del contenido dinámico)
     document.getElementById('dropdown-playas').innerHTML =
-      SPOTS['España']['Galicia'].map((p, i) => `
-        <div onclick="seleccionarPlaya(${i})"
-          style="padding:10px 16px;font-size:14px;color:${p.nombre === playaActiva.nombre ? '#4db8ff' : '#ccddee'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
-          ${p.nombre}
-        </div>`).join('');
+      Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
+        <div style="padding:6px 16px 4px;font-size:10px;color:#4a7a9b;text-transform:uppercase;letter-spacing:0.8px;border-bottom:0.5px solid rgba(255,255,255,0.05);">— ${zona} —</div>
+        ${playas.map(p => `
+          <div onclick="seleccionarPlayaPorNombre('${p.nombre}')"
+            style="padding:10px 16px;font-size:14px;color:${p.nombre === playaActiva.nombre ? '#4db8ff' : '#ccddee'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+            ${p.nombre}
+          </div>`).join('')}`).join('');
   } catch(e) {
     console.error(e);
     document.getElementById('ultima-actualizacion').textContent =
@@ -733,7 +734,7 @@ async function cargarMejoresOlas() {
   contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando mejores olas...</div>`;
   const uLat = playaActiva.lat;
   const uLon = playaActiva.lon;
-  const playas = SPOTS['España']['Galicia'].filter(p => p.nombre !== playaActiva.nombre);
+  const playas = todasLasPlayas().filter(p => p.nombre !== playaActiva.nombre);
   const resultados = [];
 
   for (const playa of playas) {
@@ -775,10 +776,10 @@ async function cargarMejoresOlas() {
 }
 
 function seleccionarPlayaPorNombre(nombre) {
-  const playas = SPOTS['España']['Galicia'];
-  const idx = playas.findIndex(p => p.nombre === nombre);
-  if (idx >= 0) {
-    playaActiva = playas[idx];
+  const playa = todasLasPlayas().find(p => p.nombre === nombre);
+  if (playa) {
+    playaActiva = playa;
+    document.getElementById('dropdown-playas').style.display = 'none';
     cargarInicio();
     cargarMejoresOlas();
   }
@@ -849,10 +850,11 @@ function irA(pantalla,btn){
 }
 
 (async () => {
+  localStorage.removeItem('salitre_exposicion');
   await inicializarExposicion();
-  console.log('=== BATIMETRÍA ===');
-  SPOTS['España']['Galicia'].forEach(p =>
-    console.log(p.nombre, '→ exposicion:', p.exposicion ?? 'NO CALCULADA', '| fetch:', p.fetch ?? '-', '| prof:', p.profundidad ?? '-')
+  console.log('=== EXPOSICIÓN ===');
+  todasLasPlayas().forEach(p =>
+    console.log(p.nombre, '→ exposicion:', p.exposicion ?? 'NO CALCULADA')
   );
   iniciarPlayaFavorita();
   cargarInicio();
