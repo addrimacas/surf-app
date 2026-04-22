@@ -428,7 +428,10 @@ async function htmlMareas(playa, tempAgua) {
     const puntos = [];
     for (let x = 0; x <= W; x += 2) {
       const r = x / W;
-      const s = (1 - Math.cos(r * Math.PI)) / 2;
+      // Curva S cúbica: empieza plana, curva en el medio, termina plana
+      const s = r < 0.5
+        ? 4 * r * r * r
+        : 1 - Math.pow(-2 * r + 2, 3) / 2;
       const h = hAnt + s * (hSig - hAnt);
       puntos.push(`${x},${norm(h).toFixed(1)}`);
     }
