@@ -22,7 +22,7 @@ const SPOTS = {
       ],
 
       'Costa de Barbanza': [
-        { nombre:'Vilar',        lat:42.5530, lon:-9.0300, orient:238, tol:40, swell:'SO-O',  viento:'NE',    hMin:0.8, hMax:2.0, pMin:9,  portIHM:'portosin',   exposicion:0.40 },
+        { nombre:'Vilar',        lat:42.5530, lon:-9.0300, orient:238, tol:40, swell:'SO-O',  viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.40 },
         { nombre:'Ladeira',      lat:42.5780, lon:-9.0589, orient:260, tol:45, swell:'O',     viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.60 },
         { nombre:'Balieiros',    lat:42.5805, lon:-9.0783, orient:262, tol:45, swell:'O',     viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.62 },
         { nombre:'Seráns',       lat:42.6028, lon:-9.0621, orient:258, tol:45, swell:'O-SO',  viento:'NE',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'portosin',   exposicion:0.65 },
