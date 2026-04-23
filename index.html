@@ -19,21 +19,16 @@
     header { text-align:center; padding:40px 0 10px; }
     header h1 { font-size:32px; font-weight:800; letter-spacing:-1px; text-shadow:0 2px 20px rgba(0,0,0,0.4); }
     header p { color:#aabccc; font-size:14px; margin-top:4px; }
-
     .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; }
     .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
     .dato-card .label { font-size:11px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
     .dato-card .valor { font-size:24px; font-weight:700; }
     .dato-card .sub { font-size:12px; color:#8899aa; margin-top:3px; }
-
     .semaforo { display:flex; align-items:center; justify-content:center; gap:12px; margin:24px auto; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px 28px; max-width:420px; }
     .semaforo-circulo { width:52px; height:52px; border-radius:50%; flex-shrink:0; }
     .semaforo-texto h2 { font-size:22px; font-weight:700; }
     .semaforo-texto p { font-size:13px; color:#8899aa; margin-top:2px; }
-
     .resumen { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px 20px; max-width:420px; margin:0 auto 20px; font-size:15px; line-height:1.6; color:#cce0ff; font-style:italic; }
-
-    /* PREVISIÓN */
     .prevision { max-width:420px; margin:0 auto 24px; }
     .prevision-titulo { font-size:12px; color:#8899aa; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px; }
     .prev-tabs { display:flex; gap:8px; margin-bottom:14px; }
@@ -65,10 +60,8 @@
     .prev-fila .pfi-altura { font-size:14px; font-weight:700; color:#4db8ff; flex:1; }
     .prev-fila .pfi-detalle { font-size:11px; color:#6688aa; width:60px; text-align:right; flex-shrink:0; }
     .prev-fila .pfi-estado { font-size:11px; font-weight:600; width:80px; text-align:right; flex-shrink:0; }
-
     footer { text-align:center; font-size:12px; color:rgba(255,255,255,0.25); padding:10px 0 20px; }
     .actualizando { text-align:center; font-size:14px; color:#8899aa; padding:60px 20px; }
-
     .mapa-header { padding:24px 0 16px; text-align:center; }
     .mapa-header h1 { font-size:24px; font-weight:700; }
     .mapa-header p { font-size:13px; color:#8899aa; margin-top:4px; }
@@ -87,7 +80,6 @@
 </head>
 <body>
 <canvas id="fondo-canvas"></canvas>
-
 <div id="pantalla-inicio" class="pantalla activa">
   <header>
     <h1>🌊 Salitre</h1>
@@ -96,7 +88,6 @@
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer>Open-Meteo · A Coruña</footer>
 </div>
-
 <div id="pantalla-mapa" class="pantalla">
   <div class="mapa-header"><h1>🗺️ Playas</h1><p>Condiciones en tiempo real</p></div>
   <div class="selector-estilo">
@@ -105,15 +96,11 @@
   </div>
   <div id="mapa"></div>
 </div>
-
 <nav class="nav-bar">
   <button class="nav-item activo" onclick="irA('inicio',this)"><span class="icono">🌊</span><span>Inicio</span></button>
   <button class="nav-item" onclick="irA('mapa',this)"><span class="icono">🗺️</span><span>Mapa</span></button>
 </nav>
-
-<!-- Dropdown fuera de cualquier contenedor con backdrop-filter para evitar problemas de z-index -->
 <div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
-
 <script src="beach-data.js"></script>
 <script>
 const SVG_AMANECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><line x1="20" y1="28" x2="20" y2="22" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/></svg>`;
@@ -126,7 +113,6 @@ function iconoPorHora(h) {
   return SVG_ATARDECER;
 }
 
-// FONDO ANIMADO
 const canvas = document.getElementById('fondo-canvas');
 const ctx = canvas.getContext('2d');
 let fondoConfig = { colorTop:'#0a1628', colorMid:'#0d2137', colorBot:'#061020', velocidad:0.008, amplitud:30 };
@@ -176,12 +162,8 @@ document.addEventListener('visibilitychange', () => {
 });
 resize(); dibujar();
 
-// DATOS
 let playaActiva = todasLasPlayas()[0];
-
-// Lista plana para los marcadores del mapa
 const PLAYAS = todasLasPlayas();
-
 const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).toFixed(dec);
 const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : String(Math.round(v));
 
@@ -190,11 +172,9 @@ function angleDiff(a, b) {
   return d > 180 ? 360 - d : d;
 }
 
-function calcularPuntuacion(h, direccion, periodo, playa) {
+// CAMBIO 2: calcularPuntuacion ahora recibe dirViento como 5º parámetro
+function calcularPuntuacion(h, direccion, periodo, playa, dirViento) {
   if (h == null || Number.isNaN(h)) return 1;
-
-  // Swell del E/NE/SE (45°–180°) es físicamente imposible en la costa gallega:
-  // hay tierra continental al este. Penalización máxima inmediata.
   if (direccion != null && !Number.isNaN(direccion) && direccion > 45 && direccion < 180) return 1;
 
   let score = 0;
@@ -203,34 +183,46 @@ function calcularPuntuacion(h, direccion, periodo, playa) {
   const hMax = (playa?.hMax ?? 2.5) * (0.5 + exp);
   const pMin = playa?.pMin ?? 9;
 
-  // Dirección (0-4 puntos)
+  // Dirección swell (0-4 puntos)
   if (playa && direccion != null && !Number.isNaN(direccion)) {
     const diff = angleDiff(direccion, playa.orient);
-    if (diff <= playa.tol * 0.6)  score += 4;
-    else if (diff <= playa.tol)   score += 2;
+    if (diff <= playa.tol * 0.6)     score += 4;
+    else if (diff <= playa.tol)      score += 2;
     else if (diff <= playa.tol + 20) score += 1;
     else return 1;
   } else score += 2;
 
   // Altura (0-4 puntos)
-  if (h >= hMin && h <= hMax)              score += 4;
-  else if (h >= hMin * 0.7 && h < hMin)   score += 2;
-  else if (h > hMax && h <= hMax * 1.3)   score += 2;
+  if (h >= hMin && h <= hMax)            score += 4;
+  else if (h >= hMin * 0.7 && h < hMin) score += 2;
+  else if (h > hMax && h <= hMax * 1.3) score += 2;
 
   // Período (0-2 puntos)
-  if (periodo >= pMin + 3)     score += 2;
-  else if (periodo >= pMin)    score += 1;
+  if (periodo >= pMin + 3)  score += 2;
+  else if (periodo >= pMin) score += 1;
+
+  // Penalización por viento desfavorable
+  if (playa && dirViento != null && !Number.isNaN(dirViento)) {
+    const offshoreDir = (playa.orient + 180) % 360;
+    const diffViento = angleDiff(dirViento, offshoreDir);
+    if (diffViento >= 144)      score -= 2;   // ONSHORE
+    else if (diffViento >= 108) score -= 1.5; // CROSS-ON
+    else if (diffViento >= 72)  score -= 1;   // CROSS
+    else if (diffViento >= 36)  score -= 0.5; // CROSS-OFF
+    // OFFSHORE / GLASSY: sin penalización
+  }
 
   return Math.max(1, Math.min(10, score));
 }
 
-function clasificar(h, direccion, playa, periodo) {
+// CAMBIO 2: clasificar recibe y pasa dirViento
+function clasificar(h, direccion, playa, periodo, dirViento) {
   if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score: 0 };
-  const score = calcularPuntuacion(h, direccion, periodo ?? 8, playa);
+  const score = calcularPuntuacion(h, direccion, periodo ?? 8, playa, dirViento);
   if (score <= 3) return { color:'#ff4444', texto: score <= 1 ? 'Sin olas' : 'No merece la pena', bg:'#fff0f0', score };
   if (score <= 6) return { color:'#FF6B00', texto: score <= 4 ? 'Flojo, pero surfeable' : 'Condiciones aceptables', bg:'#fff4ee', score };
-  if (score <= 8) return { color:'#44cc44', texto:'¡Buenas olas!', bg:'#f0fff0', score };
-  return                 { color:'#00cc88', texto:'¡Perfecto, no te lo pierdas!', bg:'#f0fff8', score };
+  if (score <= 8) return { color:'#00cc88', texto:'¡Buenas olas!', bg:'#f0fff8', score };
+  return                 { color:'#44ff44', texto:'¡Perfecto, no te lo pierdas!', bg:'#f0fff0', score };
 }
 
 function dirTxt(g) {
@@ -253,7 +245,6 @@ function resumen(h, p, d, playa) {
   return `Mar bravo: ${h.toFixed(1)}m, ${Math.round(p)}s. Solo para expertos.`;
 }
 
-// fmtFecha/fmtDia reciben unix timestamps (segundos)
 function fmtFecha(ts) {
   const d = new Date(ts * 1000);
   const ahora = new Date();
@@ -281,14 +272,14 @@ function etiquetaViento(dirViento, velViento, playa) {
   if (velViento == null || Number.isNaN(velViento) || !playa)
     return { label:'—', desc:'', color:'#8899aa' };
   if (velViento < 5)
-    return { label:'GLASSY',    desc:'Sin viento',                  color:'#44cc44' };
+    return { label:'GLASSY', desc:'Sin viento', color:'#44cc44' };
   const offshoreDir = (playa.orient + 180) % 360;
   const diff = angleDiff(dirViento, offshoreDir);
-  if (diff <  36) return { label:'OFFSHORE',  desc:'Viento de tierra',              color:'#44cc44' };
-  if (diff <  72) return { label:'CROSS-OFF', desc:'Cruzado, tirando a offshore',   color:'#FF6B00' };
-  if (diff < 108) return { label:'CROSS',     desc:'Viento cruzado',                color:'#FF6B00' };
-  if (diff < 144) return { label:'CROSS-ON',  desc:'Cruzado, tirando a onshore',    color:'#ff4444' };
-  return               { label:'ONSHORE',   desc:'Viento del mar',                color:'#ff4444' };
+  if (diff <  36) return { label:'OFFSHORE',  desc:'Viento de tierra',             color:'#44cc44' };
+  if (diff <  72) return { label:'CROSS-OFF', desc:'Cruzado, tirando a offshore',  color:'#FF6B00' };
+  if (diff < 108) return { label:'CROSS',     desc:'Viento cruzado',               color:'#FF6B00' };
+  if (diff < 144) return { label:'CROSS-ON',  desc:'Cruzado, tirando a onshore',   color:'#ff4444' };
+  return               { label:'ONSHORE',   desc:'Viento del mar',               color:'#ff4444' };
 }
 
 function cielo(codigo) {
@@ -311,7 +302,6 @@ function iconoCielo(codigo, size = 36) {
   return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><path d="M8 16 C8 16 6 18 8 20 C10 22 12 20 14 21 C16 22 16 24 18 24 L32 24 C35 24 36 21 34 19 C32 17 29 18 28 16 C27 14 24 12 21 14 C19 10 14 10 12 13 C10 11 7 12 8 16Z" stroke="${c}" stroke-width="1.5" fill="none"/><path d="M18 28 L16 32 M20 28 L22 34 M26 28 L24 32" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><path d="M15 33 L17 37 M23 33 L21 37" stroke="#88aaff" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 }
 
-// CABECERA — selector + semáforo fusionados
 function renderCabecera(playa, estado) {
   const favId = localStorage.getItem('salitre_favorita');
   const esFav = favId === playa.nombre;
@@ -382,6 +372,7 @@ function iniciarPlayaFavorita() {
   }
 }
 
+// CAMBIO 1: htmlMareas con curva S correcta (smootherstep)
 async function htmlMareas(playa, tempAgua) {
   const port = playa.portIHM || 'coruna';
   const hoy = new Date();
@@ -410,18 +401,15 @@ async function htmlMareas(playa, tempAgua) {
 
     const ratio = Math.max(0, Math.min(1, (ahora - tAnt) / (tSig - tAnt)));
 
-    // Coseno: empieza plano, curva en el centro, termina plano
-    // Igual que la imagen de referencia
-    const curva = r => (1 - Math.cos(r * Math.PI)) / 2;
-    const alturaActual = hAnt + curva(ratio) * (hSig - hAnt);
+    // Smootherstep: plana en extremos, pronunciada en centro — forma de S perfecta
+    const curvaS = r => r * r * r * (r * (r * 6 - 15) + 10);
+
+    const alturaActual = hAnt + curvaS(ratio) * (hSig - hAnt);
 
     const W = 200, H = 70;
-    // Padding vertical generoso para que la S se vea bien
     const minH = Math.min(hAnt, hSig) - 0.8;
     const maxH = Math.max(hAnt, hSig) + 0.8;
     const norm = v => H - 6 - ((v - minH) / (maxH - minH)) * (H - 12);
-
-    const curvaS = r => r * r * r * (r * (r * 6 - 15) + 10);
 
     const puntos = [];
     for (let x = 0; x <= W; x += 2) {
@@ -431,16 +419,14 @@ async function htmlMareas(playa, tempAgua) {
     }
 
     const px = ratio * W;
-    const py = norm(hAnt + curvaS(ratio) * (hSig - hAnt));
+    const py = norm(alturaActual);
 
     const labelAnt = anterior?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
     const labelSig = siguiente
       ? (siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar')
       : '▼ Bajamar';
     const horaSig = siguiente ? siguiente.hora : '~06:00';
-    const altSig = siguiente
-      ? `${parseFloat(siguiente.altura).toFixed(1)}m`
-      : 'estimada';
+    const altSig  = siguiente ? `${parseFloat(siguiente.altura).toFixed(1)}m` : 'estimada';
 
     return `
       <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
@@ -485,7 +471,6 @@ function flechaDireccion(grados, color, size = 36) {
   </svg>`;
 }
 
-// CARGA PRINCIPAL
 async function cargarInicio() {
   try {
     const lat = playaActiva.lat, lon = playaActiva.lon;
@@ -495,25 +480,26 @@ async function cargarInicio() {
     ]);
 
     const marine = await resMarine.json();
-    const atmo = await resAtmo.json();
+    const atmo   = await resAtmo.json();
     const c = marine.current;
     const a = atmo.current;
 
-    const altura    = c.wave_height;
-    const periodo   = c.wave_period;
-    const dirSwell  = c.wave_direction;
-    const tempAgua  = c.sea_surface_temperature;
-    const tempAire  = a.temperature_2m;
-    const velViento = a.wind_speed_10m;
-    const dirViento = a.wind_direction_10m;
+    const altura      = c.wave_height;
+    const periodo     = c.wave_period;
+    const dirSwell    = c.wave_direction;
+    const tempAgua    = c.sea_surface_temperature;
+    const tempAire    = a.temperature_2m;
+    const velViento   = a.wind_speed_10m;
+    const dirViento   = a.wind_direction_10m;
     const codigoCielo = a.weather_code;
-    const tempMax   = atmo.daily?.temperature_2m_max?.[0];
-    const tempMin   = atmo.daily?.temperature_2m_min?.[0];
-    const energia   = (altura != null && periodo != null)
+    const tempMax     = atmo.daily?.temperature_2m_max?.[0];
+    const tempMin     = atmo.daily?.temperature_2m_min?.[0];
+    const energia     = (altura != null && periodo != null)
       ? Math.round((1025 * 9.81 * 9.81 * periodo * altura * altura) / (64 * Math.PI * 1000))
       : null;
-    const estado    = clasificar(altura, dirSwell, playaActiva, periodo);
-    const vientoBueno = vientoFavorable(dirViento, playaActiva);
+
+    // CAMBIO 2: clasificar recibe dirViento
+    const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento);
     const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
     const cieloActual = cielo(codigoCielo);
 
@@ -522,7 +508,7 @@ async function cargarInicio() {
     document.getElementById('ultima-actualizacion').textContent =
       `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
 
-    const prevHtml = marine.hourly ? renderPrevision(marine, ahora) : '';
+    const prevHtml = marine.hourly ? renderPrevision(marine, ahora, dirViento) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
       ${renderCabecera(playaActiva, estado)}
@@ -552,7 +538,6 @@ async function cargarInicio() {
           </div>
         </div>
       </div>
-
       <div class="datos-grid">
         <div class="dato-card">
           <div class="label">Swell</div>
@@ -583,11 +568,9 @@ async function cargarInicio() {
           </div>
         </div>
       </div>
-
       ${prevHtml}`;
     document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
     cargarMejoresOlas();
-    // Actualizar dropdown (vive en el body, fuera del contenido dinámico)
     document.getElementById('dropdown-playas').innerHTML =
       Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
         <div style="padding:6px 16px 4px;font-size:10px;color:#4a7a9b;text-transform:uppercase;letter-spacing:0.8px;border-bottom:0.5px solid rgba(255,255,255,0.05);">— ${zona} —</div>
@@ -598,19 +581,19 @@ async function cargarInicio() {
           </div>`).join('')}`).join('');
   } catch(e) {
     console.error(e);
-    document.getElementById('ultima-actualizacion').textContent =
-      'Error de conexión · reintentando en 10 min';
+    document.getElementById('ultima-actualizacion').textContent = 'Error de conexión · reintentando en 10 min';
     document.getElementById('contenido-inicio').innerHTML =
-      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudieron cargar los datos.<br><span style="color:#8899aa;font-size:13px;">Revisá tu conexión.</span></p>`;
+      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudieron cargar los datos.<br><span style="color:#8899aa;font-size:13px;">Revisa tu conexión.</span></p>`;
   }
 }
 
-function renderPrevision(marine, ahora) {
+// CAMBIO 2: renderPrevision recibe dirViento actual para usarlo en clasificar
+function renderPrevision(marine, ahora, dirViento) {
   if (!marine?.hourly?.time) return '';
   const tiempos = marine.hourly.time;
-  const alturas = marine.hourly.wave_height;
+  const alturas  = marine.hourly.wave_height;
   const periodos = marine.hourly.wave_period;
-  const dirs = marine.hourly.wave_direction;
+  const dirs     = marine.hourly.wave_direction;
 
   const hoyItems = [];
   for (let i=0;i<tiempos.length;i++) {
@@ -620,7 +603,8 @@ function renderPrevision(marine, ahora) {
     if(hora<7||hora>22||hora%2!==0) continue;
     if(diffH<-8||diffH>8) continue;
     const esActual=Math.abs(diffH)<1.5;
-    const estado=clasificar(alturas[i],dirs[i],playaActiva);
+    // En previsión no tenemos viento horario, pasamos null
+    const estado=clasificar(alturas[i],dirs[i],playaActiva,periodos[i],null);
     hoyItems.push(`
       <div class="prev-card ${esActual?'actual':''}">
         <div style="margin-bottom:4px;">${iconoPorHora(hora)}</div>
@@ -642,7 +626,7 @@ function renderPrevision(marine, ahora) {
     if(!diasMap[key]) diasMap[key]={label:fmtDia(tiempos[i]),franjas:{}};
     const franja=hora===8?'Mañana':hora===14?'Tarde':'Atardecer';
     const icono=hora===8?SVG_AMANECER:hora===14?SVG_DIA:SVG_ATARDECER;
-    const estado=clasificar(alturas[i],dirs[i],playaActiva);
+    const estado=clasificar(alturas[i],dirs[i],playaActiva,periodos[i],null);
     diasMap[key].franjas[franja]=`
       <div class="prev-franja">
         <div style="margin-bottom:3px;">${icono}</div>
@@ -676,7 +660,7 @@ function renderPrevision(marine, ahora) {
     }
   }
   const diezItems=Object.values(diezMap).map(dia=>{
-    const estado=clasificar(dia.maxH,dia.dir,playaActiva);
+    const estado=clasificar(dia.maxH,dia.dir,playaActiva,dia.periodo,null);
     return `
       <div class="prev-fila">
         <div class="pfi-dia">${dia.label}</div>
@@ -713,48 +697,40 @@ function cambiarPrevTab(tab,btn){
   btn.classList.add('activo');
 }
 
-function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-  return R * 2 * Math.asin(Math.sqrt(a));
+function haversine(lat1,lon1,lat2,lon2){
+  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.asin(Math.sqrt(a));
 }
 
 async function cargarMejoresOlas() {
   const contenedor = document.getElementById('mejores-olas');
   if (!contenedor) return;
   contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando mejores olas...</div>`;
-  const uLat = playaActiva.lat;
-  const uLon = playaActiva.lon;
+  const uLat = playaActiva.lat, uLon = playaActiva.lon;
   const playas = todasLasPlayas().filter(p => p.nombre !== playaActiva.nombre);
   const resultados = [];
-
   for (const playa of playas) {
     try {
       const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction&timeformat=iso8601`);
       const data = await res.json();
       const c = data.current;
-      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period);
+      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period, null);
       const km = Math.round(haversine(uLat, uLon, playa.lat, playa.lon));
-      if (estado.score >= 4) {
-        resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
-      }
+      if (estado.score >= 4) resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
     } catch(e) {}
   }
-
-  resultados.sort((a, b) => {
-    const scoreA = b.estado.score - (b.km / 50) * 0.5;
-    const scoreB = a.estado.score - (a.km / 50) * 0.5;
+  resultados.sort((a,b) => {
+    const scoreA = b.estado.score - (b.km/50)*0.5;
+    const scoreB = a.estado.score - (a.km/50)*0.5;
     return scoreA - scoreB;
   });
-  const top3 = resultados.slice(0, 3);
-
+  const top3 = resultados.slice(0,3);
   if (top3.length === 0) {
     contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:12px;">Sin buenas condiciones cerca ahora mismo.</div>`;
     return;
   }
-  contenedor.innerHTML = top3.map((r, i) => `
+  contenedor.innerHTML = top3.map(r => `
     <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
       style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
       <div style="width:36px;height:36px;border-radius:50%;background:${r.estado.color};box-shadow:0 0 10px ${r.estado.color}88;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -778,25 +754,24 @@ function seleccionarPlayaPorNombre(nombre) {
   }
 }
 
-// MAPA
-let mapa = null, mapaIniciado = false, capaActual = null, capaMarcadores = null;
-const capas = {
-  oscuro:   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',   { attribution:'© CARTO', maxZoom:19 }),
-  satelite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution:'© Esri', maxZoom:19 }),
+let mapa=null,mapaIniciado=false,capaActual=null,capaMarcadores=null;
+const capas={
+  oscuro:   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© CARTO',maxZoom:19}),
+  satelite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri',maxZoom:19}),
 };
-function crearIcono(color) {
-  return L.divIcon({ className:'', html:`<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`, iconSize:[22,22], iconAnchor:[11,11], popupAnchor:[0,-14] });
+function crearIcono(color){
+  return L.divIcon({className:'',html:`<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-14]});
 }
-async function cargarDatosPlaya(playa) {
-  const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction`);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const data = await res.json();
-  return { playa, c: data.current };
+async function cargarDatosPlaya(playa){
+  const res=await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction`);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const data=await res.json();
+  return {playa,c:data.current};
 }
-function renderMarcador(playa, c) {
-  const h = c?.wave_height, p = c?.wave_period, d = c?.wave_direction;
-  const estado = clasificar(h, d, playa);
-  return L.marker([playa.lat, playa.lon], { icon: crearIcono(estado.color) })
+function renderMarcador(playa,c){
+  const h=c?.wave_height,p=c?.wave_period,d=c?.wave_direction;
+  const estado=clasificar(h,d,playa,p,null);
+  return L.marker([playa.lat,playa.lon],{icon:crearIcono(estado.color)})
     .bindPopup(`
       <div class="popup-playa">
         <h3>🏄 ${playa.nombre}</h3>
@@ -807,24 +782,23 @@ function renderMarcador(playa, c) {
           <div class="popup-dato"><div class="pl">Estado</div><div class="pv" style="color:${estado.color};font-size:12px;">${estado.texto}</div></div>
         </div>
         <div class="popup-estado" style="background:${estado.bg};color:${estado.color};">${estado.texto}</div>
-      </div>`, { maxWidth:220 });
+      </div>`,{maxWidth:220});
 }
-async function refrescarMarcadores() {
-  if (!mapa) return;
-  if (capaMarcadores) capaMarcadores.clearLayers();
-  else { capaMarcadores = L.layerGroup(); capaMarcadores.addTo(mapa); }
-  const resultados = await Promise.allSettled(PLAYAS.map(cargarDatosPlaya));
-  resultados.forEach((r, i) => {
-    const playa = PLAYAS[i];
-    const c = r.status === 'fulfilled' ? r.value.c : null;
-    if (r.status === 'rejected') console.warn('Error marcador', playa.nombre, r.reason);
-    renderMarcador(playa, c).addTo(capaMarcadores);
+async function refrescarMarcadores(){
+  if(!mapa) return;
+  if(capaMarcadores) capaMarcadores.clearLayers();
+  else{capaMarcadores=L.layerGroup();capaMarcadores.addTo(mapa);}
+  const resultados=await Promise.allSettled(PLAYAS.map(cargarDatosPlaya));
+  resultados.forEach((r,i)=>{
+    const playa=PLAYAS[i];
+    const c=r.status==='fulfilled'?r.value.c:null;
+    renderMarcador(playa,c).addTo(capaMarcadores);
   });
 }
-async function iniciarMapa() {
-  mapaIniciado = true;
-  mapa = L.map('mapa').setView([43.25, -8.7], 9);
-  capaActual = capas.oscuro;
+async function iniciarMapa(){
+  mapaIniciado=true;
+  mapa=L.map('mapa').setView([43.25,-8.7],9);
+  capaActual=capas.oscuro;
   capaActual.addTo(mapa);
   await refrescarMarcadores();
 }
@@ -832,7 +806,7 @@ function cambiarEstilo(estilo,btn){
   document.querySelectorAll('.btn-estilo').forEach(b=>b.classList.remove('activo'));
   btn.classList.add('activo');
   if(capaActual) mapa.removeLayer(capaActual);
-  capaActual=capas[estilo]; capaActual.addTo(mapa);
+  capaActual=capas[estilo];capaActual.addTo(mapa);
 }
 function irA(pantalla,btn){
   document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
@@ -842,23 +816,19 @@ function irA(pantalla,btn){
   if(pantalla==='mapa'&&!mapaIniciado) iniciarMapa();
 }
 
-(async () => {
+(async()=>{
   localStorage.removeItem('salitre_exposicion');
   await inicializarExposicion();
-  console.log('=== EXPOSICIÓN ===');
-  todasLasPlayas().forEach(p =>
-    console.log(p.nombre, '→ exposicion:', p.exposicion ?? 'NO CALCULADA')
-  );
   iniciarPlayaFavorita();
   cargarInicio();
-  setInterval(() => { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }, 10 * 60 * 1000);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) { cargarInicio(); if (mapaIniciado) refrescarMarcadores(); }
+  setInterval(()=>{cargarInicio();if(mapaIniciado)refrescarMarcadores();},10*60*1000);
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden){cargarInicio();if(mapaIniciado)refrescarMarcadores();}
   });
-  document.addEventListener('click', e => {
-    const dd = document.getElementById('dropdown-playas');
-    if (dd && !e.target.closest('#btn-selector') && !e.target.closest('#dropdown-playas')) {
-      dd.style.display = 'none';
+  document.addEventListener('click',e=>{
+    const dd=document.getElementById('dropdown-playas');
+    if(dd&&!e.target.closest('#btn-selector')&&!e.target.closest('#dropdown-playas')){
+      dd.style.display='none';
     }
   });
 })();
