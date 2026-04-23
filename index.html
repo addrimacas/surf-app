@@ -212,6 +212,12 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento) {
     // OFFSHORE / GLASSY: sin penalización
   }
 
+  console.log('SCORE DEBUG:', {
+    playa: playa?.nombre,
+    score_antes_viento: score + (dirViento != null ? '(antes pen.)' : '(sin dirViento)'),
+    dirViento,
+    score_final: Math.max(1, Math.min(10, score))
+  });
   return Math.max(1, Math.min(10, score));
 }
 
