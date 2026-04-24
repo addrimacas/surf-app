@@ -445,19 +445,16 @@ async function htmlMareas(playa, tempAgua) {
       </div>
       <svg width="100%" height="120" viewBox="0 0 300 120" style="margin:4px 0;overflow:visible;">
         ${(() => {
-          // Bezier fijo segun direccion
-          // Subiendo: P0=(0,100) P1=(105,100) P2=(195,20) P3=(300,20)
-          // Bajando:  P0=(0,20)  P1=(105,20)  P2=(195,100) P3=(300,100)
-          const p0y = subiendo ? 100 : 20;
-          const p1y = subiendo ? 100 : 20;
-          const p2y = subiendo ? 20  : 100;
-          const p3y = subiendo ? 20  : 100;
-          const pathStr = `M 0,${p0y} C 105,${p1y} 195,${p2y} 300,${p3y}`;
-          // Punto: t va de 0.15 a 0.85 segun ratio (tramo central visible)
+          // S con alas planas: plano-transicion-plano
+          // Bajando:  M 0,22  C 120,22  180,98 300,98
+          // Subiendo: M 0,98  C 120,98  180,22 300,22
+          const ya = subiendo ? 98 : 22;
+          const yb = subiendo ? 22 : 98;
+          const pathStr = `M 0,${ya} C 120,${ya} 180,${yb} 300,${yb}`;
           const t  = 0.15 + ratio * 0.70;
           const mt = 1 - t;
-          const bx = mt*mt*mt*0 + 3*mt*mt*t*105 + 3*mt*t*t*195 + t*t*t*300;
-          const by = mt*mt*mt*p0y + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*p3y;
+          const bx = mt*mt*mt*0   + 3*mt*mt*t*120 + 3*mt*t*t*180 + t*t*t*300;
+          const by = mt*mt*mt*ya  + 3*mt*mt*t*ya  + 3*mt*t*t*yb  + t*t*t*yb;
           return '<path d="' + pathStr + '" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>'
                + '<circle cx="' + bx.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="5" fill="#44ddaa" filter="drop-shadow(0 0 5px #44ddaaaa)"/>';
         })()}
