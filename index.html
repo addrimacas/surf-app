@@ -417,17 +417,16 @@ async function htmlMareas(playa, tempAgua) {
     const curvaS       = r => r*r*r*(r*(r*6-15)+10);
     const alturaActual = hAnt + curvaS(ratio) * (hSig - hAnt);
 
-    // S fija hardcodeada — dos formas, punto se mueve encima
+    // S fija - handles cruzados para S pronunciada
     const W = 300, H = 100;
-    const y0 = subiendo ? 88 : 12;
-    const y3 = subiendo ? 12 : 88;
-    const pathD = `M 0,${y0} C 120,${y0} 180,${y3} ${W},${y3}`;
+    const y0 = subiendo ? 90 : 10;
+    const y3 = subiendo ? 10 : 90;
+    const pathD = `M 0,${y0} C 80,${y0} 80,${y3} 150,50 S 220,${y3} ${W},${y3}`;
 
     const xMin = W * 0.20, xMax = W * 0.80;
     const px = xMin + ratio * (xMax - xMin);
-    const tApprox = px / W;
-    const mta = 1 - tApprox, ta = tApprox;
-    const py = mta*mta*mta*y0 + 3*mta*mta*ta*y0 + 3*mta*ta*ta*y3 + ta*ta*ta*y3;
+    const ss = curvaS(ratio);
+    const py = y0 + ss * (y3 - y0);
 
     const labelAnt = anterior.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
     const labelSig = siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
