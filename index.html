@@ -421,7 +421,11 @@ async function htmlMareas(playa, tempAgua) {
     const W = 300, H = 100;
     const y0 = subiendo ? 90 : 10;
     const y3 = subiendo ? 10 : 90;
-    const pathD = `M 0,${y0} C 80,${y0} 80,${y3} 150,50 S 220,${y3} ${W},${y3}`;
+    // Subiendo: abajo-izq -> arriba-der. Bajando: arriba-izq -> abajo-der
+    // C h1x,h1y h2x,h2y — handles en vertical opuesto para crear la S
+    const h1y = subiendo ? 90 : 10;
+    const h2y = subiendo ? 10 : 90;
+    const pathD = `M 0,${y0} C 110,${h1y} 190,${h2y} ${W},${y3}`;
 
     const xMin = W * 0.20, xMax = W * 0.80;
     const px = xMin + ratio * (xMax - xMin);
