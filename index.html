@@ -381,77 +381,77 @@ function iniciarPlayaFavorita() {
 // CAMBIO 1: htmlMareas con curva S correcta (smootherstep)
 async function htmlMareas(playa, tempAgua) {
   const port = playa.portIHM || 'coruna';
-  const hoy = new Date();
-  const fecha = hoy.toISOString().slice(0,10).replace(/-/g,'');
+  const hoy    = new Date();
+  const manana = new Date(hoy.getTime() + 86400000);
+  const fmt    = d => d.toISOString().slice(0,10).replace(/-/g,'');
   try {
-    const res = await fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fecha}`);
-    const data = await res.json();
-    const mareas = data.mareas?.datos?.marea ?? [];
-    const ahora = hoy.getHours() * 60 + hoy.getMinutes();
-    if (mareas.length === 0) throw new Error('sin datos');
+    const [r1, r2] = await Promise.all([
+      fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(hoy)}`),
+      fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(manana)}`),
+    ]);
+    const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
 
-    const toMin = h => { const [hh,mm] = h.split(':').map(Number); return hh*60+mm; };
+    const mareasHoy = d1.mareas?.datos?.marea ?? [];
+    if (mareasHoy.length === 0) throw new Error('sin datos');
+
+    const ahoraMin = hoy.getHours() * 60 + hoy.getMinutes();
+    const toMin    = m => { const [h,mm] = m.hora.split(':').map(Number); return h*60+mm; };
+
+    const todas = [
+      ...mareasHoy.map(m => ({ ...m, _min: toMin(m),         _man: false })),
+      ...(d2.mareas?.datos?.marea ?? []).map(m => ({ ...m, _min: toMin(m)+1440, _man: true  })),
+    ];
 
     let anterior = null, siguiente = null;
-    for (const m of mareas) {
-      const t = toMin(m.hora);
-      if (t <= ahora) anterior = m;
-      else if (!siguiente) siguiente = m;
+    for (const m of todas) {
+      if (m._min <= ahoraMin) anterior = m;
+      else if (!siguiente)    siguiente = m;
     }
+    if (!anterior || !siguiente) throw new Error('sin rango');
 
-    const tAnt = anterior ? toMin(anterior.hora) : 0;
-    const hAnt = parseFloat(anterior?.altura ?? mareas[0].altura);
-    const tSig = siguiente ? toMin(siguiente.hora) : tAnt + 360;
-    const hSig = siguiente ? parseFloat(siguiente.altura) : Math.max(0.2, hAnt - 2.5);
+    const hAnt     = parseFloat(anterior.altura);
+    const hSig     = parseFloat(siguiente.altura);
     const subiendo = hSig > hAnt;
+    const ratio    = Math.max(0, Math.min(1, (ahoraMin - anterior._min) / (siguiente._min - anterior._min)));
 
-    const ratio = Math.max(0, Math.min(1, (ahora - tAnt) / (tSig - tAnt)));
-
-    // Smootherstep: plana en extremos, pronunciada en centro — forma de S perfecta
-    const curvaS = r => r * r * r * (r * (r * 6 - 15) + 10);
-
+    const curvaS       = r => r*r*r*(r*(r*6-15)+10);
     const alturaActual = hAnt + curvaS(ratio) * (hSig - hAnt);
 
-    const W = 200, H = 70;
-    const minH = Math.min(hAnt, hSig) - 0.8;
-    const maxH = Math.max(hAnt, hSig) + 0.8;
-    const norm = v => H - 6 - ((v - minH) / (maxH - minH)) * (H - 12);
+    // Curva S fija — solo dos formas posibles, subiendo o bajando
+    // El punto recorre únicamente el tramo central (20%–80%)
+    const W = 300, H = 90;
+    const pathD = subiendo
+      ? `M 0,${H-10} C 70,${H-10} 80,${H/2} ${W/2},${H/2} S ${W-70},10 ${W},10`
+      : `M 0,10 C 70,10 80,${H/2} ${W/2},${H/2} S ${W-70},${H-10} ${W},${H-10}`;
 
-    const puntos = [];
-    for (let x = 0; x <= W; x += 2) {
-      const r = x / W;
-      const h = hAnt + curvaS(r) * (hSig - hAnt);
-      puntos.push(`${x},${norm(h).toFixed(1)}`);
-    }
+    const xMin = W * 0.20, xMax = W * 0.80;
+    const px   = xMin + ratio * (xMax - xMin);
+    const yIni = subiendo ? H-10 : 10;
+    const yFin = subiendo ? 10   : H-10;
+    const py   = yIni + curvaS(ratio) * (yFin - yIni);
 
-    const px = ratio * W;
-    const py = norm(alturaActual);
-
-    const labelAnt = anterior?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
-    const labelSig = siguiente
-      ? (siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar')
-      : '▼ Bajamar';
-    const horaSig = siguiente ? siguiente.hora : '~06:00';
-    const altSig  = siguiente ? `${parseFloat(siguiente.altura).toFixed(1)}m` : 'estimada';
+    const labelAnt = anterior.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
+    const labelSig = siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
+    const sufSig   = siguiente._man ? ' +1d' : '';
 
     return `
       <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
-      <div style="text-align:center;font-size:16px;font-weight:700;color:#44ddaa;margin-bottom:4px;">
+      <div style="text-align:center;font-size:16px;font-weight:700;color:#44ddaa;margin-bottom:2px;">
         ${alturaActual.toFixed(1)}m ${subiendo?'↑':'↓'}
         <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
-      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="margin:4px 0;">
-        <path d="M ${puntos.join(' L ')}" fill="none" stroke="#44ddaa" stroke-width="1.5" opacity="0.6"/>
-        <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="#44ddaa"/>
+      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:4px 0;overflow:visible;">
+        <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.55" stroke-linecap="round"/>
+        <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="5" fill="#44ddaa" filter="drop-shadow(0 0 5px #44ddaaaa)"/>
       </svg>
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:2px;">
         <div style="color:#8899aa;">
           <div>${labelAnt}</div>
-          <div>${anterior?.hora??'--'} · ${parseFloat(anterior?.altura??0).toFixed(1)}m</div>
+          <div>${anterior.hora} · ${hAnt.toFixed(1)}m</div>
         </div>
         <div style="color:#8899aa;text-align:right;">
           <div>${labelSig}</div>
-          <div>${horaSig} · ${altSig}</div>
+          <div>${siguiente.hora}${sufSig} · ${hSig.toFixed(1)}m</div>
         </div>
       </div>`;
   } catch(e) {
