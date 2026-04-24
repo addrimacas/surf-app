@@ -417,18 +417,17 @@ async function htmlMareas(playa, tempAgua) {
     const curvaS       = r => r*r*r*(r*(r*6-15)+10);
     const alturaActual = hAnt + curvaS(ratio) * (hSig - hAnt);
 
-    // Curva S fija — solo dos formas posibles, subiendo o bajando
-    // El punto recorre únicamente el tramo central (20%–80%)
-    const W = 300, H = 90;
-    const pathD = subiendo
-      ? `M 0,${H-10} C 70,${H-10} 80,${H/2} ${W/2},${H/2} S ${W-70},10 ${W},10`
-      : `M 0,10 C 70,10 80,${H/2} ${W/2},${H/2} S ${W-70},${H-10} ${W},${H-10}`;
+    // S fija hardcodeada — dos formas, punto se mueve encima
+    const W = 300, H = 100;
+    const y0 = subiendo ? 88 : 12;
+    const y3 = subiendo ? 12 : 88;
+    const pathD = `M 0,${y0} C 120,${y0} 180,${y3} ${W},${y3}`;
 
     const xMin = W * 0.20, xMax = W * 0.80;
-    const px   = xMin + ratio * (xMax - xMin);
-    const yIni = subiendo ? H-10 : 10;
-    const yFin = subiendo ? 10   : H-10;
-    const py   = yIni + curvaS(ratio) * (yFin - yIni);
+    const px = xMin + ratio * (xMax - xMin);
+    const tApprox = px / W;
+    const mta = 1 - tApprox, ta = tApprox;
+    const py = mta*mta*mta*y0 + 3*mta*mta*ta*y0 + 3*mta*ta*ta*y3 + ta*ta*ta*y3;
 
     const labelAnt = anterior.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
     const labelSig = siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
