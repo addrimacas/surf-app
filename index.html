@@ -421,16 +421,17 @@ async function htmlMareas(playa, tempAgua) {
     const W = 300, H = 100;
     const y0 = subiendo ? 90 : 10;
     const y3 = subiendo ? 10 : 90;
-    // Subiendo: abajo-izq -> arriba-der. Bajando: arriba-izq -> abajo-der
-    // C h1x,h1y h2x,h2y — handles en vertical opuesto para crear la S
-    const h1y = subiendo ? 90 : 10;
-    const h2y = subiendo ? 10 : 90;
-    const pathD = `M 0,${y0} C 110,${h1y} 190,${h2y} ${W},${y3}`;
+    // S limpia: handle izq en y0 (horizontal), handle der en y3 (horizontal)
+    const pathD = `M 0,${y0} C 150,${y0} 150,${y3} ${W},${y3}`;
 
     const xMin = W * 0.20, xMax = W * 0.80;
     const px = xMin + ratio * (xMax - xMin);
-    const ss = curvaS(ratio);
-    const py = y0 + ss * (y3 - y0);
+    // t normalizado sobre todo el bezier (0=inicio, 1=fin del path)
+    const tBez = px / W;
+    const mt = 1 - tBez;
+    // Bezier cubico: M 0,y0 C 150,y0 150,y3 300,y3
+    // P0=(0,y0) P1=(150,y0) P2=(150,y3) P3=(300,y3)
+    const py = mt*mt*mt*y0 + 3*mt*mt*tBez*y0 + 3*mt*tBez*tBez*y3 + tBez*tBez*tBez*y3;
 
     const labelAnt = anterior.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
     const labelSig = siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
@@ -453,7 +454,7 @@ async function htmlMareas(playa, tempAgua) {
         </div>
         <div style="color:#8899aa;text-align:right;">
           <div>${labelSig}</div>
-          <div>${siguiente.hora}${sufSig} · ${hSig.toFixed(1)}m</div>
+          <div style="white-space:nowrap;">${siguiente.hora}${sufSig} · ${hSig.toFixed(1)}m</div>
         </div>
       </div>`;
   } catch(e) {
