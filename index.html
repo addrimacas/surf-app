@@ -447,17 +447,22 @@ async function htmlMareas(playa, tempAgua) {
         ${(() => {
           const ya = subiendo ? 98 : 22;
           const yb = subiendo ? 22 : 98;
-          // Colas horizontales perfectas: handles pegados a los puntos de union con L
+          // Ola sinusoidal: mitad -> extremo -> mitad, muy redondeada
           const pathStr = subiendo
-            ? `M 0,105 L 80,105 C 110,105 190,15 220,15 L 300,15`
-            : `M 0,15 L 80,15 C 110,15 190,105 220,105 L 300,105`;
+            ? `M 0,60 C 75,60 75,10 150,10 C 225,10 225,60 300,60`
+            : `M 0,60 C 75,60 75,110 150,110 C 225,110 225,60 300,60`;
           // Punto: solo en la zona central (x 80 a 220), segun ratio
-          const p0y = subiendo ? 105 : 15;
-          const p3y = subiendo ? 15  : 105;
-          const px  = 80 + ratio * 140;
-          const tBez = (px - 80) / 140;
-          const mt = 1 - tBez;
-          const by = mt*mt*mt*p0y + 3*mt*mt*tBez*p0y + 3*mt*tBez*tBez*p3y + tBez*tBez*tBez*p3y;
+          // Punto sobre la curva sinusoidal — dos beziers concatenados
+          const px = ratio * 300;
+          const extremoY = subiendo ? 10 : 110;
+          let by;
+          if (px <= 150) {
+            const t2 = px / 150, mt2 = 1 - t2;
+            by = mt2*mt2*mt2*60 + 3*mt2*mt2*t2*60 + 3*mt2*t2*t2*extremoY + t2*t2*t2*extremoY;
+          } else {
+            const t2 = (px - 150) / 150, mt2 = 1 - t2;
+            by = mt2*mt2*mt2*extremoY + 3*mt2*mt2*t2*extremoY + 3*mt2*t2*t2*60 + t2*t2*t2*60;
+          }
           return '<path d="' + pathStr + '" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>'
                + '<circle cx="' + px.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="5" fill="#44ddaa" filter="drop-shadow(0 0 5px #44ddaaaa)"/>';
         })()}
