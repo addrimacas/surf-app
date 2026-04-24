@@ -447,16 +447,17 @@ async function htmlMareas(playa, tempAgua) {
         ${(() => {
           const ya = subiendo ? 98 : 22;
           const yb = subiendo ? 22 : 98;
-          const cIzq = ya + (yb > ya ? 18 : -18);
-          const cDer = yb + (yb > ya ? -18 : 18);
-          const pathStr = `M 0,${cIzq} L 70,${cIzq} C 120,${cIzq} 180,${cDer} 230,${cDer} L 300,${cDer}`;
+          // Exagerado: colas horizontales largas, caida/subida muy pronunciada en centro
+          const pathStr = subiendo
+            ? `M 0,105 L 80,105 C 130,105 170,15 220,15 L 300,15`
+            : `M 0,15 L 80,15 C 130,15 170,105 220,105 L 300,105`;
           // Punto: solo en la zona central (x 80 a 220), segun ratio
-          const cIzqP = ya + (yb > ya ? 18 : -18);
-          const cDerP = yb + (yb > ya ? -18 : 18);
-          const px = 70 + ratio * 160;
-          const tBez = (px - 70) / 160;
+          const p0y = subiendo ? 105 : 15;
+          const p3y = subiendo ? 15  : 105;
+          const px  = 80 + ratio * 140;
+          const tBez = (px - 80) / 140;
           const mt = 1 - tBez;
-          const by = mt*mt*mt*cIzqP + 3*mt*mt*tBez*cIzqP + 3*mt*tBez*tBez*cDerP + tBez*tBez*tBez*cDerP;
+          const by = mt*mt*mt*p0y + 3*mt*mt*tBez*p0y + 3*mt*tBez*tBez*p3y + tBez*tBez*tBez*p3y;
           return '<path d="' + pathStr + '" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>'
                + '<circle cx="' + px.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="5" fill="#44ddaa" filter="drop-shadow(0 0 5px #44ddaaaa)"/>';
         })()}
