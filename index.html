@@ -447,10 +447,10 @@ async function htmlMareas(playa, tempAgua) {
         ${(() => {
           const ya = subiendo ? 98 : 22;
           const yb = subiendo ? 22 : 98;
-          // Exagerado: colas horizontales largas, caida/subida muy pronunciada en centro
+          // Colas horizontales perfectas: handles pegados a los puntos de union con L
           const pathStr = subiendo
-            ? `M 0,105 L 80,105 C 130,105 170,15 220,15 L 300,15`
-            : `M 0,15 L 80,15 C 130,15 170,105 220,105 L 300,105`;
+            ? `M 0,105 L 80,105 C 110,105 190,15 220,15 L 300,15`
+            : `M 0,15 L 80,15 C 110,15 190,105 220,105 L 300,105`;
           // Punto: solo en la zona central (x 80 a 220), segun ratio
           const p0y = subiendo ? 105 : 15;
           const p3y = subiendo ? 15  : 105;
