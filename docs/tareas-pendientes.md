@@ -9,3 +9,6 @@
 - [ ] **Bug 4 throttle** — ya commiteado, verificar en producción
 - [ ] **Popup mapa** — añadir puntuación, flecha swell, botón "Ver playa"
 - [ ] **Previsión viento** — en previsión y mejores olas cerca se pasa null para dirViento/velViento porque la marine API no da viento horario. Buscar solución.
+
+## Ideas pendientes de diseño
+- [ ] **Tarjetas pulsables** — Swell, Viento, Marea y Tiempo expandibles al pulsar. Mostrar previsión del día completo de cada variable en un modal o expansión inline. Sin salir de la pantalla de inicio.
