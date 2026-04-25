@@ -432,7 +432,7 @@ async function htmlMareas(playa, tempAgua) {
     // Escala Y: 0 hasta maxPleamar + 0.5
     const maxH = Math.max(...puntos.map(p => p.h)) + 0.5;
 
-    const W = 300, H = 140;
+    const W = 300, H = 170;
     const xDeMin = T => ((T - inicioMin) / ventanaMin) * W;
     const yDeH   = h  => H - 22 - (h / maxH) * (H - 38);
 
