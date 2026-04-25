@@ -432,7 +432,7 @@ async function htmlMareas(playa, tempAgua) {
     // Escala Y: 0 hasta maxPleamar + 0.5
     const maxH = Math.max(...puntos.map(p => p.h)) + 0.5;
 
-    const W = 300, H = 170;
+    const W = 300, H = 140;
     const xDeMin = T => ((T - inicioMin) / ventanaMin) * W;
     const yDeH   = h  => H - 22 - (h / maxH) * (H - 38);
 
@@ -476,11 +476,11 @@ async function htmlMareas(playa, tempAgua) {
 
     return `
       <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
-      <div style="text-align:center;font-size:16px;font-weight:700;color:#44ddaa;margin-bottom:4px;">
+      <div style="text-align:center;font-size:16px;font-weight:700;color:#44ddaa;margin-bottom:0px;">
         ${alturaActual.toFixed(1)}m ${subiendo?'↑':'↓'}
         <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
-      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:2px 0;overflow:visible;">
+      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:visible;">
         <path d="${areaD}" fill="#44ddaa" opacity="0.07"/>
         <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <line x1="${pxAhora.toFixed(1)}" y1="0" x2="${pxAhora.toFixed(1)}" y2="${H}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
@@ -488,7 +488,7 @@ async function htmlMareas(playa, tempAgua) {
         ${etiqY.map(e => `<text x="2" y="${(e.y+3).toFixed(0)}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
         ${etiqX.map(e => `<text x="${(e.x-10).toFixed(0)}" y="${H-3}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
       </svg>
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:2px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:1px;">
         <div style="color:#8899aa;">
           <div>${labelAnt}</div>
           <div style="white-space:nowrap;">${minToHora(anterior?.min??0)} · ${hAnt.toFixed(1)}m</div>
