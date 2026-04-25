@@ -447,14 +447,14 @@ async function htmlMareas(playa, tempAgua) {
         ${(() => {
           const ya = subiendo ? 98 : 22;
           const yb = subiendo ? 22 : 98;
-          // Sinusoide pura sin nodo central
+          // Sinusoide con mas amplitud
           const pathStr = subiendo
-            ? `M 0,60 C 37,60 37,100 75,100 C 150,100 150,20 225,20 C 262,20 262,60 300,60`
-            : `M 0,60 C 37,60 37,20 75,20 C 150,20 150,100 225,100 C 262,100 262,60 300,60`;
+            ? `M 0,60 C 37,60 37,110 75,110 C 150,110 150,10 225,10 C 262,10 262,60 300,60`
+            : `M 0,60 C 37,60 37,10 75,10 C 150,10 150,110 225,110 C 262,110 262,60 300,60`;
           // Punto: solo en la zona central (x 80 a 220), segun ratio
           // Punto entre x=75 (primer extremo) y x=225 (segundo extremo)
-          const e1y = subiendo ? 100 : 20;
-          const e2y = subiendo ? 20  : 100;
+          const e1y = subiendo ? 110 : 10;
+          const e2y = subiendo ? 10  : 110;
           const px  = 75 + ratio * 150;
           let by;
           if (px <= 150) {
