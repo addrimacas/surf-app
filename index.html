@@ -434,7 +434,7 @@ async function htmlMareas(playa, tempAgua) {
 
     const W = 300, H = 170;
     const xDeMin = T => ((T - inicioMin) / ventanaMin) * W;
-    const yDeH   = h  => H - 22 - (h / maxH) * (H - 38);
+    const yDeH   = h  => H - 18 - (h / maxH) * (H - 30);
 
     // Curva: un punto cada 5 minutos
     const pts = [];
@@ -486,7 +486,7 @@ async function htmlMareas(playa, tempAgua) {
         <line x1="${pxAhora.toFixed(1)}" y1="0" x2="${pxAhora.toFixed(1)}" y2="${H}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
         <circle cx="${pxAhora.toFixed(1)}" cy="${pyAhora.toFixed(1)}" r="5" fill="#44ddaa" filter="drop-shadow(0 0 4px #44ddaa)"/>
         ${etiqY.map(e => `<text x="2" y="${(e.y+3).toFixed(0)}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
-        ${etiqX.map(e => `<text x="${(e.x-10).toFixed(0)}" y="${H-3}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
+        ${etiqX.map(e => `<text x="${(e.x-10).toFixed(0)}" y="${H-2}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
       </svg>
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:1px;">
         <div style="color:#8899aa;">
@@ -606,7 +606,7 @@ async function cargarInicio() {
           <div style="font-size:19px;font-weight:800;letter-spacing:1px;color:${etViento.color};margin-bottom:3px;">${etViento.label}</div>
           <div style="font-size:11px;color:#8899aa;">${etViento.desc}</div>
         </div>
-        <div class="dato-card" style="padding:10px 16px 12px;">
+        <div class="dato-card" style="padding:10px 16px 4px;">
           ${await htmlMareas(playaActiva, tempAgua)}
         </div>
         <div class="dato-card" style="text-align:center;">
