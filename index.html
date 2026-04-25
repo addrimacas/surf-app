@@ -443,7 +443,7 @@ async function htmlMareas(playa, tempAgua) {
       pts.push(`${xDeMin(T).toFixed(1)},${yDeH(alturaEn(T)).toFixed(1)}`);
     }
     const pathD = 'M ' + pts.join(' L ');
-    const areaD = pathD + ` L ${W},${H} L 0,${H} Z`;
+    const areaD = pathD + ` L ${W-mR},${H-mB} L ${mL},${H-mB} Z`;
 
     // Punto hora actual
     const pxAhora = xDeMin(ahoraMin);
