@@ -433,8 +433,9 @@ async function htmlMareas(playa, tempAgua) {
     const maxH = Math.max(...puntos.map(p => p.h)) + 0.5;
 
     const W = 300, H = 170;
-    const xDeMin = T => ((T - inicioMin) / ventanaMin) * W;
-    const yDeH   = h  => H - 18 - (h / maxH) * (H - 30);
+    const mL = 30, mR = 5, mT = 8, mB = 25; // márgenes
+    const xDeMin = T => mL + ((T - inicioMin) / ventanaMin) * (W - mL - mR);
+    const yDeH   = h  => mT + (1 - h / maxH) * (H - mT - mB);
 
     // Curva: un punto cada 5 minutos
     const pts = [];
@@ -481,12 +482,22 @@ async function htmlMareas(playa, tempAgua) {
         <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
       <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:hidden;">
+        <!-- Area bajo curva -->
         <path d="${areaD}" fill="#44ddaa" opacity="0.07"/>
+        <!-- Curva -->
         <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="${pxAhora.toFixed(1)}" y1="5" x2="${pxAhora.toFixed(1)}" y2="${(H-18).toFixed(0)}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <!-- Eje Y (línea vertical izquierda) -->
+        <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H-mB}" stroke="#ffffff15" stroke-width="1"/>
+        <!-- Eje X (línea horizontal inferior) -->
+        <line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#ffffff15" stroke-width="1"/>
+        <!-- Línea vertical hora actual -->
+        <line x1="${pxAhora.toFixed(1)}" y1="${mT}" x2="${pxAhora.toFixed(1)}" y2="${H-mB}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <!-- Punto hora actual -->
         <circle cx="${pxAhora.toFixed(1)}" cy="${pyAhora.toFixed(1)}" r="5" fill="#44ddaa" filter="drop-shadow(0 0 4px #44ddaa)"/>
-        ${etiqY.map(e => `<text x="2" y="${(e.y+3).toFixed(0)}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
-        ${etiqX.map(e => `<text x="${(e.x-10).toFixed(0)}" y="${H-2}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
+        <!-- Etiquetas Y: a la izquierda de la línea Y, alineadas a la derecha -->
+        ${etiqY.map(e => `<text x="${mL-3}" y="${(e.y+3).toFixed(0)}" fill="#7799aa" font-size="10" font-family="sans-serif" text-anchor="end">${e.label}</text>`).join('')}
+        <!-- Etiquetas X: debajo de la línea X, centradas en cada marca -->
+        ${etiqX.map(e => `<text x="${e.x.toFixed(0)}" y="${H-mB+13}" fill="#7799aa" font-size="10" font-family="sans-serif" text-anchor="middle">${e.label}</text>`).join('')}
       </svg>
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:1px;">
         <div style="color:#8899aa;">
