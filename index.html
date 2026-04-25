@@ -447,21 +447,25 @@ async function htmlMareas(playa, tempAgua) {
         ${(() => {
           const ya = subiendo ? 98 : 22;
           const yb = subiendo ? 22 : 98;
-          // Ola sinusoidal: mitad -> extremo -> mitad, muy redondeada
+          // Ola sinusoidal de 600px de ancho, mostrada en ventana 0-300
+          // Pico en x=75 (pleamar) y valle en x=225 (bajamar) o al reves
           const pathStr = subiendo
-            ? `M 0,60 C 75,60 75,10 150,10 C 225,10 225,60 300,60`
-            : `M 0,60 C 75,60 75,110 150,110 C 225,110 225,60 300,60`;
+            ? `M -75,60 C 0,60 0,10 75,10 C 150,10 150,60 225,60 C 300,60 300,110 375,110`
+            : `M -75,60 C 0,60 0,110 75,110 C 150,110 150,60 225,60 C 300,60 300,10 375,10`;
           // Punto: solo en la zona central (x 80 a 220), segun ratio
-          // Punto sobre la curva sinusoidal — dos beziers concatenados
-          const px = ratio * 300;
-          const extremoY = subiendo ? 10 : 110;
+          // Punto: se mueve entre x=75 y x=225 segun ratio
+          const px = 75 + ratio * 150;
+          const e1y = subiendo ? 10  : 110; // primer extremo (izq)
+          const e2y = subiendo ? 110 : 10;  // segundo extremo (der)
           let by;
           if (px <= 150) {
-            const t2 = px / 150, mt2 = 1 - t2;
-            by = mt2*mt2*mt2*60 + 3*mt2*mt2*t2*60 + 3*mt2*t2*t2*extremoY + t2*t2*t2*extremoY;
+            // Primer bezier: de (75,e1y) a (225,60) — mitad
+            const t2 = (px - 75) / 75, mt2 = 1 - t2;
+            by = mt2*mt2*mt2*e1y + 3*mt2*mt2*t2*e1y + 3*mt2*t2*t2*60 + t2*t2*t2*60;
           } else {
-            const t2 = (px - 150) / 150, mt2 = 1 - t2;
-            by = mt2*mt2*mt2*extremoY + 3*mt2*mt2*t2*extremoY + 3*mt2*t2*t2*60 + t2*t2*t2*60;
+            // Segundo bezier: de (150,60) a (225,e2y)
+            const t2 = (px - 150) / 75, mt2 = 1 - t2;
+            by = mt2*mt2*mt2*60 + 3*mt2*mt2*t2*60 + 3*mt2*t2*t2*e2y + t2*t2*t2*e2y;
           }
           return '<path d="' + pathStr + '" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>'
                + '<circle cx="' + px.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="5" fill="#44ddaa" filter="drop-shadow(0 0 5px #44ddaaaa)"/>';
