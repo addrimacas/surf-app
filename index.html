@@ -435,7 +435,7 @@ async function htmlMareas(playa, tempAgua) {
 
     const labelAnt = anterior.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
     const labelSig = siguiente.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
-    const sufSig   = siguiente._man ? ' +1d' : '';
+    const sufSig   = '';
 
     return `
       <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
@@ -452,19 +452,17 @@ async function htmlMareas(playa, tempAgua) {
           const pathStr = subiendo
             ? `M 0,60 C 30,60 30,95 67,95 C 120,95 120,25 220,25 C 260,25 260,60 300,60`
             : `M 0,60 C 30,60 30,25 67,25 C 120,25 120,95 220,95 C 260,95 260,60 300,60`;
-          // Punto: solo en la zona central (x 80 a 220), segun ratio
-          // Punto entre x=75 (primer extremo) y x=225 (segundo extremo)
+          // Punto sobre la curva: pico x=67, valle x=220
           const e1y = subiendo ? 95 : 25;
           const e2y = subiendo ? 25  : 95;
-          const px  = 75 + ratio * 150;
+          const px  = 67 + ratio * 153;
+          const mid = 143;
           let by;
-          if (px <= 150) {
-            // Zona 1-2: extremo -> media
-            const t2 = (px - 75) / 75, mt2 = 1 - t2;
+          if (px <= mid) {
+            const t2 = (px - 67) / (mid - 67), mt2 = 1 - t2;
             by = mt2*mt2*mt2*e1y + 3*mt2*mt2*t2*e1y + 3*mt2*t2*t2*60 + t2*t2*t2*60;
           } else {
-            // Zona 3-4: media -> extremo2
-            const t2 = (px - 143) / 77, mt2 = 1 - t2;
+            const t2 = (px - mid) / (220 - mid), mt2 = 1 - t2;
             by = mt2*mt2*mt2*60 + 3*mt2*mt2*t2*60 + 3*mt2*t2*t2*e2y + t2*t2*t2*e2y;
           }
           return '<path d="' + pathStr + '" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>'
