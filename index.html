@@ -19,7 +19,7 @@
     header { text-align:center; padding:40px 0 10px; }
     header h1 { font-size:32px; font-weight:800; letter-spacing:-1px; text-shadow:0 2px 20px rgba(0,0,0,0.4); }
     header p { color:#aabccc; font-size:14px; margin-top:4px; }
-    .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; }
+    .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; align-items:start; }
     .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
     .dato-card .label { font-size:11px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
     .dato-card .valor { font-size:24px; font-weight:700; }
@@ -433,7 +433,7 @@ async function htmlMareas(playa, tempAgua) {
     const maxH = Math.max(...puntos.map(p => p.h)) + 0.5;
 
     const W = 300, H = 170;
-    const mL = 30, mR = 5, mT = 8, mB = 25; // márgenes
+    const mL = 30, mR = 5, mT = 4, mB = 20; // márgenes
     const xDeMin = T => mL + ((T - inicioMin) / ventanaMin) * (W - mL - mR);
     const yDeH   = h  => mT + (1 - h / maxH) * (H - mT - mB);
 
@@ -450,10 +450,10 @@ async function htmlMareas(playa, tempAgua) {
     const pyAhora = yDeH(alturaEn(ahoraMin));
     const alturaActual = alturaEn(ahoraMin);
 
-    // Etiquetas X cada hora, solo número de hora
+    // Etiquetas X cada 2h para evitar solapamiento
     const etiqX = [];
-    const primeraMarca = Math.ceil(inicioMin / 60) * 60;
-    for (let T = primeraMarca; T <= finMin; T += 60) {
+    const primeraMarca = Math.ceil(inicioMin / 120) * 120;
+    for (let T = primeraMarca; T <= finMin; T += 120) {
       const m = ((T % 1440) + 1440) % 1440;
       etiqX.push({ x: xDeMin(T), label: String(Math.floor(m/60)) });
     }
@@ -477,7 +477,7 @@ async function htmlMareas(playa, tempAgua) {
     const labelSig = siguiente?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
 
     return `
-      <div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
+      <div class="label" style="margin-bottom:2px;">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
       <div style="text-align:center;font-size:16px;font-weight:700;color:#44ddaa;margin-bottom:0px;">
         ${alturaActual.toFixed(1)}m ${subiendo?'↑':'↓'}
         <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
