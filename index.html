@@ -395,7 +395,9 @@ async function htmlMareas(playa, tempAgua) {
     if (mareasHoy.length === 0) throw new Error('sin datos');
 
     const ahoraMin = hoy.getHours() * 60 + hoy.getMinutes();
-    const toMin    = m => { const [h,mm] = m.hora.split(':').map(Number); return h*60+mm; };
+    // IHM devuelve horas en UTC — convertimos a hora local
+    const offsetLocal = -hoy.getTimezoneOffset(); // minutos de offset local (ej: +120 en CEST)
+    const toMin = m => { const [h,mm] = m.hora.split(':').map(Number); return h*60+mm+offsetLocal; };
 
     const todas = [
       ...mareasHoy.map(m => ({ ...m, _min: toMin(m),         _man: false })),
