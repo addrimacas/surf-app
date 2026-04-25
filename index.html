@@ -480,10 +480,10 @@ async function htmlMareas(playa, tempAgua) {
         ${alturaActual.toFixed(1)}m ${subiendo?'↑':'↓'}
         <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
-      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:visible;">
+      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:hidden;">
         <path d="${areaD}" fill="#44ddaa" opacity="0.07"/>
         <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <line x1="${pxAhora.toFixed(1)}" y1="0" x2="${pxAhora.toFixed(1)}" y2="${H}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <line x1="${pxAhora.toFixed(1)}" y1="5" x2="${pxAhora.toFixed(1)}" y2="${(H-18).toFixed(0)}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
         <circle cx="${pxAhora.toFixed(1)}" cy="${pyAhora.toFixed(1)}" r="5" fill="#44ddaa" filter="drop-shadow(0 0 4px #44ddaa)"/>
         ${etiqY.map(e => `<text x="2" y="${(e.y+3).toFixed(0)}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
         ${etiqX.map(e => `<text x="${(e.x-10).toFixed(0)}" y="${H-2}" fill="#7799aa" font-size="11" font-family="sans-serif" font-weight="600">${e.label}</text>`).join('')}
@@ -606,7 +606,7 @@ async function cargarInicio() {
           <div style="font-size:19px;font-weight:800;letter-spacing:1px;color:${etViento.color};margin-bottom:3px;">${etViento.label}</div>
           <div style="font-size:11px;color:#8899aa;">${etViento.desc}</div>
         </div>
-        <div class="dato-card" style="padding:10px 16px 4px;align-self:start;">
+        <div class="dato-card" style="padding:10px 16px 4px;align-self:start;height:fit-content;">
           ${await htmlMareas(playaActiva, tempAgua)}
         </div>
         <div class="dato-card" style="text-align:center;">
