@@ -450,11 +450,12 @@ async function htmlMareas(playa, tempAgua) {
     const pyAhora = yDeH(alturaEn(ahoraMin));
     const alturaActual = alturaEn(ahoraMin);
 
-    // Etiquetas X cada 2h
+    // Etiquetas X cada hora, solo número de hora
     const etiqX = [];
-    const primeraMarca = Math.ceil(inicioMin / 120) * 120;
-    for (let T = primeraMarca; T <= finMin; T += 120) {
-      etiqX.push({ x: xDeMin(T), label: minToHora(T).slice(0,5) });
+    const primeraMarca = Math.ceil(inicioMin / 60) * 60;
+    for (let T = primeraMarca; T <= finMin; T += 60) {
+      const m = ((T % 1440) + 1440) % 1440;
+      etiqX.push({ x: xDeMin(T), label: String(Math.floor(m/60)) });
     }
 
     // Etiquetas Y
@@ -491,7 +492,7 @@ async function htmlMareas(playa, tempAgua) {
         <!-- Eje X (línea horizontal inferior) -->
         <line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#ffffff15" stroke-width="1"/>
         <!-- Línea vertical hora actual -->
-        <line x1="${pxAhora.toFixed(1)}" y1="${mT}" x2="${pxAhora.toFixed(1)}" y2="${H-mB}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+        <line x1="${pxAhora.toFixed(1)}" y1="${pyAhora.toFixed(1)}" x2="${pxAhora.toFixed(1)}" y2="${H-mB}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
         <!-- Punto hora actual -->
         <circle cx="${pxAhora.toFixed(1)}" cy="${pyAhora.toFixed(1)}" r="5" fill="#44ddaa" filter="drop-shadow(0 0 4px #44ddaa)"/>
         <!-- Etiquetas Y: a la izquierda de la línea Y, alineadas a la derecha -->
