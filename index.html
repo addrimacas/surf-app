@@ -396,8 +396,13 @@ async function htmlMareas(playa, tempAgua) {
 
     const ahoraMin = hoy.getHours() * 60 + hoy.getMinutes();
     // IHM devuelve horas en UTC — convertimos a hora local
-    const offsetLocal = -hoy.getTimezoneOffset(); // minutos de offset local (ej: +120 en CEST)
+    const offsetLocal = -hoy.getTimezoneOffset(); // minutos (ej: +120 en CEST)
     const toMin = m => { const [h,mm] = m.hora.split(':').map(Number); return h*60+mm+offsetLocal; };
+    // Convierte minutos totales a string HH:MM para mostrar
+    const minToHora = min => {
+      const m = ((min % 1440) + 1440) % 1440;
+      return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
+    };
 
     const todas = [
       ...mareasHoy.map(m => ({ ...m, _min: toMin(m),         _man: false })),
@@ -474,11 +479,11 @@ async function htmlMareas(playa, tempAgua) {
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:2px;gap:8px;">
         <div style="color:#8899aa;">
           <div>${labelAnt}</div>
-          <div style="white-space:nowrap;">${anterior.hora}&nbsp;·&nbsp;${hAnt.toFixed(1)}m</div>
+          <div style="white-space:nowrap;">${minToHora(anterior._min)}&nbsp;·&nbsp;${hAnt.toFixed(1)}m</div>
         </div>
         <div style="color:#8899aa;text-align:right;">
           <div>${labelSig}</div>
-          <div style="white-space:nowrap;">${siguiente.hora}${sufSig}&nbsp;·&nbsp;${hSig.toFixed(1)}m</div>
+          <div style="white-space:nowrap;">${minToHora(siguiente._min)}&nbsp;·&nbsp;${hSig.toFixed(1)}m</div>
         </div>
       </div>`;
   } catch(e) {
