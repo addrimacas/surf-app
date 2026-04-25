@@ -447,22 +447,23 @@ async function htmlMareas(playa, tempAgua) {
         ${(() => {
           const ya = subiendo ? 98 : 22;
           const yb = subiendo ? 22 : 98;
-          // Ola aprobada — curva verde del SVG de comparacion
+          // 4 zonas de 75px: media->pleamar->media->bajamar->media
           const pathStr = subiendo
-            ? `M 0,60 C 68,60 68,100 116,100 C 165,100 165,20 232,20 C 281,20 281,60 300,60`
-            : `M 0,60 C 68,60 68,20 116,20 C 165,20 165,100 232,100 C 281,100 281,60 300,60`;
+            ? `M 0,60 C 37,60 37,100 75,100 C 112,100 112,60 150,60 C 187,60 187,20 225,20 C 262,20 262,60 300,60`
+            : `M 0,60 C 37,60 37,20 75,20 C 112,20 112,60 150,60 C 187,60 187,100 225,100 C 262,100 262,60 300,60`;
           // Punto: solo en la zona central (x 80 a 220), segun ratio
-          // Punto entre x=116 y x=232, simetrico
+          // Punto entre x=75 (primer extremo) y x=225 (segundo extremo)
           const e1y = subiendo ? 100 : 20;
           const e2y = subiendo ? 20  : 100;
-          const px  = 116 + ratio * 116;
-          const mid = 174;
+          const px  = 75 + ratio * 150;
           let by;
-          if (px <= mid) {
-            const t2 = (px - 116) / (mid - 116), mt2 = 1 - t2;
+          if (px <= 150) {
+            // Zona 1-2: extremo -> media
+            const t2 = (px - 75) / 75, mt2 = 1 - t2;
             by = mt2*mt2*mt2*e1y + 3*mt2*mt2*t2*e1y + 3*mt2*t2*t2*60 + t2*t2*t2*60;
           } else {
-            const t2 = (px - mid) / (232 - mid), mt2 = 1 - t2;
+            // Zona 3-4: media -> extremo2
+            const t2 = (px - 150) / 75, mt2 = 1 - t2;
             by = mt2*mt2*mt2*60 + 3*mt2*mt2*t2*60 + 3*mt2*t2*t2*e2y + t2*t2*t2*e2y;
           }
           return '<path d="' + pathStr + '" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>'
