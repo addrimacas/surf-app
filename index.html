@@ -447,22 +447,21 @@ async function htmlMareas(playa, tempAgua) {
         ${(() => {
           const ya = subiendo ? 98 : 22;
           const yb = subiendo ? 22 : 98;
-          // Ola sinusoidal simetrica y redondeada
-          // media=60, pleamar=12, bajamar=108
+          // Ola simetrica: extremos en x=75 y x=225, equidistantes del centro
           const pathStr = subiendo
-            ? `M 0,60 C 30,60 30,108 75,108 C 120,108 120,12 175,12 C 220,12 220,60 300,60`
-            : `M 0,60 C 30,60 30,12 75,12 C 120,12 120,108 175,108 C 220,108 220,60 300,60`;
+            ? `M 0,60 C 30,60 30,108 75,108 C 120,108 120,12 225,12 C 270,12 270,60 300,60`
+            : `M 0,60 C 30,60 30,12 75,12 C 120,12 120,108 225,108 C 270,108 270,60 300,60`;
           // Punto: solo en la zona central (x 80 a 220), segun ratio
-          // Punto entre x=75 (primer extremo) y x=175 (segundo extremo)
+          // Punto entre x=75 y x=225, simetrico
           const e1y = subiendo ? 108 : 12;
           const e2y = subiendo ? 12  : 108;
-          const px  = 75 + ratio * 100;
+          const px  = 75 + ratio * 150;
           let by;
-          if (px <= 125) {
-            const t2 = (px - 75) / 50, mt2 = 1 - t2;
+          if (px <= 150) {
+            const t2 = (px - 75) / 75, mt2 = 1 - t2;
             by = mt2*mt2*mt2*e1y + 3*mt2*mt2*t2*e1y + 3*mt2*t2*t2*60 + t2*t2*t2*60;
           } else {
-            const t2 = (px - 125) / 50, mt2 = 1 - t2;
+            const t2 = (px - 150) / 75, mt2 = 1 - t2;
             by = mt2*mt2*mt2*60 + 3*mt2*mt2*t2*60 + 3*mt2*t2*t2*e2y + t2*t2*t2*e2y;
           }
           return '<path d="' + pathStr + '" fill="none" stroke="#44ddaa" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>'
