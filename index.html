@@ -569,7 +569,7 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
   const px = (a, rr) => cx + rr * Math.cos(toRad(a));
   const py = (a, rr) => cy + rr * Math.sin(toRad(a));
 
-  // Quesitos de colores según orientación offshore de la playa
+  // Quesitos
   const offshoreDir = (playa.orient + 180) % 360;
   const sector = (a1, a2, color, op) => {
     const d1 = (offshoreDir + a1 + 360) % 360;
@@ -578,70 +578,56 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
     return `<path d="M${cx},${cy} L${px(d1,r).toFixed(1)},${py(d1,r).toFixed(1)} A${r},${r} 0 ${large},1 ${px(d2,r).toFixed(1)},${py(d2,r).toFixed(1)} Z" fill="${color}" opacity="${op}"/>`;
   };
   const zonas = [
-    sector(-20,   20,  '#44ddaa', 0.55),
-    sector( 20,   55,  '#88ddaa', 0.40),
-    sector(-55,  -20,  '#88ddaa', 0.40),
-    sector( 55,  100,  '#ffcc00', 0.35),
-    sector(-100, -55,  '#ffcc00', 0.35),
-    sector( 100,  140, '#ff7722', 0.35),
-    sector(-140, -100, '#ff7722', 0.35),
-    sector( 140,  180, '#ff3333', 0.35),
-    sector(-180, -140, '#ff3333', 0.35),
+    sector(-20,20,'#44ddaa',0.55),sector(20,55,'#88ddaa',0.40),sector(-55,-20,'#88ddaa',0.40),
+    sector(55,100,'#ffcc00',0.35),sector(-100,-55,'#ffcc00',0.35),
+    sector(100,140,'#ff7722',0.35),sector(-140,-100,'#ff7722',0.35),
+    sector(140,180,'#ff3333',0.35),sector(-180,-140,'#ff3333',0.35),
   ].join('');
 
-  // Marcas + cardinales integrados
+  // Marcas + cardinales
   let marcas = '';
-  const cardMap = {0:'N', 90:'E', 180:'S', 270:'O'};
+  const cardMap = {0:'N',90:'E',180:'S',270:'O'};
   for (let a = 0; a < 360; a += 5) {
-    const isCard = a % 90 === 0;
-    const isLong = a % 30 === 0;
-    const r1 = isCard ? r - 14 : isLong ? r - 10 : r - 5;
-    const sw = isCard ? 2 : isLong ? 1.5 : 0.8;
-    const col = isCard ? '#ffffff80' : isLong ? '#ffffff50' : '#ffffff25';
-    marcas += `<line x1="${px(a,r).toFixed(1)}" y1="${py(a,r).toFixed(1)}" x2="${px(a,r1).toFixed(1)}" y2="${py(a,r1).toFixed(1)}" stroke="${col}" stroke-width="${sw}"/>`;
-    if (isCard) {
-      const tx = px(a, r-22), ty = py(a, r-22);
-      marcas += `<text x="${tx.toFixed(0)}" y="${(ty+4).toFixed(0)}" fill="white" font-size="11" font-weight="700" text-anchor="middle">${cardMap[a]}</text>`;
-    }
+    const isCard = a % 90 === 0, isLong = a % 30 === 0;
+    const r1 = isCard ? r-14 : isLong ? r-10 : r-5;
+    marcas += `<line x1="${px(a,r).toFixed(1)}" y1="${py(a,r).toFixed(1)}" x2="${px(a,r1).toFixed(1)}" y2="${py(a,r1).toFixed(1)}" stroke="${isCard?'#ffffff80':isLong?'#ffffff50':'#ffffff25'}" stroke-width="${isCard?2:isLong?1.5:0.8}"/>`;
+    if (isCard) marcas += `<text x="${px(a,r-22).toFixed(0)}" y="${(py(a,r-22)+4).toFixed(0)}" fill="white" font-size="11" font-weight="700" text-anchor="middle">${cardMap[a]}</text>`;
   }
 
-  // Velocidad centro
-  const vel = velViento != null
-    ? `<text x="${cx}" y="${cy+2}" fill="white" font-size="22" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
-       <text x="${cx}" y="${cy+16}" fill="#8899aa" font-size="9" text-anchor="middle">km/h</text>`
-    : '';
-
-  // Aguja con círculo central que no traspasa
+  // Aguja: apunta hacia donde VA el viento (dirViento+180 = destino)
+  // dirViento=51° (viene del NE) → flecha apunta al SW (51+180=231°)
   let aguja = '';
+  const rCircle = 18;
   if (dirViento != null) {
-    const rCircle = 8; // radio del círculo central
-    const tipX = px(dirViento, r-12), tipY = py(dirViento, r-12);
-    const tailX = px((dirViento+180)%360, 18), tailY = py((dirViento+180)%360, 18);
-    const fa = toRad(dirViento);
-    // Flecha triangular en la punta
+    const destino = (dirViento + 180) % 360; // hacia donde va
+    const tipX = px(destino, r-12), tipY = py(destino, r-12);
+    const fd = toRad(destino);
+    const perpX = Math.sin(fd)*5, perpY = -Math.cos(fd)*5;
     const arrowLen = 12;
-    const perpX = Math.sin(fa) * 5, perpY = -Math.cos(fa) * 5;
-    const ax1 = tipX - arrowLen*Math.cos(fa) + perpX;
-    const ay1 = tipY - arrowLen*Math.sin(fa) + perpY;
-    const ax2 = tipX - arrowLen*Math.cos(fa) - perpX;
-    const ay2 = tipY - arrowLen*Math.sin(fa) - perpY;
-    // Aguja arranca desde el borde del círculo central
-    const startX = cx + rCircle * Math.cos(fa);
-    const startY = cy + rCircle * Math.sin(fa);
+    const ax1 = tipX - arrowLen*Math.cos(fd) + perpX;
+    const ay1 = tipY - arrowLen*Math.sin(fd) + perpY;
+    const ax2 = tipX - arrowLen*Math.cos(fd) - perpX;
+    const ay2 = tipY - arrowLen*Math.sin(fd) - perpY;
+    const startX = cx + rCircle * Math.cos(fd);
+    const startY = cy + rCircle * Math.sin(fd);
+    const tailX = px(dirViento, 20), tailY = py(dirViento, 20);
     aguja = `
       <line x1="${startX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
       <polygon points="${tipX.toFixed(1)},${tipY.toFixed(1)} ${ax1.toFixed(1)},${ay1.toFixed(1)} ${ax2.toFixed(1)},${ay2.toFixed(1)}" fill="white"/>
-      <line x1="${cx}" y1="${cy}" x2="${tailX.toFixed(1)}" y2="${tailY.toFixed(1)}" stroke="#ffffff40" stroke-width="1.5" stroke-linecap="round"/>
-      <circle cx="${cx}" cy="${cy}" r="${rCircle}" fill="#1a2a3a" stroke="white" stroke-width="1.5"/>`;
+      <line x1="${cx}" y1="${cy}" x2="${tailX.toFixed(1)}" y2="${tailY.toFixed(1)}" stroke="#ffffff40" stroke-width="1.5" stroke-linecap="round"/>`;
   }
+
+  // Círculo central grande con velocidad dentro
+  const circulo = `
+    <circle cx="${cx}" cy="${cy}" r="${rCircle}" fill="#0d1b2a" stroke="white" stroke-width="1.5"/>
+    ${velViento != null ? `<text x="${cx}" y="${cy+2}" fill="white" font-size="14" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
+    <text x="${cx}" y="${cy+13}" fill="#8899aa" font-size="7" text-anchor="middle">km/h</text>` : ''}`;
 
   return `<svg width="${cx*2}" height="${cy*2}" viewBox="0 0 ${cx*2} ${cy*2}" style="overflow:visible;flex-shrink:0;">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff06"/>
     ${zonas}
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#ffffff20" stroke-width="1"/>
-    ${marcas}
-    ${vel}
-    ${aguja}
+    ${marcas}${aguja}${circulo}
   </svg>`;
 }
 
