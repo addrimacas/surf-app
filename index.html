@@ -703,11 +703,25 @@ async function cargarInicio() {
       <div style="max-width:420px;margin:0 auto 12px;">
         <div class="dato-card">
           <div class="label">Viento</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <div>
-              <div style="font-size:20px;font-weight:700;color:${etViento.color};line-height:1;margin:6px 0 6px;">${dirTxt(dirViento)}&nbsp;${rnd(velViento)}&nbsp;km/h</div>
-              <div style="font-size:20px;font-weight:800;letter-spacing:1px;color:${etViento.color};margin-bottom:3px;">${etViento.label}</div>
-              <div style="font-size:12px;color:#8899aa;">${etViento.desc}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;">
+            <div style="flex:1;">
+              <!-- Fila velocidad -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Velocidad</span>
+                <span style="font-size:13px;color:white;font-weight:600;">${rnd(velViento)} km/h</span>
+              </div>
+              <div style="height:0.5px;background:#ffffff15;"></div>
+              <!-- Fila dirección -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Dirección</span>
+                <span style="font-size:13px;color:white;font-weight:600;">${dirTxt(dirViento)} · ${rnd(dirViento)}°</span>
+              </div>
+              <div style="height:0.5px;background:#ffffff15;"></div>
+              <!-- Fila estado -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Estado</span>
+                <span style="font-size:13px;color:${etViento.color};font-weight:700;">${etViento.label}</span>
+              </div>
             </div>
             ${brujulaViento(dirViento, velViento, playaActiva, etViento)}
           </div>
