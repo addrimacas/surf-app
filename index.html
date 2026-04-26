@@ -308,7 +308,7 @@ function esNoche(sunrise, sunset) {
 }
 
 function iconoCielo(codigo, size = 36, sunrise, sunset, isDay) {
-  const noche = isDay == 0 ? true : isDay == 1 ? false : esNoche(sunrise, sunset);
+  const noche = (isDay !== undefined && isDay !== null) ? (isDay == 0) : esNoche(sunrise, sunset);
   const c = codigo == null || codigo <= 1 ? '#FFD700'
           : codigo <= 3  ? '#88aacc'
           : codigo <= 48 ? '#99aabb'
