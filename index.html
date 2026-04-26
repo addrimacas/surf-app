@@ -432,7 +432,7 @@ async function htmlMareas(playa, tempAgua) {
     // Escala Y: 0 hasta maxPleamar + 0.5
     const maxH = Math.max(...puntos.map(p => p.h)) + 0.5;
 
-    const W = 300, H = 170;
+    const W = 300, H = 210;
     const mL = 30, mR = 5, mT = 4, mB = 20; // márgenes
     const xDeMin = T => mL + ((T - inicioMin) / ventanaMin) * (W - mL - mR);
     const yDeH   = h  => mT + (1 - h / maxH) * (H - mT - mB);
@@ -505,7 +505,7 @@ async function htmlMareas(playa, tempAgua) {
         <!-- Etiquetas X: debajo de la línea X, centradas en cada marca -->
         ${etiqX.map(e => `<text x="${e.x.toFixed(0)}" y="${H-mB+13}" fill="#7799aa" font-size="10" font-family="sans-serif" text-anchor="middle">${e.label}</text>`).join('')}
       </svg>
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:1px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:0px;">
         <div style="color:#8899aa;">
           <div>${labelAnt}</div>
           <div style="white-space:nowrap;">${minToHora(anterior?.min??0)} · ${hAnt.toFixed(1)}m</div>
