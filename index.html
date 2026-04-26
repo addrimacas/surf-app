@@ -626,7 +626,7 @@ async function cargarInicio() {
     const lat = playaActiva.lat, lon = playaActiva.lon;
     const [resMarine, resAtmo] = await Promise.all([
       fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code&daily=temperature_2m_max,temperature_2m_min&wind_speed_unit=kmh&timezone=auto`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&wind_speed_unit=kmh&timezone=auto`),
     ]);
 
     const marine = await resMarine.json();
@@ -700,6 +700,16 @@ async function cargarInicio() {
               <div style="font-size:13px;color:#8899aa;">${energia ?? '--'} kW/m</div>
             </div>
           </div>
+          <!-- Cajetín ideal swell -->
+          <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
+            <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ideal</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              ${flechaDireccion(playaActiva.orient, '#4db8ff', 20)}
+              <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
+              <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
+            </div>
+          </div>
+          </div>
         </div>
       </div>
       <div style="max-width:420px;margin:0 auto 12px;">
@@ -723,6 +733,15 @@ async function cargarInicio() {
               <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
                 <span style="font-size:13px;color:#8899aa;font-weight:500;">Estado</span>
                 <span style="font-size:13px;color:${etViento.color};font-weight:700;">${etViento.label}</span>
+              </div>
+              <!-- Cajetín ideal -->
+              <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ideal</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  ${flechaDireccion((playaActiva.orient+180)%360, '#44cc44', 20)}
+                  <span style="font-size:13px;font-weight:600;color:#44cc44;">${playaActiva.viento}</span>
+                  <span style="font-size:12px;color:#8899aa;">· < 28 km/h</span>
+                </div>
               </div>
             </div>
             ${brujulaViento(dirViento, velViento, playaActiva, etViento)}
