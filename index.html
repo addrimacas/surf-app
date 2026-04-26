@@ -569,6 +569,26 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
   const px = (a, rr) => cx + rr * Math.cos(toRad(a));
   const py = (a, rr) => cy + rr * Math.sin(toRad(a));
 
+  // Quesitos de colores según orientación offshore de la playa
+  const offshoreDir = (playa.orient + 180) % 360;
+  const sector = (a1, a2, color, op) => {
+    const d1 = (offshoreDir + a1 + 360) % 360;
+    const d2 = (offshoreDir + a2 + 360) % 360;
+    const large = ((a2 - a1 + 360) % 360) > 180 ? 1 : 0;
+    return `<path d="M${cx},${cy} L${px(d1,r).toFixed(1)},${py(d1,r).toFixed(1)} A${r},${r} 0 ${large},1 ${px(d2,r).toFixed(1)},${py(d2,r).toFixed(1)} Z" fill="${color}" opacity="${op}"/>`;
+  };
+  const zonas = [
+    sector(-20,   20,  '#44ddaa', 0.55),
+    sector( 20,   55,  '#88ddaa', 0.40),
+    sector(-55,  -20,  '#88ddaa', 0.40),
+    sector( 55,  100,  '#ffcc00', 0.35),
+    sector(-100, -55,  '#ffcc00', 0.35),
+    sector( 100,  140, '#ff7722', 0.35),
+    sector(-140, -100, '#ff7722', 0.35),
+    sector( 140,  180, '#ff3333', 0.35),
+    sector(-180, -140, '#ff3333', 0.35),
+  ].join('');
+
   // Marcas + cardinales integrados
   let marcas = '';
   const cardMap = {0:'N', 90:'E', 180:'S', 270:'O'};
@@ -585,34 +605,40 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
     }
   }
 
-  // Velocidad centro — grande y visible
+  // Velocidad centro
   const vel = velViento != null
     ? `<text x="${cx}" y="${cy+2}" fill="white" font-size="22" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
        <text x="${cx}" y="${cy+16}" fill="#8899aa" font-size="9" text-anchor="middle">km/h</text>`
-    : `<text x="${cx}" y="${cy+5}" fill="#8899aa" font-size="11" text-anchor="middle">--</text>`;
+    : '';
 
-  // Aguja con flecha triangular en la punta
+  // Aguja con círculo central que no traspasa
   let aguja = '';
   if (dirViento != null) {
-    // Aguja: base en centro, punta con flecha apuntando de donde VIENE el viento
+    const rCircle = 8; // radio del círculo central
     const tipX = px(dirViento, r-12), tipY = py(dirViento, r-12);
-    const baseX = px((dirViento+180)%360, 16), baseY = py((dirViento+180)%360, 16);
+    const tailX = px((dirViento+180)%360, 18), tailY = py((dirViento+180)%360, 18);
     const fa = toRad(dirViento);
-    const perpX = Math.sin(fa) * 5, perpY = -Math.cos(fa) * 5;
+    // Flecha triangular en la punta
     const arrowLen = 12;
+    const perpX = Math.sin(fa) * 5, perpY = -Math.cos(fa) * 5;
     const ax1 = tipX - arrowLen*Math.cos(fa) + perpX;
     const ay1 = tipY - arrowLen*Math.sin(fa) + perpY;
     const ax2 = tipX - arrowLen*Math.cos(fa) - perpX;
     const ay2 = tipY - arrowLen*Math.sin(fa) - perpY;
+    // Aguja arranca desde el borde del círculo central
+    const startX = cx + rCircle * Math.cos(fa);
+    const startY = cy + rCircle * Math.sin(fa);
     aguja = `
-      <line x1="${cx}" y1="${cy}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="${startX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
       <polygon points="${tipX.toFixed(1)},${tipY.toFixed(1)} ${ax1.toFixed(1)},${ay1.toFixed(1)} ${ax2.toFixed(1)},${ay2.toFixed(1)}" fill="white"/>
-      <line x1="${cx}" y1="${cy}" x2="${baseX.toFixed(1)}" y2="${baseY.toFixed(1)}" stroke="#ffffff40" stroke-width="1.5" stroke-linecap="round"/>
-      <circle cx="${cx}" cy="${cy}" r="3" fill="white"/>`;
+      <line x1="${cx}" y1="${cy}" x2="${tailX.toFixed(1)}" y2="${tailY.toFixed(1)}" stroke="#ffffff40" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="${rCircle}" fill="#1a2a3a" stroke="white" stroke-width="1.5"/>`;
   }
 
   return `<svg width="${cx*2}" height="${cy*2}" viewBox="0 0 ${cx*2} ${cy*2}" style="overflow:visible;flex-shrink:0;">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff08" stroke="#ffffff15" stroke-width="1"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff06"/>
+    ${zonas}
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#ffffff20" stroke-width="1"/>
     ${marcas}
     ${vel}
     ${aguja}
@@ -706,19 +732,19 @@ async function cargarInicio() {
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;">
             <div style="flex:1;">
               <!-- Fila velocidad -->
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
                 <span style="font-size:13px;color:#8899aa;font-weight:500;">Velocidad</span>
                 <span style="font-size:13px;color:white;font-weight:600;">${rnd(velViento)} km/h</span>
               </div>
               <div style="height:0.5px;background:#ffffff15;"></div>
               <!-- Fila dirección -->
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
                 <span style="font-size:13px;color:#8899aa;font-weight:500;">Dirección</span>
                 <span style="font-size:13px;color:white;font-weight:600;">${dirTxt(dirViento)} · ${rnd(dirViento)}°</span>
               </div>
               <div style="height:0.5px;background:#ffffff15;"></div>
               <!-- Fila estado -->
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
                 <span style="font-size:13px;color:#8899aa;font-weight:500;">Estado</span>
                 <span style="font-size:13px;color:${etViento.color};font-weight:700;">${etViento.label}</span>
               </div>
