@@ -552,72 +552,47 @@ function flechaDireccion(grados, color, size = 36) {
 let ultimaMejoresOlas = 0;
 
 function brujulaViento(dirViento, velViento, playa, etViento) {
-  const cx = 90, cy = 90, r = 72;
-  const offshoreDir = (playa.orient + 180) % 360; // dirección desde la que sopla offshore
+  const cx = 60, cy = 60, r = 50;
+  const toRad = deg => (deg - 90) * Math.PI / 180;
+  const px = (a, rr) => cx + rr * Math.cos(toRad(a));
+  const py = (a, rr) => cy + rr * Math.sin(toRad(a));
 
-  // Convierte bearing a ángulo SVG (0=derecha=E, horario)
-  const toSvg = deg => (deg - 90) * Math.PI / 180;
+  // Marcas finas: cada 5° corta, cada 30° larga
+  let marcas = '';
+  for (let a = 0; a < 360; a += 5) {
+    const isLong = a % 30 === 0;
+    const r1 = isLong ? r - 8 : r - 4;
+    marcas += `<line x1="${px(a,r).toFixed(1)}" y1="${py(a,r).toFixed(1)}" x2="${px(a,r1).toFixed(1)}" y2="${py(a,r1).toFixed(1)}" stroke="${isLong ? '#ffffff50' : '#ffffff25'}" stroke-width="${isLong ? 1.5 : 0.8}"/>`;
+  }
 
-  // Punto en el círculo
-  const px = (a, rr) => cx + rr * Math.cos(toSvg(a));
-  const py = (a, rr) => cy + rr * Math.sin(toSvg(a));
-
-  // Sector entre dos ángulos (bearing) con color y opacidad
-  const sector = (a1, a2, color, op) => {
-    const large = ((a2 - a1 + 360) % 360) > 180 ? 1 : 0;
-    const x1 = px(a1, r), y1 = py(a1, r);
-    const x2 = px(a2, r), y2 = py(a2, r);
-    return `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${color}" opacity="${op}"/>`;
-  };
-
-  // Zonas relativas al offshore ideal
-  const o = offshoreDir;
-  const s = (deg) => (o + deg + 360) % 360;
-
-  const zonas = [
-    sector(s(-20),  s(20),   '#44ddaa', 0.55), // OFFSHORE
-    sector(s(20),   s(55),   '#88ddaa', 0.40), // CROSS-OFF der
-    sector(s(-55),  s(-20),  '#88ddaa', 0.40), // CROSS-OFF izq
-    sector(s(55),   s(100),  '#ffcc00', 0.35), // CROSS der
-    sector(s(-100), s(-55),  '#ffcc00', 0.35), // CROSS izq
-    sector(s(100),  s(140),  '#ff7722', 0.35), // CROSS-ON der
-    sector(s(-140), s(-100), '#ff7722', 0.35), // CROSS-ON izq
-    sector(s(140),  s(180),  '#ff3333', 0.35), // ONSHORE der
-    sector(s(-180), s(-140), '#ff3333', 0.35), // ONSHORE izq
-  ].join('');
-
-  // Flecha dirección actual
-  const fAngle = dirViento ?? 0;
-  const fx = px(fAngle, 55), fy = py(fAngle, 55);
-  const fx2 = px((fAngle+180)%360, 20), fy2 = py((fAngle+180)%360, 20);
-  // Cabeza de flecha
-  const fa = toSvg(fAngle);
-  const arr = `
-    <line x1="${cx}" y1="${cy}" x2="${fx.toFixed(1)}" y2="${fy.toFixed(1)}" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-    <polygon points="${fx.toFixed(1)},${fy.toFixed(1)} ${(fx-8*Math.cos(fa-0.4)).toFixed(1)},${(fy-8*Math.sin(fa-0.4)).toFixed(1)} ${(fx-8*Math.cos(fa+0.4)).toFixed(1)},${(fy-8*Math.sin(fa+0.4)).toFixed(1)}" fill="white"/>
-    <line x1="${cx}" y1="${cy}" x2="${fx2.toFixed(1)}" y2="${fy2.toFixed(1)}" stroke="#ffffff35" stroke-width="1.5" stroke-linecap="round"/>`;
-
-  // Marcas y cardinales
-  const marcas = [0,45,90,135,180,225,270,315].map(a => {
-    const x1 = px(a, r), y1 = py(a, r);
-    const x2 = px(a, r-8), y2 = py(a, r-8);
-    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#ffffff30" stroke-width="1"/>`;
-  }).join('');
-
+  // Cardinales
   const cards = [['N',0],['E',90],['S',180],['O',270]].map(([l,a]) => {
-    const x = px(a, r+12), y = py(a, r+12);
-    return `<text x="${x.toFixed(0)}" y="${(y+4).toFixed(0)}" fill="#ffffff70" font-size="10" font-weight="700" text-anchor="middle">${l}</text>`;
+    const x = px(a, r-16), y = py(a, r-16);
+    return `<text x="${x.toFixed(0)}" y="${(y+4).toFixed(0)}" fill="#ffffff90" font-size="9" font-weight="700" text-anchor="middle">${l}</text>`;
   }).join('');
+
+  // Aguja
+  let aguja = '';
+  if (dirViento != null) {
+    const fx = px(dirViento, r-10), fy = py(dirViento, r-10);
+    const bx = px((dirViento+180)%360, 14), by = py((dirViento+180)%360, 14);
+    const fa = toRad(dirViento);
+    aguja = `
+      <line x1="${bx.toFixed(1)}" y1="${by.toFixed(1)}" x2="${fx.toFixed(1)}" y2="${fy.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="3.5" fill="white"/>
+      <circle cx="${cx}" cy="${cy}" r="3" fill="white"/>`;
+  }
+
+  // Velocidad centro
+  const vel = velViento != null ? `<text x="${cx}" y="${cy+4}" fill="white" font-size="14" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
+    <text x="${cx}" y="${cy+14}" fill="#8899aa" font-size="8" text-anchor="middle">km/h</text>` : '';
 
   return `<svg width="${cx*2}" height="${cy*2}" viewBox="0 0 ${cx*2} ${cy*2}" style="overflow:visible;flex-shrink:0;">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff06"/>
-    ${zonas}
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#ffffff20" stroke-width="1"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff08" stroke="#ffffff20" stroke-width="1"/>
     ${marcas}
     ${cards}
-    <text x="${cx}" y="${cy-4}" fill="white" font-size="16" font-weight="800" text-anchor="middle">${velViento != null ? Math.round(velViento) : '--'}</text>
-    <text x="${cx}" y="${cy+12}" fill="#8899aa" font-size="9" text-anchor="middle">km/h</text>
-    ${dirViento != null ? arr : ''}
+    ${vel}
+    ${aguja}
   </svg>`;
 }
 
