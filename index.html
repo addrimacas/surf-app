@@ -424,9 +424,9 @@ async function htmlMareas(playa, tempAgua) {
       return interpolar(T, puntos[puntos.length-2], puntos[puntos.length-1]);
     };
 
-    // Ventana: -4h a +5h (9h total), centrada en ahora
+    // Ventana: -4h a +4h (8h total), ahora en el centro
     const inicioMin = ahoraMin - 4*60;
-    const finMin    = ahoraMin + 5*60;
+    const finMin    = ahoraMin + 4*60;
     const ventanaMin = finMin - inicioMin;
 
     // Escala Y: 0 hasta maxPleamar + 0.5
@@ -450,10 +450,10 @@ async function htmlMareas(playa, tempAgua) {
     const pyAhora = yDeH(alturaEn(ahoraMin));
     const alturaActual = alturaEn(ahoraMin);
 
-    // Etiquetas X cada 2h para evitar solapamiento
+    // Etiquetas X cada hora
     const etiqX = [];
-    const primeraMarca = Math.ceil(inicioMin / 120) * 120;
-    for (let T = primeraMarca; T <= finMin; T += 120) {
+    const primeraMarca = Math.ceil(inicioMin / 60) * 60;
+    for (let T = primeraMarca; T <= finMin; T += 60) {
       const m = ((T % 1440) + 1440) % 1440;
       etiqX.push({ x: xDeMin(T), label: String(Math.floor(m/60)) });
     }
@@ -492,10 +492,14 @@ async function htmlMareas(playa, tempAgua) {
         <path d="${areaD}" fill="#44ddaa" opacity="0.07" clip-path="url(#grafica-clip)"/>
         <!-- Curva -->
         <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#grafica-clip)"/>
+        <!-- Grid horizontal (una línea por cada valor Y) -->
+        ${etiqY.map(e => `<line x1="${mL}" y1="${e.y.toFixed(1)}" x2="${W-mR}" y2="${e.y.toFixed(1)}" stroke="#ffffff08" stroke-width="0.5"/>`).join('')}
+        <!-- Grid vertical (una línea por cada hora) -->
+        ${etiqX.map(e => `<line x1="${e.x.toFixed(1)}" y1="${mT}" x2="${e.x.toFixed(1)}" y2="${H-mB}" stroke="#ffffff08" stroke-width="0.5"/>`).join('')}
         <!-- Eje Y (línea vertical izquierda) -->
-        <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H-mB}" stroke="#ffffff15" stroke-width="1"/>
+        <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H-mB}" stroke="#ffffff20" stroke-width="1"/>
         <!-- Eje X (línea horizontal inferior) -->
-        <line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#ffffff15" stroke-width="1"/>
+        <line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#ffffff20" stroke-width="1"/>
         <!-- Línea vertical hora actual -->
         <line x1="${pxAhora.toFixed(1)}" y1="${pyAhora.toFixed(1)}" x2="${pxAhora.toFixed(1)}" y2="${H-mB}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
         <!-- Punto hora actual -->
