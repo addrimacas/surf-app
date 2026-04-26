@@ -550,6 +550,77 @@ function flechaDireccion(grados, color, size = 36) {
 }
 
 let ultimaMejoresOlas = 0;
+
+function brujulaViento(dirViento, velViento, playa, etViento) {
+  const cx = 90, cy = 90, r = 72;
+  const offshoreDir = (playa.orient + 180) % 360; // dirección desde la que sopla offshore
+
+  // Convierte bearing a ángulo SVG (0=derecha=E, horario)
+  const toSvg = deg => (deg - 90) * Math.PI / 180;
+
+  // Punto en el círculo
+  const px = (a, rr) => cx + rr * Math.cos(toSvg(a));
+  const py = (a, rr) => cy + rr * Math.sin(toSvg(a));
+
+  // Sector entre dos ángulos (bearing) con color y opacidad
+  const sector = (a1, a2, color, op) => {
+    const large = ((a2 - a1 + 360) % 360) > 180 ? 1 : 0;
+    const x1 = px(a1, r), y1 = py(a1, r);
+    const x2 = px(a2, r), y2 = py(a2, r);
+    return `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${color}" opacity="${op}"/>`;
+  };
+
+  // Zonas relativas al offshore ideal
+  const o = offshoreDir;
+  const s = (deg) => (o + deg + 360) % 360;
+
+  const zonas = [
+    sector(s(-20),  s(20),   '#44ddaa', 0.55), // OFFSHORE
+    sector(s(20),   s(55),   '#88ddaa', 0.40), // CROSS-OFF der
+    sector(s(-55),  s(-20),  '#88ddaa', 0.40), // CROSS-OFF izq
+    sector(s(55),   s(100),  '#ffcc00', 0.35), // CROSS der
+    sector(s(-100), s(-55),  '#ffcc00', 0.35), // CROSS izq
+    sector(s(100),  s(140),  '#ff7722', 0.35), // CROSS-ON der
+    sector(s(-140), s(-100), '#ff7722', 0.35), // CROSS-ON izq
+    sector(s(140),  s(180),  '#ff3333', 0.35), // ONSHORE der
+    sector(s(-180), s(-140), '#ff3333', 0.35), // ONSHORE izq
+  ].join('');
+
+  // Flecha dirección actual
+  const fAngle = dirViento ?? 0;
+  const fx = px(fAngle, 55), fy = py(fAngle, 55);
+  const fx2 = px((fAngle+180)%360, 20), fy2 = py((fAngle+180)%360, 20);
+  // Cabeza de flecha
+  const fa = toSvg(fAngle);
+  const arr = `
+    <line x1="${cx}" y1="${cy}" x2="${fx.toFixed(1)}" y2="${fy.toFixed(1)}" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="${fx.toFixed(1)},${fy.toFixed(1)} ${(fx-8*Math.cos(fa-0.4)).toFixed(1)},${(fy-8*Math.sin(fa-0.4)).toFixed(1)} ${(fx-8*Math.cos(fa+0.4)).toFixed(1)},${(fy-8*Math.sin(fa+0.4)).toFixed(1)}" fill="white"/>
+    <line x1="${cx}" y1="${cy}" x2="${fx2.toFixed(1)}" y2="${fy2.toFixed(1)}" stroke="#ffffff35" stroke-width="1.5" stroke-linecap="round"/>`;
+
+  // Marcas y cardinales
+  const marcas = [0,45,90,135,180,225,270,315].map(a => {
+    const x1 = px(a, r), y1 = py(a, r);
+    const x2 = px(a, r-8), y2 = py(a, r-8);
+    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#ffffff30" stroke-width="1"/>`;
+  }).join('');
+
+  const cards = [['N',0],['E',90],['S',180],['O',270]].map(([l,a]) => {
+    const x = px(a, r+12), y = py(a, r+12);
+    return `<text x="${x.toFixed(0)}" y="${(y+4).toFixed(0)}" fill="#ffffff70" font-size="10" font-weight="700" text-anchor="middle">${l}</text>`;
+  }).join('');
+
+  return `<svg width="${cx*2}" height="${cy*2}" viewBox="0 0 ${cx*2} ${cy*2}" style="overflow:visible;flex-shrink:0;">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff06"/>
+    ${zonas}
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#ffffff20" stroke-width="1"/>
+    ${marcas}
+    ${cards}
+    <text x="${cx}" y="${cy-4}" fill="white" font-size="16" font-weight="800" text-anchor="middle">${velViento != null ? Math.round(velViento) : '--'}</text>
+    <text x="${cx}" y="${cy+12}" fill="#8899aa" font-size="9" text-anchor="middle">km/h</text>
+    ${dirViento != null ? arr : ''}
+  </svg>`;
+}
+
 async function cargarInicio() {
   try {
     const lat = playaActiva.lat, lon = playaActiva.lon;
@@ -627,12 +698,14 @@ async function cargarInicio() {
         </div>
         <div class="dato-card">
           <div class="label">Viento</div>
-          <div style="display:flex;align-items:center;gap:10px;margin:6px 0 8px;">
-            ${flechaDireccion(dirViento, etViento.color, 44)}
-            <div style="font-size:18px;font-weight:700;color:${etViento.color};line-height:1;">${dirTxt(dirViento)}&nbsp;${rnd(velViento)}&nbsp;km/h</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div>
+              <div style="font-size:18px;font-weight:700;color:${etViento.color};line-height:1;margin:6px 0 6px;">${dirTxt(dirViento)}&nbsp;${rnd(velViento)}&nbsp;km/h</div>
+              <div style="font-size:19px;font-weight:800;letter-spacing:1px;color:${etViento.color};margin-bottom:3px;">${etViento.label}</div>
+              <div style="font-size:11px;color:#8899aa;">${etViento.desc}</div>
+            </div>
+            ${brujulaViento(dirViento, velViento, playaActiva, etViento)}
           </div>
-          <div style="font-size:19px;font-weight:800;letter-spacing:1px;color:${etViento.color};margin-bottom:3px;">${etViento.label}</div>
-          <div style="font-size:11px;color:#8899aa;">${etViento.desc}</div>
         </div>
       </div>
       <div class="datos-grid">
