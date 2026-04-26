@@ -482,7 +482,7 @@ async function htmlMareas(playa, tempAgua) {
         ${alturaActual.toFixed(1)}m ${subiendo?'↑':'↓'}
         <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
-      <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:hidden;">
+      <svg width="100%" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:hidden;display:block;">
         <defs>
           <clipPath id="grafica-clip">
             <rect x="${mL}" y="${mT}" width="${W-mL-mR}" height="${H-mT-mB}"/>
