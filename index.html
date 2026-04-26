@@ -296,13 +296,17 @@ function cielo(codigo) {
   return                   { texto:'Tormenta',   color:'#aa77ff', textColor:'white' };
 }
 
-function esNoche() {
-  const h = new Date().getHours();
-  return h < 7 || h >= 21;
+function esNoche(sunrise, sunset) {
+  if (!sunrise || !sunset) {
+    const h = new Date().getHours();
+    return h < 7 || h >= 21;
+  }
+  const ahora = new Date().getTime();
+  return ahora < new Date(sunrise).getTime() || ahora > new Date(sunset).getTime();
 }
 
-function iconoCielo(codigo, size = 36) {
-  const noche = esNoche();
+function iconoCielo(codigo, size = 36, sunrise, sunset) {
+  const noche = esNoche(sunrise, sunset);
   const c = codigo == null || codigo <= 1 ? '#FFD700'
           : codigo <= 3  ? '#88aacc'
           : codigo <= 48 ? '#99aabb'
@@ -558,45 +562,55 @@ function flechaDireccion(grados, color, size = 36) {
 let ultimaMejoresOlas = 0;
 
 function brujulaViento(dirViento, velViento, playa, etViento) {
-  const cx = 60, cy = 60, r = 50;
+  const cx = 65, cy = 65, r = 58;
   const toRad = deg => (deg - 90) * Math.PI / 180;
   const px = (a, rr) => cx + rr * Math.cos(toRad(a));
   const py = (a, rr) => cy + rr * Math.sin(toRad(a));
 
-  // Marcas finas: cada 5° corta, cada 30° larga
+  // Marcas + cardinales integrados
   let marcas = '';
+  const cardMap = {0:'N', 90:'E', 180:'S', 270:'O'};
   for (let a = 0; a < 360; a += 5) {
+    const isCard = a % 90 === 0;
     const isLong = a % 30 === 0;
-    const r1 = isLong ? r - 8 : r - 4;
-    marcas += `<line x1="${px(a,r).toFixed(1)}" y1="${py(a,r).toFixed(1)}" x2="${px(a,r1).toFixed(1)}" y2="${py(a,r1).toFixed(1)}" stroke="${isLong ? '#ffffff50' : '#ffffff25'}" stroke-width="${isLong ? 1.5 : 0.8}"/>`;
+    const r1 = isCard ? r - 14 : isLong ? r - 10 : r - 5;
+    const sw = isCard ? 2 : isLong ? 1.5 : 0.8;
+    const col = isCard ? '#ffffff80' : isLong ? '#ffffff50' : '#ffffff25';
+    marcas += `<line x1="${px(a,r).toFixed(1)}" y1="${py(a,r).toFixed(1)}" x2="${px(a,r1).toFixed(1)}" y2="${py(a,r1).toFixed(1)}" stroke="${col}" stroke-width="${sw}"/>`;
+    if (isCard) {
+      const tx = px(a, r-22), ty = py(a, r-22);
+      marcas += `<text x="${tx.toFixed(0)}" y="${(ty+4).toFixed(0)}" fill="white" font-size="11" font-weight="700" text-anchor="middle">${cardMap[a]}</text>`;
+    }
   }
 
-  // Cardinales
-  const cards = [['N',0],['E',90],['S',180],['O',270]].map(([l,a]) => {
-    const x = px(a, r-16), y = py(a, r-16);
-    return `<text x="${x.toFixed(0)}" y="${(y+4).toFixed(0)}" fill="#ffffff90" font-size="9" font-weight="700" text-anchor="middle">${l}</text>`;
-  }).join('');
+  // Velocidad centro — grande y visible
+  const vel = velViento != null
+    ? `<text x="${cx}" y="${cy+2}" fill="white" font-size="22" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
+       <text x="${cx}" y="${cy+16}" fill="#8899aa" font-size="9" text-anchor="middle">km/h</text>`
+    : `<text x="${cx}" y="${cy+5}" fill="#8899aa" font-size="11" text-anchor="middle">--</text>`;
 
-  // Aguja
+  // Aguja con flecha triangular en la punta
   let aguja = '';
   if (dirViento != null) {
-    const fx = px(dirViento, r-10), fy = py(dirViento, r-10);
-    const bx = px((dirViento+180)%360, 14), by = py((dirViento+180)%360, 14);
+    const tipX = px(dirViento, r-12), tipY = py(dirViento, r-12);
+    const baseX = px((dirViento+180)%360, 18), baseY = py((dirViento+180)%360, 18);
     const fa = toRad(dirViento);
+    const perpX = Math.sin(fa) * 6, perpY = -Math.cos(fa) * 6;
+    // Flecha triangular en la punta
+    const arrowLen = 14;
+    const ax1 = tipX - arrowLen*Math.cos(fa) + perpX;
+    const ay1 = tipY - arrowLen*Math.sin(fa) + perpY;
+    const ax2 = tipX - arrowLen*Math.cos(fa) - perpX;
+    const ay2 = tipY - arrowLen*Math.sin(fa) - perpY;
     aguja = `
-      <line x1="${bx.toFixed(1)}" y1="${by.toFixed(1)}" x2="${fx.toFixed(1)}" y2="${fy.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="3.5" fill="white"/>
-      <circle cx="${cx}" cy="${cy}" r="3" fill="white"/>`;
+      <line x1="${baseX.toFixed(1)}" y1="${baseY.toFixed(1)}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <polygon points="${tipX.toFixed(1)},${tipY.toFixed(1)} ${ax1.toFixed(1)},${ay1.toFixed(1)} ${ax2.toFixed(1)},${ay2.toFixed(1)}" fill="white"/>
+      <circle cx="${baseX.toFixed(1)}" cy="${baseY.toFixed(1)}" r="3" fill="#ffffff60"/>`;
   }
 
-  // Velocidad centro
-  const vel = velViento != null ? `<text x="${cx}" y="${cy+4}" fill="white" font-size="14" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
-    <text x="${cx}" y="${cy+14}" fill="#8899aa" font-size="8" text-anchor="middle">km/h</text>` : '';
-
   return `<svg width="${cx*2}" height="${cy*2}" viewBox="0 0 ${cx*2} ${cy*2}" style="overflow:visible;flex-shrink:0;">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff08" stroke="#ffffff20" stroke-width="1"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff08" stroke="#ffffff15" stroke-width="1"/>
     ${marcas}
-    ${cards}
     ${vel}
     ${aguja}
   </svg>`;
@@ -704,7 +718,7 @@ async function cargarInicio() {
           <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 8px;">
             <div style="font-size:38px;font-weight:800;color:white;line-height:1;">${fmt(tempAire, 0)}°</div>
-            <div>${iconoCielo(codigoCielo, 52)}</div>
+            <div>${iconoCielo(codigoCielo, 52, atmo.daily?.sunrise?.[0], atmo.daily?.sunset?.[0])}</div>
           </div>
           <div style="font-size:15px;font-weight:600;color:${cieloActual.textColor};margin-bottom:4px;">${cieloActual.texto}</div>
           <div style="display:flex;gap:16px;margin-top:2px;">
