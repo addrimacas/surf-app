@@ -594,31 +594,21 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
     if (isCard) marcas += `<text x="${px(a,r-22).toFixed(0)}" y="${(py(a,r-22)+4).toFixed(0)}" fill="white" font-size="11" font-weight="700" text-anchor="middle">${cardMap[a]}</text>`;
   }
 
-  // Aguja: apunta hacia donde VA el viento (dirViento+180 = destino)
-  // dirViento=51° (viene del NE) → flecha apunta al SW (51+180=231°)
+  // Aguja: apunta de donde VIENE el viento, termina en punto
   let aguja = '';
   const rCircle = 18;
   if (dirViento != null) {
-    const destino = (dirViento + 180) % 360; // hacia donde va
-    const tipX = px(destino, r-12), tipY = py(destino, r-12);
-    const fd = toRad(destino);
-    const perpX = Math.sin(fd)*5, perpY = -Math.cos(fd)*5;
-    const arrowLen = 12;
-    const ax1 = tipX - arrowLen*Math.cos(fd) + perpX;
-    const ay1 = tipY - arrowLen*Math.sin(fd) + perpY;
-    const ax2 = tipX - arrowLen*Math.cos(fd) - perpX;
-    const ay2 = tipY - arrowLen*Math.sin(fd) - perpY;
-    const startX = cx + rCircle * Math.cos(fd);
-    const startY = cy + rCircle * Math.sin(fd);
-    const tailX = px(dirViento, 20), tailY = py(dirViento, 20);
+    const tipX = px(dirViento, r-12), tipY = py(dirViento, r-12);
+    const tailX = px((dirViento+180)%360, 20), tailY = py((dirViento+180)%360, 20);
+    const startX = cx + rCircle * Math.cos(toRad(dirViento));
+    const startY = cy + rCircle * Math.sin(toRad(dirViento));
     aguja = `
       <line x1="${startX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <polygon points="${tipX.toFixed(1)},${tipY.toFixed(1)} ${ax1.toFixed(1)},${ay1.toFixed(1)} ${ax2.toFixed(1)},${ay2.toFixed(1)}" fill="white"/>
-      <line x1="${cx}" y1="${cy}" x2="${tailX.toFixed(1)}" y2="${tailY.toFixed(1)}" stroke="#ffffff40" stroke-width="1.5" stroke-linecap="round"/>`;
+      <circle cx="${tipX.toFixed(1)}" cy="${tipY.toFixed(1)}" r="4" fill="white"/>
+      <line x1="${cx}" y1="${cy}" x2="${tailX.toFixed(1)}" y2="${tailY.toFixed(1)}" stroke="#ffffff35" stroke-width="1.5" stroke-linecap="round"/>`;
   }
 
-  // Círculo central grande con velocidad dentro
-  const circulo = `
+  const circulo  const circulo = `
     <circle cx="${cx}" cy="${cy}" r="${rCircle}" fill="#0d1b2a" stroke="white" stroke-width="1.5"/>
     ${velViento != null ? `<text x="${cx}" y="${cy+2}" fill="white" font-size="14" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
     <text x="${cx}" y="${cy+13}" fill="#8899aa" font-size="7" text-anchor="middle">km/h</text>` : ''}`;
