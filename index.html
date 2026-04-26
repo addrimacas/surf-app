@@ -301,12 +301,14 @@ function esNoche(sunrise, sunset) {
     const h = new Date().getHours();
     return h < 7 || h >= 21;
   }
-  const ahora = new Date().getTime();
-  return ahora < new Date(sunrise).getTime() || ahora > new Date(sunset).getTime();
+  const ahora = Date.now();
+  const sr = new Date(sunrise).getTime();
+  const ss = new Date(sunset).getTime();
+  return ahora < sr || ahora > ss;
 }
 
-function iconoCielo(codigo, size = 36, sunrise, sunset) {
-  const noche = esNoche(sunrise, sunset);
+function iconoCielo(codigo, size = 36, sunrise, sunset, isDay) {
+  const noche = isDay === 0 ? true : isDay === 1 ? false : esNoche(sunrise, sunset);
   const c = codigo == null || codigo <= 1 ? '#FFD700'
           : codigo <= 3  ? '#88aacc'
           : codigo <= 48 ? '#99aabb'
@@ -592,20 +594,21 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
   // Aguja con flecha triangular en la punta
   let aguja = '';
   if (dirViento != null) {
+    // Aguja: base en centro, punta con flecha apuntando de donde VIENE el viento
     const tipX = px(dirViento, r-12), tipY = py(dirViento, r-12);
-    const baseX = px((dirViento+180)%360, 18), baseY = py((dirViento+180)%360, 18);
+    const baseX = px((dirViento+180)%360, 16), baseY = py((dirViento+180)%360, 16);
     const fa = toRad(dirViento);
-    const perpX = Math.sin(fa) * 6, perpY = -Math.cos(fa) * 6;
-    // Flecha triangular en la punta
-    const arrowLen = 14;
+    const perpX = Math.sin(fa) * 5, perpY = -Math.cos(fa) * 5;
+    const arrowLen = 12;
     const ax1 = tipX - arrowLen*Math.cos(fa) + perpX;
     const ay1 = tipY - arrowLen*Math.sin(fa) + perpY;
     const ax2 = tipX - arrowLen*Math.cos(fa) - perpX;
     const ay2 = tipY - arrowLen*Math.sin(fa) - perpY;
     aguja = `
-      <line x1="${baseX.toFixed(1)}" y1="${baseY.toFixed(1)}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="${cx}" y1="${cy}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
       <polygon points="${tipX.toFixed(1)},${tipY.toFixed(1)} ${ax1.toFixed(1)},${ay1.toFixed(1)} ${ax2.toFixed(1)},${ay2.toFixed(1)}" fill="white"/>
-      <circle cx="${baseX.toFixed(1)}" cy="${baseY.toFixed(1)}" r="3" fill="#ffffff60"/>`;
+      <line x1="${cx}" y1="${cy}" x2="${baseX.toFixed(1)}" y2="${baseY.toFixed(1)}" stroke="#ffffff40" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="3" fill="white"/>`;
   }
 
   return `<svg width="${cx*2}" height="${cy*2}" viewBox="0 0 ${cx*2} ${cy*2}" style="overflow:visible;flex-shrink:0;">
@@ -718,7 +721,7 @@ async function cargarInicio() {
           <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 8px;">
             <div style="font-size:38px;font-weight:800;color:white;line-height:1;">${fmt(tempAire, 0)}°</div>
-            <div>${iconoCielo(codigoCielo, 52, atmo.daily?.sunrise?.[0], atmo.daily?.sunset?.[0])}</div>
+            <div>${iconoCielo(codigoCielo, 52, atmo.daily?.sunrise?.[0], atmo.daily?.sunset?.[0], a.is_day)}</div>
           </div>
           <div style="font-size:15px;font-weight:600;color:${cieloActual.textColor};margin-bottom:4px;">${cieloActual.texto}</div>
           <div style="display:flex;gap:16px;margin-top:2px;">
