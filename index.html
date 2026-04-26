@@ -490,8 +490,10 @@ async function htmlMareas(playa, tempAgua) {
         </defs>
         <!-- Grid horizontal -->
         ${etiqY.map(e => `<line x1="${mL}" y1="${e.y.toFixed(1)}" x2="${W-mR}" y2="${e.y.toFixed(1)}" stroke="#ffffff18" stroke-width="0.5"/>`).join('')}
-        <!-- Grid vertical -->
-        ${etiqX.map(e => `<line x1="${e.x.toFixed(1)}" y1="${mT}" x2="${e.x.toFixed(1)}" y2="${H-mB}" stroke="#ffffff18" stroke-width="0.5"/>`).join('')}
+        <!-- Grid vertical (sin la primera que coincide con el eje Y) -->
+        ${etiqX.slice(1).map(e => `<line x1="${e.x.toFixed(1)}" y1="${mT}" x2="${e.x.toFixed(1)}" y2="${H-mB}" stroke="#ffffff18" stroke-width="0.5"/>`).join('')}
+        <!-- Eje Y -->
+        <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H-mB}" stroke="#ffffff30" stroke-width="1"/>
         <!-- Eje X -->
         <line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#ffffff30" stroke-width="1"/>
         <!-- Area bajo curva -->
