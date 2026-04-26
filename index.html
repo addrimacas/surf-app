@@ -406,7 +406,7 @@ async function htmlMareas(playa, tempAgua) {
       ...(d2.mareas?.datos?.marea ?? []).map(m => ({ min: toMin(m)+1440, h: parseFloat(m.altura), tipo: m.tipo })),
     ].sort((a,b) => a.min - b.min);
 
-    const ahoraMin = hoy.getHours()*60 + hoy.getMinutes() + offsetLocal;
+    const ahoraMin = hoy.getHours()*60 + hoy.getMinutes();
 
     // Interpolación coseno entre dos mareas
     const interpolar = (T, pA, pB) => {
