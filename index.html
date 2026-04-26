@@ -308,7 +308,7 @@ function esNoche(sunrise, sunset) {
 }
 
 function iconoCielo(codigo, size = 36, sunrise, sunset, isDay) {
-  const noche = isDay === 0 ? true : isDay === 1 ? false : esNoche(sunrise, sunset);
+  const noche = isDay == 0 ? true : isDay == 1 ? false : esNoche(sunrise, sunset);
   const c = codigo == null || codigo <= 1 ? '#FFD700'
           : codigo <= 3  ? '#88aacc'
           : codigo <= 48 ? '#99aabb'
@@ -605,7 +605,7 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
     aguja = `
       <line x1="${startX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
       <circle cx="${tipX.toFixed(1)}" cy="${tipY.toFixed(1)}" r="4" fill="white"/>
-      <line x1="${cx}" y1="${cy}" x2="${tailX.toFixed(1)}" y2="${tailY.toFixed(1)}" stroke="#ffffff35" stroke-width="1.5" stroke-linecap="round"/>`;
+`;
   }
 
   const circulo = `
@@ -702,9 +702,9 @@ async function cargarInicio() {
           </div>
           <!-- Cajetín ideal swell -->
           <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-            <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ideal</div>
+            <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
             <div style="display:flex;align-items:center;gap:8px;">
-              ${flechaDireccion(playaActiva.orient, '#4db8ff', 20)}
+              ${flechaDireccion(playaActiva.orient, '#4db8ff', 28)}
               <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
               <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
             </div>
@@ -736,9 +736,9 @@ async function cargarInicio() {
               </div>
               <!-- Cajetín ideal -->
               <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-                <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ideal</div>
+                <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Viento ideal</div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                  ${flechaDireccion((playaActiva.orient+180)%360, '#44cc44', 20)}
+                  ${flechaDireccion((playaActiva.orient+180)%360, '#44cc44', 28)}
                   <span style="font-size:13px;font-weight:600;color:#44cc44;">${playaActiva.viento}</span>
                   <span style="font-size:12px;color:#8899aa;">· < 28 km/h</span>
                 </div>
