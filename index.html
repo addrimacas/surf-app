@@ -217,7 +217,7 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) 
     score -= pen;
   }
 
-  return Math.max(1, Math.min(10, score));
+  return Math.round(Math.max(1, Math.min(10, score)) * 10) / 10;
 }
 
 function clasificar(h, direccion, playa, periodo, dirViento, velViento) {
@@ -483,10 +483,15 @@ async function htmlMareas(playa, tempAgua) {
         <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
       <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:hidden;">
+        <defs>
+          <clipPath id="grafica-clip">
+            <rect x="${mL}" y="${mT}" width="${W-mL-mR}" height="${H-mT-mB}"/>
+          </clipPath>
+        </defs>
         <!-- Area bajo curva -->
-        <path d="${areaD}" fill="#44ddaa" opacity="0.07"/>
+        <path d="${areaD}" fill="#44ddaa" opacity="0.07" clip-path="url(#grafica-clip)"/>
         <!-- Curva -->
-        <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#grafica-clip)"/>
         <!-- Eje Y (línea vertical izquierda) -->
         <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H-mB}" stroke="#ffffff15" stroke-width="1"/>
         <!-- Eje X (línea horizontal inferior) -->
