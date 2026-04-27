@@ -402,11 +402,13 @@ async function htmlMareas(playa, tempAgua) {
   const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
 
   try {
-    const [r1, r2] = await Promise.all([
+    const ayer = new Date(hoy.getTime() - 86400000);
+    const [r0, r1, r2] = await Promise.all([
+      fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(ayer)}`),
       fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(hoy)}`),
       fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(manana)}`),
     ]);
-    const [d1, d2] = await Promise.all([r1.json(), r2.json()]);
+    const [d0, d1, d2] = await Promise.all([r0.json(), r1.json(), r2.json()]);
 
     const mareasHoy = d1.mareas?.datos?.marea ?? [];
     if (mareasHoy.length === 0) throw new Error('sin datos');
@@ -418,9 +420,9 @@ async function htmlMareas(playa, tempAgua) {
       return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
     };
 
-    // Puntos ordenados: hoy + mañana (filtrar artefactos IHM con altura 0)
-    // Los de mañana llevan +1440 en min para poder comparar con ahoraMin directamente
+    // Puntos: ayer(-1440) + hoy + mañana(+1440) — siempre hay contexto a ambos lados
     const puntos = [
+      ...(d0.mareas?.datos?.marea ?? []).map(m => ({ min: toMin(m)-1440, h: parseFloat(m.altura), tipo: m.tipo })),
       ...mareasHoy.map(m => ({ min: toMin(m), h: parseFloat(m.altura), tipo: m.tipo })),
       ...(d2.mareas?.datos?.marea ?? []).map(m => ({ min: toMin(m)+1440, h: parseFloat(m.altura), tipo: m.tipo })),
     ].filter(p => p.h > 0.05).sort((a,b) => a.min - b.min);
