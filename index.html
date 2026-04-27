@@ -561,9 +561,20 @@ async function htmlMareas(playa, tempAgua) {
   }
 }
 
+let _olaParams = null;
+let _olaAnimFrame = null;
+
 function olaSwell(altura, periodo, energia) {
-  const id = 'ola-' + Math.random().toString(36).slice(2,7);
-  // Color según energía
+  _olaParams = { altura, periodo, energia };
+  return `<canvas id="ola-swell-canvas" width="130" height="130" style="display:block;flex-shrink:0;"></canvas>`;
+}
+
+function iniciarAnimOla() {
+  if (_olaAnimFrame) cancelAnimationFrame(_olaAnimFrame);
+  const canvas = document.getElementById('ola-swell-canvas');
+  if (!canvas || !_olaParams) return;
+  const { altura, periodo, energia } = _olaParams;
+
   let colorOla;
   if      (!energia || energia < 5)  colorOla = '#44aadd';
   else if (energia < 15) colorOla = '#4db8ff';
@@ -571,76 +582,68 @@ function olaSwell(altura, periodo, energia) {
   else if (energia < 50) colorOla = '#ffcc44';
   else                   colorOla = '#ff6644';
 
-  setTimeout(() => {
-    const canvas = document.getElementById(id);
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const W = 130, H = 130;
-    const ampNorm  = Math.min(1, (altura || 0.5) / 3);
-    const perNorm  = Math.min(1, (periodo || 8) / 18);
-    const velocidad = 0.025 / (0.4 + perNorm * 0.6);
-    const amp      = 8 + ampNorm * 28;
-    const freq     = 1.5 - perNorm * 0.8;
-    const capas = [
-      { yBase:0.52, alpha:0.18, ampMult:1.0,  speed:1.0,  phase:0   },
-      { yBase:0.60, alpha:0.13, ampMult:0.75, speed:0.73, phase:2.1 },
-      { yBase:0.68, alpha:0.09, ampMult:0.55, speed:0.55, phase:4.3 },
-    ];
-    let t = 0;
-    function draw() {
-      if (!document.getElementById(id)) return;
-      ctx.clearRect(0, 0, W, H);
-      // Fondo
-      const gBg = ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,58);
-      gBg.addColorStop(0,'rgba(77,184,255,0.06)');
-      gBg.addColorStop(1,'rgba(77,184,255,0)');
-      ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
-      ctx.fillStyle=gBg; ctx.fill();
-      ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
-      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.stroke();
-      // Clip circular
-      ctx.save();
-      ctx.beginPath(); ctx.arc(W/2,H/2,56,0,Math.PI*2); ctx.clip();
-      for (const capa of capas) {
-        const baseY = H*capa.yBase, a = amp*capa.ampMult;
-        ctx.beginPath(); ctx.moveTo(0,H);
-        for (let x=0;x<=W;x+=2) {
-          const y = baseY
-            + Math.sin((x/W)*Math.PI*2*freq + t*capa.speed + capa.phase)*a
-            + Math.sin((x/W)*Math.PI*3*freq + t*capa.speed*0.6 + capa.phase)*a*0.35;
-          ctx.lineTo(x,y);
-        }
-        ctx.lineTo(W,H); ctx.closePath();
-        const grad=ctx.createLinearGradient(0,baseY-a,0,H);
-        const ha=Math.round(capa.alpha*255).toString(16).padStart(2,'0');
-        grad.addColorStop(0,colorOla+ha); grad.addColorStop(1,colorOla+'00');
-        ctx.fillStyle=grad; ctx.fill();
-      }
-      // Línea cresta
-      const by0=H*capas[0].yBase;
-      ctx.beginPath();
+  const ctx = canvas.getContext('2d');
+  const W = 130, H = 130;
+  const ampNorm  = Math.min(1, (altura || 0.5) / 3);
+  const perNorm  = Math.min(1, (periodo || 8) / 18);
+  const velocidad = 0.025 / (0.4 + perNorm * 0.6);
+  const amp      = 8 + ampNorm * 28;
+  const freq     = 1.5 - perNorm * 0.8;
+  const capas = [
+    { yBase:0.52, alpha:0.18, ampMult:1.0,  speed:1.0,  phase:0   },
+    { yBase:0.60, alpha:0.13, ampMult:0.75, speed:0.73, phase:2.1 },
+    { yBase:0.68, alpha:0.09, ampMult:0.55, speed:0.55, phase:4.3 },
+  ];
+  let t = 0;
+
+  function draw() {
+    if (!document.getElementById('ola-swell-canvas')) return;
+    ctx.clearRect(0, 0, W, H);
+    const gBg = ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,58);
+    gBg.addColorStop(0,'rgba(77,184,255,0.06)');
+    gBg.addColorStop(1,'rgba(77,184,255,0)');
+    ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
+    ctx.fillStyle=gBg; ctx.fill();
+    ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.save();
+    ctx.beginPath(); ctx.arc(W/2,H/2,56,0,Math.PI*2); ctx.clip();
+    for (const capa of capas) {
+      const baseY = H*capa.yBase, a = amp*capa.ampMult;
+      ctx.beginPath(); ctx.moveTo(0,H);
       for (let x=0;x<=W;x+=2) {
-        const y=by0+Math.sin((x/W)*Math.PI*2*freq+t)*amp+Math.sin((x/W)*Math.PI*3*freq+t*0.6)*amp*0.35;
-        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        const y = baseY
+          + Math.sin((x/W)*Math.PI*2*freq + t*capa.speed + capa.phase)*a
+          + Math.sin((x/W)*Math.PI*3*freq + t*capa.speed*0.6 + capa.phase)*a*0.35;
+        ctx.lineTo(x,y);
       }
-      ctx.strokeStyle=colorOla+'cc'; ctx.lineWidth=1.5; ctx.stroke();
-      ctx.restore();
-      // Texto
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.shadowColor=colorOla; ctx.shadowBlur=12;
-      ctx.fillStyle='white'; ctx.font='bold 26px -apple-system,sans-serif';
-      ctx.fillText(altura!=null?altura.toFixed(1)+'m':'—', W/2, H/2-8);
-      ctx.shadowBlur=0;
-      ctx.fillStyle='#8899aa'; ctx.font='11px -apple-system,sans-serif';
-      ctx.fillText('altura', W/2, H/2+10);
-      ctx.fillStyle=colorOla+'cc'; ctx.font='600 12px -apple-system,sans-serif';
-      ctx.fillText(periodo!=null?periodo+'s':'—', W/2, H/2+27);
-      t+=velocidad;
-      requestAnimationFrame(draw);
+      ctx.lineTo(W,H); ctx.closePath();
+      const grad=ctx.createLinearGradient(0,baseY-a,0,H);
+      const ha=Math.round(capa.alpha*255).toString(16).padStart(2,'0');
+      grad.addColorStop(0,colorOla+ha); grad.addColorStop(1,colorOla+'00');
+      ctx.fillStyle=grad; ctx.fill();
     }
-    draw();
-  }, 0);
-  return `<canvas id="${id}" width="130" height="130" style="display:block;flex-shrink:0;"></canvas>`;
+    const by0=H*capas[0].yBase;
+    ctx.beginPath();
+    for (let x=0;x<=W;x+=2) {
+      const y=by0+Math.sin((x/W)*Math.PI*2*freq+t)*amp+Math.sin((x/W)*Math.PI*3*freq+t*0.6)*amp*0.35;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=colorOla+'cc'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.restore();
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.shadowColor=colorOla; ctx.shadowBlur=12;
+    ctx.fillStyle='white'; ctx.font='bold 26px -apple-system,sans-serif';
+    ctx.fillText(altura!=null?altura.toFixed(1)+'m':'—', W/2, H/2-8);
+    ctx.shadowBlur=0;
+    ctx.fillStyle='#8899aa'; ctx.font='11px -apple-system,sans-serif';
+    ctx.fillText('altura', W/2, H/2+10);
+    ctx.fillStyle=colorOla+'cc'; ctx.font='600 12px -apple-system,sans-serif';
+    ctx.fillText(periodo!=null?periodo+'s':'—', W/2, H/2+27);
+    t+=velocidad;
+    _olaAnimFrame = requestAnimationFrame(draw);
+  }
+  draw();
 }
 
 function flechaDireccion(grados, color, size = 36) {
@@ -867,6 +870,7 @@ async function cargarInicio() {
       </div>
       ${prevHtml}`;
     document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
+    iniciarAnimOla();
     cargarMejoresOlas();
     document.getElementById('dropdown-playas').innerHTML =
       Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
