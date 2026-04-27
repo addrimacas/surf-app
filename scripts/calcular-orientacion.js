@@ -130,16 +130,31 @@ async function consultarOverpass(lat, lon, radio = 600) {
     out geom;
   `;
   const url = 'https://lz4.overpass-api.de/api/interpreter';
-  const resp = await fetch(url, {
-    method: 'POST',
-    body: 'data=' + encodeURIComponent(query),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      'User-Agent': 'salitre-surf-app/1.0'
-    }
+  return new Promise((resolve, reject) => {
+    const https = require('https');
+    const postData = 'data=' + encodeURIComponent(query);
+    const options = {
+      hostname: 'lz4.overpass-api.de',
+      path: '/api/interpreter',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData),
+        'User-Agent': 'Mozilla/5.0'
+      }
+    };
+    const req = https.request(options, res => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        if (res.statusCode !== 200) return reject(new Error(`Overpass ${res.statusCode}`));
+        try { resolve(JSON.parse(data)); } catch(e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.write(postData);
+    req.end();
   });
-  if (!resp.ok) throw new Error(`Overpass ${resp.status}`);
-  return resp.json();
 }
 
 function calcularOrientacion(playa, data) {
