@@ -1,0 +1,26 @@
+{
+  "name": "surf-app",
+  "version": "1.0.0",
+  "description": "App de condiciones de surf para la costa gallega. Usa la API p\u00fablica [Open-Meteo Marine](https://open-meteo.com/en/docs/marine-weather-api) y [Leaflet](https://leafletjs.com/) + CartoDB/Esri para el mapa.",
+  "main": "beach-data.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/addrimacas/surf-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/addrimacas/surf-app/issues"
+  },
+  "homepage": "https://github.com/addrimacas/surf-app#readme",
+  "dependencies": {
+    "@turf/turf": "^7.3.5"
+  }
+}
