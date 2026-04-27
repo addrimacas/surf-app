@@ -449,17 +449,13 @@ async function htmlMareas(playa, tempAgua) {
     const finMin    = ahoraMin + 4*60;
     const ventanaMin = finMin - inicioMin;
 
-    // Escala Y dinámica: mín y máx de la curva en la ventana visible
-    const muestras = [];
-    for (let T = inicioMin; T <= finMin; T += 10) muestras.push(alturaEn(T));
-    const minH = Math.max(0, Math.min(...muestras) - 0.2);
-    const maxH = Math.max(...muestras) + 0.2;
-    const rangoH = maxH - minH || 1;
+    // Escala Y: de 0 hasta el máximo pleamar del día + margen
+    const maxH = Math.max(...puntos.map(p => p.h)) + 0.3;
 
     const W = 300, H = 210;
     const mL = 24, mR = 2, mT = 4, mB = 20; // márgenes
     const xDeMin = T => mL + ((T - inicioMin) / ventanaMin) * (W - mL - mR);
-    const yDeH   = h  => mT + (1 - (h - minH) / rangoH) * (H - mT - mB);
+    const yDeH   = h  => mT + (1 - h / maxH) * (H - mT - mB);
 
     // Curva: un punto cada 5 minutos
     const pts = [];
@@ -482,12 +478,10 @@ async function htmlMareas(playa, tempAgua) {
       etiqX.push({ x: xDeMin(T), label: String(Math.floor(m/60)) });
     }
 
-    // Etiquetas Y: de minH a maxH con pasos de 0.5m o 1m según rango
+    // Etiquetas Y: 0m, 1m, 2m, 3m...
     const etiqY = [];
-    const paso = rangoH > 2 ? 1 : 0.5;
-    const primerEtiq = Math.ceil(minH / paso) * paso;
-    for (let v = primerEtiq; v <= maxH + 0.01; v += paso) {
-      etiqY.push({ y: yDeH(v), label: `${v % 1 === 0 ? v+'m' : v.toFixed(1)+'m'}` });
+    for (let v = 0; v <= Math.floor(maxH); v++) {
+      etiqY.push({ y: yDeH(v), label: `${v}m` });
     }
 
     // Marea anterior y siguiente para footer
