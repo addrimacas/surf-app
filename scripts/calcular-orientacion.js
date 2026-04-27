@@ -129,7 +129,7 @@ async function consultarOverpass(lat, lon, radio = 600) {
     way["natural"="coastline"](around:${radio},${lat},${lon});
     out geom;
   `;
-  const url = 'https://overpass-api.de/api/interpreter';
+  const url = 'https://lz4.overpass-api.de/api/interpreter';
   const resp = await fetch(url, {
     method: 'POST',
     body: 'data=' + encodeURIComponent(query),
