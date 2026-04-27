@@ -561,6 +561,88 @@ async function htmlMareas(playa, tempAgua) {
   }
 }
 
+function olaSwell(altura, periodo, energia) {
+  const id = 'ola-' + Math.random().toString(36).slice(2,7);
+  // Color según energía
+  let colorOla;
+  if      (!energia || energia < 5)  colorOla = '#44aadd';
+  else if (energia < 15) colorOla = '#4db8ff';
+  else if (energia < 30) colorOla = '#44ddaa';
+  else if (energia < 50) colorOla = '#ffcc44';
+  else                   colorOla = '#ff6644';
+
+  setTimeout(() => {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = 130, H = 130;
+    const ampNorm  = Math.min(1, (altura || 0.5) / 3);
+    const perNorm  = Math.min(1, (periodo || 8) / 18);
+    const velocidad = 0.025 / (0.4 + perNorm * 0.6);
+    const amp      = 8 + ampNorm * 28;
+    const freq     = 1.5 - perNorm * 0.8;
+    const capas = [
+      { yBase:0.52, alpha:0.18, ampMult:1.0,  speed:1.0,  phase:0   },
+      { yBase:0.60, alpha:0.13, ampMult:0.75, speed:0.73, phase:2.1 },
+      { yBase:0.68, alpha:0.09, ampMult:0.55, speed:0.55, phase:4.3 },
+    ];
+    let t = 0;
+    function draw() {
+      if (!document.getElementById(id)) return;
+      ctx.clearRect(0, 0, W, H);
+      // Fondo
+      const gBg = ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,58);
+      gBg.addColorStop(0,'rgba(77,184,255,0.06)');
+      gBg.addColorStop(1,'rgba(77,184,255,0)');
+      ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
+      ctx.fillStyle=gBg; ctx.fill();
+      ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
+      ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.stroke();
+      // Clip circular
+      ctx.save();
+      ctx.beginPath(); ctx.arc(W/2,H/2,56,0,Math.PI*2); ctx.clip();
+      for (const capa of capas) {
+        const baseY = H*capa.yBase, a = amp*capa.ampMult;
+        ctx.beginPath(); ctx.moveTo(0,H);
+        for (let x=0;x<=W;x+=2) {
+          const y = baseY
+            + Math.sin((x/W)*Math.PI*2*freq + t*capa.speed + capa.phase)*a
+            + Math.sin((x/W)*Math.PI*3*freq + t*capa.speed*0.6 + capa.phase)*a*0.35;
+          ctx.lineTo(x,y);
+        }
+        ctx.lineTo(W,H); ctx.closePath();
+        const grad=ctx.createLinearGradient(0,baseY-a,0,H);
+        const ha=Math.round(capa.alpha*255).toString(16).padStart(2,'0');
+        grad.addColorStop(0,colorOla+ha); grad.addColorStop(1,colorOla+'00');
+        ctx.fillStyle=grad; ctx.fill();
+      }
+      // Línea cresta
+      const by0=H*capas[0].yBase;
+      ctx.beginPath();
+      for (let x=0;x<=W;x+=2) {
+        const y=by0+Math.sin((x/W)*Math.PI*2*freq+t)*amp+Math.sin((x/W)*Math.PI*3*freq+t*0.6)*amp*0.35;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=colorOla+'cc'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.restore();
+      // Texto
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.shadowColor=colorOla; ctx.shadowBlur=12;
+      ctx.fillStyle='white'; ctx.font='bold 26px -apple-system,sans-serif';
+      ctx.fillText(altura!=null?altura.toFixed(1)+'m':'—', W/2, H/2-8);
+      ctx.shadowBlur=0;
+      ctx.fillStyle='#8899aa'; ctx.font='11px -apple-system,sans-serif';
+      ctx.fillText('altura', W/2, H/2+10);
+      ctx.fillStyle=colorOla+'cc'; ctx.font='600 12px -apple-system,sans-serif';
+      ctx.fillText(periodo!=null?periodo+'s':'—', W/2, H/2+27);
+      t+=velocidad;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }, 0);
+  return `<canvas id="${id}" width="130" height="130" style="display:block;flex-shrink:0;"></canvas>`;
+}
+
 function flechaDireccion(grados, color, size = 36) {
   if (grados == null || Number.isNaN(grados)) return '';
   const rad = (grados + 90) * Math.PI / 180;
@@ -682,25 +764,45 @@ async function cargarInicio() {
       <div style="max-width:420px;margin:0 auto 12px;">
         <div class="dato-card">
           <div class="label">Swell</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 4px;">
-            <div style="display:flex;align-items:center;gap:12px;">
-              ${flechaDireccion(dirSwell, '#4db8ff', 48)}
-              <div style="font-size:30px;font-weight:700;color:#4db8ff;line-height:1;">${dirTxt(dirSwell)}&nbsp;${fmt(altura)}m</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:4px;">
+            <div style="flex:1;">
+              <!-- Fila altura -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Altura</span>
+                <span style="font-size:13px;color:#4db8ff;font-weight:600;">${fmt(altura)} m</span>
+              </div>
+              <div style="height:0.5px;background:#ffffff15;"></div>
+              <!-- Fila dirección -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Dirección</span>
+                <span style="font-size:13px;color:white;font-weight:600;display:flex;align-items:center;gap:6px;">
+                  ${flechaDireccion(dirSwell, '#4db8ff', 20)}${dirTxt(dirSwell)} · ${rnd(dirSwell)}°
+                </span>
+              </div>
+              <div style="height:0.5px;background:#ffffff15;"></div>
+              <!-- Fila período -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Período</span>
+                <span style="font-size:13px;color:white;font-weight:600;">${rnd(periodo)} s</span>
+              </div>
+              <div style="height:0.5px;background:#ffffff15;"></div>
+              <!-- Fila energía -->
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía</span>
+                <span style="font-size:13px;color:white;font-weight:600;">${energia ?? '—'} kW/m</span>
+              </div>
+              <!-- Cajetín ideal swell -->
+              <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
+                <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  ${flechaDireccion(playaActiva.orient, '#4db8ff', 20)}
+                  <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
+                  <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
+                </div>
+              </div>
             </div>
-            <div style="text-align:right;">
-              <div style="font-size:16px;color:#8899aa;">${rnd(periodo)}s</div>
-              <div style="font-size:13px;color:#8899aa;">${energia ?? '--'} kW/m</div>
-            </div>
-          </div>
-          <!-- Cajetín ideal swell -->
-          <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-            <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              ${flechaDireccion(playaActiva.orient, '#4db8ff', 28)}
-              <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
-              <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
-            </div>
-          </div>
+            <!-- Perfil de ola animado -->
+            ${olaSwell(altura, periodo, energia)}
           </div>
         </div>
       </div>
