@@ -489,11 +489,20 @@ async function htmlMareas(playa, tempAgua) {
       if (p.min <= ahoraMin) anterior = p;
       else if (!siguiente)   siguiente = p;
     }
+    // Si no hay anterior (madrugada), usar el primer punto disponible
+    if (!anterior && puntos.length > 0) anterior = puntos[0];
+    if (!siguiente && puntos.length > 0) siguiente = puntos[puntos.length - 1];
+
     const hAnt = anterior?.h ?? 0;
     const hSig = siguiente?.h ?? 0;
     const subiendo = hSig > hAnt;
-    const labelAnt = anterior?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
-    const labelSig = siguiente?.tipo === 'pleamar' ? '▲ Pleamar' : '▼ Bajamar';
+
+    // Detectar pleamar/bajamar por altura relativa (más fiable que el campo tipo del IHM)
+    const maxPleamar = Math.max(...puntos.map(p => p.h));
+    const minBajamar = Math.min(...puntos.map(p => p.h));
+    const umbral = (maxPleamar + minBajamar) / 2;
+    const labelAnt = (hAnt > umbral) ? '▲ Pleamar' : '▼ Bajamar';
+    const labelSig = (hSig > umbral) ? '▲ Pleamar' : '▼ Bajamar';
 
     return `
       <div class="label" style="margin-bottom:2px;">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
