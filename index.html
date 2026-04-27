@@ -745,20 +745,37 @@ async function cargarInicio() {
       <div style="max-width:420px;margin:0 auto 12px;">
         <div class="dato-card">
           <div class="label">Swell</div>
-          <!-- Fila datos principales -->
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 10px;border-bottom:0.5px solid #ffffff15;margin-bottom:10px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              ${flechaDireccion(dirSwell, '#4db8ff', 24)}
-              <span style="font-size:22px;font-weight:700;color:#4db8ff;">${fmt(altura)}m</span>
-              <span style="font-size:14px;color:#8899aa;">${dirTxt(dirSwell)}</span>
+          <div style="flex:1;margin-top:4px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Altura</span>
+              <span style="font-size:13px;color:#4db8ff;font-weight:600;">${fmt(altura)} m</span>
             </div>
-            <div style="text-align:right;">
-              <span style="font-size:14px;color:white;font-weight:600;">${rnd(periodo)}s</span>
-              <span style="font-size:12px;color:#8899aa;margin-left:6px;">${energia ?? '—'} kW/m</span>
+            <div style="height:0.5px;background:#ffffff15;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Dirección</span>
+              <span style="font-size:13px;color:white;font-weight:600;display:flex;align-items:center;gap:6px;">
+                ${flechaDireccion(dirSwell, '#4db8ff', 20)}${dirTxt(dirSwell)} · ${rnd(dirSwell)}°
+              </span>
+            </div>
+            <div style="height:0.5px;background:#ffffff15;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Período</span>
+              <span style="font-size:13px;color:white;font-weight:600;">${rnd(periodo)} s</span>
+            </div>
+            <div style="height:0.5px;background:#ffffff15;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía</span>
+              <span style="font-size:13px;color:white;font-weight:600;">${energia ?? '—'} kW/m</span>
+            </div>
+            <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
+              <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                ${flechaDireccion(playaActiva.orient, '#4db8ff', 20)}
+                <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
+                <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
+              </div>
             </div>
           </div>
-          <!-- Barras contextuales -->
-          ${barrasSwellContexto(altura, dirSwell, periodo, playaActiva)}
         </div>
       </div>
       <div style="max-width:420px;margin:0 auto 12px;">
