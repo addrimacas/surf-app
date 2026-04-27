@@ -39,8 +39,8 @@ function esTierra(lon, lat) {
 // Devuelve el ángulo de mayor distancia libre de tierra
 function calcularOrientacion(lat, lon) {
   const STEP_DEG = 5;
-  const MAX_KM = 25;
-  const SAMPLE_KM = 0.5;
+  const MAX_KM = 80;
+  const SAMPLE_KM = 1.0;
   const origin = turf.point([lon, lat]);
 
   let scores = {};
@@ -68,7 +68,7 @@ function calcularOrientacion(lat, lon) {
 
   // Penalizar rías: si libre < 5km, reducir score
   for (let ang = 0; ang < 360; ang += STEP_DEG) {
-    if (scores[ang] < 5) smoothed[ang] *= 0.4;
+    if (scores[ang] < 8) smoothed[ang] *= 0.3;
   }
 
   // Encontrar el ángulo con mayor score
