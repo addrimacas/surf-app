@@ -1,17 +1,11 @@
-// calcular-orientacion.js
-// Calcula automáticamente la orientación (orient) de cada playa
-// a partir de la línea de costa de OpenStreetMap via Overpass API
-//
+// calcular-orientacion.js v2
+// Calcula orientación de playas usando polígonos natural=beach de OSM
+// El eje largo del polígono define la línea de costa → perpendicular = orientación al mar
 // Uso: node scripts/calcular-orientacion.js
-//
-// Para cada playa:
-// 1. Consulta Overpass: coastline en radio 600m
-// 2. Encuentra el segmento de costa más cercano al punto de la playa
-// 3. Calcula la normal perpendicular orientada hacia el mar (lado abierto)
-// 4. Imprime resultado comparado con valor actual en beach-data.js
+
+const https = require('https');
 
 const PLAYAS = [
-  // Rías Baixas
   { nombre:'Patos',        lat:42.1555, lon:-8.8237, orientActual:215 },
   { nombre:'Prado',        lat:42.1590, lon:-8.8200, orientActual:220 },
   { nombre:'Vao',          lat:42.1978, lon:-8.7928, orientActual:225 },
@@ -23,7 +17,6 @@ const PLAYAS = [
   { nombre:'Montalvo',     lat:42.3961, lon:-8.8480, orientActual:268 },
   { nombre:'Foxos',        lat:42.4264, lon:-8.8746, orientActual:272 },
   { nombre:'Lanzada',      lat:42.4401, lon:-8.8723, orientActual:275 },
-  // Costa de Barbanza
   { nombre:'Vilar',        lat:42.5530, lon:-9.0300, orientActual:238 },
   { nombre:'Ladeira',      lat:42.5780, lon:-9.0589, orientActual:260 },
   { nombre:'Balieiros',    lat:42.5805, lon:-9.0783, orientActual:262 },
@@ -34,7 +27,6 @@ const PLAYAS = [
   { nombre:'Baroña',       lat:42.6912, lon:-9.0278, orientActual:260 },
   { nombre:'Fonforrón',    lat:42.7178, lon:-9.0081, orientActual:272 },
   { nombre:'Aguieira',     lat:42.7402, lon:-8.9746, orientActual:275 },
-  // Costa da Morte
   { nombre:'Ancoradoiro',  lat:42.7558, lon:-9.1007, orientActual:255 },
   { nombre:'Lariño',       lat:42.7706, lon:-9.1228, orientActual:250 },
   { nombre:'Carnota',      lat:42.8292, lon:-9.1051, orientActual:245 },
@@ -47,7 +39,6 @@ const PLAYAS = [
   { nombre:'Malpica',      lat:43.3231, lon:-8.8141, orientActual:305 },
   { nombre:'Razo',         lat:43.2911, lon:-8.7021, orientActual:312 },
   { nombre:'Baldaio',      lat:43.3004, lon:-8.6678, orientActual:310 },
-  // Costa Coruñesa
   { nombre:'Caión',         lat:43.3157, lon:-8.6094, orientActual:314 },
   { nombre:'Barrañán',      lat:43.3112, lon:-8.5512, orientActual:310 },
   { nombre:'Valcovo',       lat:43.3160, lon:-8.5331, orientActual:314 },
@@ -58,7 +49,6 @@ const PLAYAS = [
   { nombre:'Matadero',      lat:43.3755, lon:-8.4036, orientActual:305 },
   { nombre:'Santa Cristina',lat:43.3393, lon:-8.3769, orientActual:355 },
   { nombre:'Bastiagueiro',  lat:43.3408, lon:-8.3635, orientActual:358 },
-  // Ferrolterra
   { nombre:'Doniños',    lat:43.5001, lon:-8.3188, orientActual:335 },
   { nombre:'San Jorge',  lat:43.5321, lon:-8.2972, orientActual:338 },
   { nombre:'Santa Comba',lat:43.5562, lon:-8.2908, orientActual:340 },
@@ -69,71 +59,89 @@ const PLAYAS = [
   { nombre:'Vilarrube',  lat:43.6422, lon:-8.0718, orientActual:338 },
 ];
 
-// Diferencia angular mínima entre dos ángulos (0-180)
+function toRad(d) { return d * Math.PI / 180; }
+function toDeg(r) { return r * 180 / Math.PI; }
+
 function angleDiff(a, b) {
   const d = Math.abs(((a - b) + 360) % 360);
   return d > 180 ? 360 - d : d;
 }
 
-// Distancia en metros entre dos puntos lat/lon
+// Bearing de A→B
+function bearing(lat1, lon1, lat2, lon2) {
+  const dLon = toRad(lon2 - lon1);
+  const y = Math.sin(dLon) * Math.cos(toRad(lat2));
+  const x = Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+            Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(dLon);
+  return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+
+// Distancia en metros
 function distM(lat1, lon1, lat2, lon2) {
   const R = 6371000;
-  const dLat = (lat2-lat1)*Math.PI/180;
-  const dLon = (lon2-lon1)*Math.PI/180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  const dLat = toRad(lat2-lat1), dLon = toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// Punto más cercano en un segmento A-B al punto P
-function puntoCercanoEnSegmento(pLat, pLon, aLat, aLon, bLat, bLon) {
-  const dx = bLon - aLon, dy = bLat - aLat;
-  const len2 = dx*dx + dy*dy;
-  if (len2 === 0) return { lat: aLat, lon: aLon, t: 0 };
-  let t = ((pLon-aLon)*dx + (pLat-aLat)*dy) / len2;
-  t = Math.max(0, Math.min(1, t));
-  return { lat: aLat + t*dy, lon: aLon + t*dx, t };
+// Centroide de un polígono
+function centroide(nodos) {
+  const lat = nodos.reduce((s,n) => s+n.lat, 0) / nodos.length;
+  const lon = nodos.reduce((s,n) => s+n.lon, 0) / nodos.length;
+  return { lat, lon };
 }
 
-// Ángulo del segmento A→B en grados (0=Norte, 90=Este)
-function anguloSegmento(aLat, aLon, bLat, bLon) {
-  const dLon = bLon - aLon;
-  const dLat = bLat - aLat;
-  return (Math.atan2(dLon, dLat) * 180/Math.PI + 360) % 360;
+// Eje principal del polígono (PCA simplificado)
+// Devuelve el ángulo del eje largo del polígono
+function ejePrincipal(nodos) {
+  const c = centroide(nodos);
+  // Calcular matriz de covarianza
+  let sxx=0, syy=0, sxy=0;
+  for (const n of nodos) {
+    const dx = (n.lon - c.lon) * Math.cos(toRad(c.lat)) * 111320;
+    const dy = (n.lat - c.lat) * 111320;
+    sxx += dx*dx; syy += dy*dy; sxy += dx*dy;
+  }
+  // Eigenvector del mayor eigenvalue
+  const diff = (sxx - syy) / 2;
+  const angle = 0.5 * Math.atan2(2*sxy, sxx - syy);
+  // Eje largo en grados (bearing)
+  return (toDeg(angle) + 360) % 360;
 }
 
-// Normal perpendicular al segmento orientada hacia el mar
-// El mar está en la dirección desde el punto de la playa hacia el agua abierta
-// Devuelve el ángulo que "entra" al mar (desde tierra al mar)
-function normalHaciaElMar(segAngulo, playaLat, playaLon, coastLat, coastLon) {
-  // Dos normales posibles: +90 y -90 respecto al segmento
-  const n1 = (segAngulo + 90) % 360;
-  const n2 = (segAngulo - 90 + 360) % 360;
-
-  // El punto de costa más cercano está en la línea de costa
-  // El mar está al lado donde NO hay tierra firme
-  // Aproximación: el mar está al lado que mira más hacia el oeste/suroeste en Galicia
-  // Validación: calculamos qué normal apunta más hacia el océano Atlántico
-  // El Atlántico está al oeste de Galicia (aprox lon -15 para espacio abierto)
-  const oceanLon = -20, oceanLat = playaLat; // punto de referencia en el Atlántico
-
-  const ang1ToOcean = (Math.atan2(oceanLon - playaLon, oceanLat - playaLat) * 180/Math.PI + 360) % 360;
-  const diff1 = angleDiff(n1, ang1ToOcean);
-  const diff2 = angleDiff(n2, ang1ToOcean);
-
-  return diff1 < diff2 ? n1 : n2;
+// Normal perpendicular al eje, eligiendo el lado marino
+// El lado marino es el que tiene menos tierra (aproximamos: el que apunta más al océano abierto)
+function normalMarina(ejeLargo, playaLat, playaLon) {
+  const n1 = (ejeLargo + 90) % 360;
+  const n2 = (ejeLargo - 90 + 360) % 360;
+  // Para elegir: miramos cuál de las dos normales, proyectada 50km,
+  // tiene una longitud más al oeste (el Atlántico está al oeste de Galicia)
+  // Pero también consideramos la latitud: norte de Galicia mira al norte
+  // Usamos el punto a 30km en cada dirección y vemos cuál tiene lon más negativo (más al oeste/norte)
+  const p1 = puntoEn(playaLat, playaLon, n1, 30000);
+  const p2 = puntoEn(playaLat, playaLon, n2, 30000);
+  // El mar está donde hay más "espacio" → coordenada más extrema hacia el Atlántico
+  // Atlántico: lat~43, lon~-20 como punto de referencia
+  const d1 = distM(p1.lat, p1.lon, 43, -20);
+  const d2 = distM(p2.lat, p2.lon, 43, -20);
+  // Menor distancia al Atlántico = ese lado es el mar
+  return d1 < d2 ? Math.round(n1) : Math.round(n2);
 }
 
-async function consultarOverpass(lat, lon, radio = 600) {
-  const query = `
-    [out:json][timeout:10];
-    way["natural"="coastline"](around:${radio},${lat},${lon});
-    out geom;
-  `;
-  const url = 'https://lz4.overpass-api.de/api/interpreter';
+function puntoEn(lat, lon, angulo, distM) {
+  const R = 6371000;
+  const ang = toRad(angulo);
+  const d = distM / R;
+  const lat1 = toRad(lat), lon1 = toRad(lon);
+  const lat2 = Math.asin(Math.sin(lat1)*Math.cos(d) + Math.cos(lat1)*Math.sin(d)*Math.cos(ang));
+  const lon2 = lon1 + Math.atan2(Math.sin(ang)*Math.sin(d)*Math.cos(lat1), Math.cos(d)-Math.sin(lat1)*Math.sin(lat2));
+  return { lat: toDeg(lat2), lon: toDeg(lon2) };
+}
+
+function overpass(query) {
   return new Promise((resolve, reject) => {
-    const https = require('https');
     const postData = 'data=' + encodeURIComponent(query);
-    const options = {
+    const req = https.request({
       hostname: 'lz4.overpass-api.de',
       path: '/api/interpreter',
       method: 'POST',
@@ -143,10 +151,9 @@ async function consultarOverpass(lat, lon, radio = 600) {
         'User-Agent': 'curl/7.88.1',
         'Accept': '*/*'
       }
-    };
-    const req = https.request(options, res => {
+    }, res => {
       let data = '';
-      res.on('data', chunk => data += chunk);
+      res.on('data', c => data += c);
       res.on('end', () => {
         if (res.statusCode !== 200) return reject(new Error(`Overpass ${res.statusCode}`));
         try { resolve(JSON.parse(data)); } catch(e) { reject(e); }
@@ -158,119 +165,94 @@ async function consultarOverpass(lat, lon, radio = 600) {
   });
 }
 
-function calcularOrientacion(playa, data) {
+async function calcularPlaya(playa) {
+  // Buscar polígono natural=beach en radio 800m
+  const query = `[out:json][timeout:15];
+way["natural"="beach"](around:800,${playa.lat},${playa.lon});
+out geom;`;
+
+  const data = await overpass(query);
+
   if (!data.elements || data.elements.length === 0) {
-    return { error: 'sin datos de costa en 600m' };
-  }
-
-  // Recopilar todos los segmentos de todos los ways
-  let mejorDist = Infinity;
-  let mejorSegAngulo = null;
-  let mejorCoastLat = null, mejorCoastLon = null;
-
-  for (const way of data.elements) {
-    if (!way.geometry || way.geometry.length < 2) continue;
-    const nodes = way.geometry;
-
-    for (let i = 0; i < nodes.length - 1; i++) {
-      const A = nodes[i], B = nodes[i+1];
-      const { lat: cLat, lon: cLon } = puntoCercanoEnSegmento(
-        playa.lat, playa.lon, A.lat, A.lon, B.lat, B.lon
-      );
-      const dist = distM(playa.lat, playa.lon, cLat, cLon);
-      if (dist < mejorDist) {
-        mejorDist = dist;
-        mejorSegAngulo = anguloSegmento(A.lat, A.lon, B.lat, B.lon);
-        mejorCoastLat = cLat;
-        mejorCoastLon = cLon;
-      }
+    // Fallback: buscar con radio mayor
+    const query2 = `[out:json][timeout:15];
+way["natural"="beach"](around:2000,${playa.lat},${playa.lon});
+out geom;`;
+    const data2 = await overpass(query2);
+    if (!data2.elements || data2.elements.length === 0) {
+      return { error: 'sin polígono de playa en OSM' };
     }
+    data.elements = data2.elements;
   }
 
-  if (mejorSegAngulo === null) return { error: 'no se encontró segmento válido' };
+  // Usar el polígono más cercano al punto de la playa
+  let mejorWay = null, mejorDist = Infinity;
+  for (const way of data.elements) {
+    if (!way.geometry || way.geometry.length < 3) continue;
+    const c = centroide(way.geometry);
+    const d = distM(playa.lat, playa.lon, c.lat, c.lon);
+    if (d < mejorDist) { mejorDist = d; mejorWay = way; }
+  }
 
-  const orientCalc = normalHaciaElMar(
-    mejorSegAngulo, playa.lat, playa.lon, mejorCoastLat, mejorCoastLon
-  );
+  if (!mejorWay) return { error: 'polígono sin geometría' };
+
+  const eje = ejePrincipal(mejorWay.geometry);
+  const orientCalc = normalMarina(eje, playa.lat, playa.lon);
   const diff = angleDiff(orientCalc, playa.orientActual);
 
-  return {
-    orientCalc: Math.round(orientCalc),
-    segAngulo: Math.round(mejorSegAngulo),
-    distCosta: Math.round(mejorDist),
-    diff,
-    ok: diff <= 25
-  };
+  return { orientCalc, eje: Math.round(eje), distCentroide: Math.round(mejorDist), diff };
 }
 
 async function main() {
-  console.log('=== CÁLCULO AUTOMÁTICO DE ORIENTACIONES ===');
+  console.log('=== ORIENTACIONES DESDE POLÍGONOS OSM (natural=beach) ===');
   console.log(`Procesando ${PLAYAS.length} playas...\n`);
   console.log('Playa                  | Actual | Calc | Dif | Estado');
-  console.log('─'.repeat(60));
+  console.log('─'.repeat(62));
 
+  let ok=0, revisar=0, errores=0;
   const resultados = [];
-  let errores = 0, coinciden = 0, discrepan = 0;
 
   for (const playa of PLAYAS) {
+    await new Promise(r => setTimeout(r, 1200));
     try {
-      // Rate limit: 1 req/seg para no saturar Overpass
-      await new Promise(r => setTimeout(r, 1100));
-
-      const data = await consultarOverpass(playa.lat, playa.lon);
-      const res = calcularOrientacion(playa, data);
-
+      const res = await calcularPlaya(playa);
       const nombre = playa.nombre.padEnd(22);
-
       if (res.error) {
-        // Reintentar con radio mayor
-        await new Promise(r => setTimeout(r, 1100));
-        const data2 = await consultarOverpass(playa.lat, playa.lon, 1500);
-        const res2 = calcularOrientacion(playa, data2);
-
-        if (res2.error) {
-          console.log(`${nombre}| ${playa.orientActual}°   | ---- | --- | ⚠️  ${res2.error}`);
-          resultados.push({ ...playa, orientCalc: null, error: res2.error });
-          errores++;
-        } else {
-          const estado = res2.ok ? '✅' : '⚠️  revisar';
-          console.log(`${nombre}| ${String(playa.orientActual).padEnd(6)}| ${String(res2.orientCalc).padEnd(4)} | ${String(Math.round(res2.diff)).padEnd(3)}° | ${estado} (radio ampliado)`);
-          resultados.push({ ...playa, ...res2 });
-          res2.ok ? coinciden++ : discrepan++;
-        }
+        console.log(`${nombre}| ${String(playa.orientActual).padEnd(6)}| ---- | --- | ❌ ${res.error}`);
+        errores++;
+        resultados.push({ ...playa, orientCalc: null, error: res.error });
       } else {
-        const estado = res.ok ? '✅' : '⚠️  revisar';
+        const estado = res.diff <= 25 ? '✅' : '⚠️  revisar';
         console.log(`${nombre}| ${String(playa.orientActual).padEnd(6)}| ${String(res.orientCalc).padEnd(4)} | ${String(Math.round(res.diff)).padEnd(3)}° | ${estado}`);
+        res.diff <= 25 ? ok++ : revisar++;
         resultados.push({ ...playa, ...res });
-        res.ok ? coinciden++ : discrepan++;
       }
-    } catch (e) {
-      console.log(`${playa.nombre.padEnd(22)}| ${playa.orientActual}°   | ---- | --- | ❌ ${e.message}`);
-      resultados.push({ ...playa, orientCalc: null, error: e.message });
+    } catch(e) {
+      const nombre = playa.nombre.padEnd(22);
+      console.log(`${nombre}| ${playa.orientActual}°   | ---- | --- | ❌ ${e.message}`);
       errores++;
+      resultados.push({ ...playa, orientCalc: null, error: e.message });
     }
   }
 
-  console.log('\n' + '─'.repeat(60));
-  console.log(`✅ Coinciden (±25°): ${coinciden} | ⚠️  Discrepan: ${discrepan} | ❌ Errores: ${errores}`);
+  console.log('\n' + '─'.repeat(62));
+  console.log(`✅ Coinciden (±25°): ${ok} | ⚠️  Discrepan: ${revisar} | ❌ Errores: ${errores}`);
 
-  // Mostrar solo las que discrepan para revisión manual
-  const revisar = resultados.filter(r => r.orientCalc != null && !r.ok);
-  if (revisar.length > 0) {
+  const paraRevisar = resultados.filter(r => r.orientCalc != null && r.diff > 25);
+  if (paraRevisar.length) {
     console.log('\n=== REVISAR MANUALMENTE ===');
-    for (const r of revisar) {
-      console.log(`  ${r.nombre}: actual=${r.orientActual}° → calculado=${r.orientCalc}° (dif ${Math.round(r.diff)}°)`);
-    }
+    paraRevisar.forEach(r => console.log(`  ${r.nombre}: actual=${r.orientActual}° → calculado=${r.orientCalc}° (dif ${Math.round(r.diff)}°)`));
   }
 
-  // Generar bloque JS listo para copiar en beach-data.js
-  console.log('\n=== ORIENTACIONES CALCULADAS (para beach-data.js) ===');
-  for (const r of resultados) {
+  console.log('\n=== RESULTADO FINAL ===');
+  resultados.forEach(r => {
     if (r.orientCalc != null) {
-      const flag = r.ok ? '' : ' // ⚠️ revisar';
-      console.log(`  // ${r.nombre}: ${r.orientCalc}°${flag}`);
+      const flag = r.diff > 25 ? ' // ⚠️ verificar' : '';
+      console.log(`  ${r.nombre.padEnd(18)}: orient:${r.orientCalc}${flag}`);
+    } else {
+      console.log(`  ${r.nombre.padEnd(18)}: orient:${r.orientActual} // ❌ mantener actual (${r.error})`);
     }
-  }
+  });
 }
 
 main().catch(console.error);
