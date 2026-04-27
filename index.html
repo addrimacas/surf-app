@@ -411,9 +411,8 @@ async function htmlMareas(playa, tempAgua) {
     const mareasHoy = d1.mareas?.datos?.marea ?? [];
     if (mareasHoy.length === 0) throw new Error('sin datos');
 
-    // IHM en UTC → convertir a hora local
-    const offsetLocal = -hoy.getTimezoneOffset();
-    const toMin = m => { const [h,mm] = m.hora.split(':').map(Number); return h*60+mm+offsetLocal; };
+    // IHM devuelve horas ya en hora local española — NO aplicar offset
+    const toMin = m => { const [h,mm] = m.hora.split(':').map(Number); return h*60+mm; };
     const minToHora = min => {
       const m = ((min % 1440) + 1440) % 1440;
       return String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
@@ -428,7 +427,6 @@ async function htmlMareas(playa, tempAgua) {
 
     // ahoraMin en minutos desde medianoche LOCAL
     const ahoraMin = hoy.getHours()*60 + hoy.getMinutes();
-    console.log('[MAREA] offsetLocal:', offsetLocal, 'ahoraMin:', ahoraMin, 'puntos:', JSON.stringify(puntos.map(p => ({min:p.min, h:p.h, tipo:p.tipo}))));
 
     // Interpolación coseno entre dos mareas
     const interpolar = (T, pA, pB) => {
@@ -503,12 +501,14 @@ async function htmlMareas(playa, tempAgua) {
     const hSig = siguiente?.h ?? 0;
     const subiendo = hSig > hAnt;
 
-    // Detectar pleamar/bajamar por altura relativa (más fiable que el campo tipo del IHM)
+    // Detectar pleamar/bajamar: primero por campo tipo (IHM lo devuelve bien),
+    // fallback por altura relativa si tipo no está disponible
     const maxPleamar = Math.max(...puntos.map(p => p.h));
     const minBajamar = Math.min(...puntos.map(p => p.h));
     const umbral = (maxPleamar + minBajamar) / 2;
-    const labelAnt = (hAnt > umbral) ? '▲ Pleamar' : '▼ Bajamar';
-    const labelSig = (hSig > umbral) ? '▲ Pleamar' : '▼ Bajamar';
+    const esPleamar = (p) => p ? (p.tipo === 'pleamar' || p.h > umbral) : false;
+    const labelAnt = esPleamar(anterior) ? '▲ Pleamar' : '▼ Bajamar';
+    const labelSig = esPleamar(siguiente) ? '▲ Pleamar' : '▼ Bajamar';
 
     return `
       <div class="label" style="margin-bottom:2px;">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
