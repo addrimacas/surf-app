@@ -130,15 +130,16 @@ async function consultarOverpass(lat, lon, radio = 600) {
     out geom;
   `;
   const url = 'https://lz4.overpass-api.de/api/interpreter';
+  const body = new URLSearchParams();
+  body.append('data', query);
   const resp = await fetch(url, {
     method: 'POST',
-    body: query,
+    body: body.toString(),
     headers: {
-      'Content-Type': 'text/plain',
-      'Accept': 'application/json'
+      'Content-Type': 'application/x-www-form-urlencoded',
     }
   });
-  if (!resp.ok) throw new Error(`Overpass ${resp.status}: ${await resp.text()}`);
+  if (!resp.ok) throw new Error(`Overpass ${resp.status}`);
   return resp.json();
 }
 
