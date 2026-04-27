@@ -140,7 +140,8 @@ async function consultarOverpass(lat, lon, radio = 600) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Content-Length': Buffer.byteLength(postData),
-        'User-Agent': 'Mozilla/5.0'
+        'User-Agent': 'curl/7.88.1',
+        'Accept': '*/*'
       }
     };
     const req = https.request(options, res => {
