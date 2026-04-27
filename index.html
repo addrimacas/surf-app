@@ -420,12 +420,15 @@ async function htmlMareas(playa, tempAgua) {
     };
 
     // Puntos ordenados: hoy + mañana (filtrar artefactos IHM con altura 0)
+    // Los de mañana llevan +1440 en min para poder comparar con ahoraMin directamente
     const puntos = [
       ...mareasHoy.map(m => ({ min: toMin(m), h: parseFloat(m.altura), tipo: m.tipo })),
       ...(d2.mareas?.datos?.marea ?? []).map(m => ({ min: toMin(m)+1440, h: parseFloat(m.altura), tipo: m.tipo })),
     ].filter(p => p.h > 0.05).sort((a,b) => a.min - b.min);
 
+    // ahoraMin en minutos desde medianoche LOCAL
     const ahoraMin = hoy.getHours()*60 + hoy.getMinutes();
+    console.log('[MAREA] offsetLocal:', offsetLocal, 'ahoraMin:', ahoraMin, 'puntos:', JSON.stringify(puntos.map(p => ({min:p.min, h:p.h, tipo:p.tipo}))));
 
     // Interpolación coseno entre dos mareas
     const interpolar = (T, pA, pB) => {
@@ -484,14 +487,17 @@ async function htmlMareas(playa, tempAgua) {
     }
 
     // Marea anterior y siguiente para footer
+    // anterior = última marea pasada, siguiente = próxima marea futura
+    // Los puntos de mañana tienen min > 1440, lo que permite comparar directamente
     let anterior = null, siguiente = null;
     for (const p of puntos) {
       if (p.min <= ahoraMin) anterior = p;
       else if (!siguiente)   siguiente = p;
     }
-    // Si no hay anterior (madrugada), usar el primer punto disponible
+    // Fallback madrugada: si no hay anterior, coger el primero disponible
     if (!anterior && puntos.length > 0) anterior = puntos[0];
-    if (!siguiente && puntos.length > 0) siguiente = puntos[puntos.length - 1];
+    // Fallback noche: si no hay siguiente en hoy, buscar el primero de mañana (min > 1440)
+    if (!siguiente) siguiente = puntos.find(p => p.min > ahoraMin) ?? puntos[puntos.length - 1];
 
     const hAnt = anterior?.h ?? 0;
     const hSig = siguiente?.h ?? 0;
