@@ -561,89 +561,67 @@ async function htmlMareas(playa, tempAgua) {
   }
 }
 
-let _olaParams = null;
-let _olaAnimFrame = null;
-
-function olaSwell(altura, periodo, energia) {
-  _olaParams = { altura, periodo, energia };
-  return `<canvas id="ola-swell-canvas" width="130" height="130" style="display:block;flex-shrink:0;"></canvas>`;
-}
-
-function iniciarAnimOla() {
-  if (_olaAnimFrame) cancelAnimationFrame(_olaAnimFrame);
-  const canvas = document.getElementById('ola-swell-canvas');
-  if (!canvas || !_olaParams) return;
-  const { altura, periodo, energia } = _olaParams;
-
-  let colorOla;
-  if      (!energia || energia < 5)  colorOla = '#44aadd';
-  else if (energia < 15) colorOla = '#4db8ff';
-  else if (energia < 30) colorOla = '#44ddaa';
-  else if (energia < 50) colorOla = '#ffcc44';
-  else                   colorOla = '#ff6644';
-
-  const ctx = canvas.getContext('2d');
-  const W = 130, H = 130;
-  const ampNorm  = Math.min(1, (altura || 0.5) / 3);
-  const perNorm  = Math.min(1, (periodo || 8) / 18);
-  const velocidad = 0.025 / (0.4 + perNorm * 0.6);
-  const amp      = 8 + ampNorm * 28;
-  const freq     = 1.5 - perNorm * 0.8;
-  const capas = [
-    { yBase:0.52, alpha:0.18, ampMult:1.0,  speed:1.0,  phase:0   },
-    { yBase:0.60, alpha:0.13, ampMult:0.75, speed:0.73, phase:2.1 },
-    { yBase:0.68, alpha:0.09, ampMult:0.55, speed:0.55, phase:4.3 },
-  ];
-  let t = 0;
-
-  function draw() {
-    if (!document.getElementById('ola-swell-canvas')) return;
-    ctx.clearRect(0, 0, W, H);
-    const gBg = ctx.createRadialGradient(W/2,H/2,10,W/2,H/2,58);
-    gBg.addColorStop(0,'rgba(77,184,255,0.06)');
-    gBg.addColorStop(1,'rgba(77,184,255,0)');
-    ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
-    ctx.fillStyle=gBg; ctx.fill();
-    ctx.beginPath(); ctx.arc(W/2,H/2,58,0,Math.PI*2);
-    ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1; ctx.stroke();
-    ctx.save();
-    ctx.beginPath(); ctx.arc(W/2,H/2,56,0,Math.PI*2); ctx.clip();
-    for (const capa of capas) {
-      const baseY = H*capa.yBase, a = amp*capa.ampMult;
-      ctx.beginPath(); ctx.moveTo(0,H);
-      for (let x=0;x<=W;x+=2) {
-        const y = baseY
-          + Math.sin((x/W)*Math.PI*2*freq + t*capa.speed + capa.phase)*a
-          + Math.sin((x/W)*Math.PI*3*freq + t*capa.speed*0.6 + capa.phase)*a*0.35;
-        ctx.lineTo(x,y);
-      }
-      ctx.lineTo(W,H); ctx.closePath();
-      const grad=ctx.createLinearGradient(0,baseY-a,0,H);
-      const ha=Math.round(capa.alpha*255).toString(16).padStart(2,'0');
-      grad.addColorStop(0,colorOla+ha); grad.addColorStop(1,colorOla+'00');
-      ctx.fillStyle=grad; ctx.fill();
-    }
-    const by0=H*capas[0].yBase;
-    ctx.beginPath();
-    for (let x=0;x<=W;x+=2) {
-      const y=by0+Math.sin((x/W)*Math.PI*2*freq+t)*amp+Math.sin((x/W)*Math.PI*3*freq+t*0.6)*amp*0.35;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle=colorOla+'cc'; ctx.lineWidth=1.5; ctx.stroke();
-    ctx.restore();
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.shadowColor=colorOla; ctx.shadowBlur=12;
-    ctx.fillStyle='white'; ctx.font='bold 26px -apple-system,sans-serif';
-    ctx.fillText(altura!=null?altura.toFixed(1)+'m':'—', W/2, H/2-8);
-    ctx.shadowBlur=0;
-    ctx.fillStyle='#8899aa'; ctx.font='11px -apple-system,sans-serif';
-    ctx.fillText('altura', W/2, H/2+10);
-    ctx.fillStyle=colorOla+'cc'; ctx.font='600 12px -apple-system,sans-serif';
-    ctx.fillText(periodo!=null?periodo+'s':'—', W/2, H/2+27);
-    t+=velocidad;
-    _olaAnimFrame = requestAnimationFrame(draw);
+function barrasSwellContexto(altura, dirSwell, periodo, playa) {
+  // Genera 3 barras: altura, dirección, período
+  // Cada barra: rango ideal en verde, valor actual como indicador
+  function barra(label, valorActual, minIdeal, maxIdeal, minEscala, maxEscala, unidad, colorActual) {
+    const rango = maxEscala - minEscala;
+    // Posición % del rango ideal y valor actual
+    const pIdealMin = Math.max(0, Math.min(100, (minIdeal - minEscala) / rango * 100));
+    const pIdealMax = Math.max(0, Math.min(100, (maxIdeal - minEscala) / rango * 100));
+    const pActual   = Math.max(2,  Math.min(98,  (valorActual  - minEscala) / rango * 100));
+    const dentroRango = valorActual >= minIdeal && valorActual <= maxIdeal;
+    const color = dentroRango ? '#44cc88' : '#ff6644';
+    return `
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+          <span style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.4px;">${label}</span>
+          <span style="font-size:12px;font-weight:700;color:${color};">${valorActual != null ? valorActual+unidad : '—'}</span>
+        </div>
+        <div style="position:relative;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:visible;">
+          <!-- Rango ideal -->
+          <div style="position:absolute;top:0;left:${pIdealMin}%;width:${pIdealMax-pIdealMin}%;height:100%;background:#44cc8855;border-radius:3px;"></div>
+          <!-- Indicador actual -->
+          <div style="position:absolute;top:-3px;left:calc(${pActual}% - 5px);width:10px;height:12px;background:${color};border-radius:2px;box-shadow:0 0 6px ${color}88;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:3px;">
+          <span style="font-size:9px;color:#445566;">${minEscala}${unidad}</span>
+          <span style="font-size:9px;color:#44cc8888;">▓ ideal ${minIdeal}–${maxIdeal}${unidad}</span>
+          <span style="font-size:9px;color:#445566;">${maxEscala}${unidad}</span>
+        </div>
+      </div>`;
   }
-  draw();
+
+  // Barra dirección: diferencia angular con el ideal (0=perfecto, tol=límite)
+  function barraDireccion(dirActual, orient, tol) {
+    const diff = dirActual != null ? angleDiff(dirActual, orient) : null;
+    const pActual = diff != null ? Math.min(98, diff / (tol+30) * 100) : 50;
+    const pIdealMax = tol / (tol+30) * 100;
+    const dentroRango = diff != null && diff <= tol;
+    const color = dentroRango ? '#44cc88' : '#ff6644';
+    const label = diff != null ? (diff <= tol*0.6 ? 'perfecto' : diff <= tol ? 'aceptable' : 'fuera de rango') : '—';
+    return `
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+          <span style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.4px;">Dirección</span>
+          <span style="font-size:12px;font-weight:700;color:${color};">${dirActual!=null?dirTxt(dirActual)+' · '+Math.round(diff)+'° desv.':'—'}</span>
+        </div>
+        <div style="position:relative;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:visible;">
+          <div style="position:absolute;top:0;left:0;width:${pIdealMax}%;height:100%;background:#44cc8855;border-radius:3px;"></div>
+          <div style="position:absolute;top:-3px;left:calc(${pActual}% - 5px);width:10px;height:12px;background:${color};border-radius:2px;box-shadow:0 0 6px ${color}88;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:3px;">
+          <span style="font-size:9px;color:#44cc8888;">▓ 0–${tol}° desviación</span>
+          <span style="font-size:9px;color:#445566;">${tol+30}°</span>
+        </div>
+      </div>`;
+  }
+
+  return `<div style="padding-top:4px;">
+    ${barra('Altura', altura!=null?parseFloat(altura.toFixed(1)):null, playa.hMin, playa.hMax, 0, Math.max(4, playa.hMax*1.5), 'm', '#4db8ff')}
+    ${barraDireccion(dirSwell, playa.orient, playa.tol)}
+    ${barra('Período', periodo!=null?Math.round(periodo):null, playa.pMin, playa.pMin+4, 4, 20, 's', '#4db8ff')}
+  </div>`;
 }
 
 function flechaDireccion(grados, color, size = 36) {
@@ -767,46 +745,20 @@ async function cargarInicio() {
       <div style="max-width:420px;margin:0 auto 12px;">
         <div class="dato-card">
           <div class="label">Swell</div>
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:4px;">
-            <div style="flex:1;">
-              <!-- Fila altura -->
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                <span style="font-size:13px;color:#8899aa;font-weight:500;">Altura</span>
-                <span style="font-size:13px;color:#4db8ff;font-weight:600;">${fmt(altura)} m</span>
-              </div>
-              <div style="height:0.5px;background:#ffffff15;"></div>
-              <!-- Fila dirección -->
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                <span style="font-size:13px;color:#8899aa;font-weight:500;">Dirección</span>
-                <span style="font-size:13px;color:white;font-weight:600;display:flex;align-items:center;gap:6px;">
-                  ${flechaDireccion(dirSwell, '#4db8ff', 20)}${dirTxt(dirSwell)} · ${rnd(dirSwell)}°
-                </span>
-              </div>
-              <div style="height:0.5px;background:#ffffff15;"></div>
-              <!-- Fila período -->
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                <span style="font-size:13px;color:#8899aa;font-weight:500;">Período</span>
-                <span style="font-size:13px;color:white;font-weight:600;">${rnd(periodo)} s</span>
-              </div>
-              <div style="height:0.5px;background:#ffffff15;"></div>
-              <!-- Fila energía -->
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía</span>
-                <span style="font-size:13px;color:white;font-weight:600;">${energia ?? '—'} kW/m</span>
-              </div>
-              <!-- Cajetín ideal swell -->
-              <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-                <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                  ${flechaDireccion(playaActiva.orient, '#4db8ff', 20)}
-                  <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
-                  <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
-                </div>
-              </div>
+          <!-- Fila datos principales -->
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 10px;border-bottom:0.5px solid #ffffff15;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              ${flechaDireccion(dirSwell, '#4db8ff', 24)}
+              <span style="font-size:22px;font-weight:700;color:#4db8ff;">${fmt(altura)}m</span>
+              <span style="font-size:14px;color:#8899aa;">${dirTxt(dirSwell)}</span>
             </div>
-            <!-- Perfil de ola animado -->
-            ${olaSwell(altura, periodo, energia)}
+            <div style="text-align:right;">
+              <span style="font-size:14px;color:white;font-weight:600;">${rnd(periodo)}s</span>
+              <span style="font-size:12px;color:#8899aa;margin-left:6px;">${energia ?? '—'} kW/m</span>
+            </div>
           </div>
+          <!-- Barras contextuales -->
+          ${barrasSwellContexto(altura, dirSwell, periodo, playaActiva)}
         </div>
       </div>
       <div style="max-width:420px;margin:0 auto 12px;">
@@ -870,7 +822,6 @@ async function cargarInicio() {
       </div>
       ${prevHtml}`;
     document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
-    iniciarAnimOla();
     cargarMejoresOlas();
     document.getElementById('dropdown-playas').innerHTML =
       Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
