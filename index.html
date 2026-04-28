@@ -76,6 +76,67 @@
     .popup-playa .popup-dato .pl { font-size:10px; color:#667788; text-transform:uppercase; }
     .popup-playa .popup-dato .pv { font-size:16px; font-weight:700; color:#0a1628; }
     .popup-playa .popup-estado { margin-top:8px; text-align:center; font-size:13px; font-weight:600; padding:6px; border-radius:8px; }
+
+    /* ── PANTALLA PLAYAS ── */
+    #pantalla-playas { padding:0 0 90px; }
+    .pl-buscador-wrap { position:sticky; top:0; z-index:100; background:linear-gradient(to bottom,#07111f 80%,transparent); padding:16px 16px 8px; }
+    .pl-buscador-input-wrap { position:relative; }
+    .pl-buscador-input { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:11px 16px 11px 40px; color:#fff; font-size:15px; font-family:inherit; outline:none; }
+    .pl-buscador-input::placeholder { color:#5a7a9a; }
+    .pl-buscador-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; }
+    .pl-buscador-clear { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:#5a7a9a; font-size:18px; cursor:pointer; display:none; }
+    .pl-dropdown { background:#0d1f35; border:1px solid rgba(255,255,255,0.1); border-radius:14px; margin-top:6px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.6); display:none; }
+    .pl-dropdown-zona { padding:8px 14px 4px; font-size:10px; color:#4a7a9b; text-transform:uppercase; letter-spacing:0.8px; font-weight:600; }
+    .pl-dropdown-item { padding:11px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; border-top:1px solid rgba(255,255,255,0.04); }
+    .pl-dropdown-item:hover { background:rgba(77,184,255,0.08); }
+    .pl-dropdown-item .pdi-nombre { font-size:14px; font-weight:600; }
+    .pl-dropdown-item .pdi-zona { font-size:11px; color:#5a7a9a; margin-top:1px; }
+    .pl-dropdown-item .pdi-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#07111f; flex-shrink:0; margin-left:auto; }
+    /* Foto placeholder */
+    .pl-foto { margin:0 16px 14px; height:150px; background:linear-gradient(135deg,rgba(13,31,53,0.9),rgba(7,17,31,0.95)); border:1px solid rgba(255,255,255,0.07); border-radius:16px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; color:#2a4a6a; font-size:12px; position:relative; overflow:hidden; }
+    .pl-foto::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,0.012) 20px,rgba(255,255,255,0.012) 21px); }
+    /* Semáforo actual */
+    .pl-semaforo { margin:0 16px 14px; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; }
+    .pl-sem-circulo { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; flex-shrink:0; }
+    .pl-sem-estado { font-size:15px; font-weight:700; }
+    .pl-sem-desc { font-size:12px; color:#8899aa; margin-top:2px; line-height:1.4; }
+    /* Selector días */
+    .pl-dias { display:flex; gap:8px; padding:0 16px 14px; overflow-x:auto; scrollbar-width:none; }
+    .pl-dias::-webkit-scrollbar { display:none; }
+    .pl-dia-btn { flex-shrink:0; padding:7px 16px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:#5a7a9a; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; transition:all 0.2s; }
+    .pl-dia-btn.activo { background:#4db8ff; border-color:#4db8ff; color:#07111f; font-weight:700; }
+    /* Tabla */
+    .pl-tabla-wrap { overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+    .pl-tabla-wrap::-webkit-scrollbar { display:none; }
+    .pl-tabla { min-width:max-content; padding:0 16px; }
+    .pl-fila-horas { display:flex; position:sticky; top:0; background:#07111f; z-index:10; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:2px; }
+    .pl-hora-label { width:86px; flex-shrink:0; position:sticky; left:0; background:#07111f; z-index:11; }
+    .pl-hora-cel { width:64px; flex-shrink:0; text-align:center; padding:10px 4px; font-size:12px; font-weight:600; color:#5a7a9a; border-left:1px solid rgba(255,255,255,0.05); }
+    .pl-hora-cel.ahora { color:#4db8ff; }
+    .pl-seccion { display:flex; align-items:center; padding:10px 0 5px; }
+    .pl-seccion-label { width:86px; flex-shrink:0; font-size:9px; color:rgba(255,255,255,0.25); text-transform:uppercase; letter-spacing:0.8px; font-weight:600; position:sticky; left:0; background:#07111f; z-index:5; }
+    .pl-seccion-linea { flex:1; height:1px; background:rgba(255,255,255,0.06); }
+    .pl-fila { display:flex; align-items:stretch; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .pl-fila:last-child { border-bottom:none; }
+    .pl-fila-label { width:86px; flex-shrink:0; font-size:10px; color:#5a7a9a; text-transform:uppercase; letter-spacing:0.4px; padding:9px 8px 9px 0; display:flex; align-items:center; font-weight:500; position:sticky; left:0; background:#07111f; z-index:5; }
+    .pl-fila.ideal .pl-fila-label { color:rgba(61,220,132,0.6); background:#07111f; }
+    .pl-fila.ideal .pl-cel { background:rgba(61,220,132,0.03); }
+    .pl-cel { width:64px; flex-shrink:0; padding:7px 3px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border-left:1px solid rgba(255,255,255,0.05); }
+    .pl-cel.ahora { background:rgba(77,184,255,0.06); border-left:1px solid rgba(77,184,255,0.2); }
+    .pl-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#07111f; }
+    .pl-altura { font-size:14px; font-weight:700; color:#4db8ff; }
+    .pl-dir { font-size:10px; color:#5a7a9a; }
+    .pl-periodo { font-size:13px; font-weight:600; }
+    .pl-energia { font-size:11px; color:#8899aa; font-family:monospace; }
+    .pl-ideal-ok { font-size:10px; color:#3ddc84; font-weight:700; }
+    .pl-ideal-no { font-size:10px; color:#ff5555; font-weight:700; }
+    .pl-viento-vel { font-size:13px; font-weight:700; }
+    .pl-viento-dir { font-size:10px; color:#5a7a9a; }
+    .pl-etiqueta { font-size:8px; font-weight:700; letter-spacing:0.3px; padding:2px 4px; border-radius:3px; text-transform:uppercase; }
+    .pl-marea-h { font-size:13px; font-weight:700; color:#4db8ff; }
+    .pl-marea-tipo { font-size:9px; color:#5a7a9a; }
+    .pl-cielo { font-size:16px; }
+    .pl-temp { font-size:13px; font-weight:600; }
   </style>
 </head>
 <body>
@@ -96,9 +157,39 @@
   </div>
   <div id="mapa"></div>
 </div>
+<div id="pantalla-playas" class="pantalla">
+  <!-- BUSCADOR -->
+  <div class="pl-buscador-wrap">
+    <div class="pl-buscador-input-wrap">
+      <span class="pl-buscador-icon">🔍</span>
+      <input class="pl-buscador-input" id="pl-buscador" type="text" placeholder="Playa, zona o región..." autocomplete="off" oninput="plBuscar(this.value)" onfocus="plMostrarDropdown()" />
+      <button class="pl-buscador-clear" id="pl-clear" onclick="plLimpiar()">×</button>
+    </div>
+    <div class="pl-dropdown" id="pl-dropdown"></div>
+  </div>
+  <!-- FOTO -->
+  <div class="pl-foto">
+    <span style="font-size:28px;opacity:0.2;">📷</span>
+    <span>Foto de la playa</span>
+  </div>
+  <!-- SEMÁFORO -->
+  <div class="pl-semaforo" id="pl-semaforo">
+    <div class="pl-sem-circulo" id="pl-sem-circulo">—</div>
+    <div><div class="pl-sem-estado" id="pl-sem-estado">Cargando...</div><div class="pl-sem-desc" id="pl-sem-desc"></div></div>
+  </div>
+  <!-- SELECTOR DÍAS -->
+  <div class="pl-dias" id="pl-dias"></div>
+  <!-- TABLA -->
+  <div class="pl-tabla-wrap">
+    <div class="pl-tabla" id="pl-tabla"></div>
+  </div>
+</div>
+<div id="pantalla-guia" class="pantalla"><div style="text-align:center;padding:80px 20px;color:#4a7a9b;"><div style="font-size:48px;margin-bottom:16px;">📖</div><div style="font-size:18px;font-weight:600;margin-bottom:8px;">Guía</div><div style="font-size:14px;">Próximamente — glosario visual, brújula interactiva y guía de condiciones.</div></div></div>
 <nav class="nav-bar">
   <button class="nav-item activo" onclick="irA('inicio',this)"><span class="icono">🌊</span><span>Inicio</span></button>
+  <button class="nav-item" onclick="irA('playas',this)"><span class="icono">🏖️</span><span>Playas</span></button>
   <button class="nav-item" onclick="irA('mapa',this)"><span class="icono">🗺️</span><span>Mapa</span></button>
+  <button class="nav-item" onclick="irA('guia',this)"><span class="icono">📖</span><span>Guía</span></button>
 </nav>
 <div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
 <script src="beach-data.js"></script>
@@ -1100,6 +1191,356 @@ function irA(pantalla,btn){
     }
   });
 })();
+
+// ── PANTALLA PLAYAS ──
+let plPlayaActiva = null;
+let plDiaSeleccionado = 0; // 0 = hoy
+let plDatosCache = {}; // cache por playa+dia
+
+function plScoreColor(score) {
+  if (score >= 7) return '#3ddc84';
+  if (score >= 4) return '#ffaa44';
+  return '#ff5555';
+}
+
+function plEtiquetaViento(velKmh, dirGrados, playa) {
+  if (velKmh < 5) return { txt:'GLASSY', color:'#aaddff' };
+  const diff = angleDiff(dirGrados, (playa.orient + 180) % 360);
+  if (diff <= 20)  return { txt:'OFF', color:'#3ddc84' };
+  if (diff <= 55)  return { txt:'C-OFF', color:'#88cc44' };
+  if (diff <= 100) return { txt:'CROSS', color:'#ffaa44' };
+  if (diff <= 140) return { txt:'C-ON', color:'#ff8844' };
+  return { txt:'ON', color:'#ff5555' };
+}
+
+function plFlechaDir(grados) {
+  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+  const flechas = ['↓','↙','↙','←','←','↖','↖','↑','↑','↗','↗','→','→','↘','↘','↓'];
+  const i = Math.round(grados / 22.5) % 16;
+  return flechas[i] + ' ' + dirs[i];
+}
+
+// Busqueda inteligente: playa, zona o región
+function plBuscar(q) {
+  const clear = document.getElementById('pl-clear');
+  clear.style.display = q ? 'block' : 'none';
+  if (!q) { plMostrarDropdown(); return; }
+  const ql = q.toLowerCase();
+  const todas = todasLasPlayas();
+  const zonas = Object.keys(SPOTS['España']['Galicia']);
+
+  // Coincidencias por playa
+  const playas = todas.filter(p => p.nombre.toLowerCase().includes(ql));
+  // Coincidencias por zona
+  const zonasMatch = zonas.filter(z => z.toLowerCase().includes(ql));
+
+  const dd = document.getElementById('pl-dropdown');
+  let html = '';
+
+  if (zonasMatch.length) {
+    zonasMatch.forEach(zona => {
+      html += `<div class="pl-dropdown-zona">${zona}</div>`;
+      SPOTS['España']['Galicia'][zona].forEach(p => {
+        html += plDropdownItem(p, zona);
+      });
+    });
+  } else if (playas.length) {
+    // Agrupar por zona
+    zonas.forEach(zona => {
+      const enZona = playas.filter(p => SPOTS['España']['Galicia'][zona].some(x => x.nombre === p.nombre));
+      if (enZona.length) {
+        html += `<div class="pl-dropdown-zona">${zona}</div>`;
+        enZona.forEach(p => { html += plDropdownItem(p, zona); });
+      }
+    });
+  } else {
+    html = '<div style="padding:14px 16px;font-size:13px;color:#5a7a9a;">Sin resultados</div>';
+  }
+
+  dd.innerHTML = html;
+  dd.style.display = 'block';
+}
+
+function plMostrarDropdown() {
+  const dd = document.getElementById('pl-dropdown');
+  const zonas = Object.keys(SPOTS['España']['Galicia']);
+  let html = '';
+  zonas.forEach(zona => {
+    html += `<div class="pl-dropdown-zona">${zona}</div>`;
+    SPOTS['España']['Galicia'][zona].forEach(p => {
+      html += plDropdownItem(p, zona);
+    });
+  });
+  dd.innerHTML = html;
+  dd.style.display = 'block';
+}
+
+function plDropdownItem(p, zona) {
+  return `<div class="pl-dropdown-item" onclick="plSeleccionarPlaya('${p.nombre}')">
+    <div><div class="pdi-nombre">${p.nombre}</div><div class="pdi-zona">${zona}</div></div>
+    <div class="pdi-score" id="pdi-score-${p.nombre}" style="background:#333;color:#666;">·</div>
+  </div>`;
+}
+
+function plLimpiar() {
+  document.getElementById('pl-buscador').value = '';
+  document.getElementById('pl-clear').style.display = 'none';
+  plMostrarDropdown();
+}
+
+async function plSeleccionarPlaya(nombre) {
+  const p = todasLasPlayas().find(x => x.nombre === nombre);
+  if (!p) return;
+  plPlayaActiva = p;
+  document.getElementById('pl-dropdown').style.display = 'none';
+  document.getElementById('pl-buscador').value = nombre;
+  document.getElementById('pl-clear').style.display = 'block';
+  plDiaSeleccionado = 0;
+  await plCargarTabla();
+}
+
+async function plCargarTabla() {
+  if (!plPlayaActiva) return;
+  const p = plPlayaActiva;
+
+  // Generar selector de días
+  const diasDiv = document.getElementById('pl-dias');
+  const ahora = new Date();
+  let diasHtml = '';
+  const diasNombres = ['Hoy','Mañana'];
+  const diasSemana = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ahora); d.setDate(d.getDate() + i);
+    const label = i < 2 ? diasNombres[i] : diasSemana[d.getDay()] + ' ' + d.getDate();
+    diasHtml += `<button class="pl-dia-btn${i===plDiaSeleccionado?' activo':''}" onclick="plCambiarDia(${i})">${label}</button>`;
+  }
+  diasDiv.innerHTML = diasHtml;
+
+  // Fetch datos del día seleccionado
+  const diaOffset = plDiaSeleccionado;
+  const cacheKey = p.nombre + '_' + diaOffset;
+
+  let data;
+  if (plDatosCache[cacheKey]) {
+    data = plDatosCache[cacheKey];
+  } else {
+    try {
+      const fechaBase = new Date(ahora);
+      fechaBase.setDate(fechaBase.getDate() + diaOffset);
+      const res = await fetch(
+        `https://marine-api.open-meteo.com/v1/marine?latitude=${p.lat}&longitude=${p.lon}` +
+        `&hourly=wave_height,wave_period,wave_direction&forecast_days=8&timeformat=unixtime`
+      );
+      const atm = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}` +
+        `&hourly=wind_speed_10m,wind_direction_10m,weather_code,temperature_2m&forecast_days=8&wind_speed_unit=kmh&timeformat=unixtime`
+      );
+      const [marine, atmosfera] = await Promise.all([res.json(), atm.json()]);
+      plDatosCache[cacheKey] = { marine, atmosfera };
+      data = plDatosCache[cacheKey];
+    } catch(e) {
+      document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#5a7a9a;text-align:center;">Error cargando datos</div>';
+      return;
+    }
+  }
+
+  const { marine, atmosfera } = data;
+  const ahora2 = new Date(ahora);
+  ahora2.setDate(ahora2.getDate() + diaOffset);
+  const diaStr = ahora2.toDateString();
+
+  // Filtrar horas del día seleccionado, cada 2h
+  const horas = [], heights = [], periods = [], dirs = [], vels = [], vdirs = [], wcodes = [], temps = [];
+  const ahoraTs = Date.now() / 1000;
+
+  for (let i = 0; i < marine.hourly.time.length; i++) {
+    const ts = marine.hourly.time[i];
+    const d = new Date(ts * 1000);
+    if (d.toDateString() !== diaStr) continue;
+    if (d.getHours() % 2 !== 0) continue;
+    horas.push(d.getHours());
+    heights.push(marine.hourly.wave_height[i]);
+    periods.push(marine.hourly.wave_period[i]);
+    dirs.push(marine.hourly.wave_direction[i]);
+
+    // Buscar índice en atmosfera
+    const ai = atmosfera.hourly.time.indexOf(ts);
+    vels.push(ai >= 0 ? atmosfera.hourly.wind_speed_10m[ai] : null);
+    vdirs.push(ai >= 0 ? atmosfera.hourly.wind_direction_10m[ai] : null);
+    wcodes.push(ai >= 0 ? atmosfera.hourly.weather_code[ai] : null);
+    temps.push(ai >= 0 ? atmosfera.hourly.temperature_2m[ai] : null);
+  }
+
+  if (horas.length === 0) {
+    document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#5a7a9a;text-align:center;">Sin datos para este día</div>';
+    return;
+  }
+
+  // Semáforo actual (primera hora disponible del día)
+  const estado0 = clasificar(heights[0], dirs[0], p, periods[0], null);
+  const semCirc = document.getElementById('pl-sem-circulo');
+  const semEst = document.getElementById('pl-sem-estado');
+  const semDesc = document.getElementById('pl-sem-desc');
+  semCirc.textContent = estado0.score;
+  semCirc.style.background = estado0.color;
+  semCirc.style.boxShadow = `0 0 16px ${estado0.color}66`;
+  semEst.textContent = estado0.texto;
+  semEst.style.color = estado0.color;
+  semDesc.textContent = `${dirTxt(dirs[0])} · ${fmt(heights[0])}m · ${rnd(periods[0])}s · ${plEtiquetaViento(vels[0]||0, vdirs[0]||0, p).txt}`;
+
+  // Construir tabla
+  const ahoraH = diaOffset === 0 ? new Date().getHours() : -1;
+
+  // Fila horas
+  let horasCels = `<div class="pl-hora-label"></div>`;
+  horas.forEach(h => {
+    const esAhora = h === Math.floor(ahoraH/2)*2 && diaOffset === 0;
+    horasCels += `<div class="pl-hora-cel${esAhora?' ahora':''}">${h}h</div>`;
+  });
+
+  // Helper para celda
+  const cel = (contenido, esAhora) => `<div class="pl-cel${esAhora?' ahora':''}">${contenido}</div>`;
+  const esAhoraH = h => h === Math.floor(ahoraH/2)*2 && diaOffset === 0;
+
+  // Filas
+  let html = `<div class="pl-fila-horas">${horasCels}</div>`;
+
+  // ── MAR ──
+  html += `<div class="pl-seccion"><div class="pl-seccion-label">Mar</div><div class="pl-seccion-linea"></div></div>`;
+
+  // Puntuación
+  html += `<div class="pl-fila"><div class="pl-fila-label">Punt.</div>`;
+  horas.forEach((h, i) => {
+    const e = clasificar(heights[i], dirs[i], p, periods[i], null);
+    html += cel(`<div class="pl-score" style="background:${e.color};">${e.score}</div>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // Altura + dir
+  html += `<div class="pl-fila"><div class="pl-fila-label">Altura</div>`;
+  horas.forEach((h, i) => {
+    html += cel(`<div class="pl-altura">${fmt(heights[i])}m</div><div class="pl-dir">${plFlechaDir(dirs[i])}</div>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // Período
+  html += `<div class="pl-fila"><div class="pl-fila-label">Período</div>`;
+  horas.forEach((h, i) => {
+    html += cel(`<div class="pl-periodo">${rnd(periods[i])}s</div>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // Energía
+  html += `<div class="pl-fila"><div class="pl-fila-label">Energía</div>`;
+  horas.forEach((h, i) => {
+    const e = heights[i] && periods[i] ? Math.round((1025*9.81*9.81*periods[i]*heights[i]*heights[i])/(64*Math.PI*1000)) : null;
+    html += cel(`<div class="pl-energia">${e ?? '—'} kJ</div>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // Ideal mar
+  html += `<div class="pl-fila ideal"><div class="pl-fila-label">Ideal</div>`;
+  horas.forEach((h, i) => {
+    const diffDir = dirs[i] != null ? angleDiff(dirs[i], p.orient) : 999;
+    const altOk = heights[i] >= p.hMin && heights[i] <= p.hMax;
+    const dirOk = diffDir <= p.tol;
+    const perOk = periods[i] >= p.pMin;
+    const ok = altOk && dirOk && perOk;
+    const detalle = !altOk ? 'altura' : !dirOk ? 'dir.' : !perOk ? 'período' : '';
+    html += cel(ok
+      ? `<span class="pl-ideal-ok">✓</span>`
+      : `<span class="pl-ideal-no">✗</span>${detalle ? `<span style="font-size:9px;color:#5a7a9a;">${detalle}</span>` : ''}`,
+      esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // ── VIENTO ──
+  html += `<div class="pl-seccion"><div class="pl-seccion-label">Viento</div><div class="pl-seccion-linea"></div></div>`;
+
+  // Velocidad + dir
+  html += `<div class="pl-fila"><div class="pl-fila-label">Velocidad</div>`;
+  horas.forEach((h, i) => {
+    html += cel(`<div class="pl-viento-vel">${vels[i] != null ? Math.round(vels[i]) : '—'}</div><div class="pl-viento-dir">km/h ${vdirs[i] != null ? dirTxt(vdirs[i]) : ''}</div>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // Estado viento
+  html += `<div class="pl-fila"><div class="pl-fila-label">Estado</div>`;
+  horas.forEach((h, i) => {
+    const et = vels[i] != null ? plEtiquetaViento(vels[i], vdirs[i], p) : { txt:'—', color:'#5a7a9a' };
+    html += cel(`<span class="pl-etiqueta" style="background:${et.color}22;color:${et.color};">${et.txt}</span>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // Ideal viento
+  html += `<div class="pl-fila ideal"><div class="pl-fila-label">Ideal</div>`;
+  horas.forEach((h, i) => {
+    if (vels[i] == null) { html += cel('—', esAhoraH(h)); return; }
+    const et = plEtiquetaViento(vels[i], vdirs[i], p);
+    const ok = et.txt === 'OFF' || et.txt === 'C-OFF' || et.txt === 'GLASSY';
+    html += cel(ok ? `<span class="pl-ideal-ok">✓</span>` : `<span class="pl-ideal-no">✗</span>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // ── MAREA ──
+  html += `<div class="pl-seccion"><div class="pl-seccion-label">Marea</div><div class="pl-seccion-linea"></div></div>`;
+  html += `<div class="pl-fila"><div class="pl-fila-label">Altura</div>`;
+  horas.forEach((h) => {
+    html += cel(`<div class="pl-marea-h">—</div><div class="pl-marea-tipo">·</div>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // ── TIEMPO ──
+  html += `<div class="pl-seccion"><div class="pl-seccion-label">Tiempo</div><div class="pl-seccion-linea"></div></div>`;
+
+  // Cielo
+  html += `<div class="pl-fila"><div class="pl-fila-label">Cielo</div>`;
+  horas.forEach((h, i) => {
+    const isNoche = h < 7 || h >= 21;
+    html += cel(`<span class="pl-cielo">${iconoCielo(wcodes[i], isNoche ? 0 : 1).replace(/width="\d+"/,'width="20"').replace(/height="\d+"/,'height="20"')}</span>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  // Temp
+  html += `<div class="pl-fila" style="border-bottom:none;"><div class="pl-fila-label">Temp.</div>`;
+  horas.forEach((h, i) => {
+    const t = temps[i] != null ? Math.round(temps[i]) : null;
+    const c = t != null ? (t > 18 ? '#ffaa44' : '#88aacc') : '#5a7a9a';
+    html += cel(`<span class="pl-temp" style="color:${c};">${t != null ? t+'°' : '—'}</span>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  document.getElementById('pl-tabla').innerHTML = html;
+}
+
+function plCambiarDia(idx) {
+  plDiaSeleccionado = idx;
+  document.querySelectorAll('.pl-dia-btn').forEach((b,i) => b.classList.toggle('activo', i === idx));
+  plCargarTabla();
+}
+
+// Cerrar dropdown al click fuera
+document.addEventListener('click', e => {
+  const dd = document.getElementById('pl-dropdown');
+  if (dd && !e.target.closest('#pl-buscador') && !e.target.closest('.pl-dropdown')) {
+    dd.style.display = 'none';
+  }
+});
+
+// Modificar irA para iniciar Playas
+const _irA_orig = irA;
+function irA(pantalla, btn) {
+  _irA_orig(pantalla, btn);
+  if (pantalla === 'playas') {
+    if (!plPlayaActiva) {
+      plPlayaActiva = playaActiva;
+      document.getElementById('pl-buscador').value = playaActiva.nombre;
+      document.getElementById('pl-clear').style.display = 'block';
+      plCargarTabla();
+    }
+  }
+}
+
 </script>
 </body>
 </html>
