@@ -164,8 +164,7 @@
 <div id="pantalla-mapa" class="pantalla">
   <div class="mapa-header"><h1>🗺️ Playas</h1><p>Condiciones en tiempo real</p></div>
   <div class="selector-estilo">
-    <button class="btn-estilo activo" onclick="cambiarEstilo('oscuro',this)">🌑 Oscuro</button>
-    <button class="btn-estilo" onclick="cambiarEstilo('satelite',this)">🛰️ Satélite</button>
+
   </div>
   <div id="mapa"></div>
 </div>
@@ -1204,7 +1203,7 @@ async function refrescarMarcadores(){
 async function iniciarMapa(){
   mapaIniciado=true;
   mapa=L.map('mapa').setView([43.25,-8.7],9);
-  capaActual=capas.oscuro;
+  capaActual=capas.satelite;
   capaActual.addTo(mapa);
   await refrescarMarcadores();
 }
