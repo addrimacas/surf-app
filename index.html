@@ -2,7 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Salitre" />
+  <meta name="theme-color" content="#07111f" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <title>Salitre</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -10,9 +16,9 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#fff; min-height:100vh; padding-bottom:70px; }
     #fondo-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
-    .pantalla { position:relative; z-index:1; display:none; padding:20px; }
+    .pantalla { position:relative; z-index:1; display:none; padding:20px; padding-bottom:calc(20px + 65px + env(safe-area-inset-bottom)); }
     .pantalla.activa { display:block; }
-    .nav-bar { position:fixed; bottom:0; left:0; right:0; height:65px; background:linear-gradient(135deg,#0d2137cc,#0a3050cc); backdrop-filter:blur(12px); border-top:1px solid #1a4a6e; display:flex; z-index:1000; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; height:calc(65px + env(safe-area-inset-bottom)); background:linear-gradient(135deg,#0d2137cc,#0a3050cc); backdrop-filter:blur(12px); border-top:1px solid #1a4a6e; display:flex; z-index:1000; }
     .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; color:#4a7a9b; font-size:11px; border:none; background:none; transition:color 0.2s; }
     .nav-item.activo { color:#4db8ff; }
     .nav-item .icono { font-size:22px; }
