@@ -1173,6 +1173,12 @@ function irA(pantalla,btn){
   document.getElementById('pantalla-'+pantalla).classList.add('activa');
   btn.classList.add('activo');
   if(pantalla==='mapa'&&!mapaIniciado) iniciarMapa();
+  if(pantalla==='playas'&&!plPlayaActiva){
+    plPlayaActiva=playaActiva;
+    document.getElementById('pl-buscador').value=playaActiva.nombre;
+    document.getElementById('pl-clear').style.display='block';
+    plCargarTabla();
+  }
 }
 
 (async()=>{
@@ -1527,19 +1533,7 @@ document.addEventListener('click', e => {
   }
 });
 
-// Modificar irA para iniciar Playas
-const _irA_orig = irA;
-function irA(pantalla, btn) {
-  _irA_orig(pantalla, btn);
-  if (pantalla === 'playas') {
-    if (!plPlayaActiva) {
-      plPlayaActiva = playaActiva;
-      document.getElementById('pl-buscador').value = playaActiva.nombre;
-      document.getElementById('pl-clear').style.display = 'block';
-      plCargarTabla();
-    }
-  }
-}
+// irA extendido en la función original
 
 </script>
 </body>
