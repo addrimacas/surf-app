@@ -31,8 +31,7 @@
       align-items: center;
       justify-content: center;
       padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 10px;
-      /* Mismo azul oscuro que theme-color/canvas inicial; logos PNG con alpha encajan aquí */
-      background: linear-gradient(180deg, #07111f 0%, rgba(7, 17, 31, 0.55) 55%, transparent 100%);
+      background: transparent;
     }
     .logo-wrapper {
       display: flex;
@@ -49,7 +48,7 @@
       object-fit: contain;
       flex-shrink: 0;
       display: block;
-      /* Suaviza bordes del alpha sobre el degradado detrás */
+      /* Borde suave del alpha sobre el canvas */
       filter: drop-shadow(0 0 0.5px rgba(7, 17, 31, 0.9));
     }
     .logo-texto {
