@@ -157,9 +157,12 @@
 <body>
 <canvas id="fondo-canvas"></canvas>
 <div id="pantalla-inicio" class="pantalla activa">
-  <header style="text-align:center;padding:calc(env(safe-area-inset-top) + 16px) 16px 4px;background:transparent;">
-    <img src="logo-completo.png" alt="Salitre" style="width:160px;height:auto;display:block;margin:0 auto;">
-    <p id="ultima-actualizacion" style="font-size:11px;color:#4a7a9b;margin-top:8px;"></p>
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 10px) 20px 10px;background:transparent;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <img src="logo-simbolo.png" alt="Salitre" style="width:34px;height:auto;">
+      <span style="font-family:'Nunito',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,#3ab0ff,#44eeff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">salitre</span>
+    </div>
+    <p id="ultima-actualizacion" style="font-size:11px;color:#4a7a9b;"></p>
   </header>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer>Open-Meteo · A Coruña</footer>
