@@ -25,7 +25,7 @@
     .nav-item.activo { color:#4db8ff; }
     .nav-item.activo { color:#4db8ff; }
     .nav-item .icono { font-size:22px; }
-    header { position:sticky; top:0; z-index:50; background:rgba(7,17,31,0.85); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,0.05); }
+    header { background:transparent; }
     .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; align-items:stretch; }
     .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
     .dato-card .label { font-size:11px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
@@ -157,12 +157,9 @@
 <body>
 <canvas id="fondo-canvas"></canvas>
 <div id="pantalla-inicio" class="pantalla activa">
-  <header style="text-align:center;padding:calc(env(safe-area-inset-top) + 16px) 16px 12px;">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-      <img src="icon-192.png" alt="Salitre" style="width:56px;height:56px;border-radius:14px;box-shadow:0 4px 20px rgba(77,184,255,0.25);">
-      <span style="font-family:'Nunito',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#4db8ff,#44eeff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;">salitre</span>
-    </div>
-    <p id="ultima-actualizacion" style="font-size:11px;color:#4a7a9b;margin-top:4px;"></p>
+  <header style="text-align:center;padding:calc(env(safe-area-inset-top) + 20px) 16px 8px;background:transparent;">
+    <img src="icon-192.png" alt="Salitre" style="width:72px;height:72px;border-radius:18px;">
+    <p id="ultima-actualizacion" style="font-size:11px;color:#4a7a9b;margin-top:8px;"></p>
   </header>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer>Open-Meteo · A Coruña</footer>
