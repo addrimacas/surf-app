@@ -30,7 +30,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 10px;
+      padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 6px;
       background: transparent;
     }
     .logo-wrapper {
@@ -42,9 +42,9 @@
       min-width: 0;
     }
     .logo-simbolo {
-      height: 36px;
+      height: 43px;
       width: auto;
-      max-width: min(40vw, 120px);
+      max-width: min(42vw, 144px);
       object-fit: contain;
       flex-shrink: 0;
       display: block;
@@ -52,17 +52,17 @@
       filter: drop-shadow(0 0 0.5px rgba(7, 17, 31, 0.9));
     }
     .logo-texto {
-      height: 28px;
+      height: 34px;
       width: auto;
-      max-width: min(55vw, 200px);
+      max-width: min(58vw, 240px);
       object-fit: contain;
       flex-shrink: 1;
       display: block;
       filter: drop-shadow(0 0 0.5px rgba(7, 17, 31, 0.9));
     }
     @media (max-width: 400px) {
-      .logo-simbolo { height: 30px; max-width: min(38vw, 110px); }
-      .logo-texto { height: 24px; max-width: min(50vw, 180px); }
+      .logo-simbolo { height: 36px; max-width: min(40vw, 132px); }
+      .logo-texto { height: 29px; max-width: min(52vw, 216px); }
     }
     .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; align-items:stretch; }
     .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
@@ -70,9 +70,9 @@
     .dato-card .valor { font-size:24px; font-weight:700; }
     .dato-card .sub { font-size:12px; color:#8899aa; margin-top:3px; }
     .semaforo { display:flex; align-items:center; justify-content:center; gap:12px; margin:24px auto; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px 28px; max-width:420px; }
-    .semaforo-circulo { width:52px; height:52px; border-radius:50%; flex-shrink:0; }
-    .semaforo-texto h2 { font-size:22px; font-weight:700; }
-    .semaforo-texto p { font-size:13px; color:#8899aa; margin-top:2px; }
+    .semaforo-circulo { width:62px; height:62px; border-radius:50%; flex-shrink:0; }
+    .semaforo-texto h2 { font-size:26px; font-weight:700; }
+    .semaforo-texto p { font-size:16px; color:#8899aa; margin-top:2px; }
     .resumen { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px 20px; max-width:420px; margin:0 auto 20px; font-size:15px; line-height:1.6; color:#cce0ff; font-style:italic; }
     .prevision { max-width:420px; margin:0 auto 24px; }
     .prevision-titulo { font-size:12px; color:#8899aa; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px; }
@@ -530,25 +530,25 @@ function renderCabecera(playa, estado) {
   const favId = localStorage.getItem('salitre_favorita');
   const esFav = favId === playa.nombre;
   return `
-    <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:16px 18px;max-width:420px;margin:16px auto 16px;">
+    <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:18px 20px;max-width:420px;margin:6px auto 16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <button onclick="toggleSelector()" id="btn-selector"
-          style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
-          <span style="font-size:11px;color:#8899aa;font-weight:400;">España · Galicia</span>
+          style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:7px 16px;color:#ffffff;font-size:17px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+          <span style="font-size:13px;color:#8899aa;font-weight:400;">España · Galicia</span>
           &nbsp;${playa.nombre}
         </button>
         <button onclick="toggleFavorita()" id="btn-estrella"
-          style="background:none;border:none;font-size:22px;cursor:pointer;color:${esFav ? '#ffcc00' : '#445566'};">
+          style="background:none;border:none;font-size:26px;cursor:pointer;color:${esFav ? '#ffcc00' : '#445566'};">
           ${esFav ? '★' : '☆'}
         </button>
       </div>
       <div style="display:flex;align-items:center;gap:14px;">
-        <div style="width:52px;height:52px;border-radius:50%;background:${estado.color};box-shadow:0 0 20px ${estado.color}99;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <span style="font-size:22px;font-weight:800;color:white;">${estado.score}</span>
+        <div style="width:62px;height:62px;border-radius:50%;background:${estado.color};box-shadow:0 0 20px ${estado.color}99;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="font-size:26px;font-weight:800;color:white;">${estado.score}</span>
         </div>
         <div>
-          <div style="font-size:20px;font-weight:700;">${estado.texto}</div>
-          <div style="font-size:13px;color:#8899aa;margin-top:2px;" id="resumen-texto"></div>
+          <div style="font-size:24px;font-weight:700;">${estado.texto}</div>
+          <div style="font-size:16px;color:#8899aa;margin-top:2px;" id="resumen-texto"></div>
         </div>
       </div>
     </div>`;
