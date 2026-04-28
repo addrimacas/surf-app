@@ -12,3 +12,5 @@
 
 ## Ideas pendientes de diseño
 - [ ] **Tarjetas pulsables** — Swell, Viento, Marea y Tiempo expandibles al pulsar. Mostrar previsión del día completo de cada variable en un modal o expansión inline. Sin salir de la pantalla de inicio.
+- [ ] **Tarjeta Cielo — fondo de vídeo dinámico** — reemplazar icono SVG por vídeo corto en loop (3-5s, WebM/MP4). Un clip por condición: despejado día, despejado noche, nublado, lluvia, tormenta, niebla. Conseguir clips de stock gratuito (Pexels/Pixabay). Lógica: mapear código WMO de Open-Meteo a clip correspondiente. ~8 clips × ~700KB = ~6MB cacheados.
+- [ ] **Tab Playas** — pantalla nueva. 4 tabs: Inicio/Playas/Mapa/Guía. Tarjeta de playa activa en Inicio es pulsable → va a Playas. Vista detalle por horas tipo Surf-Forecast con fila "ideal" encima de "actual" para mar y viento. Cuadro en blanco reservado para foto/imagen de la playa (pendiente).
