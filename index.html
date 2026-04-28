@@ -111,7 +111,7 @@
     .pl-dia-btn { flex-shrink:0; padding:7px 16px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:#5a7a9a; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; transition:all 0.2s; }
     .pl-dia-btn.activo { background:#4db8ff; border-color:#4db8ff; color:#07111f; font-weight:700; }
     /* Tabla */
-    .pl-tabla-wrap { overflow-x:auto; overflow-y:visible; scrollbar-width:none; -webkit-overflow-scrolling:touch; touch-action:pan-x; }
+    .pl-tabla-wrap { overflow-x:auto; overflow-y:visible; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
     .pl-tabla-wrap::-webkit-scrollbar { display:none; }
     .pl-tabla { min-width:max-content; padding:0 16px; }
     .pl-fila-horas { display:flex; position:sticky; top:0; background:#07111f; z-index:10; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:2px; }
@@ -1295,7 +1295,10 @@ function plMostrarDropdown() {
 function plDropdownItem(p, zona) {
   return `<div class="pl-dropdown-item" onclick="plSeleccionarPlaya('${p.nombre}')">
     <div class="pdi-nombre">${p.nombre}</div>
-    <div class="pdi-score" id="pdi-score-${p.nombre}" style="background:#1a3a5a;color:#5a7a9a;font-size:10px;">·</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+      <span style="font-size:10px;color:#5a7a9a;">${zona}</span>
+      <span style="font-size:14px;color:#4db8ff;">›</span>
+    </div>
   </div>`;
 }
 
@@ -1311,8 +1314,10 @@ async function plSeleccionarPlaya(nombre) {
   plPlayaActiva = p;
   document.getElementById('pl-dropdown').style.display = 'none';
   document.getElementById('pl-buscador').value = nombre;
+  document.getElementById('pl-buscador').blur();
   document.getElementById('pl-clear').style.display = 'block';
   plDiaSeleccionado = 0;
+  document.getElementById('pantalla-playas').scrollTop = 0;
   await plCargarTabla();
 }
 
