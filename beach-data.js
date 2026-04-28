@@ -10,9 +10,9 @@ const SPOTS = {
     'Galicia': {
 
       'Rías Baixas': [
-        { nombre:'Patos',        lat:42.1555, lon:-8.8237, orient:306, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.2, pMin:7,  portIHM:'vigo',       exposicion:0.20, orientArcMin:275, orientArcMax:340, orientComputed:306, exposureAngular:0.214 },
-        { nombre:'Prado',        lat:42.1590, lon:-8.8200, orient:290, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.2, pMin:7,  portIHM:'vigo',       exposicion:0.20, orientArcMin:265, orientArcMax:335, orientComputed:290, exposureAngular:0.198 },
-        { nombre:'Vao',          lat:42.1978, lon:-8.7928, orient:276, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.5, pMin:7,  portIHM:'vigo',       exposicion:0.22, orientArcMin:245, orientArcMax:310, orientComputed:276, exposureAngular:0.211 },
+        { nombre:'Patos',        lat:42.1555, lon:-8.8237, orient:350, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.2, pMin:7,  portIHM:'vigo',       exposicion:0.20, orientArcMin:275, orientArcMax:340, orientComputed:306, exposureAngular:0.214 },
+        { nombre:'Prado',        lat:42.1590, lon:-8.8200, orient:355, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.2, pMin:7,  portIHM:'vigo',       exposicion:0.20, orientArcMin:265, orientArcMax:335, orientComputed:290, exposureAngular:0.198 },
+        { nombre:'Vao',          lat:42.1978, lon:-8.7928, orient:340, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.5, pMin:7,  portIHM:'vigo',       exposicion:0.22, orientArcMin:245, orientArcMax:310, orientComputed:276, exposureAngular:0.211 },
         { nombre:'Samil',        lat:42.2074, lon:-8.7772, orient:264, tol:35, swell:'O-SO',  viento:'NE',    hMin:0.5, hMax:2.0, pMin:8,  portIHM:'vigo',       exposicion:0.35, orientArcMin:235, orientArcMax:300, orientComputed:264, exposureAngular:0.189 },
         { nombre:'Nerga',        lat:42.2573, lon:-8.8364, orient:216, tol:35, swell:'O-SO',  viento:'NE',    hMin:0.5, hMax:2.0, pMin:8,  portIHM:'vigo',       exposicion:0.30, orientArcMin:200, orientArcMax:240, orientComputed:216, exposureAngular:0.178 },
         { nombre:'Melide',       lat:42.2513, lon:-8.8673, orient:277, tol:35, swell:'O',     viento:'NE',    hMin:0.5, hMax:1.8, pMin:8,  portIHM:'vigo',       exposicion:0.32, orientArcMin:190, orientArcMax:355, orientComputed:277, exposureAngular:0.474 },
