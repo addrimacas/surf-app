@@ -1,6 +1,6 @@
 // beach-data.js — datos de playas Galicia
 // Orientaciones calculadas geométricamente por perpendicular a línea de costa
-// Exposición calculada con script GEBCO/OSM (calcular-exposicion.js)
+// Exposición: modelo GEBCO 7 factores — scripts/calcular-exposicion-v3.js (o v2)
 // Última actualización: 2026-04-22
 
 const SPOTS = {

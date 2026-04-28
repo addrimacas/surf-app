@@ -8,15 +8,18 @@ App de condiciones de surf para la costa gallega. Usa la API pública
 
 ```
 index.html           App completa (HTML + CSS + JS inline).
-playas.json          Catálogo de spots con coords, orientación, tolerancia
-                     y datos ideales (swell, viento, nivel).
+beach-data.js        Catálogo de spots con coords, orientación, tolerancia
+                     y datos ideales (swell, viento, alturas, exposición…).
+manifest.json        PWA — iconos en la raíz (icon-192.png, icon-512.png).
 scripts/
-  verificar-coords.js  Script Node para validar las coords contra OSM.
+  verificar-coords.js           Valida coords contra OSM (lee beach-data.js).
+  calcular-exposicion-v2.js     Modelo 7 factores GEBCO → campo exposicion.
+  calcular-exposicion-v3.js     Mismo motor que v2; salida etiquetada v3 / localStorage v3.
 ```
 
 ## Ejecutar la app
 
-Tenés que servirla por HTTP (el `fetch('playas.json')` no funciona con `file://`):
+Hay que servirla por HTTP (`file://` no sirve para cargar scripts/datos):
 
 ```bash
 python3 -m http.server 8000
@@ -31,8 +34,7 @@ npx serve .
 
 ## Validar coordenadas contra OpenStreetMap
 
-Usa la Overpass API para buscar, dentro de 30 km de cada playa, elementos
-`natural=beach` cuyo nombre coincida y mide la distancia al más cercano.
+Usa la Overpass API para buscar playas `natural=beach` cerca de cada punto en **beach-data.js**.
 
 ```bash
 node scripts/verificar-coords.js
@@ -47,7 +49,7 @@ Reporta:
 
 Al final lista las playas a corregir con las coords de OSM como sugerencia.
 
-Requiere Node 18+ (fetch nativo). Sin dependencias.
+Requiere Node 18+ (fetch nativo). Sin dependencias npm para este script.
 
 ## Modelo de pronóstico
 

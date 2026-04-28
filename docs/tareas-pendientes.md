@@ -5,7 +5,7 @@
 - [ ] **Valoraciones post-sesión** — diseño e implementación pendiente para más adelante (Fase 1.5).
 
 ## Pendiente técnico
-- [ ] **calcular-exposicion-v4.js** — ejecutar script de exposición multi-direccional y actualizar beach-data.js
+- [ ] **Exposición en beach-data** — ejecutar `calcular-exposicion-v3.js` cuando toque revisión GEBCO; pendiente aparte un modelo multi-direccional más fino (antes pensado como «v4»)
 - [ ] **Bug 4 throttle** — ya commiteado, verificar en producción
 - [ ] **Popup mapa** — añadir puntuación, flecha swell, botón "Ver playa"
 - [ ] **Previsión viento** — en previsión y mejores olas cerca se pasa null para dirViento/velViento porque la marine API no da viento horario. Buscar solución.

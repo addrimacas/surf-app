@@ -32,6 +32,9 @@ if (PLAYAS.length === 0) {
 }
 console.log(`Playas cargadas: ${PLAYAS.length}`);
 
+const LS_KEY = process.env.SALITRE_EXPOS_LS || 'salitre_exposicion_v2';
+const LABEL_VERSION = process.env.SALITRE_EXPOS_VERSION || 'v2';
+
 // ─── Constantes ──────────────────────────────────────────────────────────────
 const PASOS_FETCH  = [10, 25, 50, 100, 150, 200]; // km
 const RAYOS_OFFSET = [0, -22.5, +22.5, -45, +45]; // grados desde orient
@@ -147,7 +150,7 @@ async function procesarPlaya(playa) {
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log('\n=== CÁLCULO DE EXPOSICIÓN v2 (7 factores) ===\n');
+  console.log(`\n=== CÁLCULO DE EXPOSICIÓN ${LABEL_VERSION} (7 factores) ===\n`);
   console.log(
     'Playa'.padEnd(18),
     'Exp_ant'.padEnd(8),
@@ -218,7 +221,7 @@ async function main() {
       exposicion: r.exposicion,
     };
   }
-  console.log(`localStorage.setItem('salitre_exposicion_v2', JSON.stringify(${JSON.stringify(json, null, 2)}));`);
+  console.log(`localStorage.setItem('${LS_KEY}', JSON.stringify(${JSON.stringify(json, null, 2)}));`);
 }
 
 main().catch(e => { console.error('Error fatal:', e); process.exit(1); });

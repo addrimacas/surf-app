@@ -1,4 +1,4 @@
-// Verifica las coordenadas de playas.json contra OpenStreetMap (Overpass API).
+// Verifica las coordenadas de beach-data.js contra OpenStreetMap (Overpass API).
 //
 // Estrategia: para cada playa, pide a Overpass TODAS las playas (natural=beach)
 // dentro de un bounding box de RADIO_BUSQUEDA_KM alrededor del punto, sin
@@ -12,7 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const PLAYAS_PATH = path.join(__dirname, '..', 'playas.json');
+const BEACH_DATA_PATH = path.join(__dirname, '..', 'beach-data.js');
 const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
 const RADIO_BUSQUEDA_KM = 8;
 const UMBRAL_LEJOS_KM = 2;
@@ -145,8 +145,13 @@ const ICONO = {
 };
 
 async function main() {
-  const config = JSON.parse(fs.readFileSync(PLAYAS_PATH, 'utf-8'));
-  const playas = config.playas;
+  const beachSrc = fs.readFileSync(BEACH_DATA_PATH, 'utf-8');
+  const getSpots = new Function(`${beachSrc}; return typeof todasLasPlayas === 'function' ? todasLasPlayas() : [];`);
+  const playas = getSpots();
+  if (playas.length === 0) {
+    console.error('ERROR: No se pudieron cargar las playas desde beach-data.js');
+    process.exit(1);
+  }
 
   console.log('Verificando ' + playas.length + ' playas contra OpenStreetMap...');
   console.log('(radio: ' + RADIO_BUSQUEDA_KM + ' km, delay: ' + DELAY_MS + ' ms, retries: ' + MAX_RETRIES + ')\n');

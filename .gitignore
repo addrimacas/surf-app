@@ -1,2 +1,11 @@
 node_modules/
-package-lock.json
+
+# Outputs locales de scripts (orientación / exposición)
+orientaciones*.txt
+orientaciones-output.txt
+
+# Datos GIS pesados en scripts/ (descarga manual; no versionar en general)
+scripts/ne_land.zip
+scripts/osm_land.zip
+scripts/ne_10m_land.*
+scripts/osm_land/
