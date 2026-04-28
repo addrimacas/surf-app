@@ -10,11 +10,13 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <title>Salitre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#fff; min-height:100vh; padding-bottom:70px; }
+    body { font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#fff; min-height:100vh; padding-bottom:70px; }
     #fondo-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
     .pantalla { position:relative; z-index:1; display:none; padding:20px; padding-bottom:calc(20px + 65px + env(safe-area-inset-bottom)); }
     .pantalla.activa { display:block; }
@@ -23,9 +25,7 @@
     .nav-item.activo { color:#4db8ff; }
     .nav-item.activo { color:#4db8ff; }
     .nav-item .icono { font-size:22px; }
-    header { text-align:center; padding:40px 0 10px; }
-    header h1 { font-size:32px; font-weight:800; letter-spacing:-1px; text-shadow:0 2px 20px rgba(0,0,0,0.4); }
-    header p { color:#aabccc; font-size:14px; margin-top:4px; }
+    header { position:sticky; top:0; z-index:50; background:rgba(7,17,31,0.85); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,0.05); }
     .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; align-items:stretch; }
     .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
     .dato-card .label { font-size:11px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
@@ -157,9 +157,12 @@
 <body>
 <canvas id="fondo-canvas"></canvas>
 <div id="pantalla-inicio" class="pantalla activa">
-  <header>
-    <h1>🌊 Salitre</h1>
-    <p id="ultima-actualizacion">Cargando datos...</p>
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 8px) 16px 8px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="icon-192.png" alt="Salitre" style="width:36px;height:36px;border-radius:8px;">
+      <span style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,#4db8ff,#44ddff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">salitre</span>
+    </div>
+    <p id="ultima-actualizacion" style="font-size:11px;color:#4a7a9b;"></p>
   </header>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer>Open-Meteo · A Coruña</footer>
