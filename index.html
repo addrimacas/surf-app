@@ -313,6 +313,27 @@ function angleDiff(a, b) {
   return d > 180 ? 360 - d : d;
 }
 
+/** Ángulo swell dentro del arco [orientArcMin, orientArcMax] (permite cruce 350°→10°). Sin arco → null. */
+function anguloEnArco(grados, minA, maxA) {
+  if (minA == null || maxA == null) return null;
+  const x = ((grados % 360) + 360) % 360;
+  const a = ((minA % 360) + 360) % 360;
+  const b = ((maxA % 360) + 360) % 360;
+  if (a <= b) return x >= a && x <= b;
+  return x >= a || x <= b;
+}
+
+/**
+ * Desviación swell vs playa: igual que angleDiff(dir, orient), pero si hay sector angular
+ * (orientArc*) el swell fuera de ese sector cuenta como muy malo → fuerza penalización sin borrar tol.
+ */
+function diffSwellRespectoPlaya(direccion, playa) {
+  if (direccion == null || Number.isNaN(direccion) || !playa) return 999;
+  const enArco = anguloEnArco(direccion, playa.orientArcMin, playa.orientArcMax);
+  if (enArco === false) return Math.min(999, (playa.tol ?? 45) + 100);
+  return angleDiff(direccion, playa.orient);
+}
+
 function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) {
   if (h == null || Number.isNaN(h)) return 1;
   if (direccion != null && !Number.isNaN(direccion) && direccion > 45 && direccion < 180) return 1;
@@ -325,7 +346,7 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) 
 
   // Dirección swell (0-4 puntos)
   if (playa && direccion != null && !Number.isNaN(direccion)) {
-    const diff = angleDiff(direccion, playa.orient);
+    const diff = diffSwellRespectoPlaya(direccion, playa);
     if (diff <= playa.tol * 0.6)     score += 4;
     else if (diff <= playa.tol)      score += 2;
     else if (diff <= playa.tol + 20) score += 1;
@@ -379,7 +400,7 @@ function dirTxt(g) {
 function resumen(h, p, d, playa) {
   const dir = dirTxt(d);
   if (playa && d != null && !Number.isNaN(d) && playa.orient != null
-      && angleDiff(d, playa.orient) > playa.tol) {
+      && diffSwellRespectoPlaya(d, playa) > playa.tol) {
     return `Swell del ${dir} fuera de rango para ${playa.nombre} (mira ${playa.swell}). Mejor buscar otro spot.`;
   }
   if (h == null || Number.isNaN(h)) return 'Sin datos del mar ahora mismo.';
@@ -733,9 +754,11 @@ function barrasSwellContexto(altura, dirSwell, periodo, playa) {
       </div>`;
   }
 
-  // Barra dirección: diferencia angular con el ideal (0=perfecto, tol=límite)
-  function barraDireccion(dirActual, orient, tol) {
-    const diff = dirActual != null ? angleDiff(dirActual, orient) : null;
+  // Barra dirección: diferencia angular con el ideal (0=perfecto, tol=límite); respeta orientArc* si existe
+  function barraDireccion(dirActual, playa) {
+    const orient = playa.orient;
+    const tol = playa.tol;
+    const diff = dirActual != null ? diffSwellRespectoPlaya(dirActual, playa) : null;
     const pActual = diff != null ? Math.min(98, diff / (tol+30) * 100) : 50;
     const pIdealMax = tol / (tol+30) * 100;
     const dentroRango = diff != null && diff <= tol;
@@ -760,7 +783,7 @@ function barrasSwellContexto(altura, dirSwell, periodo, playa) {
 
   return `<div style="padding-top:4px;">
     ${barra('Altura', altura!=null?parseFloat(altura.toFixed(1)):null, playa.hMin, playa.hMax, 0, Math.max(4, playa.hMax*1.5), 'm', '#4db8ff')}
-    ${barraDireccion(dirSwell, playa.orient, playa.tol)}
+    ${barraDireccion(dirSwell, playa)}
     ${barra('Período', periodo!=null?Math.round(periodo):null, playa.pMin, playa.pMin+4, 4, 20, 's', '#4db8ff')}
   </div>`;
 }
@@ -1510,7 +1533,7 @@ async function plCargarTabla() {
   // Ideal mar
   html += `<div class="pl-fila ideal"><div class="pl-fila-label">Ideal</div>`;
   horas.forEach((h, i) => {
-    const diffDir = dirs[i] != null ? angleDiff(dirs[i], p.orient) : 999;
+    const diffDir = dirs[i] != null ? diffSwellRespectoPlaya(dirs[i], p) : 999;
     const altOk = heights[i] >= p.hMin && heights[i] <= p.hMax;
     const dirOk = diffDir <= p.tol;
     const perOk = periods[i] >= p.pMin;

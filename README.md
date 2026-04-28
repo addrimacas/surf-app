@@ -12,9 +12,16 @@ beach-data.js        Catálogo de spots con coords, orientación, tolerancia
                      y datos ideales (swell, viento, alturas, exposición…).
 manifest.json        PWA — iconos en la raíz (icon-192.png, icon-512.png).
 scripts/
-  verificar-coords.js           Valida coords contra OSM (lee beach-data.js).
-  calcular-exposicion-v2.js     Modelo 7 factores GEBCO → campo exposicion.
-  calcular-exposicion-v3.js     Mismo motor que v2; salida etiquetada v3 / localStorage v3.
+  verificar-coords.js             Valida coords contra OSM (lee beach-data.js).
+  calcular-exposicion-v2.js       Modelo 7 factores GEBCO → campo exposicion.
+  calcular-exposicion-v3.js       Mismo motor que v2; salida etiquetada v3 / localStorage v3.
+  calcular-orientacion-v3.js      Un ángulo vía rayos + Natural Earth (ne_10m_land.geojson).
+  calcular-orientacion-curva.js   Curva exposure_curve(θ): orientación principal, ventana útil,
+                                   exposureScore; paralelo al modelo «un número». Opciones:
+                                   --solo=Nombre --json --no-curve · env SALITRE_CURVE_STEP,
+                                   SALITRE_CURVE_STEP_KM (por defecto 5° y 1 km).
+  experiments/orientacion/         Laboratorio: varios perfiles y compare-matrix.js sin tocar
+                                   los scripts anteriores (ver README dentro de esa carpeta).
 ```
 
 ## Ejecutar la app

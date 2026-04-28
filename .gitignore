@@ -1,5 +1,9 @@
 node_modules/
 
+# Vista previa script apply-sectors (regenerable)
+beach-data.preview.js
+beach-data.js.bak
+
 # Outputs locales de scripts (orientación / exposición)
 orientaciones*.txt
 orientaciones-output.txt
