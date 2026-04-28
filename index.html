@@ -93,8 +93,13 @@
     .pl-dropdown-item .pdi-zona { font-size:11px; color:#5a7a9a; margin-top:1px; }
     .pl-dropdown-item .pdi-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#07111f; flex-shrink:0; margin-left:auto; }
     /* Foto placeholder */
-    .pl-foto { margin:0 16px 14px; height:150px; background:linear-gradient(135deg,rgba(13,31,53,0.9),rgba(7,17,31,0.95)); border:1px solid rgba(255,255,255,0.07); border-radius:16px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; color:#2a4a6a; font-size:12px; position:relative; overflow:hidden; }
-    .pl-foto::before { content:''; position:absolute; inset:0; background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,0.012) 20px,rgba(255,255,255,0.012) 21px); }
+    .pl-foto { margin:0 16px 14px; height:150px; border-radius:16px; display:flex; align-items:flex-end; justify-content:flex-start; padding:16px 18px; position:relative; overflow:hidden; }
+    .pl-foto-bg { position:absolute; inset:0; background:linear-gradient(135deg,#0a2540,#061830,#0d1f35); }
+    .pl-foto-pattern { position:absolute; inset:0; background:repeating-linear-gradient(135deg,transparent,transparent 30px,rgba(77,184,255,0.03) 30px,rgba(77,184,255,0.03) 31px); }
+    .pl-foto-gradient { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 60%); }
+    .pl-foto-nombre { position:relative; z-index:1; font-size:22px; font-weight:800; letter-spacing:-0.5px; color:white; text-shadow:0 2px 8px rgba(0,0,0,0.5); }
+    .pl-foto-zona { position:relative; z-index:1; font-size:11px; color:rgba(255,255,255,0.5); font-weight:500; margin-top:2px; }
+    .pl-foto-icono { position:absolute; top:14px; right:16px; font-size:11px; color:rgba(255,255,255,0.2); z-index:1; }
     /* Semáforo actual */
     .pl-semaforo { margin:0 16px 14px; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; }
     .pl-sem-circulo { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; flex-shrink:0; }
@@ -110,16 +115,16 @@
     .pl-tabla-wrap::-webkit-scrollbar { display:none; }
     .pl-tabla { min-width:max-content; padding:0 16px; }
     .pl-fila-horas { display:flex; position:sticky; top:0; background:#07111f; z-index:10; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:2px; }
-    .pl-hora-label { width:86px; flex-shrink:0; position:sticky; left:0; background:#07111f; z-index:11; }
+    .pl-hora-label { width:80px; flex-shrink:0; position:sticky; left:0; background:#07111f; z-index:11; border-right:1px solid rgba(255,255,255,0.06); }
     .pl-hora-cel { width:64px; flex-shrink:0; text-align:center; padding:10px 4px; font-size:12px; font-weight:600; color:#5a7a9a; border-left:1px solid rgba(255,255,255,0.05); }
     .pl-hora-cel.ahora { color:#4db8ff; }
     .pl-seccion { display:flex; align-items:center; padding:10px 0 5px; }
-    .pl-seccion-label { width:86px; flex-shrink:0; font-size:9px; color:rgba(255,255,255,0.25); text-transform:uppercase; letter-spacing:0.8px; font-weight:600; position:sticky; left:0; background:#07111f; z-index:5; }
+    .pl-seccion-label { width:80px; flex-shrink:0; font-size:9px; color:rgba(77,184,255,0.4); text-transform:uppercase; letter-spacing:0.8px; font-weight:700; position:sticky; left:0; background:#07111f; z-index:5; padding-left:4px; }
     .pl-seccion-linea { flex:1; height:1px; background:rgba(255,255,255,0.06); }
     .pl-fila { display:flex; align-items:stretch; border-bottom:1px solid rgba(255,255,255,0.05); }
     .pl-fila:last-child { border-bottom:none; }
-    .pl-fila-label { width:86px; flex-shrink:0; font-size:10px; color:#5a7a9a; text-transform:uppercase; letter-spacing:0.4px; padding:9px 8px 9px 0; display:flex; align-items:center; font-weight:500; position:sticky; left:0; background:#07111f; z-index:5; }
-    .pl-fila.ideal .pl-fila-label { color:rgba(61,220,132,0.6); background:#07111f; }
+    .pl-fila-label { width:80px; flex-shrink:0; font-size:10px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; padding:9px 10px 9px 4px; display:flex; align-items:center; justify-content:flex-end; text-align:right; font-weight:600; position:sticky; left:0; background:#07111f; z-index:5; border-right:1px solid rgba(255,255,255,0.06); }
+    .pl-fila.ideal .pl-fila-label { color:rgba(61,220,132,0.7); background:#07111f; }
     .pl-fila.ideal .pl-cel { background:rgba(61,220,132,0.03); }
     .pl-cel { width:64px; flex-shrink:0; padding:7px 3px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border-left:1px solid rgba(255,255,255,0.05); }
     .pl-cel.ahora { background:rgba(77,184,255,0.06); border-left:1px solid rgba(77,184,255,0.2); }
@@ -168,9 +173,15 @@
     <div class="pl-dropdown" id="pl-dropdown"></div>
   </div>
   <!-- FOTO -->
-  <div class="pl-foto">
-    <span style="font-size:28px;opacity:0.2;">📷</span>
-    <span>Foto de la playa</span>
+  <div class="pl-foto" id="pl-foto">
+    <div class="pl-foto-bg"></div>
+    <div class="pl-foto-pattern"></div>
+    <div class="pl-foto-gradient"></div>
+    <div style="position:relative;z-index:1;">
+      <div class="pl-foto-nombre" id="pl-foto-nombre">—</div>
+      <div class="pl-foto-zona" id="pl-foto-zona">—</div>
+    </div>
+    <div class="pl-foto-icono">📷 próximamente</div>
   </div>
   <!-- SEMÁFORO -->
   <div class="pl-semaforo" id="pl-semaforo">
@@ -1283,8 +1294,8 @@ function plMostrarDropdown() {
 
 function plDropdownItem(p, zona) {
   return `<div class="pl-dropdown-item" onclick="plSeleccionarPlaya('${p.nombre}')">
-    <div><div class="pdi-nombre">${p.nombre}</div><div class="pdi-zona">${zona}</div></div>
-    <div class="pdi-score" id="pdi-score-${p.nombre}" style="background:#333;color:#666;">·</div>
+    <div class="pdi-nombre">${p.nombre}</div>
+    <div class="pdi-score" id="pdi-score-${p.nombre}" style="background:#1a3a5a;color:#5a7a9a;font-size:10px;">·</div>
   </div>`;
 }
 
@@ -1308,6 +1319,14 @@ async function plSeleccionarPlaya(nombre) {
 async function plCargarTabla() {
   if (!plPlayaActiva) return;
   const p = plPlayaActiva;
+
+  // Actualizar foto placeholder
+  const zonaPlaya = Object.entries(SPOTS['España']['Galicia'])
+    .find(([z, ps]) => ps.some(x => x.nombre === p.nombre))?.[0] || '';
+  const fNombre = document.getElementById('pl-foto-nombre');
+  const fZona = document.getElementById('pl-foto-zona');
+  if (fNombre) fNombre.textContent = p.nombre;
+  if (fZona) fZona.textContent = zonaPlaya + ' · Galicia';
 
   // Generar selector de días
   const diasDiv = document.getElementById('pl-dias');
@@ -1439,7 +1458,7 @@ async function plCargarTabla() {
   // Energía
   html += `<div class="pl-fila"><div class="pl-fila-label">Energía</div>`;
   horas.forEach((h, i) => {
-    const e = heights[i] && periods[i] ? Math.round((1025*9.81*9.81*periods[i]*heights[i]*heights[i])/(64*Math.PI*1000)) : null;
+    const e = heights[i] && periods[i] ? Math.round((1025*9.81*9.81*periods[i]*heights[i]*heights[i])/(64*Math.PI)) : null;
     html += cel(`<div class="pl-energia">${e ?? '—'} kJ</div>`, esAhoraH(h));
   });
   html += `</div>`;
