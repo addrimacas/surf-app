@@ -25,7 +25,41 @@
     .nav-item.activo { color:#4db8ff; }
     .nav-item.activo { color:#4db8ff; }
     .nav-item .icono { font-size:22px; }
-    header { background:transparent; }
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 10px;
+      background: transparent;
+    }
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      max-width: 100%;
+      min-width: 0;
+    }
+    .logo-simbolo {
+      height: 36px;
+      width: auto;
+      max-width: min(40vw, 120px);
+      object-fit: contain;
+      flex-shrink: 0;
+      display: block;
+    }
+    .logo-texto {
+      height: 28px;
+      width: auto;
+      max-width: min(55vw, 200px);
+      object-fit: contain;
+      flex-shrink: 1;
+      display: block;
+    }
+    @media (max-width: 400px) {
+      .logo-simbolo { height: 30px; max-width: min(38vw, 110px); }
+      .logo-texto { height: 24px; max-width: min(50vw, 180px); }
+    }
     .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; align-items:stretch; }
     .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
     .dato-card .label { font-size:11px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
@@ -157,9 +191,11 @@
 <body>
 <canvas id="fondo-canvas"></canvas>
 <div id="pantalla-inicio" class="pantalla activa">
-  <header style="display:flex;align-items:center;justify-content:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 16px 8px;background:transparent;">
-    <img src="logo-simbolo.png" alt="Salitre" style="height:52px;width:auto;display:block;">
-    <img src="logo-texto.png" alt="salitre" style="height:32px;width:auto;display:block;">
+  <header class="app-header">
+    <div class="logo-wrapper">
+      <img src="logo-simbolo.png" alt="Salitre símbolo" class="logo-simbolo">
+      <img src="logo-texto.png" alt="Salitre" class="logo-texto">
+    </div>
   </header>
   <p id="ultima-actualizacion" style="display:none;"></p>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
@@ -1007,7 +1043,7 @@ async function cargarInicio() {
       Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
         <div style="padding:6px 16px 4px;font-size:10px;color:#4a7a9b;text-transform:uppercase;letter-spacing:0.8px;border-bottom:0.5px solid rgba(255,255,255,0.05);">— ${zona} —</div>
         ${playas.map(p => `
-          <div onclick="seleccionarPlayaPorNombre('${p.nombre}')"
+          <div onclick='seleccionarPlayaPorNombre(${JSON.stringify(p.nombre)})'
             style="padding:10px 16px;font-size:14px;color:${p.nombre === playaActiva.nombre ? '#4db8ff' : '#ccddee'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
             ${p.nombre}
           </div>`).join('')}`).join('');
@@ -1363,7 +1399,7 @@ function plMostrarDropdown() {
 }
 
 function plDropdownItem(p, zona) {
-  return `<div class="pl-dropdown-item" onclick="plSeleccionarPlaya('${p.nombre}')">
+  return `<div class="pl-dropdown-item" onclick='plSeleccionarPlaya(${JSON.stringify(p.nombre)})'>
     <div class="pdi-nombre">${p.nombre}</div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
       <span style="font-size:10px;color:#5a7a9a;">${zona}</span>
