@@ -29,7 +29,7 @@
     .app-header {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       padding: calc(env(safe-area-inset-top, 0px) + 22px) 16px 10px;
       background: transparent;
     }
@@ -244,17 +244,75 @@
   .leaflet-control-attribution { font-size:8px !important; opacity:0.25 !important; background:transparent !important; color:rgba(255,255,255,0.3) !important; padding:0 3px !important; }
     .leaflet-control-attribution a { color:rgba(255,255,255,0.3) !important; }
     .leaflet-control-attribution svg { display:none !important; }
+
+    /* ── Selector de perfil ── */
+    .perfil-btn { width:40px; height:40px; border-radius:50%; background:rgba(77,184,255,0.12); border:2px solid rgba(77,184,255,0.25); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:20px; user-select:none; transition:background 0.2s; }
+    .perfil-btn:active { background:rgba(77,184,255,0.25); }
+    .perfil-spacer { width:40px; flex-shrink:0; }
+    .perfil-modal-overlay { position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s; }
+    .perfil-modal-overlay.visible { opacity:1; pointer-events:all; }
+    .perfil-modal { background:#0d1f35; border-radius:24px 24px 0 0; padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 32px); width:100%; max-width:480px; transform:translateY(100%); transition:transform 0.3s cubic-bezier(.32,.72,0,1); }
+    .perfil-modal-overlay.visible .perfil-modal { transform:translateY(0); }
+    .perfil-handle { width:36px; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; margin:0 auto 20px; }
+    .perfil-titulo { font-size:13px; font-weight:600; color:rgba(255,255,255,0.45); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:16px; }
+    .perfil-opciones { display:flex; flex-direction:column; gap:10px; }
+    .perfil-opcion { display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:14px; background:rgba(255,255,255,0.05); cursor:pointer; border:2px solid transparent; transition:all 0.2s; }
+    .perfil-opcion.activo { background:rgba(77,184,255,0.12); border-color:rgba(77,184,255,0.35); }
+    .perfil-opcion-emoji { font-size:26px; }
+    .perfil-opcion-info { flex:1; }
+    .perfil-opcion-nombre { font-size:16px; font-weight:700; color:#fff; }
+    .perfil-opcion-desc { font-size:12px; color:rgba(255,255,255,0.45); margin-top:2px; }
   </style>
 </head>
 <body>
 <canvas id="fondo-canvas"></canvas>
 <div id="pantalla-inicio" class="pantalla activa">
   <header class="app-header" aria-label="Salitre">
+    <div class="perfil-spacer"></div>
     <div class="logo-wrapper">
       <img src="logo-simbolo.png" alt="" class="logo-simbolo" role="presentation">
       <span class="titulo-marca-gradient logo-wordmark">salitre</span>
     </div>
+    <button class="perfil-btn" id="perfil-btn" aria-label="Seleccionar perfil">🏄</button>
   </header>
+
+  <!-- Modal selector de perfil -->
+  <div class="perfil-modal-overlay" id="perfil-overlay">
+    <div class="perfil-modal">
+      <div class="perfil-handle"></div>
+      <div class="perfil-titulo">¿Cómo vas al agua?</div>
+      <div class="perfil-opciones">
+        <div class="perfil-opcion" data-perfil="banista">
+          <div class="perfil-opcion-emoji">🏊</div>
+          <div class="perfil-opcion-info">
+            <div class="perfil-opcion-nombre">Bañista</div>
+            <div class="perfil-opcion-desc">Temperatura, viento y mar tranquilo</div>
+          </div>
+        </div>
+        <div class="perfil-opcion" data-perfil="principiante">
+          <div class="perfil-opcion-emoji">🛹</div>
+          <div class="perfil-opcion-info">
+            <div class="perfil-opcion-nombre">Principiante</div>
+            <div class="perfil-opcion-desc">Olas pequeñas, condiciones suaves</div>
+          </div>
+        </div>
+        <div class="perfil-opcion" data-perfil="intermedio">
+          <div class="perfil-opcion-emoji">🏄</div>
+          <div class="perfil-opcion-info">
+            <div class="perfil-opcion-nombre">Intermedio</div>
+            <div class="perfil-opcion-desc">Olas de 0.6–1.8m, algo de técnica</div>
+          </div>
+        </div>
+        <div class="perfil-opcion activo" data-perfil="pro">
+          <div class="perfil-opcion-emoji">🌊</div>
+          <div class="perfil-opcion-info">
+            <div class="perfil-opcion-nombre">Pro</div>
+            <div class="perfil-opcion-desc">Mar grande, condiciones exigentes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <p id="ultima-actualizacion" style="display:none;"></p>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer>Open-Meteo · A Coruña</footer>
@@ -402,6 +460,96 @@ let playaActiva = todasLasPlayas()[0];
 const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).toFixed(dec);
 const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : String(Math.round(v));
 
+// ── Sistema de perfiles ────────────────────────────────────────────
+const PERFILES = {
+  banista:      { emoji:'🏊', nombre:'Bañista',      hMinMult:0,    hMaxMult:0.5  },
+  principiante: { emoji:'🛹', nombre:'Principiante', hMinMult:0.4,  hMaxMult:0.7  },
+  intermedio:   { emoji:'🏄', nombre:'Intermedio',   hMinMult:0.7,  hMaxMult:1.0  },
+  pro:          { emoji:'🌊', nombre:'Pro',           hMinMult:1.0,  hMaxMult:1.4  },
+};
+
+let perfilActivo = localStorage.getItem('salitre_perfil') || 'pro';
+
+function perfilMultHMin(playa) { return PERFILES[perfilActivo]?.hMinMult ?? 1.0; }
+function perfilMultHMax(playa) { return PERFILES[perfilActivo]?.hMaxMult ?? 1.0; }
+
+function aplicarPerfil(playa) {
+  if (!playa) return playa;
+  const p = PERFILES[perfilActivo];
+  if (!p) return playa;
+  return {
+    ...playa,
+    hMin: playa.hMin * p.hMinMult || playa.hMin,
+    hMax: playa.hMax * p.hMaxMult,
+  };
+}
+
+function textoPerfilScore(score, h, playa) {
+  const hEf = h * (playa?.exposicion ?? 0.5);
+  const hMinPerfil = (playa?.hMin ?? 0.8) * perfilMultHMin();
+  const hMaxPerfil = (playa?.hMax ?? 2.5) * perfilMultHMax();
+
+  if (perfilActivo === 'banista') {
+    if (score <= 3) return 'El mar puede estar movido hoy';
+    if (score <= 6) return 'Condiciones aceptables para el baño';
+    return 'Buen día para darse un baño';
+  }
+  if (perfilActivo === 'principiante') {
+    if (hEf > hMaxPerfil * 1.1) return 'El mar puede estar demasiado grande para tu nivel';
+    if (hEf < hMinPerfil * 0.7) return 'Puede que el mar esté algo flojo hoy';
+    if (score >= 7) return 'Puede que encuentres buenas olas para practicar';
+    if (score >= 5) return 'Condiciones que pueden venir bien para aprender';
+    return 'Hoy puede que no sea el mejor día para salir';
+  }
+  if (perfilActivo === 'intermedio') {
+    if (hEf > hMaxPerfil * 1.2) return 'Las olas pueden estar grandes hoy';
+    if (hEf < hMinPerfil * 0.7) return 'Las condiciones apuntan a poco mar';
+    if (score >= 8) return 'Puede que sea una muy buena sesión';
+    if (score >= 6) return 'Las condiciones apuntan bien para salir';
+    return 'Hoy puede que no valga mucho la pena';
+  }
+  // pro
+  if (hEf < hMinPerfil * 0.6) return 'Las condiciones pueden quedarse cortas';
+  if (score >= 8) return 'Las condiciones apuntan a un mar interesante';
+  if (score >= 6) return 'Puede que merezca la pena salir';
+  return 'Hoy puede que no valga mucho la pena';
+}
+
+// UI del modal de perfil
+function initPerfilUI() {
+  const btn = document.getElementById('perfil-btn');
+  const overlay = document.getElementById('perfil-overlay');
+  if (!btn || !overlay) return;
+
+  function actualizarBtnEmoji() {
+    btn.textContent = PERFILES[perfilActivo]?.emoji ?? '🏄';
+  }
+  function marcarActivo() {
+    overlay.querySelectorAll('.perfil-opcion').forEach(el => {
+      el.classList.toggle('activo', el.dataset.perfil === perfilActivo);
+    });
+  }
+
+  actualizarBtnEmoji();
+  marcarActivo();
+
+  btn.addEventListener('click', () => overlay.classList.add('visible'));
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('visible');
+  });
+  overlay.querySelectorAll('.perfil-opcion').forEach(el => {
+    el.addEventListener('click', () => {
+      perfilActivo = el.dataset.perfil;
+      localStorage.setItem('salitre_perfil', perfilActivo);
+      actualizarBtnEmoji();
+      marcarActivo();
+      overlay.classList.remove('visible');
+      // Recargar datos con el nuevo perfil
+      if (typeof actualizarInicio === 'function') actualizarInicio();
+    });
+  });
+}
+
 function angleDiff(a, b) {
   const d = (((a - b) % 360) + 360) % 360;
   return d > 180 ? 360 - d : d;
@@ -444,8 +592,12 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) 
 
   let score = 0;
   const exp  = playa?.exposicion ?? 0.5;
-  const hMin = (playa?.hMin ?? 0.8) / (0.5 + exp * 0.5);
-  const hMax = (playa?.hMax ?? 2.5) * (0.5 + exp);
+  const playaConPerfil = aplicarPerfil(playa);
+
+  // Altura efectiva: el swell offshore se atenúa según la exposición real de la playa
+  const hEfectiva = h * exp;
+  const hMin = playaConPerfil?.hMin ?? 0.8;
+  const hMax = playaConPerfil?.hMax ?? 2.5;
   const pMin = playa?.pMin ?? 9;
 
   // Dirección swell (0-4 puntos)
@@ -458,10 +610,10 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) 
     else return 1;
   } else score += 2;
 
-  // Altura (0-4 puntos)
-  if (h >= hMin && h <= hMax)            score += 4;
-  else if (h >= hMin * 0.7 && h < hMin) score += 2;
-  else if (h > hMax && h <= hMax * 1.3) score += 2;
+  // Altura (0-4 puntos) — comparada con los rangos reales de la playa
+  if (hEfectiva >= hMin && hEfectiva <= hMax)            score += 4;
+  else if (hEfectiva >= hMin * 0.7 && hEfectiva < hMin) score += 2;
+  else if (hEfectiva > hMax && hEfectiva <= hMax * 1.3) score += 2;
 
   // Período (0-2 puntos)
   if (periodo >= pMin + 3)  score += 2;
@@ -1376,6 +1528,7 @@ function irA(pantalla,btn){
   localStorage.removeItem('salitre_exposicion');
   await inicializarExposicion();
   iniciarPlayaFavorita();
+  initPerfilUI();
   cargarInicio();
   setInterval(()=>{cargarInicio();if(mapaIniciado)refrescarMarcadores();},10*60*1000);
   document.addEventListener('visibilitychange',()=>{

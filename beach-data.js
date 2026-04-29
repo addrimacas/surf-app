@@ -10,14 +10,14 @@ const SPOTS = {
     'Galicia': {
 
       'Rías Baixas': [
-        { nombre:'Patos',        lat:42.1555, lon:-8.8237, orient:350, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.2, pMin:7,  portIHM:'vigo',       exposicion:0.45, orientArcMin:275, orientArcMax:340, orientComputed:306, exposureAngular:0.214 },
-        { nombre:'Prado',        lat:42.1590, lon:-8.8200, orient:355, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.2, pMin:7,  portIHM:'vigo',       exposicion:0.20, orientArcMin:265, orientArcMax:335, orientComputed:290, exposureAngular:0.198 },
-        { nombre:'Vao',          lat:42.1978, lon:-8.7928, orient:340, tol:30, swell:'SO',    viento:'NE',    hMin:0.3, hMax:1.5, pMin:7,  portIHM:'vigo',       exposicion:0.15, orientArcMin:245, orientArcMax:310, orientComputed:276, exposureAngular:0.211 },
-        { nombre:'Samil',        lat:42.2074, lon:-8.7772, orient:264, tol:35, swell:'O-SO',  viento:'NE',    hMin:0.5, hMax:2.0, pMin:8,  portIHM:'vigo',       exposicion:0.18, orientArcMin:235, orientArcMax:300, orientComputed:264, exposureAngular:0.189 },
-        { nombre:'Nerga',        lat:42.2573, lon:-8.8364, orient:216, tol:35, swell:'O-SO',  viento:'NE',    hMin:0.5, hMax:2.0, pMin:8,  portIHM:'vigo',       exposicion:0.22, orientArcMin:200, orientArcMax:240, orientComputed:216, exposureAngular:0.178 },
-        { nombre:'Melide',       lat:42.2513, lon:-8.8673, orient:277, tol:35, swell:'O',     viento:'NE',    hMin:0.5, hMax:1.8, pMin:8,  portIHM:'vigo',       exposicion:0.28, orientArcMin:190, orientArcMax:355, orientComputed:277, exposureAngular:0.474 },
-        { nombre:'Caneliñas',    lat:42.3912, lon:-8.8256, orient:217, tol:35, swell:'O',     viento:'NE',    hMin:0.5, hMax:1.8, pMin:8,  portIHM:'vilagarcia', exposicion:0.32, orientArcMin:205, orientArcMax:230, orientComputed:217, exposureAngular:0.184 },
-        { nombre:'Canelas',      lat:42.3892, lon:-8.8320, orient:228, tol:35, swell:'O-SO',  viento:'NE',    hMin:0.5, hMax:1.8, pMin:8,  portIHM:'vilagarcia', exposicion:0.38, orientArcMin:195, orientArcMax:280, orientComputed:228, exposureAngular:0.286 },
+        { nombre:'Patos',        lat:42.1555, lon:-8.8237, orient:350, tol:30, swell:'SO',    viento:'NE',    hMin:0.8, hMax:2, pMin:7,  portIHM:'vigo',       exposicion:0.45, orientArcMin:275, orientArcMax:340, orientComputed:306, exposureAngular:0.214 },
+        { nombre:'Prado',        lat:42.1590, lon:-8.8200, orient:355, tol:30, swell:'SO',    viento:'NE',    hMin:2, hMax:4, pMin:7,  portIHM:'vigo',       exposicion:0.20, orientArcMin:265, orientArcMax:335, orientComputed:290, exposureAngular:0.198 },
+        { nombre:'Vao',          lat:42.1978, lon:-8.7928, orient:340, tol:30, swell:'SO',    viento:'NE',    hMin:2, hMax:4, pMin:7,  portIHM:'vigo',       exposicion:0.15, orientArcMin:245, orientArcMax:310, orientComputed:276, exposureAngular:0.211 },
+        { nombre:'Samil',        lat:42.2074, lon:-8.7772, orient:264, tol:35, swell:'O-SO',  viento:'NE',    hMin:2.5, hMax:5, pMin:8,  portIHM:'vigo',       exposicion:0.18, orientArcMin:235, orientArcMax:300, orientComputed:264, exposureAngular:0.189 },
+        { nombre:'Nerga',        lat:42.2573, lon:-8.8364, orient:216, tol:35, swell:'O-SO',  viento:'NE',    hMin:2, hMax:4, pMin:8,  portIHM:'vigo',       exposicion:0.22, orientArcMin:200, orientArcMax:240, orientComputed:216, exposureAngular:0.178 },
+        { nombre:'Melide',       lat:42.2513, lon:-8.8673, orient:277, tol:35, swell:'O',     viento:'NE',    hMin:1.5, hMax:3, pMin:8,  portIHM:'vigo',       exposicion:0.28, orientArcMin:190, orientArcMax:355, orientComputed:277, exposureAngular:0.474 },
+        { nombre:'Caneliñas',    lat:42.3912, lon:-8.8256, orient:217, tol:35, swell:'O',     viento:'NE',    hMin:1, hMax:2.5, pMin:8,  portIHM:'vilagarcia', exposicion:0.32, orientArcMin:205, orientArcMax:230, orientComputed:217, exposureAngular:0.184 },
+        { nombre:'Canelas',      lat:42.3892, lon:-8.8320, orient:228, tol:35, swell:'O-SO',  viento:'NE',    hMin:0.8, hMax:2, pMin:8,  portIHM:'vilagarcia', exposicion:0.38, orientArcMin:195, orientArcMax:280, orientComputed:228, exposureAngular:0.286 },
         { nombre:'Montalvo',     lat:42.3961, lon:-8.8480, orient:236, tol:40, swell:'O',     viento:'NE',    hMin:0.6, hMax:2.0, pMin:9,  portIHM:'vilagarcia', exposicion:0.50, orientArcMin:190, orientArcMax:295, orientComputed:236, exposureAngular:0.264 },
         { nombre:'Foxos',        lat:42.4264, lon:-8.8746, orient:261, tol:45, swell:'O',     viento:'NE-E',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'vilagarcia', exposicion:0.65, orientArcMin:205, orientArcMax:300, orientComputed:261, exposureAngular:0.246 },
         { nombre:'Lanzada',      lat:42.4401, lon:-8.8723, orient:243, tol:55, swell:'O',     viento:'NE-E',  hMin:0.8, hMax:3.0, pMin:9,  portIHM:'vilagarcia', exposicion:0.8, orientArcMin:200, orientArcMax:280, orientComputed:243, exposureAngular:0.244 },
@@ -56,12 +56,12 @@ const SPOTS = {
         { nombre:'Barrañán',      lat:43.3112, lon:-8.5512, orient:340, tol:45, swell:'NO-O',  viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'coruna',     exposicion:0.82, orientArcMin:295, orientArcMax:30, orientComputed:340, exposureAngular:0.279 },
         { nombre:'Valcovo',       lat:43.3160, lon:-8.5331, orient:330, tol:45, swell:'NO-O',  viento:'SE-S',  hMin:0.7, hMax:2.0, pMin:9,  portIHM:'coruna',     exposicion:0.65, orientArcMin:280, orientArcMax:20, orientComputed:330, exposureAngular:0.308 },
         { nombre:'Repibelo',      lat:43.3226, lon:-8.5215, orient:324, tol:45, swell:'NO-O',  viento:'SE-S',  hMin:0.7, hMax:2.0, pMin:9,  portIHM:'coruna',     exposicion:0.62, orientArcMin:270, orientArcMax:20, orientComputed:324, exposureAngular:0.31 },
-        { nombre:'Sabón',         lat:43.3278, lon:-8.5098, orient:308, tol:45, swell:'NO-O',  viento:'SE-S',  hMin:0.7, hMax:2.0, pMin:9,  portIHM:'coruna',     exposicion:0.5, orientArcMin:265, orientArcMax:345, orientComputed:308, exposureAngular:0.233 },
+        { nombre:'Sabón',         lat:43.3278, lon:-8.5098, orient:308, tol:45, swell:'NO-O',  viento:'SE-S',  hMin:1, hMax:2.5, pMin:9,  portIHM:'coruna',     exposicion:0.5, orientArcMin:265, orientArcMax:345, orientComputed:308, exposureAngular:0.233 },
         { nombre:'Orzán',         lat:43.3739, lon:-8.4033, orient:305, tol:50, swell:'NO-O',  viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'coruna',     exposicion:0.6, orientArcMin:290, orientArcMax:320, orientComputed:305, exposureAngular:0.154 },
         { nombre:'Riazor',        lat:43.3683, lon:-8.4089, orient:333, tol:50, swell:'NO-N',  viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'coruna',     exposicion:0.55, orientArcMin:310, orientArcMax:355, orientComputed:333, exposureAngular:0.163 },
-        { nombre:'Matadero',      lat:43.3755, lon:-8.4036, orient:309, tol:45, swell:'NO-O',  viento:'SE-S',  hMin:0.7, hMax:2.0, pMin:9,  portIHM:'coruna',     exposicion:0.62, orientArcMin:285, orientArcMax:345, orientComputed:309, exposureAngular:0.173 },
-        { nombre:'Santa Cristina',lat:43.3393, lon:-8.3769, orient:355, tol:40, swell:'N-NO',  viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8,  portIHM:'sada',       exposicion:0.3, orientArcMin:345, orientArcMax:5, orientComputed:355, exposureAngular:0.109 },
-        { nombre:'Bastiagueiro',  lat:43.3408, lon:-8.3635, orient:348, tol:40, swell:'N-NO',  viento:'SO-S',  hMin:0.6, hMax:2.0, pMin:8,  portIHM:'sada',       exposicion:0.18, orientArcMin:330, orientArcMax:5, orientComputed:348, exposureAngular:0.138 },
+        { nombre:'Matadero',      lat:43.3755, lon:-8.4036, orient:309, tol:45, swell:'NO-O',  viento:'SE-S',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'coruna',     exposicion:0.62, orientArcMin:285, orientArcMax:345, orientComputed:309, exposureAngular:0.173 },
+        { nombre:'Santa Cristina',lat:43.3393, lon:-8.3769, orient:355, tol:40, swell:'N-NO',  viento:'SO-S',  hMin:2, hMax:4, pMin:8,  portIHM:'sada',       exposicion:0.3, orientArcMin:345, orientArcMax:5, orientComputed:355, exposureAngular:0.109 },
+        { nombre:'Bastiagueiro',  lat:43.3408, lon:-8.3635, orient:348, tol:40, swell:'N-NO',  viento:'SO-S',  hMin:3, hMax:6, pMin:8,  portIHM:'sada',       exposicion:0.18, orientArcMin:330, orientArcMax:5, orientComputed:348, exposureAngular:0.138 },
       ],
 
       'Ferrolterra': [
@@ -72,14 +72,14 @@ const SPOTS = {
         { nombre:'Campelo',    lat:43.5831, lon:-8.2155, orient:310, tol:45, swell:'N-NO',  viento:'SO',    hMin:0.8, hMax:2.5, pMin:9,  portIHM:'ferrol',  exposicion:0.8, orientArcMin:260, orientArcMax:5, orientComputed:310, exposureAngular:0.309 },
         { nombre:'Valdoviño',  lat:43.6150, lon:-8.1526, orient:330, tol:45, swell:'N-NO',  viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'cedeira', exposicion:0.8, orientArcMin:270, orientArcMax:25, orientComputed:330, exposureAngular:0.323 },
         { nombre:'Pantín',     lat:43.6405, lon:-8.1124, orient:328, tol:55, swell:'N-NO',  viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:10, portIHM:'cedeira', exposicion:0.92, orientArcMin:270, orientArcMax:25, orientComputed:328, exposureAngular:0.341 },
-        { nombre:'Vilarrube',  lat:43.6422, lon:-8.0718, orient:340, tol:45, swell:'N-NO',  viento:'SO-S',  hMin:0.8, hMax:2.5, pMin:9,  portIHM:'cedeira', exposicion:0.28, orientArcMin:330, orientArcMax:350, orientComputed:340, exposureAngular:0.089 },
+        { nombre:'Vilarrube',  lat:43.6422, lon:-8.0718, orient:340, tol:45, swell:'N-NO',  viento:'SO-S',  hMin:2.5, hMax:5, pMin:9,  portIHM:'cedeira', exposicion:0.28, orientArcMin:330, orientArcMax:350, orientComputed:340, exposureAngular:0.089 },
       ],
 
       /** Ortigueira — cabo Ortegal (entre Ferrolterra y Mariña lucense); nombre editable */
       'Costa do Ortegal': [
         { nombre:'A Concha',        lat:43.7178368, lon:-7.8087553, orient:354, tol:48, swell:'N-NO', viento:'SO-S', hMin:0.8, hMax:2.5, pMin:9, portIHM:'cedeira', exposicion:0.75, orientArcMin:325, orientArcMax:25, orientComputed:354, exposureAngular:0.208 },
         { nombre:'San Antón',       lat:43.7233012, lon:-7.7999885, orient:343, tol:48, swell:'N-NO', viento:'SO-S', hMin:0.8, hMax:2.5, pMin:9, portIHM:'cedeira', exposicion:0.78, orientArcMin:315, orientArcMax:10, orientComputed:343, exposureAngular:0.196 },
-        { nombre:'Sarridal',        lat:43.7337690, lon:-7.7790428, orient:355, tol:48, swell:'N-NO', viento:'SO-S', hMin:0.8, hMax:2.5, pMin:9, portIHM:'cedeira', exposicion:0.35, orientArcMin:300, orientArcMax:50, orientComputed:355, exposureAngular:0.343 },
+        { nombre:'Sarridal',        lat:43.7337690, lon:-7.7790428, orient:355, tol:48, swell:'N-NO', viento:'SO-S', hMin:1.5, hMax:3, pMin:9, portIHM:'cedeira', exposicion:0.35, orientArcMin:300, orientArcMax:50, orientComputed:355, exposureAngular:0.343 },
       ],
 
       'Mariña Lucense': [
