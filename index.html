@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="icon-192.png" />
   <title>Salitre</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Comfortaa:wght@300;400;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Comfortaa:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -107,9 +107,70 @@
     .prev-fila .pfi-estado { font-size:11px; font-weight:600; width:80px; text-align:right; flex-shrink:0; }
     footer { text-align:center; font-size:12px; color:rgba(255,255,255,0.25); padding:10px 0 20px; }
     .actualizando { text-align:center; font-size:14px; color:#8899aa; padding:60px 20px; }
+    /* Tipografía marca (estilo logo salitre): Comfortaa + degradado horizontal en azules */
+    .titulo-marca-gradient {
+      font-family: 'Comfortaa', 'Nunito', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(
+        92deg,
+        #1a4a72 0%,
+        #2366a8 22%,
+        #2d7fc4 48%,
+        #4db8ff 78%,
+        #8bd4f9 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .nav-item span.nav-txt-marca {
+      font-family: 'Comfortaa', 'Nunito', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .nav-item.activo span.nav-txt-marca {
+      background: linear-gradient(
+        92deg,
+        #1a4a72 0%,
+        #2366a8 22%,
+        #2d7fc4 48%,
+        #4db8ff 78%,
+        #8bd4f9 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
     .mapa-header { padding:24px 0 16px; text-align:center; }
-    .mapa-header h1 { font-size:24px; font-weight:700; }
-    .mapa-header p { font-size:13px; color:#8899aa; margin-top:4px; }
+    .mapa-header-titulo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 0;
+      line-height: 1.2;
+    }
+    .mapa-header-emoji {
+      font-size: 1.75rem;
+      line-height: 1;
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
+    }
+    .mapa-header .titulo-marca-gradient {
+      font-size: 1.65rem;
+    }
+    .mapa-header-sub {
+      font-size: 13px;
+      margin-top: 8px;
+      background: linear-gradient(90deg, #6a8cad 0%, #9bb6d4 50%, #7eb8e8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
     .selector-estilo { display:flex; gap:10px; max-width:420px; margin:0 auto 16px; }
     .btn-estilo { flex:1; padding:10px; border-radius:10px; border:1px solid #1a4a6e; background:rgba(10,22,40,0.6); color:#8899aa; font-size:13px; cursor:pointer; }
     .btn-estilo.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
@@ -206,7 +267,13 @@
   <footer>Open-Meteo · A Coruña</footer>
 </div>
 <div id="pantalla-mapa" class="pantalla">
-  <div class="mapa-header"><h1>🗺️ Playas</h1><p>Condiciones en tiempo real</p></div>
+  <div class="mapa-header">
+    <h1 class="mapa-header-titulo">
+      <span class="mapa-header-emoji" aria-hidden="true">🗺️</span>
+      <span class="titulo-marca-gradient">Playas</span>
+    </h1>
+    <p class="mapa-header-sub">Condiciones en tiempo real</p>
+  </div>
   <div class="selector-estilo">
 
   </div>
@@ -265,7 +332,7 @@
       <line x1="29.1" y1="13.9" x2="30.1" y2="14.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
       <path d="M4 27 Q12 23 18 25 Q24 27 32 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>
       <path d="M4 22 C7 22 9 20 12 20 C15 20 17 22 20 22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.6"/>
-    </svg><span>Playas</span></button>
+    </svg><span class="nav-txt-marca">Playas</span></button>
   <button class="nav-item" onclick="irA('mapa',this)"><svg width="26" height="26" viewBox="0 0 36 36" fill="none">
       <path d="M18 4 C13 4 9 8 9 13 C9 20 18 30 18 30 C18 30 27 20 27 13 C27 8 23 4 18 4Z" stroke="currentColor" stroke-width="1.8"/>
       <path d="M13 13 C14.5 13 15.5 11.5 17 11.5 C18.5 11.5 19.5 13 21 13 C22.5 13 23.5 11.5 24 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
