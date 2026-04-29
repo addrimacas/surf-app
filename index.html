@@ -30,7 +30,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 10px;
+      padding: calc(env(safe-area-inset-top, 0px) + 22px) 16px 10px;
       background: transparent;
     }
     .logo-wrapper {
@@ -51,18 +51,19 @@
       /* Borde suave del alpha sobre el canvas */
       filter: drop-shadow(0 0 0.5px rgba(7, 17, 31, 0.9));
     }
-    .logo-texto {
-      height: 52px;
-      width: auto;
-      max-width: min(62vw, 296px);
-      object-fit: contain;
+    .logo-wordmark {
+      font-size: clamp(1.85rem, 11vw, 3.35rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      text-transform: lowercase;
       flex-shrink: 1;
-      display: block;
+      min-width: 0;
       filter: drop-shadow(0 0 0.5px rgba(7, 17, 31, 0.9));
     }
     @media (max-width: 400px) {
       .logo-simbolo { height: 48px; max-width: min(46vw, 172px); }
-      .logo-texto { height: 45px; max-width: min(64vw, 272px); }
+      .logo-wordmark { font-size: clamp(1.65rem, 10.5vw, 2.85rem); }
     }
     .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; align-items:stretch; }
     .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
@@ -125,6 +126,9 @@
       -webkit-text-fill-color: transparent;
       color: transparent;
     }
+    .titulo-marca-gradient.logo-wordmark {
+      letter-spacing: -0.04em;
+    }
     .nav-item span.nav-txt-marca {
       font-family: 'Comfortaa', 'Nunito', sans-serif;
       font-weight: 700;
@@ -144,20 +148,11 @@
       -webkit-text-fill-color: transparent;
       color: transparent;
     }
-    .mapa-header { padding:24px 0 16px; text-align:center; }
+    .mapa-header { padding: calc(env(safe-area-inset-top, 0px) + 26px) 16px 16px; text-align:center; }
     .mapa-header-titulo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      display: block;
       margin: 0;
-      font-size: 0;
       line-height: 1.2;
-    }
-    .mapa-header-emoji {
-      font-size: 1.75rem;
-      line-height: 1;
-      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
     }
     .mapa-header .titulo-marca-gradient {
       font-size: 1.65rem;
@@ -256,10 +251,10 @@
 <body>
 <canvas id="fondo-canvas"></canvas>
 <div id="pantalla-inicio" class="pantalla activa">
-  <header class="app-header">
+  <header class="app-header" aria-label="Salitre">
     <div class="logo-wrapper">
-      <img src="logo-simbolo.png" alt="Salitre símbolo" class="logo-simbolo">
-      <img src="logo-texto.png" alt="Salitre" class="logo-texto">
+      <img src="logo-simbolo.png" alt="" class="logo-simbolo" role="presentation">
+      <span class="titulo-marca-gradient logo-wordmark">salitre</span>
     </div>
   </header>
   <p id="ultima-actualizacion" style="display:none;"></p>
@@ -268,10 +263,7 @@
 </div>
 <div id="pantalla-mapa" class="pantalla">
   <div class="mapa-header">
-    <h1 class="mapa-header-titulo">
-      <span class="mapa-header-emoji" aria-hidden="true">🗺️</span>
-      <span class="titulo-marca-gradient">Playas</span>
-    </h1>
+    <h1 class="mapa-header-titulo"><span class="titulo-marca-gradient">Playas</span></h1>
     <p class="mapa-header-sub">Condiciones en tiempo real</p>
   </div>
   <div class="selector-estilo">
