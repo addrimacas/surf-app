@@ -363,19 +363,29 @@ function anguloEnArco(grados, minA, maxA) {
 }
 
 /**
- * Desviación swell vs playa: igual que angleDiff(dir, orient), pero si hay sector angular
- * (orientArc*) el swell fuera de ese sector cuenta como muy malo → fuerza penalización sin borrar tol.
+ * Desviación swell vs playa: distancia al centro del arco si está dentro;
+ * fuera del arco penalización gradual (no binaria).
  */
 function diffSwellRespectoPlaya(direccion, playa) {
   if (direccion == null || Number.isNaN(direccion) || !playa) return 999;
   const enArco = anguloEnArco(direccion, playa.orientArcMin, playa.orientArcMax);
-  if (enArco === false) return Math.min(999, (playa.tol ?? 45) + 100);
-  return angleDiff(direccion, playa.orient);
+  if (enArco === null) return angleDiff(direccion, playa.orient ?? 0);
+  // Si está dentro del arco: devuelve distancia al centro del arco (0 = perfecto)
+  if (enArco) {
+    const apertura = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
+    const centro = (playa.orientArcMin + apertura / 2 + 360) % 360;
+    return angleDiff(direccion, centro);
+  }
+  // Fuera del arco: distancia al borde más cercano del arco, escalada
+  const dMin = angleDiff(direccion, playa.orientArcMin);
+  const dMax = angleDiff(direccion, playa.orientArcMax);
+  const distBorde = Math.min(dMin, dMax);
+  // Penalización gradual: 1° fuera = leve, 45°+ fuera = eliminatorio
+  return (playa.tol ?? 45) + distBorde * 1.5;
 }
 
 function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) {
   if (h == null || Number.isNaN(h)) return 1;
-  if (direccion != null && !Number.isNaN(direccion) && direccion > 45 && direccion < 180) return 1;
 
   let score = 0;
   const exp  = playa?.exposicion ?? 0.5;
@@ -386,9 +396,10 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) 
   // Dirección swell (0-4 puntos)
   if (playa && direccion != null && !Number.isNaN(direccion)) {
     const diff = diffSwellRespectoPlaya(direccion, playa);
-    if (diff <= playa.tol * 0.6)     score += 4;
-    else if (diff <= playa.tol)      score += 2;
-    else if (diff <= playa.tol + 20) score += 1;
+    const mitadArco = (((playa.orientArcMax - playa.orientArcMin) + 360) % 360) / 2;
+    if (diff <= mitadArco * 0.5)      score += 4;
+    else if (diff <= mitadArco)       score += 2;
+    else if (diff <= mitadArco + 20)  score += 1;
     else return 1;
   } else score += 2;
 
@@ -403,7 +414,9 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) 
 
   // Penalización por viento (dirección + velocidad)
   if (playa && dirViento != null && !Number.isNaN(dirViento)) {
-    const offshoreDir = (playa.orient + 180) % 360;
+    const apertura = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
+    const centroPlaya = (playa.orientArcMin + apertura / 2 + 360) % 360;
+    const offshoreDir = (centroPlaya + 180) % 360;
     const diffViento = angleDiff(dirViento, offshoreDir);
     let pen = 0;
     if      (diffViento >= 144) pen = 3;
@@ -438,9 +451,11 @@ function dirTxt(g) {
 
 function resumen(h, p, d, playa) {
   const dir = dirTxt(d);
-  if (playa && d != null && !Number.isNaN(d) && playa.orient != null
-      && diffSwellRespectoPlaya(d, playa) > playa.tol) {
-    return `Swell del ${dir} fuera de rango para ${playa.nombre} (mira ${playa.swell}). Mejor buscar otro spot.`;
+  if (playa && d != null && !Number.isNaN(d)) {
+    const en = anguloEnArco(d, playa.orientArcMin, playa.orientArcMax);
+    if (en === false || (en === null && playa.orient != null && angleDiff(d, playa.orient) > playa.tol)) {
+      return `Swell del ${dir} fuera de rango para ${playa.nombre} (mira ${playa.swell}). Mejor buscar otro spot.`;
+    }
   }
   if (h == null || Number.isNaN(h)) return 'Sin datos del mar ahora mismo.';
   if (h < 0.5) return 'El mar está en calma. No merece salir.';
