@@ -194,13 +194,11 @@
     .pl-dropdown-item .pdi-zona { font-size:11px; color:#5a7a9a; margin-top:1px; }
     .pl-dropdown-item .pdi-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#07111f; flex-shrink:0; margin-left:auto; }
     /* Foto placeholder */
-    .pl-foto { margin:0 16px 14px; height:150px; border-radius:16px; display:flex; align-items:flex-end; justify-content:flex-start; padding:16px 18px; position:relative; overflow:hidden; }
-    .pl-foto-bg { position:absolute; inset:0; background:linear-gradient(135deg,#0a2540,#061830,#0d1f35); }
-    .pl-foto-pattern { position:absolute; inset:0; background:repeating-linear-gradient(135deg,transparent,transparent 30px,rgba(77,184,255,0.03) 30px,rgba(77,184,255,0.03) 31px); }
-    .pl-foto-gradient { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 60%); }
-    .pl-foto-nombre { position:relative; z-index:1; font-size:22px; font-weight:800; letter-spacing:-0.5px; color:white; text-shadow:0 2px 8px rgba(0,0,0,0.5); }
-    .pl-foto-zona { position:relative; z-index:1; font-size:11px; color:rgba(255,255,255,0.5); font-weight:500; margin-top:2px; }
-    .pl-foto-icono { position:absolute; top:14px; right:16px; font-size:11px; color:rgba(255,255,255,0.2); z-index:1; }
+    .pl-foto { margin:0 16px 14px; height:160px; border-radius:16px; display:flex; align-items:flex-end; justify-content:flex-start; padding:16px 18px; position:relative; overflow:hidden; }
+    .pl-foto-map { position:absolute; inset:0; width:100%; height:100%; border:none; border-radius:16px; z-index:0; pointer-events:none; }
+    .pl-foto-gradient { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.15) 55%,transparent 100%); z-index:1; }
+    .pl-foto-nombre { position:relative; z-index:2; font-size:22px; font-weight:800; letter-spacing:-0.5px; color:white; text-shadow:0 2px 8px rgba(0,0,0,0.7); }
+    .pl-foto-zona { position:relative; z-index:2; font-size:11px; color:rgba(255,255,255,0.7); font-weight:500; margin-top:2px; }
     /* Semáforo actual */
     .pl-semaforo { margin:0 16px 14px; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; }
     .pl-sem-circulo { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; flex-shrink:0; }
@@ -283,14 +281,12 @@
   </div>
   <!-- FOTO -->
   <div class="pl-foto" id="pl-foto">
-    <div class="pl-foto-bg"></div>
-    <div class="pl-foto-pattern"></div>
+    <iframe id="pl-foto-map" class="pl-foto-map" src="" loading="lazy" scrolling="no" title="Mapa playa"></iframe>
     <div class="pl-foto-gradient"></div>
-    <div style="position:relative;z-index:1;">
+    <div style="position:relative;z-index:2;">
       <div class="pl-foto-nombre" id="pl-foto-nombre">—</div>
       <div class="pl-foto-zona" id="pl-foto-zona">—</div>
     </div>
-    <div class="pl-foto-icono">📷 próximamente</div>
   </div>
   <!-- SEMÁFORO -->
   <div class="pl-semaforo" id="pl-semaforo">
@@ -1509,13 +1505,21 @@ async function plCargarTabla() {
   if (!plPlayaActiva) return;
   const p = plPlayaActiva;
 
-  // Actualizar foto placeholder
+  // Actualizar mapa real de la playa
   const zonaPlaya = Object.entries(SPOTS['España']['Galicia'])
     .find(([z, ps]) => ps.some(x => x.nombre === p.nombre))?.[0] || '';
   const fNombre = document.getElementById('pl-foto-nombre');
-  const fZona = document.getElementById('pl-foto-zona');
+  const fZona   = document.getElementById('pl-foto-zona');
+  const fMap    = document.getElementById('pl-foto-map');
   if (fNombre) fNombre.textContent = p.nombre;
-  if (fZona) fZona.textContent = zonaPlaya + ' · Galicia';
+  if (fZona)   fZona.textContent   = zonaPlaya + ' · Galicia';
+  if (fMap && p.lat && p.lon) {
+    const zoom = 14;
+    const lat  = p.lat, lon = p.lon;
+    // OpenStreetMap embed con capa satélite (Esri World Imagery via OSM iframe)
+    // Usamos el embed estándar de OSM con marcador en las coordenadas
+    fMap.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.018},${lat-0.010},${lon+0.018},${lat+0.010}&layer=hot&marker=${lat},${lon}`;
+  }
 
   // Generar selector de días
   const diasDiv = document.getElementById('pl-dias');
