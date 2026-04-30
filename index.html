@@ -246,7 +246,7 @@
     .leaflet-control-attribution svg { display:none !important; }
 
     /* ── Selector de perfil ── */
-    .perfil-btn { width:40px; height:40px; border-radius:50%; background:rgba(77,184,255,0.12); border:2px solid rgba(77,184,255,0.25); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:20px; user-select:none; transition:background 0.2s; }
+    .perfil-btn { width:40px; height:40px; border-radius:50%; background:rgba(77,184,255,0.12); border:2px solid rgba(77,184,255,0.25); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; color:#c8e8ff; user-select:none; transition:background 0.2s; }
     .perfil-btn:active { background:rgba(77,184,255,0.25); }
     .perfil-spacer { width:40px; flex-shrink:0; }
     .perfil-modal-overlay { position:fixed; inset:0; z-index:12000; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s; overscroll-behavior:none; }
@@ -258,7 +258,9 @@
     .perfil-opciones { display:flex; flex-direction:column; gap:10px; }
     .perfil-opcion { display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:14px; background:rgba(255,255,255,0.05); cursor:pointer; border:2px solid transparent; transition:all 0.2s; }
     .perfil-opcion.activo { background:rgba(77,184,255,0.12); border-color:rgba(77,184,255,0.35); }
-    .perfil-opcion-emoji { font-size:26px; }
+    .perfil-opcion-icon { flex-shrink:0; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:#ddeeff; }
+    .perfil-opcion-icon svg { width:32px; height:32px; display:block; }
+    .perfil-btn svg { width:22px; height:22px; display:block; }
     .perfil-opcion-info { flex:1; }
     .perfil-opcion-nombre { font-size:16px; font-weight:700; color:#fff; }
     .perfil-opcion-desc { font-size:12px; color:rgba(255,255,255,0.45); margin-top:2px; }
@@ -268,7 +270,7 @@
 <canvas id="fondo-canvas"></canvas>
 <div id="pantalla-inicio" class="pantalla activa">
   <header class="app-header" aria-label="Salitre">
-    <button class="perfil-btn" id="perfil-btn" aria-label="Seleccionar perfil">🌊</button>
+    <button type="button" class="perfil-btn" id="perfil-btn" aria-label="Opciones y perfil"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="9" y1="11" x2="27" y2="11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="9" y1="18" x2="27" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="9" y1="25" x2="27" y2="25" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
     <div class="logo-wrapper">
       <img src="logo-simbolo.png" alt="" class="logo-simbolo" role="presentation">
       <span class="titulo-marca-gradient logo-wordmark">salitre</span>
@@ -364,28 +366,28 @@
     <div class="perfil-titulo">¿Cómo vas al agua?</div>
     <div class="perfil-opciones">
       <div class="perfil-opcion" data-perfil="banista">
-        <div class="perfil-opcion-emoji">🏊</div>
+        <div class="perfil-opcion-icon" aria-hidden="true"></div>
         <div class="perfil-opcion-info">
           <div class="perfil-opcion-nombre">Bañista</div>
           <div class="perfil-opcion-desc">Temperatura, viento y mar tranquilo</div>
         </div>
       </div>
       <div class="perfil-opcion" data-perfil="principiante">
-        <div class="perfil-opcion-emoji">🛹</div>
+        <div class="perfil-opcion-icon" aria-hidden="true"></div>
         <div class="perfil-opcion-info">
           <div class="perfil-opcion-nombre">Principiante</div>
           <div class="perfil-opcion-desc">Olas pequeñas, condiciones suaves</div>
         </div>
       </div>
       <div class="perfil-opcion" data-perfil="intermedio">
-        <div class="perfil-opcion-emoji">🏄</div>
+        <div class="perfil-opcion-icon" aria-hidden="true"></div>
         <div class="perfil-opcion-info">
           <div class="perfil-opcion-nombre">Intermedio</div>
           <div class="perfil-opcion-desc">Olas de 0.6–1.8m, algo de técnica</div>
         </div>
       </div>
       <div class="perfil-opcion activo" data-perfil="pro">
-        <div class="perfil-opcion-emoji">🌊</div>
+        <div class="perfil-opcion-icon" aria-hidden="true"></div>
         <div class="perfil-opcion-info">
           <div class="perfil-opcion-nombre">Pro</div>
           <div class="perfil-opcion-desc">Mar grande, condiciones exigentes</div>
@@ -461,11 +463,22 @@ const fmt = (v, dec = 1) => (v == null || Number.isNaN(v)) ? '—' : Number(v).t
 const rnd = (v) => (v == null || Number.isNaN(v)) ? '—' : String(Math.round(v));
 
 // ── Sistema de perfiles ────────────────────────────────────────────
+// Icono fijo del botón (menú desplegable). Modal: sin figuras — playa / tablas.
+const SVG_PERFIL_BTN_MENU = `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="9" y1="11" x2="27" y2="11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="9" y1="18" x2="27" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="9" y1="25" x2="27" y2="25" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+// Bañista: sombrilla + toalla (pictograma playa).
+const SVG_PERFIL_BANISTA = `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.5 19.5Q14 7 22.5 19.5" stroke="currentColor" stroke-width="1.55" stroke-linecap="round"/><line x1="14.5" y1="19" x2="14.5" y2="29" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M20 24.2L29.5 22.2L30.8 27.8L21.3 29.8Z" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round"/><line x1="21.2" y1="25.2" x2="29.8" y2="23.4" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" opacity="0.55"/><line x1="21.6" y1="26.8" x2="30.2" y2="25" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" opacity="0.55"/></svg>`;
+// Principiante: longboard — elipse alargada (vista desde arriba).
+const SVG_PERFIL_PRINCIPIANTE = `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 3.5C21.5 3.5 23.5 8 23.5 18 23.5 28 21.5 32.5 18 32.5 14.5 32.5 12.5 28 12.5 18 12.5 8 14.5 3.5 18 3.5z" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><line x1="18" y1="11" x2="18" y2="25" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/></svg>`;
+// Intermedio: planta tipo principiante pero más pequeña; cola fish (V invertida).
+const SVG_PERFIL_INTERMEDIO = `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 6C20.5 6 21.5 9.5 21.5 14.5C21.5 19.5 21.2 23.6 20.4 26.6L22.2 28.6 18 30.9 13.8 28.6 15.6 26.6C14.8 23.6 14.5 19.5 14.5 14.5C14.5 9.5 15.5 6 18 6z" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><line x1="18" y1="10" x2="18" y2="26" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/></svg>`;
+// Pro: nose afilado; cola ancha redondeada (squash).
+const SVG_PERFIL_PRO = `<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 3.5L21 8.5C22.8 13.5 22.8 21.5 21.2 26.8C20.2 29.8 18.2 31.2 18 31.2C17.8 31.2 15.8 29.8 14.8 26.8C13.2 21.5 13.2 13.5 15 8.5L18 3.5z" stroke="currentColor" stroke-width="1.55" stroke-linejoin="round"/><line x1="18" y1="10" x2="18" y2="25.5" stroke="currentColor" stroke-width="0.85" stroke-linecap="round" opacity="0.35"/></svg>`;
+
 const PERFILES = {
-  banista:      { emoji:'🏊', nombre:'Bañista',      hMinMult:0,    hMaxMult:0.5  },
-  principiante: { emoji:'🛹', nombre:'Principiante', hMinMult:0.4,  hMaxMult:0.7  },
-  intermedio:   { emoji:'🏄', nombre:'Intermedio',   hMinMult:0.7,  hMaxMult:1.0  },
-  pro:          { emoji:'🌊', nombre:'Pro',           hMinMult:1.0,  hMaxMult:1.4  },
+  banista:      { svg: SVG_PERFIL_BANISTA,      nombre:'Bañista',      hMinMult:0,    hMaxMult:0.5  },
+  principiante: { svg: SVG_PERFIL_PRINCIPIANTE, nombre:'Principiante', hMinMult:0.4,  hMaxMult:0.7  },
+  intermedio:   { svg: SVG_PERFIL_INTERMEDIO,   nombre:'Intermedio',   hMinMult:0.7,  hMaxMult:1.0  },
+  pro:          { svg: SVG_PERFIL_PRO,          nombre:'Pro',          hMinMult:1.0,  hMaxMult:1.4  },
 };
 
 let perfilActivo = localStorage.getItem('salitre_perfil') || 'pro';
@@ -521,8 +534,15 @@ function initPerfilUI() {
   const overlay = document.getElementById('perfil-overlay');
   if (!btn || !overlay) return;
 
-  function actualizarBtnEmoji() {
-    btn.textContent = PERFILES[perfilActivo]?.emoji ?? '🏄';
+  function actualizarBtnIcon() {
+    btn.innerHTML = SVG_PERFIL_BTN_MENU;
+  }
+  function rellenarIconosModal() {
+    overlay.querySelectorAll('.perfil-opcion').forEach(el => {
+      const id = el.dataset.perfil;
+      const wrap = el.querySelector('.perfil-opcion-icon');
+      if (wrap && PERFILES[id]?.svg) wrap.innerHTML = PERFILES[id].svg;
+    });
   }
   function marcarActivo() {
     overlay.querySelectorAll('.perfil-opcion').forEach(el => {
@@ -530,7 +550,8 @@ function initPerfilUI() {
     });
   }
 
-  actualizarBtnEmoji();
+  actualizarBtnIcon();
+  rellenarIconosModal();
   marcarActivo();
 
   function setPerfilOverlayAbierto(abierto) {
@@ -547,7 +568,6 @@ function initPerfilUI() {
     el.addEventListener('click', () => {
       perfilActivo = el.dataset.perfil;
       localStorage.setItem('salitre_perfil', perfilActivo);
-      actualizarBtnEmoji();
       marcarActivo();
       setPerfilOverlayAbierto(false);
       // Recargar inicio y mapa con el nuevo perfil (clasificación depende de perfilActivo)
