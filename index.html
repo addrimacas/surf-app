@@ -1608,6 +1608,23 @@ function plFlechaDir(grados) {
   return flechas[i] + ' ' + dirs[i];
 }
 
+/** Índice horario en hourly Open-Meteo; si no coincide el unix exacto, el más cercano (≤2 h). */
+function plHourlyIdxForTs(hourlyTimes, ts) {
+  if (!hourlyTimes?.length) return -1;
+  const j = hourlyTimes.indexOf(ts);
+  if (j >= 0) return j;
+  let best = -1;
+  let bestDiff = Infinity;
+  for (let k = 0; k < hourlyTimes.length; k++) {
+    const d = Math.abs(hourlyTimes[k] - ts);
+    if (d < bestDiff) {
+      bestDiff = d;
+      best = k;
+    }
+  }
+  return bestDiff <= 7200 ? best : -1;
+}
+
 // Busqueda inteligente: playa, zona o región
 function plBuscar(q) {
   const clear = document.getElementById('pl-clear');
@@ -1737,11 +1754,11 @@ async function plCargarTabla() {
       fechaBase.setDate(fechaBase.getDate() + diaOffset);
       const res = await fetch(
         `https://marine-api.open-meteo.com/v1/marine?latitude=${p.lat}&longitude=${p.lon}` +
-        `&hourly=wave_height,wave_period,wave_direction&forecast_days=8&timeformat=unixtime`
+        `&hourly=wave_height,wave_period,wave_direction&forecast_days=8&timeformat=unixtime&timezone=auto`
       );
       const atm = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}` +
-        `&hourly=wind_speed_10m,wind_direction_10m,weather_code,temperature_2m&forecast_days=8&wind_speed_unit=kmh&timeformat=unixtime`
+        `&hourly=wind_speed_10m,wind_direction_10m,weather_code,temperature_2m&forecast_days=8&wind_speed_unit=kmh&timeformat=unixtime&timezone=auto`
       );
       const [marine, atmosfera] = await Promise.all([res.json(), atm.json()]);
       plDatosCache[cacheKey] = { marine, atmosfera };
@@ -1771,8 +1788,7 @@ async function plCargarTabla() {
     periods.push(marine.hourly.wave_period[i]);
     dirs.push(marine.hourly.wave_direction[i]);
 
-    // Buscar índice en atmosfera
-    const ai = atmosfera.hourly.time.indexOf(ts);
+    const ai = plHourlyIdxForTs(atmosfera.hourly?.time, ts);
     vels.push(ai >= 0 ? atmosfera.hourly.wind_speed_10m[ai] : null);
     vdirs.push(ai >= 0 ? atmosfera.hourly.wind_direction_10m[ai] : null);
     wcodes.push(ai >= 0 ? atmosfera.hourly.weather_code[ai] : null);
@@ -1865,10 +1881,21 @@ async function plCargarTabla() {
   // ── VIENTO ──
   html += `<div class="pl-seccion"><div class="pl-seccion-label">Viento</div><div class="pl-seccion-linea"></div></div>`;
 
-  // Velocidad + dir
   html += `<div class="pl-fila"><div class="pl-fila-label">Velocidad</div>`;
   horas.forEach((h, i) => {
-    html += cel(`<div class="pl-viento-vel">${vels[i] != null ? Math.round(vels[i]) : '—'}</div><div class="pl-viento-dir">km/h ${vdirs[i] != null ? dirTxt(vdirs[i]) : ''}</div>`, esAhoraH(h));
+    html += cel(`<div class="pl-viento-vel">${vels[i] != null ? Math.round(vels[i]) : '—'}</div><div class="pl-viento-dir">km/h</div>`, esAhoraH(h));
+  });
+  html += `</div>`;
+
+  html += `<div class="pl-fila"><div class="pl-fila-label">Dirección</div>`;
+  horas.forEach((h, i) => {
+    const vd = vdirs[i];
+    html += cel(
+      vd != null
+        ? `<div class="pl-dir" style="font-size:11px;color:#ccddee;font-weight:700;">${plFlechaDir(vd)}</div><div class="pl-viento-dir">${dirTxt(vd)} · ${rnd(vd)}°</div>`
+        : `<div class="pl-dir">—</div>`,
+      esAhoraH(h)
+    );
   });
   html += `</div>`;
 
