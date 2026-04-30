@@ -249,7 +249,7 @@
     .perfil-btn { width:40px; height:40px; border-radius:50%; background:rgba(77,184,255,0.12); border:2px solid rgba(77,184,255,0.25); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:20px; user-select:none; transition:background 0.2s; }
     .perfil-btn:active { background:rgba(77,184,255,0.25); }
     .perfil-spacer { width:40px; flex-shrink:0; }
-    .perfil-modal-overlay { position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s; }
+    .perfil-modal-overlay { position:fixed; inset:0; z-index:12000; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s; overscroll-behavior:none; }
     .perfil-modal-overlay.visible { opacity:1; pointer-events:all; }
     .perfil-modal { background:#0d1f35; border-radius:24px 24px 0 0; padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 32px); width:100%; max-width:480px; transform:translateY(100%); transition:transform 0.3s cubic-bezier(.32,.72,0,1); }
     .perfil-modal-overlay.visible .perfil-modal { transform:translateY(0); }
@@ -276,43 +276,6 @@
     <div class="perfil-spacer"></div>
   </header>
 
-  <!-- Modal selector de perfil -->
-  <div class="perfil-modal-overlay" id="perfil-overlay">
-    <div class="perfil-modal">
-      <div class="perfil-handle"></div>
-      <div class="perfil-titulo">¿Cómo vas al agua?</div>
-      <div class="perfil-opciones">
-        <div class="perfil-opcion" data-perfil="banista">
-          <div class="perfil-opcion-emoji">🏊</div>
-          <div class="perfil-opcion-info">
-            <div class="perfil-opcion-nombre">Bañista</div>
-            <div class="perfil-opcion-desc">Temperatura, viento y mar tranquilo</div>
-          </div>
-        </div>
-        <div class="perfil-opcion" data-perfil="principiante">
-          <div class="perfil-opcion-emoji">🛹</div>
-          <div class="perfil-opcion-info">
-            <div class="perfil-opcion-nombre">Principiante</div>
-            <div class="perfil-opcion-desc">Olas pequeñas, condiciones suaves</div>
-          </div>
-        </div>
-        <div class="perfil-opcion" data-perfil="intermedio">
-          <div class="perfil-opcion-emoji">🏄</div>
-          <div class="perfil-opcion-info">
-            <div class="perfil-opcion-nombre">Intermedio</div>
-            <div class="perfil-opcion-desc">Olas de 0.6–1.8m, algo de técnica</div>
-          </div>
-        </div>
-        <div class="perfil-opcion activo" data-perfil="pro">
-          <div class="perfil-opcion-emoji">🌊</div>
-          <div class="perfil-opcion-info">
-            <div class="perfil-opcion-nombre">Pro</div>
-            <div class="perfil-opcion-desc">Mar grande, condiciones exigentes</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
   <p id="ultima-actualizacion" style="display:none;"></p>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer>Open-Meteo · A Coruña</footer>
@@ -394,6 +357,43 @@
       <line x1="21" y1="18" x2="26" y2="18" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
     </svg><span>Guía</span></button>
 </nav>
+<!-- Modal perfil: fuera de .pantalla para no quedar bajo la barra (stacking context z-index:1) -->
+<div class="perfil-modal-overlay" id="perfil-overlay">
+  <div class="perfil-modal">
+    <div class="perfil-handle"></div>
+    <div class="perfil-titulo">¿Cómo vas al agua?</div>
+    <div class="perfil-opciones">
+      <div class="perfil-opcion" data-perfil="banista">
+        <div class="perfil-opcion-emoji">🏊</div>
+        <div class="perfil-opcion-info">
+          <div class="perfil-opcion-nombre">Bañista</div>
+          <div class="perfil-opcion-desc">Temperatura, viento y mar tranquilo</div>
+        </div>
+      </div>
+      <div class="perfil-opcion" data-perfil="principiante">
+        <div class="perfil-opcion-emoji">🛹</div>
+        <div class="perfil-opcion-info">
+          <div class="perfil-opcion-nombre">Principiante</div>
+          <div class="perfil-opcion-desc">Olas pequeñas, condiciones suaves</div>
+        </div>
+      </div>
+      <div class="perfil-opcion" data-perfil="intermedio">
+        <div class="perfil-opcion-emoji">🏄</div>
+        <div class="perfil-opcion-info">
+          <div class="perfil-opcion-nombre">Intermedio</div>
+          <div class="perfil-opcion-desc">Olas de 0.6–1.8m, algo de técnica</div>
+        </div>
+      </div>
+      <div class="perfil-opcion activo" data-perfil="pro">
+        <div class="perfil-opcion-emoji">🌊</div>
+        <div class="perfil-opcion-info">
+          <div class="perfil-opcion-nombre">Pro</div>
+          <div class="perfil-opcion-desc">Mar grande, condiciones exigentes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
 <script src="beach-data.js"></script>
 <script>
@@ -533,9 +533,15 @@ function initPerfilUI() {
   actualizarBtnEmoji();
   marcarActivo();
 
-  btn.addEventListener('click', () => overlay.classList.add('visible'));
+  function setPerfilOverlayAbierto(abierto) {
+    overlay.classList.toggle('visible', abierto);
+    document.documentElement.style.overflow = abierto ? 'hidden' : '';
+    document.body.style.overflow = abierto ? 'hidden' : '';
+  }
+
+  btn.addEventListener('click', () => setPerfilOverlayAbierto(true));
   overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('visible');
+    if (e.target === overlay) setPerfilOverlayAbierto(false);
   });
   overlay.querySelectorAll('.perfil-opcion').forEach(el => {
     el.addEventListener('click', () => {
@@ -543,9 +549,10 @@ function initPerfilUI() {
       localStorage.setItem('salitre_perfil', perfilActivo);
       actualizarBtnEmoji();
       marcarActivo();
-      overlay.classList.remove('visible');
-      // Recargar datos con el nuevo perfil
-      if (typeof actualizarInicio === 'function') actualizarInicio();
+      setPerfilOverlayAbierto(false);
+      // Recargar inicio y mapa con el nuevo perfil (clasificación depende de perfilActivo)
+      cargarInicio();
+      if (mapaIniciado) refrescarMarcadores();
     });
   });
 }
@@ -1496,6 +1503,14 @@ async function refrescarMarcadores(){
     renderMarcador(playa,c).addTo(capaMarcadores);
   });
 }
+/** Tras mostrar de nuevo el contenedor del mapa (estaba oculto), Leaflet necesita recalcular tamaño y vista. */
+function ajustarVistaMapa(){
+  if(!mapa) return;
+  requestAnimationFrame(()=>{
+    mapa.invalidateSize();
+    mapa.fitBounds(boundsTodasLasPlayas(), { padding:[28,28], maxZoom:10 });
+  });
+}
 async function iniciarMapa(){
   mapaIniciado=true;
   mapa=L.map('mapa');
@@ -1515,7 +1530,10 @@ function irA(pantalla,btn){
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('activo'));
   document.getElementById('pantalla-'+pantalla).classList.add('activa');
   btn.classList.add('activo');
-  if(pantalla==='mapa'&&!mapaIniciado) iniciarMapa();
+  if(pantalla==='mapa'){
+    if(!mapaIniciado) iniciarMapa();
+    else ajustarVistaMapa();
+  }
   if(pantalla==='playas'&&!plPlayaActiva){
     plPlayaActiva=playaActiva;
     document.getElementById('pl-buscador').value=playaActiva.nombre;
