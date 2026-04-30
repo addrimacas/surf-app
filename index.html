@@ -24,7 +24,6 @@
     .nav-bar { position:fixed; bottom:0; left:0; right:0; height:calc(65px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom); padding-bottom:env(safe-area-inset-bottom); background:linear-gradient(135deg,#0d2137cc,#0a3050cc); backdrop-filter:blur(12px); border-top:1px solid #1a4a6e; display:flex; z-index:1000; }
     .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; color:#4a7a9b; font-size:10px; font-weight:600; letter-spacing:0.3px; border:none; background:none; transition:color 0.2s; }
     .nav-item.activo { color:#4db8ff; }
-    .nav-item.activo { color:#4db8ff; }
     .nav-item .icono { font-size:22px; }
     .app-header {
       display: flex;
@@ -286,9 +285,6 @@
   <div class="mapa-header">
     <h1 class="mapa-header-titulo"><span class="titulo-marca-gradient">playas</span></h1>
     <p class="mapa-header-sub">Condiciones en tiempo real</p>
-  </div>
-  <div class="selector-estilo">
-
   </div>
   <div id="mapa"></div>
 </div>
@@ -671,10 +667,10 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) 
 function clasificar(h, direccion, playa, periodo, dirViento, velViento) {
   if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score: 0 };
   const score = calcularPuntuacion(h, direccion, periodo ?? 8, playa, dirViento, velViento);
-  if (score <= 3) return { color:'#ff4444', texto: score <= 1 ? 'Sin olas' : 'No merece la pena', bg:'#fff0f0', score };
-  if (score <= 6) return { color:'#FF6B00', texto: score <= 4 ? 'Flojo, pero surfeable' : 'Condiciones aceptables', bg:'#fff4ee', score };
-  if (score <= 8) return { color:'#00cc88', texto:'¡Buenas olas!', bg:'#f0fff8', score };
-  return                 { color:'#44ff44', texto:'¡Perfecto, no te lo pierdas!', bg:'#f0fff0', score };
+  if (score <= 3) return { color:'#ff4444', texto: score <= 1 ? 'Sin olas' : 'Poco mar hoy', bg:'#fff0f0', score };
+  if (score <= 6) return { color:'#FF6B00', texto: score <= 4 ? 'Flojo, puede que no valga' : 'Condiciones aceptables', bg:'#fff4ee', score };
+  if (score <= 8) return { color:'#00cc88', texto:'Puede que haya buenas olas', bg:'#f0fff8', score };
+  return                 { color:'#44ff44', texto:'Las condiciones apuntan muy bien', bg:'#f0fff0', score };
 }
 
 function dirTxt(g) {
@@ -692,11 +688,11 @@ function resumen(h, p, d, playa) {
     }
   }
   if (h == null || Number.isNaN(h)) return 'Sin datos del mar ahora mismo.';
-  if (h < 0.5) return 'El mar está en calma. No merece salir.';
-  if (h < 0.8) return `Olas pequeñas de ${h.toFixed(1)}m, período ${Math.round(p)}s. Bueno para iniciarse.`;
-  if (h < 1.5) return `${h.toFixed(1)}m de ola, período ${Math.round(p)}s, swell del ${dir}. Vale la pena salir.`;
-  if (h < 2.5) return `Sesión de categoría: ${h.toFixed(1)}m, ${Math.round(p)}s. Swell del ${dir}. ¡No te lo pierdas!`;
-  return `Mar bravo: ${h.toFixed(1)}m, ${Math.round(p)}s. Solo para expertos.`;
+  if (h < 0.5) return 'El mar está en calma hoy.';
+  if (h < 0.8) return `Olas pequeñas de ${h.toFixed(1)}m, período ${Math.round(p)}s. Puede ir bien para iniciarse.`;
+  if (h < 1.5) return `${h.toFixed(1)}m, período ${Math.round(p)}s, swell del ${dir}. Puede merecer salir.`;
+  if (h < 2.5) return `${h.toFixed(1)}m, ${Math.round(p)}s. Swell del ${dir}. Las condiciones apuntan bien.`;
+  return `Mar grande hoy: ${h.toFixed(1)}m, ${Math.round(p)}s. Solo para niveles avanzados.`;
 }
 
 function fmtFecha(ts) {
@@ -719,7 +715,9 @@ function fmtDia(ts) {
 
 function vientoFavorable(dir, playa) {
   if (dir == null || Number.isNaN(dir) || !playa) return false;
-  return angleDiff(dir, (playa.orient + 180) % 360) < 45;
+  const _aperturaVF = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
+  const _centroVF = (playa.orientArcMin + _aperturaVF / 2 + 360) % 360;
+  return angleDiff(dir, (_centroVF + 180) % 360) < 45;
 }
 
 function etiquetaViento(dirViento, velViento, playa) {
@@ -727,7 +725,9 @@ function etiquetaViento(dirViento, velViento, playa) {
     return { label:'—', desc:'', color:'#8899aa' };
   if (velViento < 5)
     return { label:'GLASSY', desc:'Sin viento', color:'#44cc44' };
-  const offshoreDir = (playa.orient + 180) % 360;
+  const _aperturaEV = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
+  const _centroEV = (playa.orientArcMin + _aperturaEV / 2 + 360) % 360;
+  const offshoreDir = (_centroEV + 180) % 360;
   const diff = angleDiff(dirViento, offshoreDir);
   if (diff <  36) return { label:'OFFSHORE',  desc:'Viento de tierra',             color:'#44cc44' };
   if (diff <  72) return { label:'CROSS-OFF', desc:'Cruzado, tirando a offshore',  color:'#FF6B00' };
@@ -1428,7 +1428,9 @@ async function cargarMejoresOlas() {
   if (!contenedor) return;
   contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando mejores olas...</div>`;
   const uLat = playaActiva.lat, uLon = playaActiva.lon;
-  const playas = todasLasPlayas().filter(p => p.nombre !== playaActiva.nombre);
+  const todasPlayas = todasLasPlayas().filter(p => p.nombre !== playaActiva.nombre);
+  todasPlayas.sort((a,b) => haversine(uLat,uLon,a.lat,a.lon) - haversine(uLat,uLon,b.lat,b.lon));
+  const playas = todasPlayas.slice(0, 10);
   const resultados = [];
   for (const playa of playas) {
     try {
@@ -1564,7 +1566,7 @@ function irA(pantalla,btn){
 
 (async()=>{
   localStorage.removeItem('salitre_exposicion');
-  await inicializarExposicion();
+  // exposicion ya está en beach-data.js — no necesita inicialización
   iniciarPlayaFavorita();
   initPerfilUI();
   cargarInicio();
@@ -1593,7 +1595,9 @@ function plScoreColor(score) {
 
 function plEtiquetaViento(velKmh, dirGrados, playa) {
   if (velKmh < 5) return { txt:'GLASSY', color:'#aaddff' };
-  const diff = angleDiff(dirGrados, (playa.orient + 180) % 360);
+  const _apertPL = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
+  const _centroPL = (playa.orientArcMin + _apertPL / 2 + 360) % 360;
+  const diff = angleDiff(dirGrados, (_centroPL + 180) % 360);
   if (diff <= 20)  return { txt:'OFF', color:'#3ddc84' };
   if (diff <= 55)  return { txt:'C-OFF', color:'#88cc44' };
   if (diff <= 100) return { txt:'CROSS', color:'#ffaa44' };
@@ -1932,7 +1936,7 @@ async function plCargarTabla() {
   html += `<div class="pl-fila"><div class="pl-fila-label">Cielo</div>`;
   horas.forEach((h, i) => {
     const isNoche = h < 7 || h >= 21;
-    html += cel(`<span class="pl-cielo">${iconoCielo(wcodes[i], isNoche ? 0 : 1).replace(/width="\d+"/,'width="20"').replace(/height="\d+"/,'height="20"')}</span>`, esAhoraH(h));
+    html += cel(`<span class="pl-cielo">${iconoCielo(wcodes[i], 20, null, null, isNoche ? 0 : 1).replace(/width="\d+"/,'width="20"').replace(/height="\d+"/,'height="20"')}</span>`, esAhoraH(h));
   });
   html += `</div>`;
 
