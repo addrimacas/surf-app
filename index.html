@@ -610,67 +610,202 @@ function diffSwellRespectoPlaya(direccion, playa) {
   return (playa.tol ?? 45) + distBorde * 1.5;
 }
 
-function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento) {
-  if (h == null || Number.isNaN(h)) return 1;
+function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax) {
+  if (h == null || Number.isNaN(h)) return { score: 1, componentes: {} };
 
-  let score = 0;
   const exp  = playa?.exposicion ?? 0.5;
-  const playaConPerfil = aplicarPerfil(playa);
+  const hEf  = h * exp;
+  const hMin = playa?.hMin ?? 0.8;
+  const hMax = playa?.hMax ?? 2.5;
 
-  // Altura efectiva: el swell offshore se atenúa según la exposición real de la playa
-  const hEfectiva = h * exp;
-  const hMin = playaConPerfil?.hMin ?? 0.8;
-  const hMax = playaConPerfil?.hMax ?? 2.5;
-  const pMin = playa?.pMin ?? 9;
+  // ── Funciones internas ─────────────────────────────────────────
 
-  // Dirección swell (0-4 puntos)
-  if (playa && direccion != null && !Number.isNaN(direccion)) {
-    const diff = diffSwellRespectoPlaya(direccion, playa);
-    const mitadArco = (((playa.orientArcMax - playa.orientArcMin) + 360) % 360) / 2;
-    if (diff <= mitadArco * 0.5)      score += 4;
-    else if (diff <= mitadArco)       score += 2;
-    else if (diff <= mitadArco + 20)  score += 1;
-    else return 1;
-  } else score += 2;
-
-  // Altura (0-4 puntos) — comparada con los rangos reales de la playa
-  if (hEfectiva >= hMin && hEfectiva <= hMax)            score += 4;
-  else if (hEfectiva >= hMin * 0.7 && hEfectiva < hMin) score += 2;
-  else if (hEfectiva > hMax && hEfectiva <= hMax * 1.3) score += 2;
-
-  // Período (0-2 puntos)
-  if (periodo >= pMin + 3)  score += 2;
-  else if (periodo >= pMin) score += 1;
-
-  // Penalización por viento (dirección + velocidad)
-  if (playa && dirViento != null && !Number.isNaN(dirViento)) {
-    const apertura = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
-    const centroPlaya = (playa.orientArcMin + apertura / 2 + 360) % 360;
-    const offshoreDir = (centroPlaya + 180) % 360;
-    const diffViento = angleDiff(dirViento, offshoreDir);
-    let pen = 0;
-    if      (diffViento >= 144) pen = 3;
-    else if (diffViento >= 108) pen = 2;
-    else if (diffViento >= 72)  pen = 1;
-    else if (diffViento >= 36)  pen = 0.5;
-    if (pen > 0 && velViento != null && !Number.isNaN(velViento)) {
-      if      (velViento > 40) pen *= 1.5;
-      else if (velViento > 25) pen *= 1.2;
-      else if (velViento < 15) pen *= 0.6;
-    }
-    score -= pen;
+  function _lerp(x, x0, x1, y0, y1) {
+    const t = Math.max(0, Math.min(1, (x - x0) / (x1 - x0)));
+    return y0 + (y1 - y0) * t;
   }
 
-  return Math.round(Math.max(1, Math.min(10, score)) * 10) / 10;
+  function _swellDirScore() {
+    if (direccion == null || Number.isNaN(direccion) || !playa?.orientArcMin) return 5;
+    const arcMin = playa.orientArcMin, arcMax = playa.orientArcMax;
+    const center = arcMin <= arcMax ? (arcMin + arcMax) / 2 : ((arcMin + arcMax + 360) / 2) % 360;
+    const half   = arcMin <= arcMax ? (arcMax - arcMin) / 2 : (arcMax + 360 - arcMin) / 2;
+    const inside = arcMin <= arcMax ? (direccion >= arcMin && direccion <= arcMax)
+                                    : (direccion >= arcMin || direccion <= arcMax);
+    let dev = Math.abs(direccion - center) % 360;
+    if (dev > 180) dev = 360 - dev;
+    if (inside) return 10 - (dev / half) * 3;
+    const over = dev - half;
+    return Math.max(0, 7 - over * 0.22);
+  }
+
+  function _alturaScore() {
+    if (hEf < hMin * 0.7) return 0.5; // gating: no hay ola
+    const rangos = {
+      banista:      { lo:0,    i0:0,    i1:0.4,  hi:0.8  },
+      principiante: { lo:0.15, i0:0.25, i1:0.7,  hi:1.1  },
+      intermedio:   { lo:0.3,  i0:0.5,  i1:1.4,  hi:2.2  },
+      pro:          { lo:0.5,  i0:0.9,  i1:2.8,  hi:4.5  },
+    };
+    const r = rangos[perfilActivo] ?? rangos.pro;
+    if (hEf <= r.lo)  return 0;
+    if (hEf <= r.i0)  return _lerp(hEf, r.lo, r.i0, 1, 10);
+    if (hEf <= r.i1)  return 10;
+    if (hEf <= r.hi)  return _lerp(hEf, r.i1, r.hi, 10, 3);
+    const pen = perfilActivo === 'principiante' ? 3.0 : 1.5;
+    return Math.max(0, 3 - (hEf - r.hi) * pen);
+  }
+
+  function _periodoScore() {
+    if (hEf < hMin * 0.7) return 0.5; // gating
+    const p = periodo ?? 8;
+    if (p <= 5)  return 0;
+    if (p <= 7)  return _lerp(p, 5, 7, 0, 3);
+    if (p <= 9)  return _lerp(p, 7, 9, 3, 6);
+    if (p <= 11) return _lerp(p, 9, 11, 6, 8.5);
+    if (p <= 14) return _lerp(p, 11, 14, 8.5, 10);
+    return 10;
+  }
+
+  function _vientoScore() {
+    if (dirViento == null || Number.isNaN(dirViento)) return 7;
+    const vel = velViento ?? 0;
+    const racha = velRacha ?? vel;
+    const factorRacha = racha > vel * 1.6 ? 0.80 : racha > vel * 1.3 ? 0.92 : 1.0;
+
+    if (perfilActivo === 'banista') {
+      let s;
+      if (vel < 10)      s = 10;
+      else if (vel < 25) s = _lerp(vel, 10, 25, 10, 4);
+      else               s = Math.max(0, _lerp(vel, 25, 40, 4, 0));
+      const esNordes = dirViento >= 320 || dirViento <= 70;
+      // tempAire no disponible aquí — penalización fija si viene del norte con fuerza
+      if (esNordes && vel > 12) s *= 0.65;
+      return Math.max(0, s) * factorRacha;
+    }
+
+    // Surf: dirección vs offshore ideal
+    const offDeg = playa?.offshoreWindDeg ?? ((playa?.orient ?? 0) + 180) % 360;
+    let diff = Math.abs(dirViento - offDeg) % 360;
+    if (diff > 180) diff = 360 - diff;
+    let dirFactor = diff < 22  ? 1.10
+                  : diff < 45  ? 1.00
+                  : diff < 80  ? 0.80
+                  : diff < 120 ? 0.55
+                  : 0.30;
+    let speedS;
+    if (vel < 8)       speedS = 9;
+    else if (vel < 15) speedS = 10;
+    else if (vel < 25) speedS = _lerp(vel, 15, 25, 10, 7);
+    else if (vel < 40) speedS = _lerp(vel, 25, 40, 7, 3);
+    else               speedS = Math.max(0, _lerp(vel, 40, 60, 3, 0));
+    if (dirFactor < 0.5 && vel > 20) speedS = Math.max(0, speedS - 2);
+    return Math.min(10, speedS * dirFactor) * factorRacha;
+  }
+
+  function _ordenMarFactor() {
+    const sH = swellH ?? h;
+    const wH = windH  ?? 0;
+    const ratio = wH / (sH + 0.01);
+    if (ratio < 0.4) return 1.00;
+    if (ratio < 0.8) return 0.88;
+    if (ratio < 1.2) return 0.75;
+    return 0.60;
+  }
+
+  function _mareaFactor() {
+    if (tideH == null || tideMin == null || tideMax == null) return 1.0;
+    const range = tideMax - tideMin;
+    if (range < 0.1) return 1.0;
+    const frac = Math.max(0, Math.min(1, (tideH - tideMin) / range));
+    // Casos críticos
+    const esArena = playa?.mareaOptima !== 'media-alta';
+    if (esArena && frac < 0.20 && hEf > hMax * 0.9)   return 0.70; // closeout
+    if (frac > 0.85 && hEf < hMin * 1.1)              return 0.75; // no rompe
+    // Preferencia general
+    const opt = playa?.mareaOptima;
+    if (!opt || opt === 'cualquiera') return 1.0;
+    const targets = { 'media-baja':0.25, 'media':0.50, 'media-alta':0.75 };
+    const dev = Math.abs(frac - targets[opt]);
+    if (dev < 0.15) return 1.05;
+    if (dev < 0.30) return 1.00;
+    if (dev < 0.45) return 0.93;
+    return 0.85;
+  }
+
+  // ── Pesos por perfil ───────────────────────────────────────────
+  const PESOS = {
+    banista:      { vie:0.45, tmp:0.25, cie:0.15, alt:0.15 },
+    principiante: { alt:0.35, vie:0.25, per:0.15, dir:0.15, mar:0.10 },
+    intermedio:   { dir:0.25, alt:0.25, per:0.25, vie:0.20, mar:0.05 },
+    pro:          { dir:0.30, per:0.30, alt:0.25, vie:0.15, mar:0.00 },
+  };
+  const pw = PESOS[perfilActivo] ?? PESOS.pro;
+
+  // ── Calcular componentes ───────────────────────────────────────
+  const componentes = {
+    dir: _swellDirScore(),
+    alt: _alturaScore(),
+    per: _periodoScore(),
+    vie: _vientoScore(),
+  };
+
+  const scoreBase = componentes.dir * (pw.dir ?? 0)
+                  + componentes.alt * (pw.alt ?? 0)
+                  + componentes.per * (pw.per ?? 0)
+                  + componentes.vie * (pw.vie ?? 0);
+
+  const fMarea = (pw.mar ?? 0) > 0 ? _mareaFactor() : 1.0;
+  const fOrden = _ordenMarFactor();
+
+  const raw = scoreBase * fMarea * fOrden;
+  const score = Math.round(Math.min(9.5, Math.max(1, raw)) * 10) / 10;
+
+  return { score, componentes };
 }
 
-function clasificar(h, direccion, playa, periodo, dirViento, velViento) {
-  if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score: 0 };
-  const score = calcularPuntuacion(h, direccion, periodo ?? 8, playa, dirViento, velViento);
-  if (score <= 3) return { color:'#ff4444', texto: score <= 1 ? 'Sin olas' : 'Poco mar hoy', bg:'#fff0f0', score };
-  if (score <= 6) return { color:'#FF6B00', texto: score <= 4 ? 'Flojo, puede que no valga' : 'Condiciones aceptables', bg:'#fff4ee', score };
-  if (score <= 8) return { color:'#00cc88', texto:'Puede que haya buenas olas', bg:'#f0fff8', score };
-  return                 { color:'#44ff44', texto:'Las condiciones apuntan muy bien', bg:'#f0fff0', score };
+function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax) {
+  if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score:0, componentes:{} };
+  const { score, componentes } = calcularPuntuacion(h, direccion, periodo ?? 8, playa, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax);
+
+  const TEXTOS = {
+    banista: {
+      bajo:  'El viento y la temperatura desaconsejan el baño hoy.',
+      medio: 'Día aceptable, aunque el viento puede molestar.',
+      bien:  'Bastante buen día para estar en el agua.',
+      bueno: 'Las condiciones apuntan a un buen día de playa.',
+      top:   'Día de playa difícil de mejorar.',
+    },
+    principiante: {
+      bajo:  'Las condiciones no acompañan para entrar al agua.',
+      medio: 'Puede haber algo, pero no es el día más fácil.',
+      bien:  'Las condiciones apuntan bien para practicar.',
+      bueno: 'Muy buenas condiciones para coger soltura.',
+      top:   'Pocas veces se dan condiciones así para aprender.',
+    },
+    intermedio: {
+      bajo:  'El mar no ofrece opciones surfeables hoy.',
+      medio: 'Las condiciones apuntan muy justas.',
+      bien:  'Día bastante aprovechable.',
+      bueno: 'Las condiciones apuntan muy bien hoy.',
+      top:   'Las previsiones apuntan a sesión memorable.',
+    },
+    pro: {
+      bajo:  'Sin condiciones ni interés técnico.',
+      medio: 'Condiciones marginales, escaso potencial.',
+      bien:  'El mar sugiere opciones razonables.',
+      bueno: 'Condiciones sólidas. Merece la pena ir.',
+      top:   'Excelente alineación de factores. Poco habitual.',
+    },
+  };
+
+  const nivel = score <= 3 ? 'bajo' : score <= 5 ? 'medio' : score <= 7 ? 'bien' : score < 9.5 ? 'bueno' : 'top';
+  const perfil = (typeof perfilActivo !== 'undefined' ? perfilActivo : null) ?? 'pro';
+  const texto  = (TEXTOS[perfil] ?? TEXTOS.pro)[nivel];
+  const color  = score <= 3 ? '#ff4444' : score <= 5 ? '#FF6B00' : score <= 7 ? '#f0a500' : '#00cc88';
+  const bg     = score <= 3 ? '#fff0f0' : score <= 5 ? '#fff4ee' : score <= 7 ? '#fffbee' : '#f0fff8';
+
+  return { color, texto, bg, score, componentes };
 }
 
 function dirTxt(g) {
@@ -775,6 +910,48 @@ function iconoCielo(codigo, size = 36, sunrise, sunset, isDay) {
   return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><path d="M8 16 C8 16 6 18 8 20 C10 22 12 20 14 21 C16 22 16 24 18 24 L32 24 C35 24 36 21 34 19 C32 17 29 18 28 16 C27 14 24 12 21 14 C19 10 14 10 12 13 C10 11 7 12 8 16Z" stroke="${c}" stroke-width="1.5" fill="none"/><path d="M18 28 L16 32 M20 28 L22 34 M26 28 L24 32" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><path d="M15 33 L17 37 M23 33 L21 37" stroke="#88aaff" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 }
 
+
+function renderDesglose(componentes, perfil) {
+  const ETIQUETAS = {
+    dir: { pos:'Dirección de swell buena', neg:'Dirección de swell mala' },
+    alt: { pos:'Altura adecuada',           neg:'Altura fuera de rango'   },
+    per: { pos:'Período largo',              neg:'Período corto'           },
+    vie: { pos:'Viento favorable',           neg:'Viento desfavorable'     },
+  };
+  if (!componentes || !Object.keys(componentes).length) return '';
+  const PESOS = {
+    banista:      { vie:0.45, alt:0.15 },
+    principiante: { alt:0.35, vie:0.25, per:0.15, dir:0.15 },
+    intermedio:   { dir:0.25, alt:0.25, per:0.25, vie:0.20 },
+    pro:          { dir:0.30, per:0.30, alt:0.25, vie:0.15 },
+  };
+  const pw = PESOS[perfil] ?? PESOS.pro;
+  const scoreTotal = Object.keys(componentes).reduce(
+    (s, k) => s + (componentes[k] ?? 5) * (pw[k] ?? 0), 0
+  );
+  const items = Object.keys(componentes).map(k => ({
+    key: k, val: componentes[k] ?? 5, desv: (componentes[k] ?? 5) - scoreTotal
+  })).sort((a, b) => b.desv - a.desv);
+
+  const mejor = items[0];
+  const peor  = items[items.length - 1];
+  const partes = [];
+  if (mejor && mejor.desv > 1.5) {
+    const et = ETIQUETAS[mejor.key]?.pos;
+    if (et) partes.push(`<span style="color:#4db8ff;">${et}</span>`);
+  }
+  if (peor && peor.desv < -1.5) {
+    const et = ETIQUETAS[peor.key]?.neg;
+    if (et) partes.push(`<span style="color:#ff8844;">${et}</span>`);
+  }
+  if (!partes.length) return '';
+  return `<div style="font-size:12px;margin-top:6px;color:#8899aa;">${partes.join(' &middot; ')}</div>`;
+}
+
+function scoreRanking(score, consistencia) {
+  const bonusRareza = score >= 7 ? (1 - (consistencia ?? 0.33)) * 0.3 : 0;
+  return score + bonusRareza;
+}
 function renderCabecera(playa, estado) {
   const favId = localStorage.getItem('salitre_favorita');
   const esFav = favId === playa.nombre;
@@ -798,6 +975,7 @@ function renderCabecera(playa, estado) {
         <div>
           <div style="font-size:20px;font-weight:700;">${estado.texto}</div>
           <div style="font-size:13px;color:#8899aa;margin-top:2px;" id="resumen-texto"></div>
+          <div id="desglose-factores"></div>
         </div>
       </div>
     </div>`;
@@ -1157,8 +1335,8 @@ async function cargarInicio() {
   try {
     const lat = playaActiva.lat, lon = playaActiva.lon;
     const [resMarine, resAtmo] = await Promise.all([
-      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&wind_speed_unit=kmh&timezone=auto`),
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature,swell_wave_height,wind_wave_height&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&wind_speed_unit=kmh&timezone=auto`),
     ]);
 
     const marine = await resMarine.json();
@@ -1180,7 +1358,10 @@ async function cargarInicio() {
       ? Math.round((1025 * 9.81 * 9.81 * periodo * altura * altura) / (64 * Math.PI * 1000))
       : null;
 
-    const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento);
+    const swellH      = c.swell_wave_height;
+    const windH       = c.wind_wave_height;
+    const velRacha    = a.wind_gusts_10m;
+    const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento, velRacha, swellH, windH, null, null, null);
     const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
     const cieloActual = cielo(codigoCielo);
 
@@ -1291,6 +1472,14 @@ async function cargarInicio() {
       </div>
       ${prevHtml}`;
     document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
+    const desgloseEl = document.getElementById('desglose-factores');
+    if (desgloseEl) desgloseEl.innerHTML = renderDesglose(estado.componentes, perfilActivo ?? 'pro');
+    // Badge día poco habitual
+    const cons = playaActiva?.consistencia ?? 0.33;
+    if (cons < 0.25 && estado.score >= 7) {
+      const resEl = document.getElementById('resumen-texto');
+      if (resEl) resEl.textContent += ' · Día poco habitual en esta playa.';
+    }
     cargarMejoresOlas();
     document.getElementById('dropdown-playas').innerHTML =
       Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
@@ -1426,44 +1615,75 @@ function haversine(lat1,lon1,lat2,lon2){
 async function cargarMejoresOlas() {
   const contenedor = document.getElementById('mejores-olas');
   if (!contenedor) return;
-  contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando mejores olas...</div>`;
+  contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando mejores condiciones cerca...</div>`;
   const uLat = playaActiva.lat, uLon = playaActiva.lon;
   const todasPlayas = todasLasPlayas().filter(p => p.nombre !== playaActiva.nombre);
   todasPlayas.sort((a,b) => haversine(uLat,uLon,a.lat,a.lon) - haversine(uLat,uLon,b.lat,b.lon));
   const playas = todasPlayas.slice(0, 10);
   const resultados = [];
+
   for (const playa of playas) {
     try {
-      const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction&timeformat=iso8601`);
+      const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction,swell_wave_height,wind_wave_height&timeformat=iso8601`);
       const data = await res.json();
       const c = data.current;
-      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period, null);
+      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period, null, null, null, c.swell_wave_height, c.wind_wave_height);
       const km = Math.round(haversine(uLat, uLon, playa.lat, playa.lon));
-      if (estado.score >= 4) resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
+      if (estado.score >= 5) resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
     } catch(e) {}
   }
-  resultados.sort((a,b) => {
-    const scoreA = b.estado.score - (b.km/50)*0.5;
-    const scoreB = a.estado.score - (a.km/50)*0.5;
-    return scoreA - scoreB;
-  });
-  const top3 = resultados.slice(0,3);
-  if (top3.length === 0) {
+
+  // Ordenar por scoreRanking (rareza + score)
+  resultados.sort((a,b) =>
+    scoreRanking(b.estado.score, b.playa.consistencia) -
+    scoreRanking(a.estado.score, a.playa.consistencia)
+  );
+
+  const top = resultados.slice(0, 8);
+  if (top.length === 0) {
     contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:12px;">Sin buenas condiciones cerca ahora mismo.</div>`;
     return;
   }
-  contenedor.innerHTML = top3.map(r => `
+
+  function textoFactorDiferencial(componentes, playa) {
+    if (playa.consistencia < 0.25 && (componentes.dir > 6 || componentes.alt > 6)) {
+      return 'Día poco habitual en esta playa';
+    }
+    const PESOS = { dir:0.30, per:0.30, alt:0.25, vie:0.15 };
+    const top = Object.keys(componentes)
+      .filter(k => PESOS[k])
+      .map(k => ({ k, aporte: (componentes[k] ?? 5) * (PESOS[k] ?? 0) }))
+      .sort((a, b) => b.aporte - a.aporte)[0];
+    if (!top) return '';
+    const val = componentes[top.k] ?? 5;
+    const textos = {
+      dir: { alto:'Dirección de swell perfecta', med:'Buena dirección de swell' },
+      per: { alto:'Período excelente hoy',        med:'Buen período'             },
+      alt: { alto:'Altura ideal',                 med:'Altura razonable'        },
+      vie: { alto:'Viento muy favorable',          med:'Viento aceptable'        },
+    };
+    const nivel = val >= 8.5 ? 'alto' : 'med';
+    return textos[top.k]?.[nivel] ?? '';
+  }
+
+  contenedor.innerHTML = top.map(r => {
+    const factor = textoFactorDiferencial(r.estado.componentes ?? {}, r.playa);
+    const esPoco = r.playa.consistencia < 0.25 && r.estado.score >= 7;
+    return `
     <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
       style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
       <div style="width:36px;height:36px;border-radius:50%;background:${r.estado.color};box-shadow:0 0 10px ${r.estado.color}88;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <span style="font-size:14px;font-weight:800;color:white;">${r.estado.score}</span>
       </div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:600;">${r.playa.nombre}</div>
-        <div style="font-size:12px;color:#8899aa;">${r.altura.toFixed(1)}m · ${Math.round(r.periodo)}s · ${r.km} km</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;">
+          ${r.playa.nombre}
+          ${esPoco ? '<span style="font-size:10px;color:#f0a500;font-weight:500;">· Día poco habitual</span>' : ''}
+        </div>
+        <div style="font-size:11px;color:#8899aa;margin-top:1px;">${r.km} km${factor ? ' · ' + factor : ''}</div>
       </div>
-      <div style="font-size:11px;color:${r.estado.color};font-weight:600;">${r.estado.texto}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function seleccionarPlayaPorNombre(nombre) {
