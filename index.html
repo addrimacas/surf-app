@@ -549,6 +549,115 @@
       </div>
     </div>
 
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">La marea</div>
+
+    <div class="guia-card">
+      <div class="guia-card-titulo">Cómo afecta la marea a las olas</div>
+      <div class="guia-card-cuerpo">
+        <svg viewBox="0 0 220 100" class="guia-svg">
+          <!-- Fondo marino -->
+          <path d="M0 90 Q40 85 80 90 Q120 95 160 90 Q190 87 220 90 L220 100 L0 100 Z" fill="#0d1f35" opacity="0.6"/>
+
+          <!-- BAJAMAR -->
+          <text x="36" y="10" text-anchor="middle" fill="#f0a500" font-size="7.5" font-weight="600">Bajamar</text>
+          <!-- Nivel agua bajo -->
+          <path d="M0 72 Q18 68 36 72 Q54 76 72 72" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
+          <!-- Ola rompiendo lejos -->
+          <path d="M5 65 Q15 52 25 65 Q35 78 45 65" stroke="#f0a500" stroke-width="1.8" fill="none"/>
+          <!-- Banco de arena -->
+          <path d="M0 82 Q20 78 40 80 Q60 82 72 80" fill="#1a3a5a" opacity="0.5"/>
+          <text x="36" y="88" text-anchor="middle" fill="#f0a500" font-size="6" opacity="0.8">banco expuesto</text>
+          <!-- Etiqueta problema -->
+          <text x="36" y="98" text-anchor="middle" fill="#f0a500" font-size="6">closeout posible</text>
+
+          <!-- Separador -->
+          <line x1="78" y1="5" x2="78" y2="95" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
+
+          <!-- MAREA MEDIA -->
+          <text x="114" y="10" text-anchor="middle" fill="#3ddc84" font-size="7.5" font-weight="600">Marea media</text>
+          <path d="M82 62 Q100 58 118 62 Q136 66 154 62" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
+          <!-- Ola bien formada -->
+          <path d="M85 55 Q100 36 115 55 Q125 68 140 55" stroke="#3ddc84" stroke-width="1.8" fill="none"/>
+          <!-- Banco cubierto justo -->
+          <path d="M82 76 Q102 73 122 75 Q142 77 154 75" fill="#1a3a5a" opacity="0.4"/>
+          <text x="118" y="88" text-anchor="middle" fill="#3ddc84" font-size="6" opacity="0.8">banco cubierto justo</text>
+          <text x="118" y="98" text-anchor="middle" fill="#3ddc84" font-size="6">ola con forma</text>
+
+          <!-- Separador -->
+          <line x1="158" y1="5" x2="158" y2="95" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
+
+          <!-- PLEAMAR -->
+          <text x="190" y="10" text-anchor="middle" fill="#8899aa" font-size="7.5" font-weight="600">Pleamar</text>
+          <path d="M162 52 Q176 48 190 52 Q204 56 218 52" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
+          <!-- Ola chata, no rompe bien -->
+          <path d="M164 50 Q174 44 184 50 Q192 56 202 50" stroke="#8899aa" stroke-width="1.5" fill="none" opacity="0.7"/>
+          <!-- Banco enterrado -->
+          <path d="M162 80 Q182 77 202 79 Q214 80 218 79" fill="#1a3a5a" opacity="0.3"/>
+          <text x="190" y="88" text-anchor="middle" fill="#8899aa" font-size="6" opacity="0.8">banco muy cubierto</text>
+          <text x="190" y="98" text-anchor="middle" fill="#8899aa" font-size="6">ola no rompe bien</text>
+        </svg>
+        <p class="guia-desc">La marea sube y baja durante el día. La mayoría de playas de arena funcionan mejor con marea media-baja, cuando el banco de arena está cubierto justo y la ola puede formar bien antes de romper.</p>
+      </div>
+    </div>
+
+    <div class="guia-card">
+      <div class="guia-card-cuerpo" style="padding:0;">
+        <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div style="flex-shrink:0;width:36px;text-align:center;">
+            <svg viewBox="0 0 36 36" width="34" height="34">
+              <path d="M4 28 Q10 18 18 22 Q26 26 32 18" stroke="#f0a500" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M4 32 Q10 29 18 31 Q26 33 32 30" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
+              <text x="18" y="12" text-anchor="middle" fill="#f0a500" font-size="8" font-weight="700">↓</text>
+            </svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Bajamar</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">El banco de arena queda expuesto o muy poco cubierto. Con mar grande puede haber closeouts — la ola cierra de golpe sin sección.</div>
+          </div>
+        </div>
+        <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div style="flex-shrink:0;width:36px;text-align:center;">
+            <svg viewBox="0 0 36 36" width="34" height="34">
+              <path d="M4 26 Q10 14 18 20 Q26 24 32 16" stroke="#3ddc84" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M4 30 Q12 27 20 29 Q28 31 32 28" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
+              <text x="18" y="10" text-anchor="middle" fill="#3ddc84" font-size="7" font-weight="600">~</text>
+            </svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Marea media</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">La mejor para la mayoría de playas de arena en Galicia. El banco está cubierto lo justo para que la ola forme bien antes de romper.</div>
+          </div>
+        </div>
+        <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div style="flex-shrink:0;width:36px;text-align:center;">
+            <svg viewBox="0 0 36 36" width="34" height="34">
+              <path d="M4 22 Q10 18 18 20 Q26 22 32 18" stroke="#8899aa" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+              <path d="M4 28 Q12 25 20 27 Q28 29 32 26" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
+              <text x="18" y="12" text-anchor="middle" fill="#8899aa" font-size="8" font-weight="700">↑</text>
+            </svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Pleamar</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">El agua cubre demasiado los bancos de arena. La ola puede no romper bien o hacerlo sin forma. Los reefs y puntas suelen aguantar mejor.</div>
+          </div>
+        </div>
+        <div class="guia-nivel-row">
+          <div style="flex-shrink:0;width:36px;text-align:center;">
+            <svg viewBox="0 0 36 36" width="34" height="34">
+              <path d="M4 20 Q9 14 14 20 Q19 26 24 20 Q29 14 34 20" stroke="#4db8ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <line x1="4" y1="28" x2="34" y2="28" stroke="#4db8ff" stroke-width="0.8" opacity="0.3"/>
+              <line x1="4" y1="12" x2="8" y2="12" stroke="#4db8ff" stroke-width="0.8" opacity="0.4"/>
+              <line x1="4" y1="28" x2="8" y2="28" stroke="#4db8ff" stroke-width="0.8" opacity="0.4"/>
+            </svg>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Subiendo o bajando</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">La dirección de la marea también importa. La marea bajando activa los bancos progresivamente. La marea subiendo los va apagando.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">Condiciones por nivel</div>
 
     <div class="guia-card">
