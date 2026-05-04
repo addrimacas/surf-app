@@ -263,6 +263,26 @@
     .perfil-opcion-info { flex:1; }
     .perfil-opcion-nombre { font-size:16px; font-weight:700; color:#fff; }
     .perfil-opcion-desc { font-size:12px; color:rgba(255,255,255,0.45); margin-top:2px; }
+
+    /* ── Guía ── */
+    .guia-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.07); border-radius:16px; overflow:hidden; margin-bottom:12px; }
+    .guia-card-titulo { font-size:12px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; color:#4a7a9b; padding:14px 16px 0; }
+    .guia-card-cuerpo { padding:12px 16px 16px; }
+    .guia-svg { width:100%; height:auto; display:block; margin-bottom:10px; }
+    .guia-desc { font-size:13px; color:#8899aa; line-height:1.6; margin:0; }
+    .guia-viento-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .guia-viento-svg-wrap { flex-shrink:0; width:80px; }
+    .guia-viento-svg { width:80px; height:50px; display:block; }
+    .guia-viento-info { flex:1; }
+    .guia-viento-label { font-size:13px; font-weight:800; letter-spacing:0.5px; margin-bottom:2px; }
+    .guia-viento-desc { font-size:11px; color:#8899aa; line-height:1.4; }
+    .guia-factor-chip { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 10px; }
+    .guia-escala-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+    .guia-escala-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .guia-escala-rango { font-size:11px; font-weight:700; color:#cce0ff; width:32px; flex-shrink:0; }
+    .guia-escala-txt { font-size:11px; color:#8899aa; }
+    .guia-nivel-row { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; }
+    .guia-nivel-icono { flex-shrink:0; width:36px; display:flex; align-items:center; justify-content:center; }
   </style>
 </head>
 <body>
@@ -319,7 +339,246 @@
     <div class="pl-tabla" id="pl-tabla"></div>
   </div>
 </div>
-<div id="pantalla-guia" class="pantalla"><div style="text-align:center;padding:80px 20px;color:#4a7a9b;"><div style="font-size:48px;margin-bottom:16px;">📖</div><div style="font-size:18px;font-weight:600;margin-bottom:8px;">Guía</div><div style="font-size:14px;">Próximamente — glosario visual, brújula interactiva y guía de condiciones.</div></div></div>
+<div id="pantalla-guia" class="pantalla">
+  <div style="max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 80px);">
+
+    <div style="margin-bottom:28px;">
+      <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;">Guía Salitre</div>
+      <div style="font-size:13px;color:#5a7a9a;">Todo lo que necesitas saber para leer el mar.</div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin-bottom:14px;">El mar</div>
+
+    <div class="guia-card">
+      <div class="guia-card-titulo">Swell</div>
+      <div class="guia-card-cuerpo">
+        <svg viewBox="0 0 220 80" class="guia-svg">
+          <path d="M0 55 Q20 45 40 55 Q60 65 80 55 Q100 45 120 55 Q140 65 160 55 Q180 45 200 55 Q210 50 220 55" stroke="#1a4a6e" stroke-width="1" fill="none" opacity="0.4"/>
+          <path d="M0 62 Q30 30 55 62 Q80 90 105 62 Q130 34 155 62 Q180 90 205 62 L220 62" stroke="#4db8ff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <line x1="30" y1="20" x2="30" y2="38" stroke="#4db8ff" stroke-width="1.5" opacity="0.7"/>
+          <polygon points="30,42 27,36 33,36" fill="#4db8ff" opacity="0.7"/>
+          <line x1="80" y1="14" x2="80" y2="32" stroke="#4db8ff" stroke-width="1.5" opacity="0.7"/>
+          <polygon points="80,36 77,30 83,30" fill="#4db8ff" opacity="0.7"/>
+          <line x1="130" y1="20" x2="130" y2="38" stroke="#4db8ff" stroke-width="1.5" opacity="0.7"/>
+          <polygon points="130,42 127,36 133,36" fill="#4db8ff" opacity="0.7"/>
+          <text x="30" y="12" text-anchor="middle" fill="#4db8ff" font-size="7" opacity="0.8">dirección</text>
+          <text x="55" y="78" text-anchor="middle" fill="#8899aa" font-size="7">longitud de onda</text>
+          <line x1="5" y1="72" x2="105" y2="72" stroke="#8899aa" stroke-width="0.8" opacity="0.5" stroke-dasharray="2,2"/>
+          <line x1="5" y1="69" x2="5" y2="75" stroke="#8899aa" stroke-width="0.8" opacity="0.5"/>
+          <line x1="105" y1="69" x2="105" y2="75" stroke="#8899aa" stroke-width="0.8" opacity="0.5"/>
+        </svg>
+        <p class="guia-desc">Trenes de olas generadas por tormentas en el océano. Viajan miles de kilómetros organizadas y con energía constante.</p>
+      </div>
+    </div>
+
+    <div class="guia-card">
+      <div class="guia-card-titulo">Período</div>
+      <div class="guia-card-cuerpo">
+        <svg viewBox="0 0 220 80" class="guia-svg">
+          <text x="50" y="10" text-anchor="middle" fill="#ff8844" font-size="7.5" font-weight="600">6–8s · Wind swell</text>
+          <path d="M5 50 Q14 38 23 50 Q32 62 41 50 Q50 38 59 50 Q68 62 77 50 Q86 38 95 50" stroke="#ff8844" stroke-width="1.5" fill="none" opacity="0.8"/>
+          <path d="M5 58 Q9 55 13 58 Q17 61 21 58 Q25 55 29 58" stroke="#ff8844" stroke-width="0.8" fill="none" opacity="0.4"/>
+          <line x1="110" y1="5" x2="110" y2="75" stroke="#1a4a6e" stroke-width="1" opacity="0.5"/>
+          <text x="162" y="10" text-anchor="middle" fill="#4db8ff" font-size="7.5" font-weight="600">12–16s · Ground swell</text>
+          <path d="M118 55 Q137 28 156 55 Q175 82 194 55 Q207 38 215 52" stroke="#4db8ff" stroke-width="1.8" fill="none"/>
+        </svg>
+        <p class="guia-desc">Segundos entre dos olas. A más período, más energía y más forma. Con menos de 8s las olas son cortas y desordenadas. Con más de 12s, el mar lleva potencia real.</p>
+      </div>
+    </div>
+
+    <div class="guia-card">
+      <div class="guia-card-titulo">Altura offshore vs altura real</div>
+      <div class="guia-card-cuerpo">
+        <svg viewBox="0 0 220 85" class="guia-svg">
+          <text x="35" y="10" text-anchor="middle" fill="#8899aa" font-size="7">offshore · 2m</text>
+          <path d="M5 45 Q20 28 35 45 Q50 62 65 45" stroke="#4db8ff" stroke-width="1.8" fill="none"/>
+          <line x1="80" y1="45" x2="100" y2="45" stroke="#5a7a9a" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <polygon points="100,45 95,42 95,48" fill="#5a7a9a"/>
+          <text x="140" y="10" text-anchor="middle" fill="#4db8ff" font-size="7">expuesta · 1.8m</text>
+          <path d="M108 50 Q123 30 138 50 Q153 70 168 50" stroke="#4db8ff" stroke-width="1.8" fill="none"/>
+          <text x="200" y="10" text-anchor="middle" fill="#8844ff" font-size="7">protegida · 0.4m</text>
+          <path d="M178 62 Q187 57 196 62 Q205 67 214 62" stroke="#8844ff" stroke-width="1.5" fill="none" opacity="0.8"/>
+          <ellipse cx="176" cy="46" rx="6" ry="10" stroke="#8899aa" stroke-width="1" fill="none" opacity="0.4"/>
+          <text x="176" y="34" text-anchor="middle" fill="#8899aa" font-size="6" opacity="0.7">cabo</text>
+        </svg>
+        <p class="guia-desc">Los datos de ola son medidos en mar abierto. Lo que llega a cada playa depende de su exposición real: una playa protegida por un cabo recibe mucho menos.</p>
+      </div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">El viento</div>
+
+    <div class="guia-card">
+      <div class="guia-card-titulo">Tipos de viento</div>
+      <div class="guia-card-cuerpo" style="padding:0;">
+        <div class="guia-viento-row">
+          <div class="guia-viento-svg-wrap">
+            <svg viewBox="0 0 80 50" class="guia-viento-svg">
+              <path d="M5 32 Q20 28 40 30 Q60 32 75 29" stroke="#4db8ff" stroke-width="1.5" fill="none"/>
+              <path d="M5 38 Q20 36 40 37 Q60 38 75 36" stroke="#4db8ff" stroke-width="0.8" fill="none" opacity="0.4"/>
+              <text x="40" y="15" text-anchor="middle" fill="#8899aa" font-size="7">sin viento</text>
+            </svg>
+          </div>
+          <div class="guia-viento-info">
+            <div class="guia-viento-label" style="color:#4db8ff;">GLASSY</div>
+            <div class="guia-viento-desc">Superficie de espejo. Sin viento.</div>
+          </div>
+        </div>
+        <div class="guia-viento-row">
+          <div class="guia-viento-svg-wrap">
+            <svg viewBox="0 0 80 50" class="guia-viento-svg">
+              <rect x="0" y="28" width="18" height="22" fill="#1a3a5a" opacity="0.5" rx="2"/>
+              <text x="9" y="23" text-anchor="middle" fill="#5a7a9a" font-size="6">tierra</text>
+              <path d="M25 38 Q37 22 50 38 Q58 50 70 40" stroke="#3ddc84" stroke-width="1.8" fill="none"/>
+              <path d="M50 22 Q55 17 62 14" stroke="#3ddc84" stroke-width="1" opacity="0.6" stroke-linecap="round"/>
+              <line x1="6" y1="16" x2="22" y2="16" stroke="#3ddc84" stroke-width="1.2"/>
+              <polygon points="22,16 18,13 18,19" fill="#3ddc84"/>
+            </svg>
+          </div>
+          <div class="guia-viento-info">
+            <div class="guia-viento-label" style="color:#3ddc84;">OFFSHORE</div>
+            <div class="guia-viento-desc">De tierra al mar. Alisa la ola y levanta el labio. Ideal.</div>
+          </div>
+        </div>
+        <div class="guia-viento-row">
+          <div class="guia-viento-svg-wrap">
+            <svg viewBox="0 0 80 50" class="guia-viento-svg">
+              <path d="M20 40 Q35 25 52 38 Q62 48 74 40" stroke="#88cc44" stroke-width="1.8" fill="none"/>
+              <line x1="5" y1="10" x2="25" y2="25" stroke="#88cc44" stroke-width="1.2"/>
+              <polygon points="25,25 19,22 22,17" fill="#88cc44"/>
+            </svg>
+          </div>
+          <div class="guia-viento-info">
+            <div class="guia-viento-label" style="color:#88cc44;">CROSS-OFF</div>
+            <div class="guia-viento-desc">Cruzado con tendencia offshore. Aceptable.</div>
+          </div>
+        </div>
+        <div class="guia-viento-row">
+          <div class="guia-viento-svg-wrap">
+            <svg viewBox="0 0 80 50" class="guia-viento-svg">
+              <path d="M15 42 Q30 28 48 40 Q60 50 74 42" stroke="#ffaa44" stroke-width="1.8" fill="none"/>
+              <line x1="40" y1="5" x2="40" y2="22" stroke="#ffaa44" stroke-width="1.2"/>
+              <polygon points="40,22 37,16 43,16" fill="#ffaa44"/>
+            </svg>
+          </div>
+          <div class="guia-viento-info">
+            <div class="guia-viento-label" style="color:#ffaa44;">CROSS</div>
+            <div class="guia-viento-desc">Viento cruzado. Surfeable pero la ola pierde forma.</div>
+          </div>
+        </div>
+        <div class="guia-viento-row" style="border-bottom:none;">
+          <div class="guia-viento-svg-wrap">
+            <svg viewBox="0 0 80 50" class="guia-viento-svg">
+              <rect x="62" y="28" width="18" height="22" fill="#1a3a5a" opacity="0.5" rx="2"/>
+              <path d="M8 42 Q18 35 28 42 Q35 48 44 40 Q50 34 56 42" stroke="#ff5555" stroke-width="1.5" fill="none" opacity="0.8"/>
+              <line x1="58" y1="16" x2="74" y2="16" stroke="#ff5555" stroke-width="1.2"/>
+              <polygon points="74,16 70,13 70,19" fill="#ff5555"/>
+            </svg>
+          </div>
+          <div class="guia-viento-info">
+            <div class="guia-viento-label" style="color:#ff5555;">ONSHORE</div>
+            <div class="guia-viento-desc">Del mar a tierra. Rompe la ola antes de que se forme.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">El semáforo</div>
+
+    <div class="guia-card">
+      <div class="guia-card-titulo">Cómo se calcula la puntuación</div>
+      <div class="guia-card-cuerpo">
+        <p class="guia-desc" style="margin-bottom:14px;">El semáforo combina varios factores y los pondera según tu perfil. Nunca es una garantía, es una previsión.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div class="guia-factor-chip">
+            <svg viewBox="0 0 32 32" width="26" height="26"><circle cx="16" cy="16" r="12" stroke="#4db8ff" stroke-width="1.2" fill="none"/><line x1="16" y1="4" x2="16" y2="16" stroke="#4db8ff" stroke-width="1.5"/><polygon points="16,4 13,10 19,10" fill="#4db8ff"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Dirección</div><div style="font-size:10px;color:#8899aa;">¿Entra bien?</div></div>
+          </div>
+          <div class="guia-factor-chip">
+            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 10 16 22 Q22 34 28 22" stroke="#4db8ff" stroke-width="1.5" fill="none"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Altura</div><div style="font-size:10px;color:#8899aa;">¿Para tu nivel?</div></div>
+          </div>
+          <div class="guia-factor-chip">
+            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 20 Q10 8 16 20 Q22 32 28 20" stroke="#4db8ff" stroke-width="1.5" fill="none"/><path d="M4 25 Q7 21 10 25" stroke="#4db8ff" stroke-width="0.8" fill="none" opacity="0.5"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Período</div><div style="font-size:10px;color:#8899aa;">Calidad de la ola</div></div>
+          </div>
+          <div class="guia-factor-chip">
+            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 14 16 22 Q22 30 28 22" stroke="#4db8ff" stroke-width="1.5" fill="none"/><line x1="20" y1="8" x2="28" y2="15" stroke="#3ddc84" stroke-width="1.2"/><polygon points="28,15 23,13 25,19" fill="#3ddc84"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Viento</div><div style="font-size:10px;color:#8899aa;">Dirección y fuerza</div></div>
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px;">
+          <div style="font-size:10px;color:#5a7a9a;margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">Escala</div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#ff4444;"></div><span class="guia-escala-rango">1–3</span><span class="guia-escala-txt">Condiciones desfavorables</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#FF6B00;"></div><span class="guia-escala-rango">4–5</span><span class="guia-escala-txt">Aceptable, puede no valer</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#f0a500;"></div><span class="guia-escala-rango">6–7</span><span class="guia-escala-txt">Bastante bueno</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#00cc88;"></div><span class="guia-escala-rango">8–9.5</span><span class="guia-escala-txt">Muy buenas condiciones</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">Brújula de tu playa</div>
+
+    <div class="guia-card">
+      <div class="guia-card-titulo" id="guia-brujula-titulo">Orientación actual</div>
+      <div class="guia-card-cuerpo" style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+        <div style="position:relative;width:180px;height:180px;">
+          <svg viewBox="0 0 180 180" width="180" height="180" style="position:absolute;inset:0;">
+            <circle cx="90" cy="90" r="80" stroke="#1a4a6e" stroke-width="1" fill="none"/>
+            <circle cx="90" cy="90" r="60" stroke="#1a4a6e" stroke-width="0.5" fill="none" opacity="0.5"/>
+            <circle cx="90" cy="90" r="4" fill="#2a5a7e"/>
+            <text x="90" y="16" text-anchor="middle" fill="#5a7a9a" font-size="10" font-weight="600">N</text>
+            <text x="90" y="172" text-anchor="middle" fill="#5a7a9a" font-size="10" font-weight="600">S</text>
+            <text x="168" y="94" text-anchor="middle" fill="#5a7a9a" font-size="10" font-weight="600">E</text>
+            <text x="12" y="94" text-anchor="middle" fill="#5a7a9a" font-size="10" font-weight="600">O</text>
+            <line x1="90" y1="22" x2="90" y2="36" stroke="#1a4a6e" stroke-width="1"/>
+            <line x1="90" y1="144" x2="90" y2="158" stroke="#1a4a6e" stroke-width="1"/>
+            <line x1="22" y1="90" x2="36" y2="90" stroke="#1a4a6e" stroke-width="1"/>
+            <line x1="144" y1="90" x2="158" y2="90" stroke="#1a4a6e" stroke-width="1"/>
+            <path id="guia-arco-exposicion" d="" stroke="#4db8ff" stroke-width="4" fill="none" opacity="0.2" stroke-linecap="round"/>
+            <line id="guia-aguja-swell" x1="90" y1="90" x2="90" y2="20" stroke="#4db8ff" stroke-width="2" stroke-linecap="round"/>
+            <circle id="guia-punto-swell" cx="90" cy="20" r="4" fill="#4db8ff"/>
+            <line id="guia-aguja-playa" x1="90" y1="90" x2="90" y2="30" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4,3" opacity="0.45"/>
+            <circle id="guia-punto-playa" cx="90" cy="30" r="3" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.45"/>
+          </svg>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px;width:100%;font-size:12px;">
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:22px;height:2px;background:#4db8ff;border-radius:1px;flex-shrink:0;"></div><span style="color:#8899aa;" id="guia-leyenda-swell">Dirección del swell actual</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:22px;height:2px;background:rgba(255,255,255,0.35);border-radius:1px;flex-shrink:0;"></div><span style="color:#8899aa;" id="guia-leyenda-playa">Orientación ideal de la playa</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:22px;height:6px;background:rgba(77,184,255,0.22);border-radius:3px;flex-shrink:0;"></div><span style="color:#8899aa;">Arco de exposición óptimo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">Condiciones por nivel</div>
+
+    <div class="guia-card">
+      <div class="guia-card-cuerpo" style="padding:0;">
+        <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><circle cx="18" cy="11" r="5" stroke="#4db8ff" stroke-width="1.4" fill="none"/><path d="M10 28 Q14 20 18 20 Q22 20 26 28" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Bañista</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">Mar tranquilo, viento suave (&lt;15 km/h), agua y aire cálidos. El viento importa más que las olas.</div></div>
+        </div>
+        <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M8 28 Q14 18 20 22 Q26 26 30 20" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 22 L20 30" stroke="#4db8ff" stroke-width="1.2" stroke-linecap="round"/><circle cx="20" cy="10" r="3.5" stroke="#4db8ff" stroke-width="1.2" fill="none"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Principiante</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">0.3–0.8m efectivos, viento suave u offshore, olas ordenadas (período &gt;8s).</div></div>
+        </div>
+        <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M5 26 Q12 14 18 20 Q22 24 26 18 Q30 12 34 20" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 20 L19 29" stroke="#4db8ff" stroke-width="1.2" stroke-linecap="round"/><circle cx="19" cy="10" r="3.5" stroke="#4db8ff" stroke-width="1.2" fill="none"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Intermedio</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">0.6–1.5m efectivos, buena dirección, período &gt;9s. Tolera algo de viento cruzado.</div></div>
+        </div>
+        <div class="guia-nivel-row">
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M3 24 Q8 10 14 16 Q18 20 22 12 Q26 4 30 14 Q33 20 36 16" stroke="#4db8ff" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M14 16 L15 28" stroke="#4db8ff" stroke-width="1.3" stroke-linecap="round"/><circle cx="15" cy="8" r="3.5" stroke="#4db8ff" stroke-width="1.3" fill="none"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Pro</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">1m+ efectivos, período &gt;12s, dirección perfecta. El viento importa menos si el swell es de calidad.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:24px;font-size:11px;color:#3a6a8a;line-height:1.6;">
+      Datos: Open-Meteo Marine · Mareas: IHM España<br>
+      Las previsiones son orientativas. El mar siempre tiene la última palabra.
+    </div>
+
+  </div>
+</div>
 <nav class="nav-bar">
   <button class="nav-item activo" onclick="irA('inicio',this)"><svg width="26" height="26" viewBox="0 0 36 36" fill="none">
       <path d="M18 1 C16 1 12 5 11 10 C10 15 10.5 20 11 24 C11.5 27 12.5 30 14 33 L14 35 C15 35 16.5 32 18 31 C19.5 32 21 35 22 35 L22 33 C23.5 30 24.5 27 25 24 C25.5 20 26 15 25 10 C24 5 20 1 18 1 Z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1362,6 +1621,7 @@ async function cargarInicio() {
     const windH       = c.wind_wave_height;
     const velRacha    = a.wind_gusts_10m;
     const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento, velRacha, swellH, windH, null, null, null);
+    window.ultimoDirSwell = dirSwell;
     const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
     const cieloActual = cielo(codigoCielo);
 
@@ -1696,6 +1956,60 @@ function seleccionarPlayaPorNombre(nombre) {
   }
 }
 
+
+function actualizarBrujulaGuia() {
+  const playa = typeof playaActiva !== 'undefined' ? playaActiva : null;
+  if (!playa) return;
+
+  // Actualizar título
+  const titulo = document.getElementById('guia-brujula-titulo');
+  if (titulo) titulo.textContent = playa.nombre + ' — orientación y swell';
+
+  const leyendaPlaya = document.getElementById('guia-leyenda-playa');
+  if (leyendaPlaya) leyendaPlaya.textContent = 'Orientación ideal: ' + (playa.swell || '—');
+
+  // Dibujar arco de exposición
+  const arcEl = document.getElementById('guia-arco-exposicion');
+  if (arcEl && playa.orientArcMin != null && playa.orientArcMax != null) {
+    const cx = 90, cy = 90, r = 68;
+    const minRad = (playa.orientArcMin - 90) * Math.PI / 180;
+    const maxRad = (playa.orientArcMax - 90) * Math.PI / 180;
+    const x1 = cx + r * Math.cos(minRad), y1 = cy + r * Math.sin(minRad);
+    const x2 = cx + r * Math.cos(maxRad), y2 = cy + r * Math.sin(maxRad);
+    let apertura = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
+    const largeArc = apertura > 180 ? 1 : 0;
+    arcEl.setAttribute('d', `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`);
+  }
+
+  // Aguja orientación ideal de la playa
+  const agujaPlaya = document.getElementById('guia-aguja-playa');
+  const puntoPLaya = document.getElementById('guia-punto-playa');
+  if (agujaPlaya && playa.orient != null) {
+    const ang = (playa.orient - 90) * Math.PI / 180;
+    const r = 62;
+    const x = 90 + r * Math.cos(ang), y = 90 + r * Math.sin(ang);
+    agujaPlaya.setAttribute('x2', x.toFixed(1));
+    agujaPlaya.setAttribute('y2', y.toFixed(1));
+    if (puntoPLaya) { puntoPLaya.setAttribute('cx', x.toFixed(1)); puntoPLaya.setAttribute('cy', y.toFixed(1)); }
+  }
+
+  // Aguja swell actual — necesita el último dato cargado
+  const agujaS = document.getElementById('guia-aguja-swell');
+  const puntoS = document.getElementById('guia-punto-swell');
+  const leyendaS = document.getElementById('guia-leyenda-swell');
+  const dir = typeof ultimoDirSwell !== 'undefined' ? ultimoDirSwell : null;
+  if (agujaS && dir != null && !Number.isNaN(dir)) {
+    const ang = (dir - 90) * Math.PI / 180;
+    const r = 62;
+    const x = 90 + r * Math.cos(ang), y = 90 + r * Math.sin(ang);
+    agujaS.setAttribute('x2', x.toFixed(1));
+    agujaS.setAttribute('y2', y.toFixed(1));
+    if (puntoS) { puntoS.setAttribute('cx', x.toFixed(1)); puntoS.setAttribute('cy', y.toFixed(1)); }
+    const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+    const dirTxt = dirs[Math.round(((dir % 360) + 360) % 360 / 22.5) % 16];
+    if (leyendaS) leyendaS.textContent = 'Swell actual: ' + dirTxt + ' ' + Math.round(dir) + '°';
+  }
+}
 let mapa=null,mapaIniciado=false,capaActual=null,capaMarcadores=null;
 const capas={
   oscuro:   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© CARTO',maxZoom:19}),
@@ -1776,6 +2090,7 @@ function irA(pantalla,btn){
     if(!mapaIniciado) iniciarMapa();
     else ajustarVistaMapa();
   }
+  if(pantalla==='guia') setTimeout(actualizarBrujulaGuia, 80);
   if(pantalla==='playas'&&!plPlayaActiva){
     plPlayaActiva=playaActiva;
     document.getElementById('pl-buscador').value=playaActiva.nombre;
