@@ -1849,8 +1849,8 @@ async function cargarInicio() {
   try {
     const lat = playaActiva.lat, lon = playaActiva.lon;
     const [resMarine, resAtmo] = await Promise.all([
-      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature,swell_wave_height,wind_wave_height&hourly=wave_height,wave_period,wave_direction&timeformat=unixtime&forecast_days=10&past_days=1`),
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&wind_speed_unit=kmh&timezone=auto`),
+      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature,swell_wave_height,wind_wave_height&hourly=wave_height,wave_period,wave_direction,swell_wave_height,wind_wave_height&timeformat=unixtime&forecast_days=10&past_days=1`),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&wind_speed_unit=kmh&timezone=auto&timeformat=unixtime`),
     ]);
 
     const marine = await resMarine.json();
@@ -1885,7 +1885,7 @@ async function cargarInicio() {
     document.getElementById('ultima-actualizacion').textContent =
       `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
 
-    const prevHtml = marine.hourly ? renderPrevision(marine, ahora, dirViento) : '';
+    const prevHtml = marine.hourly ? renderPrevision(marine, atmo, ahora) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
       ${renderCabecera(playaActiva, estado)}
@@ -2012,86 +2012,139 @@ async function cargarInicio() {
   }
 }
 
-function renderPrevision(marine, ahora, dirViento) {
+function renderPrevision(marine, atmo, ahora) {
   if (!marine?.hourly?.time) return '';
-  const tiempos = marine.hourly.time;
+  const tiempos  = marine.hourly.time;
   const alturas  = marine.hourly.wave_height;
   const periodos = marine.hourly.wave_period;
   const dirs     = marine.hourly.wave_direction;
+  const swellHs  = marine.hourly.swell_wave_height;
+  const windHs   = marine.hourly.wind_wave_height;
 
+  // Viento horario de la respuesta atmosférica
+  const atmoTimes  = atmo?.hourly?.time            || [];
+  const windSpeeds = atmo?.hourly?.wind_speed_10m   || [];
+  const windDirs   = atmo?.hourly?.wind_direction_10m || [];
+  const windGusts  = atmo?.hourly?.wind_gusts_10m   || [];
+
+  function windIdx(ts) {
+    if (!atmoTimes.length) return -1;
+    let best = 0, bestD = Infinity;
+    for (let k = 0; k < atmoTimes.length; k++) {
+      const d = Math.abs(atmoTimes[k] - ts);
+      if (d < bestD) { bestD = d; best = k; }
+    }
+    return bestD < 7200 ? best : -1;
+  }
+
+  function clasificarHorario(i) {
+    const wi  = windIdx(tiempos[i]);
+    const vel  = wi >= 0 ? windSpeeds[wi] : null;
+    const wdir = wi >= 0 ? windDirs[wi]   : null;
+    const gust = wi >= 0 ? windGusts[wi]  : null;
+    return clasificar(
+      alturas[i], dirs[i], playaActiva, periodos[i],
+      wdir, vel, gust,
+      swellHs?.[i], windHs?.[i],
+      null, null, null
+    );
+  }
+
+  // Frases cortas para la vista de 10 días
+  const FRASES = {
+    banista:      ['Mal día','Aceptable','Buen día','Muy bueno','Perfecto'],
+    principiante: ['No apto','Justo','Bueno','Muy bueno','Ideal'],
+    intermedio:   ['Sin olas','Flojo','Decente','Bueno','Muy bueno'],
+    pro:          ['Nada','Marginal','Funciona','Bueno','Destacado'],
+  };
+  function textoCorto(score) {
+    const idx = score <= 3 ? 0 : score <= 5 ? 1 : score <= 7 ? 2 : score < 9.5 ? 3 : 4;
+    return (FRASES[perfilActivo] ?? FRASES.pro)[idx];
+  }
+
+  // ── HOY ────────────────────────────────────────────────────────
   const hoyItems = [];
-  for (let i=0;i<tiempos.length;i++) {
-    const tt=new Date(tiempos[i] * 1000);
-    const hora=tt.getHours();
-    const diffH=(tt-ahora)/3600000;
-    if(hora<7||hora>22||hora%2!==0) continue;
-    if(diffH<-8||diffH>8) continue;
-    const esActual=Math.abs(diffH)<1.5;
-    // En previsión no tenemos viento horario, pasamos null
-    const estado=clasificar(alturas[i],dirs[i],playaActiva,periodos[i],null);
+  for (let i = 0; i < tiempos.length; i++) {
+    const tt    = new Date(tiempos[i] * 1000);
+    const hora  = tt.getHours();
+    const diffH = (tt - ahora) / 3600000;
+    if (hora < 6 || hora > 22 || hora % 2 !== 0) continue;
+    if (diffH < -1 || diffH > 24) continue;
+    const esActual = Math.abs(diffH) < 1;
+    const { score, color } = clasificarHorario(i);
     hoyItems.push(`
-      <div class="prev-card ${esActual?'actual':''}">
+      <div class="prev-card ${esActual ? 'actual' : ''}">
         <div style="margin-bottom:4px;">${iconoPorHora(hora)}</div>
         <div class="pc-fecha">${fmtFecha(tiempos[i])}</div>
-        <div class="pc-semaforo" style="background:${estado.color};box-shadow:0 0 6px ${estado.color}88;"></div>
+        <div class="pc-semaforo" style="background:${color};box-shadow:0 0 6px ${color}88;"></div>
         <div class="pc-altura">${fmt(alturas[i])}m</div>
         <div class="pc-detalle">${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
       </div>`);
   }
 
-  const diasMap={};
-  for(let i=0;i<tiempos.length;i++){
-    const tt=new Date(tiempos[i] * 1000);
-    const hora=tt.getHours();
-    const key=tt.toDateString();
-    const diffDias=(tt-ahora)/86400000;
-    if(diffDias<0||diffDias>3) continue;
-    if(![8,14,20].includes(hora)) continue;
-    if(!diasMap[key]) diasMap[key]={label:fmtDia(tiempos[i]),franjas:{}};
-    const franja=hora===8?'Mañana':hora===14?'Tarde':'Atardecer';
-    const icono=hora===8?SVG_AMANECER:hora===14?SVG_DIA:SVG_ATARDECER;
-    const estado=clasificar(alturas[i],dirs[i],playaActiva,periodos[i],null);
-    diasMap[key].franjas[franja]=`
+  // ── 3 DÍAS ─────────────────────────────────────────────────────
+  const diasMap = {};
+  for (let i = 0; i < tiempos.length; i++) {
+    const tt   = new Date(tiempos[i] * 1000);
+    const hora = tt.getHours();
+    const key  = tt.toDateString();
+    const diffD = (tt - ahora) / 86400000;
+    if (diffD < 0 || diffD > 3.5) continue;
+    if (![8, 14, 20].includes(hora)) continue;
+    if (!diasMap[key]) diasMap[key] = { label: fmtDia(tiempos[i]), franjas: {} };
+    const franja = hora === 8 ? 'Mañana' : hora === 14 ? 'Tarde' : 'Tarde-noche';
+    const icono  = hora === 8 ? SVG_AMANECER : hora === 14 ? SVG_DIA : SVG_ATARDECER;
+    const { score, color } = clasificarHorario(i);
+    diasMap[key].franjas[franja] = `
       <div class="prev-franja">
         <div style="margin-bottom:3px;">${icono}</div>
         <div class="pf-label">${franja}</div>
-        <div class="pf-semaforo" style="background:${estado.color};"></div>
+        <div class="pf-semaforo" style="background:${color};"></div>
         <div class="pf-altura">${fmt(alturas[i])}m</div>
         <div class="pf-detalle">${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
       </div>`;
   }
-  const tresItems=Object.values(diasMap).map(dia=>`
+  const tresItems = Object.values(diasMap).map(dia => `
     <div class="prev-dia-bloque">
       <div class="prev-dia-header">${dia.label}</div>
       <div class="prev-dia-franjas">
-        ${dia.franjas['Mañana']||''}
-        ${dia.franjas['Tarde']||''}
-        ${dia.franjas['Atardecer']||''}
+        ${dia.franjas['Mañana'] || ''}
+        ${dia.franjas['Tarde'] || ''}
+        ${dia.franjas['Tarde-noche'] || ''}
       </div>
     </div>`).join('');
 
-  const diezMap={};
-  for(let i=0;i<tiempos.length;i++){
-    const tt=new Date(tiempos[i] * 1000);
-    const key=tt.toDateString();
-    const diffDias=(tt-ahora)/86400000;
-    if(diffDias<0||diffDias>10) continue;
-    if(!diezMap[key]) diezMap[key]={label:fmtDia(tiempos[i]),maxH:0,periodo:0,dir:0};
-    if((alturas[i]||0)>diezMap[key].maxH){
-      diezMap[key].maxH=alturas[i];
-      diezMap[key].periodo=periodos[i];
-      diezMap[key].dir=dirs[i];
+  // ── 10 DÍAS ────────────────────────────────────────────────────
+  const diezMap = {};
+  for (let i = 0; i < tiempos.length; i++) {
+    const tt   = new Date(tiempos[i] * 1000);
+    const hora = tt.getHours();
+    const key  = tt.toDateString();
+    const diffD = (tt - ahora) / 86400000;
+    if (diffD < 0 || diffD > 10) continue;
+    if (!diezMap[key]) diezMap[key] = { label: fmtDia(tiempos[i]), scores: [], maxH: 0, periodo: 0, dir: 0 };
+    if (hora >= 10 && hora <= 18) {
+      const { score } = clasificarHorario(i);
+      diezMap[key].scores.push(score);
+      if ((alturas[i] || 0) > diezMap[key].maxH) {
+        diezMap[key].maxH    = alturas[i];
+        diezMap[key].periodo = periodos[i];
+        diezMap[key].dir     = dirs[i];
+      }
     }
   }
-  const diezItems=Object.values(diezMap).map(dia=>{
-    const estado=clasificar(dia.maxH,dia.dir,playaActiva,dia.periodo,null);
+  const diezItems = Object.values(diezMap).map(dia => {
+    const sc = dia.scores.length
+      ? dia.scores.sort((a, b) => a - b)[Math.floor(dia.scores.length / 2)]
+      : 1;
+    const color = sc <= 3 ? '#ff4444' : sc <= 5 ? '#FF6B00' : sc <= 7 ? '#f0a500' : '#00cc88';
     return `
       <div class="prev-fila">
         <div class="pfi-dia">${dia.label}</div>
-        <div class="pfi-semaforo" style="background:${estado.color};box-shadow:0 0 6px ${estado.color}88;"></div>
+        <div class="pfi-semaforo" style="background:${color};box-shadow:0 0 6px ${color}88;"></div>
         <div class="pfi-altura">${fmt(dia.maxH)}m</div>
         <div class="pfi-detalle">${rnd(dia.periodo)}s · ${dirTxt(dia.dir)}</div>
-        <div class="pfi-estado" style="color:${estado.color};">${estado.texto}</div>
+        <div class="pfi-estado" style="color:${color};">${textoCorto(sc)}</div>
       </div>`;
   }).join('');
 
@@ -2112,6 +2165,7 @@ function renderPrevision(marine, ahora, dirViento) {
       <div id="mejores-olas"></div>
     </div>`;
 }
+
 
 function cambiarPrevTab(tab,btn){
   ['hoy','3d','10d'].forEach(t=>{
