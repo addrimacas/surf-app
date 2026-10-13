@@ -14,6 +14,8 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const zlib = require('zlib');
+let ATLAS = null;
+try { ATLAS = require('../atlas-playas.js'); } catch (e) { /* sin atlas: coordenadas de la playa */ }
 
 // ---------------------------------------------------------------- configuración
 const VERSION_FORMATO = 1;
@@ -44,13 +46,13 @@ function cargarPlayas() {
     for (const [region, zonas] of Object.entries(regiones)) {
       for (const [zona, lista] of Object.entries(zonas)) {
         for (const p of lista) {
+          // Oleaje: en el punto offshore del atlas (spec v1.1, punto 1). Viento: en la playa.
+          const off = ATLAS?.playas?.[p.nombre]?.offshore;
           playas.push({
             nombre: p.nombre, zona, region, pais,
-            // Coordenadas usadas para pedir datos. Hoy son las de la playa;
-            // cuando existan puntos offshore se rellenará latOffshore/lonOffshore y se usarán esos.
-            lat: p.latOffshore ?? p.lat,
-            lon: p.lonOffshore ?? p.lon,
-            origenCoords: p.latOffshore != null ? 'offshore' : 'playa',
+            lat: off ? off[0] : p.lat,
+            lon: off ? off[1] : p.lon,
+            origenCoords: off ? 'offshore' : 'playa',
             latPlaya: p.lat, lonPlaya: p.lon,
           });
         }
@@ -70,8 +72,8 @@ function urlMarina(lote) {
 }
 function urlViento(lote) {
   return 'https://api.open-meteo.com/v1/forecast'
-    + `?latitude=${lote.map(p => p.lat).join(',')}`
-    + `&longitude=${lote.map(p => p.lon).join(',')}`
+    + `?latitude=${lote.map(p => p.latPlaya).join(',')}`
+    + `&longitude=${lote.map(p => p.lonPlaya).join(',')}`
     + `&hourly=${VARS_VIENTO.join(',')}`
     + `&models=${MODELO_VIENTO}&forecast_hours=${HORAS}&wind_speed_unit=kmh&timeformat=unixtime`;
 }
@@ -126,7 +128,8 @@ async function main() {
       registro.playas.push({
         nombre: p.nombre, zona: p.zona,
         origen_coords: p.origenCoords,
-        pedido: { lat: p.lat, lon: p.lon },
+        pedido_oleaje: { lat: p.lat, lon: p.lon },
+        pedido_viento: { lat: p.latPlaya, lon: p.lonPlaya },
         celda_oleaje: { lat: m.latitude, lon: m.longitude }, // celda real que devolvió la API
         celda_viento: { lat: v.latitude, lon: v.longitude },
         tiempo: m.hourly.time,
