@@ -9,7 +9,8 @@
   "scripts": {
     "test": "node --test tests/coherencia.test.js",
     "atlas": "node scripts/calcular-atlas.js",
-    "registro": "node scripts/registrar-prevision.js"
+    "registro": "node scripts/registrar-prevision.js",
+    "test:app": "npm i --no-save jsdom@24 && node tests/app-sin-red.js . v1 && node tests/app-sin-red.js . rechazo && node tests/app-sin-red.js . v0"
   },
   "repository": {
     "type": "git",

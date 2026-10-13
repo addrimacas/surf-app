@@ -908,6 +908,8 @@
 </div>
 <div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
 <script src="beach-data.js"></script>
+<script src="atlas-playas.js"></script>
+<script src="motor-v1.js"></script>
 <script>
 const SVG_AMANECER = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><line x1="20" y1="28" x2="20" y2="22" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="14" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="26" y2="23" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="11" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="28" x2="29" y2="26" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="30" x2="32" y2="30" stroke="#FFB347" stroke-width="1.5" stroke-linecap="round"/></svg>`;
 const SVG_DIA = `<svg width="20" height="20" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="5" stroke="#FFD700" stroke-width="1.5"/><line x1="20" y1="10" x2="20" y2="13" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="27" x2="20" y2="30" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="20" x2="13" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="20" x2="30" y2="20" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="13" x2="15" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="25" y1="25" x2="27" y2="27" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="13" x2="25" y2="15" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="27" x2="15" y2="25" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/></svg>`;
@@ -1333,9 +1335,98 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento, 
   return { score, componentes };
 }
 
-function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax) {
+// ── Motor v1.1 y capa de datos (consulta multi-IA, oct 2026) ───────────────────
+// Interruptor: abrir la app con ?motor=v0 vuelve al motor antiguo (se recuerda en este
+// navegador); ?motor=v1 lo reactiva. Si falta motor-v1.js o el atlas, se usa el antiguo.
+const MOTOR_ACTIVO = (() => {
+  const hayV1 = typeof MotorV1 !== 'undefined' && typeof ATLAS_PLAYAS !== 'undefined';
+  let pref = 'v1';
+  try {
+    const q = new URLSearchParams(location.search).get('motor');
+    if (q === 'v0' || q === 'v1') localStorage.setItem('salitre_motor', q);
+    pref = localStorage.getItem('salitre_motor') || 'v1';
+  } catch (e) {}
+  return pref === 'v1' && hayV1 ? 'v1' : 'v0';
+})();
+const MODELO_OLEAJE = 'meteofrance_wave';   // modelo fijado (spec v1.1, punto 2)
+const VARS_OLEAJE_V1 = [
+  'wave_height','wave_period','wave_direction',
+  'swell_wave_height','swell_wave_period','swell_wave_peak_period','swell_wave_direction',
+  'secondary_swell_wave_height','secondary_swell_wave_period','secondary_swell_wave_direction',
+  'wind_wave_height','wind_wave_period','wind_wave_peak_period','wind_wave_direction',
+].join(',');
+const VARS_OLEAJE_V0 = 'wave_height,wave_period,wave_direction,swell_wave_height,wind_wave_height';
+
+function atlasDe(playa) {
+  return (typeof ATLAS_PLAYAS !== 'undefined') ? ATLAS_PLAYAS.playas?.[playa?.nombre] ?? null : null;
+}
+// Coordenadas donde pedir el oleaje: punto offshore del atlas (v1) o la propia playa (v0)
+function coordsOleaje(playa) {
+  const off = MOTOR_ACTIVO === 'v1' ? atlasDe(playa)?.offshore : null;
+  return off ? { lat: off[0], lon: off[1], offshore: true } : { lat: playa.lat, lon: playa.lon, offshore: false };
+}
+
+/**
+ * Pide el oleaje de una playa. opciones: { current, hourly, forecastDays, pastDays, extraCurrent, timezone }
+ * Con el motor v1 pide todas las particiones en el punto offshore con el modelo fijado; si esa
+ * petición falla, repite la antigua (coordenadas de la playa, sin modelo) y marca _v0 = true.
+ */
+async function pedirOleaje(playa, opciones = {}) {
+  const { current = true, hourly = true, forecastDays = 10, pastDays = 0, extraCurrent = '', timezone = '' } = opciones;
+  const construir = v1 => {
+    const c = v1 ? coordsOleaje(playa) : { lat: playa.lat, lon: playa.lon };
+    const vars = v1 ? VARS_OLEAJE_V1 : VARS_OLEAJE_V0;
+    let u = `https://marine-api.open-meteo.com/v1/marine?latitude=${c.lat}&longitude=${c.lon}&timeformat=unixtime`;
+    if (current) u += `&current=${vars}${extraCurrent ? ',' + extraCurrent : ''}`;
+    if (hourly) u += `&hourly=${vars}&forecast_days=${forecastDays}${pastDays ? '&past_days=' + pastDays : ''}`;
+    if (timezone) u += `&timezone=${timezone}`;
+    if (v1) u += `&models=${MODELO_OLEAJE}`;
+    return u;
+  };
+  if (MOTOR_ACTIVO === 'v1') {
+    try {
+      const r = await fetch(construir(true));
+      const j = await r.json();
+      if (r.ok && !j.error && (j.current || j.hourly)) { j._v0 = false; return j; }
+      console.warn('[Salitre] petición v1 rechazada, se usa la antigua:', j?.reason ?? r.status);
+    } catch (e) { console.warn('[Salitre] petición v1 fallida, se usa la antigua:', e); }
+  }
+  const r = await fetch(construir(false));
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const j = await r.json();
+  j._v0 = true;
+  // Datos de la petición antigua (coordenadas de la playa): el motor v1 no debe usarlos
+  if (j.current) j.current._v0 = true;
+  if (j.hourly) j.hourly._v0 = true;
+  return j;
+}
+
+// Datos de una hora (o del "current" si i es null) en el formato que espera MotorV1.evaluar
+function datosMotor(fuente, i, viento = {}, extra = {}) {
+  if (!fuente || fuente._v0) return null;   // sin datos offshore: se usa el motor antiguo
+  const g = k => i == null ? fuente?.[k] : fuente?.[k]?.[i];
+  return {
+    hTotal: g('wave_height'), tTotal: g('wave_period'), dirTotal: g('wave_direction'),
+    swellH: g('swell_wave_height'), swellT: g('swell_wave_period'), swellTp: g('swell_wave_peak_period'), swellDir: g('swell_wave_direction'),
+    swell2H: g('secondary_swell_wave_height'), swell2T: g('secondary_swell_wave_period'), swell2Dir: g('secondary_swell_wave_direction'),
+    vientoMarH: g('wind_wave_height'), vientoMarT: g('wind_wave_period'), vientoMarTp: g('wind_wave_peak_period'), vientoMarDir: g('wind_wave_direction'),
+    vientoVel: viento.vel ?? null, vientoDir: viento.dir ?? null, vientoRacha: viento.racha ?? null,
+    codigoTiempo: viento.codigo ?? null, esDeDia: viento.esDeDia ?? null,
+    ...extra,
+  };
+}
+const diasDesdeAhora = ts => Math.max(0, (ts * 1000 - Date.now()) / 86400000);
+
+function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax, datosV1) {
   if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score:0, componentes:{} };
-  const { score, componentes } = calcularPuntuacion(h, direccion, periodo ?? 8, playa, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax);
+  let score, componentes, v1 = null;
+  if (MOTOR_ACTIVO === 'v1' && datosV1) {
+    v1 = MotorV1.evaluar(datosV1, playa, perfilActivo, atlasDe(playa));
+    score = v1.nota;
+    componentes = {};
+  } else {
+    ({ score, componentes } = calcularPuntuacion(h, direccion, periodo ?? 8, playa, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax));
+  }
 
   const TEXTOS = {
     banista: {
@@ -1374,7 +1465,31 @@ function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha
   const color  = score <= 3 ? '#ff4444' : score <= 5 ? '#FF6B00' : score <= 7 ? '#e6a817' : '#00cc88';
   const bg     = score <= 3 ? '#fff0f0' : score <= 5 ? '#fff4ee' : score <= 7 ? '#fffbee' : '#f0fff8';
 
-  return { color, texto, bg, score, componentes };
+  return { color, texto, bg, score, componentes, v1 };
+}
+
+// Resumen del mar abierto a partir de las particiones (motor v1)
+function resumenV1(r) {
+  const ps = (r?.particiones || []).filter(p => p.h >= 0.2).sort((a, b) => b.h * b.h * b.T - a.h * a.h * a.T);
+  if (!ps.length) return 'Mar abierto en calma.';
+  const nombre = { swell: 'Mar de fondo', swell2: 'Mar de fondo secundario', viento: 'Mar de viento' };
+  const txt = ps.slice(0, 2).map(p => `${nombre[p.tipo]} del ${dirTxt(p.dir)}: ${p.h.toFixed(1)} m y ${Math.round(p.T)} s`);
+  return txt.join(' · ') + ' (mar abierto).';
+}
+
+// Línea de explicación bajo la nota (motor v1): factor limitante, ola estimada, confianza y avisos
+function renderExplicacionV1(r) {
+  if (!r) return '';
+  const confColor = r.confianza === 'alta' ? '#44cc88' : r.confianza === 'media' ? '#e6a817' : '#8899aa';
+  const rango = r.rango ? ` · podría estar entre ${r.rango[0]} y ${r.rango[1]}` : '';
+  const ola = r.hb != null ? `Ola estimada en la playa: ~${r.hb.toFixed(1)} m` : '';
+  const avisos = (r.avisos || []).map(a => `<div style="color:#ff8844;margin-top:3px;">⚠ ${a}</div>`).join('');
+  return `<div style="font-size:12px;margin-top:6px;color:#8899aa;line-height:1.45;">
+      <div style="color:#ccddee;">${r.limitante?.texto ?? ''}</div>
+      <div>${ola}</div>
+      <div>Confianza <span style="color:${confColor};font-weight:600;">${r.confianza}</span>${rango}</div>
+      ${avisos}
+    </div>`;
 }
 
 function dirTxt(g) {
@@ -1909,13 +2024,11 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
 async function cargarInicio() {
   try {
     const lat = playaActiva.lat, lon = playaActiva.lon;
-    const [resMarine, resAtmo] = await Promise.all([
-      fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_period,wave_direction,sea_surface_temperature,swell_wave_height,wind_wave_height&hourly=wave_height,wave_period,wave_direction,swell_wave_height,wind_wave_height&timeformat=unixtime&forecast_days=10&past_days=1`),
-      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&wind_speed_unit=kmh&timezone=auto&timeformat=unixtime`),
+    // Oleaje: punto offshore + modelo fijado (motor v1). Viento y tiempo: en la playa.
+    const [marine, atmo] = await Promise.all([
+      pedirOleaje(playaActiva, { current: true, hourly: true, forecastDays: 10, pastDays: 1, extraCurrent: 'sea_surface_temperature' }),
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&wind_speed_unit=kmh&timezone=auto&timeformat=unixtime`).then(r => r.json()),
     ]);
-
-    const marine = await resMarine.json();
-    const atmo   = await resAtmo.json();
     const c = marine.current;
     const a = atmo.current;
 
@@ -1936,7 +2049,10 @@ async function cargarInicio() {
     const swellH      = c.swell_wave_height;
     const windH       = c.wind_wave_height;
     const velRacha    = a.wind_gusts_10m;
-    const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento, velRacha, swellH, windH, null, null, null);
+    const datosAhora  = datosMotor(c, null,
+      { vel: velViento, dir: dirViento, racha: velRacha, codigo: codigoCielo, esDeDia: a.is_day == null ? null : a.is_day == 1 },
+      { diasVista: 0, tempAgua });
+    const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento, velRacha, swellH, windH, null, null, null, datosAhora);
     window.ultimoDirSwell = dirSwell;
     const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
     const cieloActual = cielo(codigoCielo);
@@ -1973,9 +2089,20 @@ async function cargarInicio() {
             </div>
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía</span>
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía${estado.v1 ? ' mar abierto' : ''}</span>
               <span style="font-size:13px;color:white;font-weight:600;">${energia ?? '—'} kW/m</span>
             </div>
+            ${estado.v1 ? `
+            <div style="height:0.5px;background:#ffffff15;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Ola en la playa (estimada)</span>
+              <span style="font-size:13px;color:#4db8ff;font-weight:600;">~${fmt(estado.v1.hb)} m</span>
+            </div>
+            <div style="height:0.5px;background:#ffffff15;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía que llega</span>
+              <span style="font-size:13px;color:white;font-weight:600;">${estado.v1.potenciaLlega != null ? fmt(estado.v1.potenciaLlega) : '—'} kW/m</span>
+            </div>` : ''}
             <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
               <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
               <div style="display:flex;align-items:center;gap:8px;">
@@ -2047,9 +2174,9 @@ async function cargarInicio() {
         </div>
       </div>
       ${prevHtml}`;
-    document.getElementById('resumen-texto').textContent = resumen(altura, periodo, dirSwell, playaActiva);
+    document.getElementById('resumen-texto').textContent = estado.v1 ? resumenV1(estado.v1) : resumen(altura, periodo, dirSwell, playaActiva);
     const desgloseEl = document.getElementById('desglose-factores');
-    if (desgloseEl) desgloseEl.innerHTML = renderDesglose(estado.componentes, perfilActivo ?? 'pro');
+    if (desgloseEl) desgloseEl.innerHTML = estado.v1 ? renderExplicacionV1(estado.v1) : renderDesglose(estado.componentes, perfilActivo ?? 'pro');
     // Badge día poco habitual
     const cons = playaActiva?.consistencia ?? 0.33;
     if (cons < 0.25 && estado.score >= 7) {
@@ -2103,11 +2230,16 @@ function renderPrevision(marine, atmo, ahora) {
     const vel  = wi >= 0 ? windSpeeds[wi] : null;
     const wdir = wi >= 0 ? windDirs[wi]   : null;
     const gust = wi >= 0 ? windGusts[wi]  : null;
+    const codigo = wi >= 0 ? atmo?.hourly?.weather_code?.[wi] : null;
+    const dia    = wi >= 0 ? atmo?.hourly?.is_day?.[wi] : null;
+    const datos = datosMotor(marine.hourly, i,
+      { vel, dir: wdir, racha: gust, codigo, esDeDia: dia == null ? null : dia == 1 },
+      { diasVista: diasDesdeAhora(tiempos[i]) });
     return clasificar(
       alturas[i], dirs[i], playaActiva, periodos[i],
       wdir, vel, gust,
       swellHs?.[i], windHs?.[i],
-      null, null, null
+      null, null, null, datos
     );
   }
 
@@ -2254,10 +2386,10 @@ async function cargarMejoresOlas() {
 
   for (const playa of playas) {
     try {
-      const res = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction,swell_wave_height,wind_wave_height&timeformat=iso8601`);
-      const data = await res.json();
+      const data = await pedirOleaje(playa, { current: true, hourly: false });
       const c = data.current;
-      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period, null, null, null, c.swell_wave_height, c.wind_wave_height);
+      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period, null, null, null, c.swell_wave_height, c.wind_wave_height,
+        null, null, null, datosMotor(c, null, {}, { diasVista: 0 }));
       const km = Math.round(haversine(uLat, uLon, playa.lat, playa.lon));
       if (estado.score >= 5) resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
     } catch(e) {}
@@ -2426,14 +2558,13 @@ function crearIcono(color){
   return L.divIcon({className:'',html:`<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-14]});
 }
 async function cargarDatosPlaya(playa){
-  const res=await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=wave_height,wave_period,wave_direction`);
-  if(!res.ok) throw new Error('HTTP '+res.status);
-  const data=await res.json();
+  const data=await pedirOleaje(playa,{current:true,hourly:false});
   return {playa,c:data.current};
 }
 function renderMarcador(playa,c){
   const h=c?.wave_height,p=c?.wave_period,d=c?.wave_direction;
-  const estado=clasificar(h,d,playa,p,null);
+  const estado=clasificar(h,d,playa,p,null,null,null,c?.swell_wave_height,c?.wind_wave_height,null,null,null,
+    c?datosMotor(c,null,{},{diasVista:0}):null);
   return L.marker([playa.lat,playa.lon],{icon:crearIcono(estado.color)})
     .bindPopup(`
       <div class="popup-playa">
@@ -2691,15 +2822,13 @@ async function plCargarTabla() {
     try {
       const fechaBase = new Date(ahora);
       fechaBase.setDate(fechaBase.getDate() + diaOffset);
-      const res = await fetch(
-        `https://marine-api.open-meteo.com/v1/marine?latitude=${p.lat}&longitude=${p.lon}` +
-        `&hourly=wave_height,wave_period,wave_direction&forecast_days=8&timeformat=unixtime&timezone=auto`
-      );
-      const atm = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}` +
-        `&hourly=wind_speed_10m,wind_direction_10m,weather_code,temperature_2m&forecast_days=8&wind_speed_unit=kmh&timeformat=unixtime&timezone=auto`
-      );
-      const [marine, atmosfera] = await Promise.all([res.json(), atm.json()]);
+      const [marine, atmosfera] = await Promise.all([
+        pedirOleaje(p, { current: false, hourly: true, forecastDays: 8, timezone: 'auto' }),
+        fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}` +
+          `&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day,temperature_2m&forecast_days=8&wind_speed_unit=kmh&timeformat=unixtime&timezone=auto`
+        ).then(r => r.json()),
+      ]);
       plDatosCache[cacheKey] = { marine, atmosfera };
       data = plDatosCache[cacheKey];
     } catch(e) {
@@ -2714,7 +2843,7 @@ async function plCargarTabla() {
   const diaStr = ahora2.toDateString();
 
   // Filtrar horas del día seleccionado, cada 2h
-  const horas = [], heights = [], periods = [], dirs = [], vels = [], vdirs = [], wcodes = [], temps = [];
+  const horas = [], heights = [], periods = [], dirs = [], vels = [], vdirs = [], wcodes = [], temps = [], datosV1 = [];
   const ahoraTs = Date.now() / 1000;
 
   for (let i = 0; i < marine.hourly.time.length; i++) {
@@ -2732,6 +2861,12 @@ async function plCargarTabla() {
     vdirs.push(ai >= 0 ? atmosfera.hourly.wind_direction_10m[ai] : null);
     wcodes.push(ai >= 0 ? atmosfera.hourly.weather_code[ai] : null);
     temps.push(ai >= 0 ? atmosfera.hourly.temperature_2m[ai] : null);
+    const esDia = ai >= 0 ? atmosfera.hourly.is_day?.[ai] : null;
+    datosV1.push(datosMotor(marine.hourly, i, {
+      vel: vels[vels.length - 1], dir: vdirs[vdirs.length - 1],
+      racha: ai >= 0 ? atmosfera.hourly.wind_gusts_10m?.[ai] : null,
+      codigo: wcodes[wcodes.length - 1], esDeDia: esDia == null ? null : esDia == 1,
+    }, { diasVista: diasDesdeAhora(ts) }));
   }
 
   if (horas.length === 0) {
@@ -2740,7 +2875,7 @@ async function plCargarTabla() {
   }
 
   // Semáforo actual (primera hora disponible del día)
-  const estado0 = clasificar(heights[0], dirs[0], p, periods[0], null);
+  const estado0 = clasificar(heights[0], dirs[0], p, periods[0], vdirs[0], vels[0], null, null, null, null, null, null, datosV1[0]);
   const semCirc = document.getElementById('pl-sem-circulo');
   const semEst = document.getElementById('pl-sem-estado');
   const semDesc = document.getElementById('pl-sem-desc');
@@ -2774,7 +2909,7 @@ async function plCargarTabla() {
   // Puntuación
   html += `<div class="pl-fila"><div class="pl-fila-label">Punt.</div>`;
   horas.forEach((h, i) => {
-    const e = clasificar(heights[i], dirs[i], p, periods[i], null);
+    const e = clasificar(heights[i], dirs[i], p, periods[i], vdirs[i], vels[i], null, null, null, null, null, null, datosV1[i]);
     html += cel(`<div class="pl-score" style="background:${e.color};">${e.score}</div>`, esAhoraH(h));
   });
   html += `</div>`;
@@ -2785,6 +2920,16 @@ async function plCargarTabla() {
     html += cel(`<div class="pl-altura">${fmt(heights[i])}m</div><div class="pl-dir">${plFlechaDir(dirs[i])}</div>`, esAhoraH(h));
   });
   html += `</div>`;
+
+  // Ola estimada en la playa (motor v1)
+  if (MOTOR_ACTIVO === 'v1' && !marine._v0) {
+    html += `<div class="pl-fila"><div class="pl-fila-label">En playa</div>`;
+    horas.forEach((h, i) => {
+      const e = clasificar(heights[i], dirs[i], p, periods[i], vdirs[i], vels[i], null, null, null, null, null, null, datosV1[i]);
+      html += cel(`<div class="pl-altura" style="color:#4db8ff;">~${e.v1 ? fmt(e.v1.hb) : '—'}m</div>`, esAhoraH(h));
+    });
+    html += `</div>`;
+  }
 
   // Período
   html += `<div class="pl-fila"><div class="pl-fila-label">Período</div>`;

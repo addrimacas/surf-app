@@ -177,7 +177,7 @@
       { tipo: 'swell2', h: d.swell2H, T: d.swell2T, dir: d.swell2Dir },
       { tipo: 'viento', h: d.vientoMarH, T: d.vientoMarTp ?? d.vientoMarT, dir: d.vientoMarDir },
     ].filter(p => valido(p.h) && p.h > 0.02);
-    let parts = crudas.map(p => ({ ...p, T: valido(p.T) ? p.T : (p.tipo === 'viento' ? 5 : 10), dir: valido(p.dir) ? p.dir : d.dirTotal }));
+    let parts = crudas.map(p => ({ ...p, T: valido(p.T) ? p.T : (p.tipo === 'viento' ? 5 : (valido(d.tTotal) ? d.tTotal : 10)), dir: valido(p.dir) ? p.dir : d.dirTotal }));
     // Si la API no trae particiones, usar el total como una sola partición de swell
     if (!parts.length && valido(d.hTotal)) parts = [{ tipo: 'swell', h: d.hTotal, T: d.tTotal ?? 10, dir: d.dirTotal }];
     return parts.map(p => {
