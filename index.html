@@ -299,7 +299,11 @@
 
   <p id="ultima-actualizacion" style="display:none;"></p>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
-  <footer>Open-Meteo · A Coruña</footer>
+  <footer style="max-width:420px;margin:18px auto 0;padding:0 16px;line-height:1.5;">
+    <div style="color:#8899aa;">Esta app no es una herramienta de seguridad: respeta siempre la bandera y las indicaciones del socorrista.</div>
+    <div style="margin-top:6px;">Oleaje y tiempo: <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:inherit;">Open-Meteo.com</a> (CC BY 4.0) · Mareas: Instituto Hidrográfico de la Marina · Costa: GSHHG · Mapas: © OpenStreetMap</div>
+    <div id="pie-motor" style="margin-top:6px;"></div>
+  </footer>
 </div>
 <div id="pantalla-mapa" class="pantalla">
   <div class="mapa-header">
@@ -1349,6 +1353,13 @@ const MOTOR_ACTIVO = (() => {
   return pref === 'v1' && hayV1 ? 'v1' : 'v0';
 })();
 const MODELO_OLEAJE = 'meteofrance_wave';   // modelo fijado (spec v1.1, punto 2)
+document.addEventListener('DOMContentLoaded', () => {
+  const pie = document.getElementById('pie-motor');
+  if (!pie) return;
+  pie.innerHTML = MOTOR_ACTIVO === 'v1'
+    ? 'Cálculo: motor nuevo (v1.1) · <a href="?motor=v0" style="color:inherit;">usar el anterior</a>'
+    : 'Cálculo: motor anterior · <a href="?motor=v1" style="color:inherit;">probar el nuevo</a>';
+});
 const VARS_OLEAJE_V1 = [
   'wave_height','wave_period','wave_direction',
   'swell_wave_height','swell_wave_period','swell_wave_peak_period','swell_wave_direction',
