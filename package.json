@@ -7,10 +7,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node --test tests/coherencia.test.js",
+    "test": "node --test tests/coherencia.test.js tests/panel.test.js",
     "atlas": "node scripts/calcular-atlas.js",
     "registro": "node scripts/registrar-prevision.js",
-    "test:app": "npm i --no-save jsdom@24 && node tests/app-sin-red.js . v1 && node tests/app-sin-red.js . rechazo && node tests/app-sin-red.js . v0"
+    "test:app": "npm i --no-save jsdom@24 && node tests/app-sin-red.js . v1 && node tests/app-sin-red.js . rechazo && node tests/app-sin-red.js . v0",
+    "panel:preparar": "node scripts/panel-ciego-preparar.js",
+    "panel:evaluar": "node scripts/panel-ciego-evaluar.js"
   },
   "repository": {
     "type": "git",
