@@ -1,0 +1,114 @@
+// tests/coherencia.test.js — tests de cordura del motor v1.1 (especificación, punto 20)
+// Ejecutar: node --test tests/
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert');
+const vm = require('vm');
+const fs = require('fs');
+const path = require('path');
+
+const M = require('../motor-v1.js');
+const ATLAS = require('../atlas-playas.js');
+
+function cargarPlayas() {
+  const ctx = { console: { log() {} } };
+  vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'beach-data.js'), 'utf8') + ';this.P = todasLasPlayas();', ctx);
+  return Object.fromEntries(ctx.P.map(p => [p.nombre, p]));
+}
+const PLAYAS = cargarPlayas();
+const ev = (nombre, d, nivel = 'pro') => M.evaluar(d, PLAYAS[nombre], nivel, ATLAS.playas[nombre]);
+
+// Escenario base: un swell, sin mar de viento, viento flojo
+const mar = (h, T, dir, extra = {}) => ({
+  hTotal: h, tTotal: T, dirTotal: dir, swellH: h, swellTp: T, swellDir: dir,
+  vientoVel: 5, vientoDir: 90, codigoTiempo: 1, esDeDia: true, diasVista: 0, ...extra,
+});
+
+test('las 60 playas tienen atlas con tabla de transferencia y punto offshore', () => {
+  for (const n of Object.keys(PLAYAS)) {
+    const a = ATLAS.playas[n];
+    assert.ok(a, `falta atlas de ${n}`);
+    assert.ok(a.k2 && a.k2.length > 100, `falta tabla K² de ${n}`);
+    assert.ok(Array.isArray(a.offshore), `falta punto offshore de ${n}`);
+  }
+});
+
+test('física: potencia y altura de rompiente', () => {
+  assert.ok(Math.abs(M.potencia(2, 10) - 0.49 * 4 * 9) < 1e-9);
+  const hb = M.alturaRompiente([{ T: 12, hLocal: 1.5 }]);
+  assert.ok(Math.abs(hb - 2.31) < 0.02, `Hb=${hb}`);
+});
+
+test('con swell moderado del NO una playa abierta puntúa más que una de fondo de ría', () => {
+  const d = mar(1.2, 11, 310);
+  for (const nivel of ['intermedio', 'pro']) {
+    assert.ok(ev('Pantín', d, nivel).nota > ev('Samil', d, nivel).nota, nivel);
+    assert.ok(ev('Razo', d, nivel).nota > ev('Santa Cristina', d, nivel).nota, nivel);
+  }
+});
+
+test('plan B: con un temporal enorme del NO, una playa de ría supera a una abierta (avanzado)', () => {
+  const d = mar(5.5, 16, 300);
+  assert.ok(ev('Samil', d, 'pro').nota > ev('Pantín', d, 'pro').nota);
+});
+
+test('playa de ría con poco mar: nota baja', () => {
+  assert.ok(ev('Samil', mar(0.6, 8, 300), 'intermedio').nota <= 3);
+});
+
+test('tormenta eléctrica: nota 1 en todos los niveles', () => {
+  for (const nivel of ['banista', 'principiante', 'intermedio', 'pro'])
+    assert.strictEqual(ev('Pantín', mar(1.2, 11, 310, { codigoTiempo: 96 }), nivel).nota, 1, nivel);
+});
+
+test('onshore fuerte hunde la nota aunque el mar sea bueno', () => {
+  const bueno = ev('Pantín', mar(1.8, 13, 310), 'pro').nota;
+  const dirOn = ((PLAYAS['Pantín'].offshoreWindDeg ?? 135) + 180) % 360;   // viento de mar según beach-data
+  const onshore = ev('Pantín', mar(1.8, 13, 310, { vientoVel: 40, vientoDir: dirOn }), 'pro').nota;
+  assert.ok(onshore <= 3 && bueno >= 7, `bueno ${bueno}, onshore ${onshore}`);
+});
+
+test('principiante: topes por tamaño y por período largo', () => {
+  assert.ok(ev('Pantín', mar(2.5, 12, 310), 'principiante').nota <= 2);
+  assert.ok(ev('Pantín', mar(0.6, 17, 310), 'principiante').nota <= 3);
+});
+
+test('principiante: pasado el tamaño ideal, más ola no sube la nota', () => {
+  let anterior = 10;
+  for (const h of [1.0, 1.4, 1.8, 2.2]) {
+    const n = ev('Razo', mar(h, 10, 330), 'principiante').nota;
+    assert.ok(n <= anterior, `h=${h} nota=${n} anterior=${anterior}`);
+    anterior = n;
+  }
+});
+
+test('glassy mejor o igual que cross-on', () => {
+  const g = ev('Razo', mar(1.4, 12, 330), 'intermedio').nota;
+  const c = ev('Razo', mar(1.4, 12, 330, { vientoVel: 25, vientoDir: 240 }), 'intermedio').nota;
+  assert.ok(g >= c);
+});
+
+test('cruce de swells: penalización máxima ×0,7 con energías iguales a 90°', () => {
+  const f = M.factorCruce([
+    { tipo: 'swell', hLocal: 1, T: 12, dir: 300 },
+    { tipo: 'swell2', hLocal: 1, T: 12, dir: 210 },
+  ]);
+  assert.ok(Math.abs(f - 0.7) < 1e-9, `f=${f}`);
+});
+
+test('baño: viento de tierra fuerte y mar grande limitan la nota', () => {
+  const p = PLAYAS['Riazor'];
+  const off = (p.offshoreWindDeg ?? 135);
+  assert.ok(ev('Riazor', mar(0.3, 8, 330, { vientoVel: 35, vientoDir: off }), 'banista').nota <= 2);
+  assert.ok(ev('Riazor', mar(2.0, 12, 330), 'banista').nota <= 2);
+  assert.ok(ev('Riazor', mar(0.2, 7, 330), 'banista').nota >= 7);
+});
+
+test('la nota siempre es un entero de 1 a 10 y la confianza una categoría', () => {
+  for (const n of Object.keys(PLAYAS)) for (const nivel of ['banista', 'principiante', 'intermedio', 'pro']) {
+    const r = ev(n, mar(1.5, 12, 290, { diasVista: 3 }), nivel);
+    assert.ok(Number.isInteger(r.nota) && r.nota >= 1 && r.nota <= 10, `${n} ${nivel} ${r.nota}`);
+    assert.ok(['alta', 'media', 'baja'].includes(r.confianza));
+  }
+});
