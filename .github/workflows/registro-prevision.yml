@@ -1,0 +1,42 @@
+name: Registro diario de previsiones
+
+on:
+  schedule:
+    - cron: '17 6 * * *'   # 06:17 UTC (08:17 en Madrid en verano, 07:17 en invierno)
+  workflow_dispatch:        # permite lanzarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: registro-prevision
+  cancel-in-progress: false
+
+jobs:
+  registrar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Comprobar sintaxis
+        run: node --check scripts/registrar-prevision.js
+
+      - name: Descargar y guardar previsión
+        run: node scripts/registrar-prevision.js
+
+      - name: Commit del registro
+        run: |
+          git config user.name  "salitre-bot"
+          git config user.email "salitre-bot@users.noreply.github.com"
+          git add registro/
+          if git diff --cached --quiet; then
+            echo "Nada nuevo que guardar"
+          else
+            git commit -m "registro: previsión $(TZ=Europe/Madrid date +%F)"
+            git push
+          fi
