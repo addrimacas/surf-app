@@ -1400,7 +1400,8 @@ function resumen(h, p, d, playa) {
   if (pp >= 14)   return hEf.toFixed(1) + 'm con ' + Math.round(pp) + 's de período — ground swell de calidad.';
   if (pp >= 11)   return hEf.toFixed(1) + 'm, ' + Math.round(pp) + 's. Swell organizado del ' + dir + '.';
   if (pp < 8)     return hEf.toFixed(1) + 'm pero período de ' + Math.round(pp) + 's — olas de viento, poco organizadas.';
-  const enStr = energia < 80 ? 'suave' : energia < 300 ? 'moderado' : energia < 800 ? 'potente' : 'muy potente';
+  // energia está en kW/m: los umbrales anteriores (80/300/800) eran de otra escala y casi siempre daba "suave"
+  const enStr = energia < 5 ? 'suave' : energia < 15 ? 'moderado' : energia < 40 ? 'potente' : 'muy potente';
   return hEf.toFixed(1) + 'm en playa, ' + Math.round(pp) + 's, mar ' + enStr + '.';
 }
 
@@ -2795,8 +2796,10 @@ async function plCargarTabla() {
   // Energía
   html += `<div class="pl-fila"><div class="pl-fila-label">Energía</div>`;
   horas.forEach((h, i) => {
-    const e = heights[i] && periods[i] ? Math.round((1025*9.81*9.81*periods[i]*heights[i]*heights[i])/(64*Math.PI)) : null;
-    html += cel(`<div class="pl-energia">${e ?? '—'} kJ</div>`, esAhoraH(h));
+    // Potencia del oleaje en mar abierto en kW/m (antes faltaba /1000 y se etiquetaba como kJ: 1,6 kW/m salía "1598 kJ")
+    const eRaw = heights[i] && periods[i] ? (1025*9.81*9.81*periods[i]*heights[i]*heights[i])/(64*Math.PI*1000) : null;
+    const e = eRaw == null ? null : (eRaw < 10 ? eRaw.toFixed(1) : Math.round(eRaw));
+    html += cel(`<div class="pl-energia">${e ?? '—'} kW/m</div>`, esAhoraH(h));
   });
   html += `</div>`;
 
