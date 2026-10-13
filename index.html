@@ -1668,7 +1668,101 @@ function renderCabecera(playa, estado) {
           <div id="desglose-factores"></div>
         </div>
       </div>
+      <button onclick="abrirValoracion()" style="margin-top:12px;width:100%;background:rgba(77,184,255,0.10);border:1px solid rgba(77,184,255,0.30);border-radius:12px;padding:9px 12px;color:#4db8ff;font-size:13px;font-weight:600;cursor:pointer;">
+        Valorar mi sesión de hoy
+      </button>
     </div>`;
+}
+
+// ── Valoraciones post-sesión (spec v1.1, punto 18) ─────────────────────────────
+// De momento se guardan en este dispositivo (localStorage) con la predicción completa del
+// momento y la versión del motor, para poder subirlas cuando haya backend. Una por playa y día.
+const CLAVE_VALORACIONES = 'salitre_valoraciones';
+function leerValoraciones() {
+  try { return JSON.parse(localStorage.getItem(CLAVE_VALORACIONES) || '[]'); } catch (e) { return []; }
+}
+function guardarValoraciones(lista) {
+  try { localStorage.setItem(CLAVE_VALORACIONES, JSON.stringify(lista)); return true; } catch (e) { return false; }
+}
+function hoyLocal() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function abrirValoracion() {
+  const ev = window.ultimaEvaluacion;
+  if (!ev) return;
+  const previa = leerValoraciones().find(v => v.playa === ev.playa && v.fecha === hoyLocal());
+  let fondo = document.getElementById('valoracion-overlay');
+  if (!fondo) {
+    fondo = document.createElement('div');
+    fondo.id = 'valoracion-overlay';
+    fondo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:flex-end;justify-content:center;';
+    fondo.addEventListener('click', e => { if (e.target === fondo) cerrarValoracion(); });
+    document.body.appendChild(fondo);
+  }
+  const botonesNota = Array.from({ length: 10 }, (_, i) => i + 1).map(n =>
+    `<button data-nota="${n}" class="val-nota" style="flex:1;min-width:0;padding:10px 0;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:white;font-weight:700;font-size:14px;cursor:pointer;">${n}</button>`).join('');
+  const botonesCoinc = [['si', 'Sí'], ['mas_grande', 'Más grande'], ['mas_pequena', 'Más pequeña']].map(([v, t]) =>
+    `<button data-coinc="${v}" class="val-coinc" style="flex:1;padding:9px 4px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#ccddee;font-size:13px;cursor:pointer;">${t}</button>`).join('');
+  fondo.innerHTML = `
+    <div style="width:100%;max-width:440px;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:18px 16px 24px;">
+      <div style="font-size:16px;font-weight:700;margin-bottom:2px;">¿Qué tal la sesión en ${ev.playa}?</div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:14px;">La previsión daba un ${ev.nota}${ev.hb != null ? ' con ~' + ev.hb.toFixed(1) + ' m en la playa' : ''}. Tu valoración ayuda a afinar esta playa.${previa ? ' Ya valoraste hoy: se sustituirá.' : ''}</div>
+      <div style="display:flex;gap:4px;margin-bottom:16px;">${botonesNota}</div>
+      <div style="font-size:13px;color:#ccddee;margin-bottom:8px;">¿El tamaño coincidió con la previsión?</div>
+      <div style="display:flex;gap:6px;margin-bottom:18px;">${botonesCoinc}</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="cerrarValoracion()" style="flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:none;color:#8899aa;font-size:14px;cursor:pointer;">Cancelar</button>
+        <button id="val-guardar" disabled style="flex:2;padding:11px;border-radius:12px;border:none;background:#4db8ff;color:#06182c;font-size:14px;font-weight:700;cursor:pointer;opacity:0.4;">Guardar</button>
+      </div>
+      <div id="val-estado" style="font-size:12px;color:#8899aa;margin-top:10px;text-align:center;"></div>
+    </div>`;
+  let nota = previa?.nota ?? null, coinc = previa?.coincidio ?? null;
+  const marcar = () => {
+    fondo.querySelectorAll('.val-nota').forEach(b => {
+      const on = +b.dataset.nota === nota;
+      b.style.background = on ? '#4db8ff' : 'rgba(255,255,255,0.05)';
+      b.style.color = on ? '#06182c' : 'white';
+    });
+    fondo.querySelectorAll('.val-coinc').forEach(b => {
+      const on = b.dataset.coinc === coinc;
+      b.style.background = on ? 'rgba(77,184,255,0.25)' : 'rgba(255,255,255,0.05)';
+    });
+    const g = document.getElementById('val-guardar');
+    g.disabled = nota == null;
+    g.style.opacity = nota == null ? 0.4 : 1;
+  };
+  fondo.querySelectorAll('.val-nota').forEach(b => b.addEventListener('click', () => { nota = +b.dataset.nota; marcar(); }));
+  fondo.querySelectorAll('.val-coinc').forEach(b => b.addEventListener('click', () => { coinc = b.dataset.coinc; marcar(); }));
+  document.getElementById('val-guardar').addEventListener('click', () => {
+    const lista = leerValoraciones().filter(v => !(v.playa === ev.playa && v.fecha === hoyLocal()));
+    lista.push({
+      version: 1, playa: ev.playa, fecha: hoyLocal(), registrada: new Date().toISOString(),
+      nota, coincidio: coinc, perfil: ev.perfil,
+      prediccion: { nota: ev.nota, hb: ev.hb, confianza: ev.confianza, motor: ev.motor, modelo: ev.modelo,
+                    calculada: new Date(ev.ts).toISOString(), datos: ev.datos },
+    });
+    const ok = guardarValoraciones(lista);
+    document.getElementById('val-estado').textContent = ok
+      ? 'Guardada en este dispositivo. Gracias.'
+      : 'No se ha podido guardar en este navegador.';
+    if (ok) setTimeout(cerrarValoracion, 900);
+  });
+  marcar();
+  fondo.style.display = 'flex';
+}
+function cerrarValoracion() {
+  const f = document.getElementById('valoracion-overlay');
+  if (f) f.style.display = 'none';
+}
+// Exportar las valoraciones de este dispositivo (para subirlas cuando exista backend)
+function exportarValoraciones() {
+  const blob = new Blob([JSON.stringify(leerValoraciones(), null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'salitre-valoraciones-' + hoyLocal() + '.json';
+  a.click();
 }
 
 function toggleSelector() {
@@ -2097,6 +2191,12 @@ async function cargarInicio() {
       { vel: velViento, dir: dirViento, racha: velRacha, codigo: codigoCielo, esDeDia: a.is_day == null ? null : a.is_day == 1 },
       { diasVista: 0, tempAgua, marea: mareaEn(Date.now()) });
     const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento, velRacha, swellH, windH, null, null, null, datosAhora);
+    window.ultimaEvaluacion = {
+      playa: playaActiva.nombre, perfil: perfilActivo, ts: Date.now(),
+      motor: estado.v1 ? estado.v1.motor : 'v0', modelo: marine._v0 ? 'auto (playa)' : MODELO_OLEAJE,
+      nota: estado.score, hb: estado.v1?.hb ?? null, confianza: estado.v1?.confianza ?? null,
+      datos: datosAhora ?? { hTotal: altura, tTotal: periodo, dirTotal: dirSwell, vientoVel: velViento, vientoDir: dirViento },
+    };
     window.ultimoDirSwell = dirSwell;
     const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
     const cieloActual = cielo(codigoCielo);

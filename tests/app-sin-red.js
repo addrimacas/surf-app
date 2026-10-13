@@ -79,6 +79,14 @@ setTimeout(async () => {
     w.eval(`perfilActivo='${perf}'`); await w.eval('cargarInicio()');
     console.log(`  perfil ${perf}: nota`, doc.querySelector('#contenido-inicio span[style*="font-size:22px"]')?.textContent);
   }
+  // Valoración post-sesión
+  w.eval("perfilActivo='intermedio'"); await w.eval('cargarInicio()');
+  w.abrirValoracion();
+  doc.querySelector('.val-nota[data-nota="7"]').click();
+  doc.querySelector('.val-coinc[data-coinc="mas_pequena"]').click();
+  doc.getElementById('val-guardar').click();
+  const vals = JSON.parse(w.localStorage.getItem('salitre_valoraciones') || '[]');
+  console.log('Valoraciones guardadas:', vals.length, '| nota', vals[0]?.nota, '| coincidió', vals[0]?.coincidio, '| motor', vals[0]?.prediccion?.motor, '| modelo', vals[0]?.prediccion?.modelo);
   const marinas = peticiones.filter(u => u.includes('marine-api'));
   console.log('Peticiones mareas:', peticiones.filter(u => u.includes('salitre-mareas')).length);
   console.log('Peticiones oleaje:', marinas.length, '| con modelo fijado:', marinas.filter(u => u.includes('models=meteofrance_wave')).length);
