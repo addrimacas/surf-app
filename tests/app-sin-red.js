@@ -49,7 +49,10 @@ const dom = new JSDOM(html, {
         return resp(marina(u));
       }
       if (u.includes('api.open-meteo.com')) return resp(atmos(u));
-      return resp({}, false, 404); // mareas y resto
+      if (u.includes('salitre-mareas')) return resp({ mareas: { datos: { marea: [
+        { hora: '03:10', altura: '0.80', tipo: 'bajamar' }, { hora: '09:25', altura: '3.40', tipo: 'pleamar' },
+        { hora: '15:40', altura: '0.90', tipo: 'bajamar' }, { hora: '21:50', altura: '3.30', tipo: 'pleamar' } ] } } });
+      return resp({}, false, 404);
     };
     w.L = new Proxy(function () {}, { get: () => () => new Proxy({}, { get: () => () => ({}) }) });
     w.console.error = (...a) => console.log('[console.error]', ...a.map(String));
@@ -77,6 +80,7 @@ setTimeout(async () => {
     console.log(`  perfil ${perf}: nota`, doc.querySelector('#contenido-inicio span[style*="font-size:22px"]')?.textContent);
   }
   const marinas = peticiones.filter(u => u.includes('marine-api'));
+  console.log('Peticiones mareas:', peticiones.filter(u => u.includes('salitre-mareas')).length);
   console.log('Peticiones oleaje:', marinas.length, '| con modelo fijado:', marinas.filter(u => u.includes('models=meteofrance_wave')).length);
   console.log('Ejemplo:', marinas[0]?.slice(0, 160));
   process.exit(0);

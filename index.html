@@ -1713,6 +1713,51 @@ function iniciarPlayaFavorita() {
   }
 }
 
+// Mareas IHM (vía Worker) con caché por puerto y día: las usan la gráfica y la nota (motor v1)
+const _cacheMareas = new Map();
+function pedirMareaDia(port, yyyymmdd) {
+  const k = port + '_' + yyyymmdd;
+  if (!_cacheMareas.has(k)) {
+    _cacheMareas.set(k, fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${yyyymmdd}`)
+      .then(r => r.json())
+      .catch(e => { _cacheMareas.delete(k); throw e; }));
+  }
+  return _cacheMareas.get(k);
+}
+
+/**
+ * Curva de marea de ayer, hoy y mañana (hora local española, como la devuelve el IHM).
+ * Devuelve fracEn(fecha): 0 = bajamar, 1 = pleamar, según el ciclo en curso; null fuera de rango.
+ */
+async function curvaMarea(playa) {
+  const port = playa.portIHM || 'coruna';
+  const hoy = new Date();
+  const f = d => d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  const dias = [-1, 0, 1].map(o => new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + o));
+  const datos = await Promise.all(dias.map(d => pedirMareaDia(port, f(d))));
+  const toMin = m => { const [h, mm] = m.hora.split(':').map(Number); return h * 60 + mm; };
+  const puntos = datos.flatMap((d, k) => (d?.mareas?.datos?.marea ?? [])
+    .map(m => ({ min: toMin(m) + (k - 1) * 1440, h: parseFloat(m.altura) })))
+    .filter(p => p.h > 0.05).sort((a, b) => a.min - b.min);
+  if (puntos.length < 3) return null;
+  const medianoche = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()).getTime();
+  return {
+    fracEn(fecha) {
+      const T = (fecha.getTime() - medianoche) / 60000;
+      for (let i = 0; i < puntos.length - 1; i++) {
+        const A = puntos[i], B = puntos[i + 1];
+        if (T >= A.min && T <= B.min) {
+          const r = (T - A.min) / (B.min - A.min);
+          const h = A.h + (B.h - A.h) * (1 - Math.cos(Math.PI * r)) / 2;
+          const lo = Math.min(A.h, B.h), hi = Math.max(A.h, B.h);
+          return hi - lo > 0.1 ? (h - lo) / (hi - lo) : null;
+        }
+      }
+      return null;
+    },
+  };
+}
+
 async function htmlMareas(playa, tempAgua) {
   const port = playa.portIHM || 'coruna';
   const hoy = new Date();
@@ -1721,12 +1766,9 @@ async function htmlMareas(playa, tempAgua) {
 
   try {
     const ayer = new Date(hoy.getTime() - 86400000);
-    const [r0, r1, r2] = await Promise.all([
-      fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(ayer)}`),
-      fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(hoy)}`),
-      fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${fmt(manana)}`),
+    const [d0, d1, d2] = await Promise.all([
+      pedirMareaDia(port, fmt(ayer)), pedirMareaDia(port, fmt(hoy)), pedirMareaDia(port, fmt(manana)),
     ]);
-    const [d0, d1, d2] = await Promise.all([r0.json(), r1.json(), r2.json()]);
 
     const mareasHoy = d1.mareas?.datos?.marea ?? [];
     if (mareasHoy.length === 0) throw new Error('sin datos');
@@ -2049,9 +2091,11 @@ async function cargarInicio() {
     const swellH      = c.swell_wave_height;
     const windH       = c.wind_wave_height;
     const velRacha    = a.wind_gusts_10m;
+    const marea       = await curvaMarea(playaActiva).catch(() => null);
+    const mareaEn     = ts => { const fr = marea?.fracEn(new Date(ts)); return fr == null ? null : { frac: fr }; };
     const datosAhora  = datosMotor(c, null,
       { vel: velViento, dir: dirViento, racha: velRacha, codigo: codigoCielo, esDeDia: a.is_day == null ? null : a.is_day == 1 },
-      { diasVista: 0, tempAgua });
+      { diasVista: 0, tempAgua, marea: mareaEn(Date.now()) });
     const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento, velRacha, swellH, windH, null, null, null, datosAhora);
     window.ultimoDirSwell = dirSwell;
     const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
@@ -2062,7 +2106,7 @@ async function cargarInicio() {
     document.getElementById('ultima-actualizacion').textContent =
       `Actualizado: ${ahora.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;
 
-    const prevHtml = marine.hourly ? renderPrevision(marine, atmo, ahora) : '';
+    const prevHtml = marine.hourly ? renderPrevision(marine, atmo, ahora, mareaEn) : '';
 
     document.getElementById('contenido-inicio').innerHTML = `
       ${renderCabecera(playaActiva, estado)}
@@ -2200,7 +2244,7 @@ async function cargarInicio() {
   }
 }
 
-function renderPrevision(marine, atmo, ahora) {
+function renderPrevision(marine, atmo, ahora, mareaEn = () => null) {
   if (!marine?.hourly?.time) return '';
   const tiempos  = marine.hourly.time;
   const alturas  = marine.hourly.wave_height;
@@ -2234,7 +2278,7 @@ function renderPrevision(marine, atmo, ahora) {
     const dia    = wi >= 0 ? atmo?.hourly?.is_day?.[wi] : null;
     const datos = datosMotor(marine.hourly, i,
       { vel, dir: wdir, racha: gust, codigo, esDeDia: dia == null ? null : dia == 1 },
-      { diasVista: diasDesdeAhora(tiempos[i]) });
+      { diasVista: diasDesdeAhora(tiempos[i]), marea: mareaEn(tiempos[i] * 1000) });
     return clasificar(
       alturas[i], dirs[i], playaActiva, periodos[i],
       wdir, vel, gust,
@@ -2429,7 +2473,9 @@ async function cargarMejoresOlas() {
   }
 
   contenedor.innerHTML = top.map(r => {
-    const factor = textoFactorDiferencial(r.estado.componentes ?? {}, r.playa);
+    const factor = r.estado.v1
+      ? `~${fmt(r.estado.v1.hb)} m en la playa`
+      : textoFactorDiferencial(r.estado.componentes ?? {}, r.playa);
     const esPoco = r.playa.consistencia < 0.25 && r.estado.score >= 7;
     return `
     <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
