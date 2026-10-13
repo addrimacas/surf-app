@@ -355,6 +355,16 @@ function procesarPlaya(S, I, p) {
 }
 
 // ---------------------------------------------------------------- revisión visual
+// K en altura a 12 s por la normal, con la misma dispersión que usa el motor (swell, σ 17,5°)
+function kEnNormal(a) {
+  const t = Buffer.from(a.k2, 'base64'), it = PERIODOS.indexOf(12), s = 17.5;
+  let su = 0, pe = 0;
+  for (let d = -3 * s; d <= 3 * s; d++) {
+    const w = Math.exp(-0.5 * (d / s) ** 2), g = ((Math.round(a.normal + d) % 360) + 360) % 360;
+    su += w * t[it * 360 + g] / 255; pe += w;
+  }
+  return Math.sqrt(su / pe) * (a.factorConfinamiento ?? 1);
+}
 function htmlRevision(atlas, playas) {
   const tarjetas = playas.map(p => {
     const a = atlas.playas[p.nombre];
@@ -377,29 +387,46 @@ function htmlRevision(atlas, playas) {
     }
     const nr = a.normal * Math.PI / 180;
     const ori = (p.orientComputed ?? p.orient) * Math.PI / 180;
-    return `<figure><svg viewBox="0 0 160 160" role="img" aria-label="Exposición de ${p.nombre}">
+    const kNormal = kEnNormal(a);
+    const marca = p.exposicion != null && Math.abs(kNormal - p.exposicion) > 0.25;
+    return `<figure${marca ? ' class="marca"' : ''}><svg viewBox="0 0 160 160" role="img" aria-label="Exposición de ${p.nombre}">
       <circle cx="${C}" cy="${C}" r="${R}" fill="none" class="aro"/>${sectores}
       <line x1="${C}" y1="${C}" x2="${(C + R * Math.sin(nr)).toFixed(1)}" y2="${(C - R * Math.cos(nr)).toFixed(1)}" class="normal"/>
       <line x1="${C}" y1="${C}" x2="${(C + R * 0.8 * Math.sin(ori)).toFixed(1)}" y2="${(C - R * 0.8 * Math.cos(ori)).toFixed(1)}" class="orient"/>
       <text x="${C}" y="10" class="n">N</text></svg>
       <figcaption><b>${p.nombre}</b><span>${p.zona} · abierta ${(a.fraccionAbierta * 100).toFixed(0)} % · normal ${a.normal}° (antes ${p.orientComputed ?? p.orient}°)</span>
-      ${a.offshore ? `<span>offshore a ${a.offshoreKm} km</span>` : '<span class="aviso">sin punto offshore</span>'}
+      <span>K a 12 s por la normal ${kNormal.toFixed(2)} · exposición antigua ${p.exposicion ?? '—'}</span>
+      <span>confinamiento ${a.confinamientoKm} km · offshore a ${a.offshoreKm ?? '—'} km</span>
       ${a.avisos.map(t => `<span class="aviso">${t}</span>`).join('')}</figcaption></figure>`;
   }).join('\n');
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Atlas de exposición</title><style>
-:root{--bg:#f7f8fa;--fg:#1d2733;--sub:#5b6b7c;--abierto:#2b7fd1;--tierra:#c9a46b;--aro:#d5dbe2;--normal:#d1342b;--orient:#222}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1720;--fg:#e6edf3;--sub:#9fb0c1;--abierto:#4da3ff;--tierra:#8a6e44;--aro:#2a3644;--normal:#ff6b62;--orient:#e6edf3}}
-body{margin:0;padding:16px;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif}
-h1{font-size:20px;margin:0 0 4px}p{color:var(--sub);margin:0 0 16px;max-width:70ch}
-.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-figure{margin:0;padding:10px;border:1px solid var(--aro);border-radius:10px}svg{width:100%;max-width:200px;display:block;margin:auto}
-.aro{stroke:var(--aro)}.normal{stroke:var(--normal);stroke-width:2}.orient{stroke:var(--orient);stroke-width:1;stroke-dasharray:3 2}
-.n{font-size:9px;fill:var(--sub);text-anchor:middle}figcaption{display:flex;flex-direction:column;gap:2px;font-size:12px}
-figcaption span{color:var(--sub)}.aviso{color:var(--normal)!important}</style></head><body>
+  return `<title>Atlas de exposición Salitre</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Hoja de revisión técnica: rejilla de rosas polares, una por playa, tipo carta náutica */
+:root{--bg:#f4f7f8;--fg:#14242b;--sub:#56707a;--abierto:#1f6fae;--tierra:#c19a5b;--linea:#d3dde1;--normal:#c2412d;--aviso:#b3401f;--panel:#ffffff;
+ --f-texto:"IBM Plex Sans",system-ui,sans-serif;--f-dato:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e171b;--fg:#e3ecef;--sub:#93a9b2;--abierto:#4e9fdc;--tierra:#8c7045;--linea:#26353c;--normal:#ef7a63;--aviso:#f08a6c;--panel:#142026;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e171b;--fg:#e3ecef;--sub:#93a9b2;--abierto:#4e9fdc;--tierra:#8c7045;--linea:#26353c;--normal:#ef7a63;--aviso:#f08a6c;--panel:#142026;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 var(--f-texto);padding-inline:16px;padding-block:20px}
+h1{font-size:20px;margin:0 0 6px;text-wrap:balance}
+p{color:var(--sub);margin:0 0 18px;max-width:68ch}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+figure{margin:0;padding:10px;background:var(--panel);border:1px solid var(--linea);border-radius:8px;min-width:0}
+figure.marca{border-color:var(--aviso)}
+svg{width:100%;max-width:190px;display:block;margin:0 auto 6px}
+.aro{stroke:var(--linea);fill:none}.normal{stroke:var(--normal);stroke-width:2}.orient{stroke:var(--fg);stroke-width:1;stroke-dasharray:3 2;opacity:.6}
+.n{font:9px var(--f-dato);fill:var(--sub);text-anchor:middle}
+figcaption{display:flex;flex-direction:column;gap:2px;font-size:12px}
+figcaption b{font-size:13px}
+figcaption span{color:var(--sub);font-family:var(--f-dato);font-size:11px}
+.aviso{color:var(--aviso)!important}
+.ley{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--sub);margin:-8px 0 16px}
+.ley i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+</style>
 <h1>Atlas de exposición · ${playas.length} playas</h1>
-<p>Azul: direcciones con mar abierto a 150 km. Ocre: tierra (más largo = obstáculo más lejos). Línea roja: normal calculada. Línea discontinua: orientación de beach-data.js. Costa GSHHG full; generado ${atlas.generado}.</p>
-<div class="g">${tarjetas}</div></body></html>`;
+<p>Cada rosa muestra hacia dónde ve mar abierto la playa (azul) y dónde tiene tierra delante (ocre; más largo = obstáculo más lejos). Costa GSHHG en resolución completa, rayos cada 0,5° hasta 150 km. Generado ${atlas.generado}. Las tarjetas con borde rojo difieren mucho de la exposición calibrada a mano: conviene revisarlas.</p>
+<div class="ley"><span><i style="background:var(--abierto)"></i>mar abierto</span><span><i style="background:var(--tierra)"></i>tierra</span><span><i style="background:var(--normal)"></i>normal calculada</span><span><i style="background:var(--fg);opacity:.6"></i>orientación de beach-data.js</span></div>
+<div class="g">${tarjetas}</div>`;
 }
 
 // ---------------------------------------------------------------- main
@@ -435,7 +462,9 @@ function main() {
     `const ATLAS_PLAYAS = ${JSON.stringify(runtime)};\n` +
     `if (typeof module !== 'undefined') module.exports = ATLAS_PLAYAS;\n`;
   fs.writeFileSync(path.join(RAIZ, 'atlas-playas.js'), js);
-  fs.writeFileSync(path.join(RAIZ, 'docs', 'atlas-revision.html'), htmlRevision(atlas, playas));
+  fs.writeFileSync(path.join(RAIZ, 'docs', 'atlas-revision.html'),
+    '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">\n'
+    + htmlRevision(atlas, playas).replace('</style>', '</style></head><body>') + '\n</body></html>\n');
   console.log(`Listo en ${((Date.now() - t0) / 1000).toFixed(0)} s → atlas-playas.js, data/atlas-completo.json, docs/atlas-revision.html`);
 }
 
