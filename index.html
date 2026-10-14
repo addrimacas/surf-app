@@ -893,14 +893,14 @@
           <div class="perfil-opcion-desc">Olas pequeñas, condiciones suaves</div>
         </div>
       </div>
-      <div class="perfil-opcion" data-perfil="intermedio">
+      <div class="perfil-opcion activo" data-perfil="intermedio">
         <div class="perfil-opcion-icon" aria-hidden="true"></div>
         <div class="perfil-opcion-info">
           <div class="perfil-opcion-nombre">Intermedio</div>
           <div class="perfil-opcion-desc">Olas de 0.6–1.8m, algo de técnica</div>
         </div>
       </div>
-      <div class="perfil-opcion activo" data-perfil="pro">
+      <div class="perfil-opcion" data-perfil="pro">
         <div class="perfil-opcion-icon" aria-hidden="true"></div>
         <div class="perfil-opcion-info">
           <div class="perfil-opcion-nombre">Pro</div>
@@ -997,7 +997,10 @@ const PERFILES = {
   pro:          { svg: SVG_PERFIL_PRO,          nombre:'Pro',          hMinMult:1.0,  hMaxMult:1.4  },
 };
 
-let perfilActivo = localStorage.getItem('salitre_perfil') || 'pro';
+// Perfil por defecto: intermedio (es una app de surf). Si el usuario ya eligió uno, se respeta.
+let perfilActivo = (() => {
+  try { return localStorage.getItem('salitre_perfil') || 'intermedio'; } catch (e) { return 'intermedio'; }
+})();
 
 function perfilMultHMin(playa) { return PERFILES[perfilActivo]?.hMinMult ?? 1.0; }
 function perfilMultHMax(playa) { return PERFILES[perfilActivo]?.hMaxMult ?? 1.0; }
