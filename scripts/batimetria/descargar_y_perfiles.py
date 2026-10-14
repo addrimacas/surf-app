@@ -30,15 +30,17 @@ def descargar():
         u = ('https://ows.emodnet-bathymetry.eu/wcs?service=WCS&version=2.0.1&request=GetCoverage'
              f'&coverageId={cov}&subset=Lat({BBOX["lat0"]},{BBOX["lat1"]})&subset=Long({BBOX["lon0"]},{BBOX["lon1"]})'
              '&format=image/tiff')
-        try:
-            with urllib.request.urlopen(u, timeout=300) as r:
-                datos = r.read()
-            if datos[:2] in (b'II', b'MM'):
-                print('WCS OK', cov, len(datos), 'bytes')
-                return datos
-            print('WCS', cov, 'no es TIFF:', datos[:600])
-        except Exception as e:
-            print('WCS', cov, 'error', e)
+        for intento in range(6):
+            try:
+                with urllib.request.urlopen(u, timeout=300) as r:
+                    datos = r.read()
+                if datos[:2] in (b'II', b'MM'):
+                    print('WCS OK', cov, len(datos), 'bytes')
+                    return datos
+                print('WCS', cov, 'no es TIFF:', datos[:600]); break
+            except Exception as e:
+                print('WCS', cov, 'intento', intento + 1, 'error', e)
+                import time; time.sleep(45 * (intento + 1))
     sys.exit('No se pudo descargar la batimetría')
 
 
