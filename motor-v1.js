@@ -258,13 +258,17 @@
       ['tamano', f.tamano], ['superficie', f.superficie], ['cruce', f.cruce], ['marea', f.marea],
     ].sort((a, b) => a[1] - b[1]);
     const [clave, valor] = cand[0];
-    if (valor >= 0.85) return { clave: null, texto: 'Ningún factor parece limitar mucho' };
+    const r = NIVELES[nivel] ?? NIVELES.pro;
+    const paraNivel = `para nivel ${nivel}`;
+    if (valor >= 0.85) {
+      const enRango = ev.hb >= r.idealMin && ev.hb <= r.idealMax;
+      return { clave: null, texto: enRango ? `Buen tamaño ${paraNivel}` : 'Ningún factor parece limitar mucho' };
+    }
     let texto;
     if (clave === 'tamano') {
-      const r = NIVELES[nivel] ?? NIVELES.pro;
       if (f.capacidad < f.ajusteNivel) texto = 'La playa podría cerrar con este tamaño';
-      else if (ev.hb < r.idealMin) texto = ev.hb < 0.3 ? 'Apenas parece entrar ola en esta playa' : 'Podría quedarse algo pequeño';
-      else texto = 'Podría estar grande para tu nivel';
+      else if (ev.hb < r.idealMin) texto = ev.hb < 0.3 ? 'Apenas parece entrar ola en esta playa' : `Podría quedarse pequeño ${paraNivel}`;
+      else texto = `Podría estar grande ${paraNivel}`;
     } else if (clave === 'superficie') {
       texto = f.limpieza < f.viento ? 'Mucho mar de viento: las olas podrían estar desordenadas'
         : (ev.viento.tipo === 'off' ? 'Viento de tierra fuerte' : `Viento ${ev.viento.etiqueta.toLowerCase()} que podría estropear la ola`);
@@ -372,10 +376,51 @@
     };
   }
 
+  // ---------------------------------------------------------------- frase de la tarjeta principal
+  // Se construye solo con los datos (tamaño en la playa y viento), igual para todas las playas.
+  // Tamaño: altura de rompiente con referencias del cuerpo de un adulto de pie.
+  function tallaTexto(hb) {
+    if (!valido(hb)) return null;
+    if (hb < 0.25) return 'casi sin ola';
+    if (hb < 0.5) return 'olas por la rodilla';
+    if (hb < 0.85) return 'olas por la cintura';
+    if (hb < 1.25) return 'olas por el pecho';
+    if (hb < 1.7) return 'olas por la cabeza';
+    if (hb < 2.4) return 'olas de más de una cabeza';
+    return 'olas de dos cabezas o más';
+  }
+  function superficieTexto(r) {
+    const v = r.viento || {};
+    const desordenado = r.factores?.limpieza != null && r.factores.limpieza < 0.7;
+    let t;
+    if (v.tipo === 'glassy') t = 'sin apenas viento';
+    else if (v.tipo === 'off') t = 'con viento de tierra';
+    else if (v.tipo === 'cross') t = 'con viento cruzado';
+    else if (v.tipo === 'on') t = 'con viento de mar';
+    else t = null;
+    if (desordenado) t = t ? `${t} y mar desordenado` : 'con mar desordenado';
+    return t;
+  }
+  function frase(r) {
+    if (!r) return '';
+    if (r.esBano) {
+      const hb = r.hb;
+      const mar = hb <= 0.4 ? 'Mar en calma en la orilla' : hb <= 0.7 ? 'Algo de ola en la orilla'
+        : hb <= 1.0 ? 'Mar movido en la orilla' : 'Mar fuerte para el baño';
+      const v = r.viento?.tipo === 'off' ? ', con viento de tierra' : r.viento?.tipo ? ', con viento de mar' : '';
+      return `Se espera: ${mar.charAt(0).toLowerCase() + mar.slice(1)}${v}`;
+    }
+    const talla = tallaTexto(r.hb);
+    if (!talla) return '';
+    if (talla === 'casi sin ola') return 'Se espera casi sin ola';
+    const sup = superficieTexto(r);
+    return `Se esperan ${talla}${sup ? ', ' + sup : ''}`;
+  }
+
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
     evaluar, evaluarBano, transmision, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
-    clasificarViento, prepararParticiones,
+    clasificarViento, prepararParticiones, frase, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   global.MotorV1 = API;

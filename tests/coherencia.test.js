@@ -112,3 +112,44 @@ test('la nota siempre es un entero de 1 a 10 y la confianza una categoría', () 
     assert.ok(['alta', 'media', 'baja'].includes(r.confianza));
   }
 });
+
+// Barrido completo: 60 playas × 8 direcciones × 6 alturas × 3 períodos × 4 vientos × 4 niveles.
+// No comprueba casos sueltos: comprueba reglas que deben cumplirse en todas las combinaciones.
+test('barrido: frase y veredicto coherentes con el tamaño en todas las playas', () => {
+  const DIRS = [0, 45, 90, 135, 180, 225, 270, 315];
+  const ALTS = [0.3, 0.8, 1.3, 2.0, 3.0, 5.0];
+  const PERS = [7, 11, 15];
+  let n = 0;
+  for (const nombre of Object.keys(PLAYAS)) {
+    const off = PLAYAS[nombre].offshoreWindDeg ?? 90;
+    const VIENTOS = [{ vientoVel: 3, vientoDir: 0 }, { vientoVel: 15, vientoDir: off },
+      { vientoVel: 15, vientoDir: (off + 90) % 360 }, { vientoVel: 25, vientoDir: (off + 180) % 360 }];
+    for (const dir of DIRS) for (const h of ALTS) for (const T of PERS) for (const vi of VIENTOS) {
+      for (const nivel of ['banista', 'principiante', 'intermedio', 'pro']) {
+        const r = ev(nombre, mar(h, T, dir, vi), nivel);
+        const f = M.frase(r);
+        assert.ok(f && f.startsWith('Se espera'), `${nombre} ${nivel}: frase vacía`);
+        assert.ok(r.limitante?.texto, `${nombre} ${nivel}: sin veredicto`);
+        if (nivel === 'banista') continue;
+        const R = M.NIVELES[nivel];
+        const t = r.limitante.texto;
+        if (t.startsWith('Buen tamaño')) assert.ok(r.hb >= R.idealMin && r.hb <= R.idealMax, `${nombre} ${nivel} hb ${r.hb}: «${t}»`);
+        if (t.includes('pequeño')) assert.ok(r.hb < R.idealMin, `${nombre} ${nivel} hb ${r.hb}: «${t}»`);
+        if (t.includes('grande para')) assert.ok(r.hb > R.idealMax, `${nombre} ${nivel} hb ${r.hb}: «${t}»`);
+        n++;
+      }
+    }
+  }
+  assert.ok(n > 100000, `combinaciones ${n}`);
+});
+
+test('barrido: con el mismo viento, más mar fuera nunca da menos ola en la playa', () => {
+  for (const nombre of Object.keys(PLAYAS)) for (const dir of [0, 90, 180, 270, 315]) for (const T of [8, 12, 16]) {
+    let prev = -1;
+    for (const h of [0.5, 1, 1.5, 2, 3, 4, 6]) {
+      const hb = ev(nombre, mar(h, T, dir), 'intermedio').hb;
+      assert.ok(hb >= prev - 1e-9, `${nombre} dir ${dir} T ${T}: ${h} m fuera da ${hb} < ${prev}`);
+      prev = hb;
+    }
+  }
+});

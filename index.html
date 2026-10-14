@@ -1488,7 +1488,8 @@ function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha
 
   const nivel = score <= 3 ? 'bajo' : score <= 5 ? 'medio' : score <= 7 ? 'bien' : score < 9.5 ? 'bueno' : 'top';
   const perfil = (typeof perfilActivo !== 'undefined' ? perfilActivo : null) ?? 'pro';
-  const texto  = (TEXTOS[perfil] ?? TEXTOS.pro)[nivel];
+  // Motor v1: frase concreta generada con los datos (tamaño y viento); el veredicto por nivel va debajo
+  const texto  = (v1 && MotorV1.frase(v1)) || (TEXTOS[perfil] ?? TEXTOS.pro)[nivel];
   const color  = score <= 3 ? '#ff4444' : score <= 5 ? '#FF6B00' : score <= 7 ? '#e6a817' : '#00cc88';
   const bg     = score <= 3 ? '#fff0f0' : score <= 5 ? '#fff4ee' : score <= 7 ? '#fffbee' : '#f0fff8';
 
@@ -2635,11 +2636,17 @@ function seleccionarPlayaPorNombre(nombre) {
     playaActiva = playa;
     document.getElementById('dropdown-playas').style.display = 'none';
     // Volver arriba y mostrar que se carga la nueva playa (antes se quedaba abajo y parecía no hacer nada)
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    document.querySelectorAll('.pantalla.activa').forEach(el => { el.scrollTop = 0; });
+    // Instantáneo (el suave se corta en móvil al cambiar el contenido) y otra vez al terminar de cargar
+    const arriba = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      document.querySelectorAll('.pantalla.activa').forEach(el => { el.scrollTop = 0; });
+    };
+    arriba();
     const cont = document.getElementById('contenido-inicio');
     if (cont) cont.innerHTML = `<p class="actualizando">Consultando ${playa.nombre}...</p>`;
-    cargarInicio();   // cargarInicio recarga «Mejores olas cerca» al terminar
+    Promise.resolve(cargarInicio()).finally(arriba);   // cargarInicio recarga «Mejores olas cerca» al terminar
   }
 }
 
