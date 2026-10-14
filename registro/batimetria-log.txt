@@ -1,0 +1,14 @@
+Coberturas WCS: ['emodnet__mean', 'emodnet__mean_2016', 'emodnet__mean_2018', 'emodnet__mean_2020', 'emodnet__mean_2022', 'emodnet__mean_atlas_land', 'emodnet__mean_multicolour', 'emodnet__mean_rainbowcolour']
+WCS OK emodnet__mean 20972064 bytes
+Traceback (most recent call last):
+  File "/home/runner/work/surf-app/surf-app/scripts/batimetria/descargar_y_perfiles.py", line 116, in <module>
+    main()
+  File "/home/runner/work/surf-app/surf-app/scripts/batimetria/descargar_y_perfiles.py", line 70, in main
+    z, lon0, lat0, dx, dy = leer(descargar())
+                            ^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/surf-app/surf-app/scripts/batimetria/descargar_y_perfiles.py", line 49, in leer
+    escala = pag.tags['ModelPixelScaleTag'].value
+             ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/tifffile/tifffile.py", line 11407, in __getitem__
+    raise KeyError(key)
+KeyError: 'ModelPixelScaleTag'
