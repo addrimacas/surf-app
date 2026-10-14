@@ -1634,14 +1634,28 @@ function esNoche(sunrise, sunset) {
 }
 
 // Luna creciente con el mismo trazo que el sol (y nube opcional para cielo parcialmente cubierto de noche)
-function svgLuna(s, conNube = false) {
-  const luna = conNube
-    ? `<path d="M17 5 A8 8 0 1 0 24 17 A6 6 0 1 1 17 5 Z" stroke="#cfe0ff" stroke-width="1.5" stroke-linejoin="round" fill="#cfe0ff" fill-opacity="0.18"/>`
-    : `<path d="M23 7 A13 13 0 1 0 33 25 A10 10 0 1 1 23 7 Z" stroke="#cfe0ff" stroke-width="1.5" stroke-linejoin="round" fill="#cfe0ff" fill-opacity="0.18"/><circle cx="31" cy="9" r="1" fill="#cfe0ff"/><circle cx="35" cy="15" r="0.8" fill="#cfe0ff" fill-opacity="0.7"/>`;
+// Luna en su fase real. Contorno tenue del disco + parte iluminada rellena, mismo estilo de trazo que el resto de iconos.
+function faseLunar(fecha = new Date()) {
+  const sinodico = 29.530588853;
+  const ref = Date.UTC(2000, 0, 6, 18, 14) / 86400000;      // luna nueva de referencia
+  const dias = fecha.getTime() / 86400000 - ref;
+  return ((dias % sinodico) + sinodico) % sinodico / sinodico;   // 0 nueva · 0,5 llena
+}
+function svgLuna(s, conNube = false, fecha = new Date()) {
+  const f = faseLunar(fecha);
+  const cx = conNube ? 17 : 20, cy = conNube ? 16 : 20, r = conNube ? 9 : 11;
+  const creciente = f < 0.5;
+  const k = Math.cos(2 * Math.PI * f);                   // 1 nueva, -1 llena
+  const rx = Math.abs(k) * r;
+  const bordeExt = creciente ? 1 : 0;                    // lado iluminado: derecho al crecer, izquierdo al menguar
+  const bordeInt = (k > 0) === creciente ? 0 : 1;
+  const luz = f < 0.02 || f > 0.98 ? ''
+    : `<path d="M${cx} ${cy - r} A${r} ${r} 0 0 ${bordeExt} ${cx} ${cy + r} A${rx.toFixed(2)} ${r} 0 0 ${bordeInt} ${cx} ${cy - r}Z" fill="#e8eef8"/>`;
+  const disco = `<circle cx="${cx}" cy="${cy}" r="${r}" stroke="#cfe0ff" stroke-opacity="0.35" stroke-width="1.5"/>`;
   const nube = conNube
-    ? `<path d="M19 18 C19 18 14 18 12 20 C9 22 10 30 14 30 L30 30 C34 30 36 26 33 23 C31 20 27 20 25 21 C24 18 22 16 19 18Z" stroke="white" stroke-width="1.5" fill="white" fill-opacity="0.9"/>`
+    ? `<path d="M15 31 L31 31 C34.5 31 36 28 34 25.5 C32.5 23.5 29.5 23.5 28 24.5 C27 21.5 23.5 20 20.5 21.5 C18 22.7 17.5 25 17.8 26.2 C15.5 26 13 27.5 13 29 C13 30.2 13.8 31 15 31Z" fill="#0d2137" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>`
     : '';
-  return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none">${luna}${nube}</svg>`;
+  return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none">${disco}${luz}${nube}</svg>`;
 }
 
 function iconoCielo(codigo, size = 36, sunrise, sunset, isDay) {
