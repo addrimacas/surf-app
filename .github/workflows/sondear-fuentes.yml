@@ -1,0 +1,17 @@
+name: Sondear fuentes (oleaje costero y batimetría)
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  sondear:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: node scripts/sondear-fuentes.js
+      - run: |
+          git config user.name "salitre-bot"; git config user.email "salitre-bot@users.noreply.github.com"
+          git add registro/sondeo-fuentes.json
+          git commit -m "sondeo de fuentes" || true
+          git pull --rebase && git push
