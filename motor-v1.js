@@ -1,16 +1,21 @@
-// motor-v1.js — motor de evaluación de Salitre, especificación v1.1 (consulta multi-IA, oct 2026)
+// motor-v1.js — motor de evaluación de Salitre. v2.0 = especificación v1.1 + ronda 6 de la consulta
+// multi-IA (14-oct-2026): «la nota medía la ausencia de problemas, no la presencia de buenas olas».
 //
-// Cadena: oleaje offshore por particiones → transferencia direccional K(θ,T) del atlas
-//         → altura en la playa → altura de rompiente Hb (Komar-Gaughan)
-//         → nota = 1 + 9 · tamaño · superficie · cruce · marea  (cada fenómeno entra una vez)
-//         → topes de seguridad → confianza por perturbación.
+// Cadena: oleaje offshore por particiones (período de PICO estimado: el modelo da período medio)
+//         → transferencia K(θ,Tp) del atlas → altura en la playa → rompiente Hb (Komar-Gaughan con Tp)
+//         → calidad Q = tamaño × media geométrica ponderada de (forma, limpieza, fuerza, marea)
+//           · forma: ángulo de llegada a la playa tras refractar a 10 m (Snell): de frente cierra
+//           · limpieza: viento, mar de viento, pendiente del oleaje (Hs/L0) y cruce de mares
+//           · fuerza: período de pico según el nivel
+//         → cuello de botella: si un componente es muy malo, la nota no pasa de 4
+//         → escala calibrada con la climatología (calibracion-nota.js) → topes de seguridad.
 //
 // Funciona en el navegador (window.MotorV1) y en Node (module.exports) para los tests.
 // Todos los números marcados "prior" son puntos de partida a calibrar con el panel ciego.
 (function (global) {
   'use strict';
 
-  const VERSION = 'v1.3.0';
+  const VERSION = 'v2.0.0';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -158,54 +163,87 @@
     return 1 - 0.6 * (ev / e);
   }
 
-  // Calidad por período: un mar de 6 s, aunque tenga buen tamaño y no haya viento, no es un 10.
-  // Período ponderado por la energía que llega a la playa. Ojo: el modelo da período MEDIO
-  // (unos 0,8 del de pico): 10 s medio ≈ 12–13 s de pico.
-  function factorPeriodo(parts) {
-    const e = parts.reduce((s, p) => s + p.hLocal * p.hLocal, 0);
-    if (e <= 0) return 1;
-    const T = parts.reduce((s, p) => s + p.T * p.hLocal * p.hLocal, 0) / e;
-    if (T >= 11) return 1;
-    if (T >= 9) return lerp(T, 9, 11, 0.9, 1);
-    if (T >= 7) return lerp(T, 7, 9, 0.75, 0.9);
-    if (T >= 5) return lerp(T, 5, 7, 0.55, 0.75);
-    return 0.55;
+  // ---------------------------------------------------------------- componentes de calidad (v2.0)
+  // Dirección dominante y período de pico ponderados por la energía que llega a la playa
+  function dominante(parts) {
+    const base = parts.filter(p => valido(p.dir) && p.hLocal > 0);
+    if (!base.length) return { dir: null, T: null };
+    let x = 0, y = 0, e = 0, t = 0;
+    for (const p of base) {
+      const w = p.hLocal * p.hLocal * p.T;
+      x += w * Math.cos(p.dir * Math.PI / 180); y += w * Math.sin(p.dir * Math.PI / 180);
+      e += p.hLocal * p.hLocal; t += p.T * p.hLocal * p.hLocal;
+    }
+    return { dir: (Math.atan2(y, x) * 180 / Math.PI + 360) % 360, T: t / e };
   }
-
-  // Dirección: cada playa tiene una dirección de mar de fondo con la que funciona bien (el «Swell
-  // ideal» que enseña la app: SO, O-NO, N-NO…). Aunque el mar entre con tamaño, si viene de otra
-  // dirección la ola suele ser peor (cierra, sale de lado, sin forma). Se compara la dirección
-  // dominante en mar abierto (ponderada por la energía que llega a la playa) con ese abanico.
-  const RUMBOS = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SO: 225, O: 270, NO: 315 };
-  function abanicoIdeal(playa) {
-    const ps = String(playa?.swell || '').split('-').map(x => RUMBOS[x.trim()]).filter(v => v != null);
-    if (!ps.length) return null;
-    if (ps.length === 1) return [ps[0], ps[0]];
-    let [a, b] = ps;
-    if (difAng(a, b) !== ((b - a + 360) % 360)) [a, b] = [b, a];   // de a a b en sentido horario por el lado corto
-    return [a, b];
+  // Número de onda por la relación de dispersión (iteración de punto fijo)
+  function numeroOnda(T, h) {
+    const w = 2 * Math.PI / T;
+    let k = w * w / G;
+    for (let n = 0; n < 30; n++) k = w * w / (G * Math.tanh(k * h));
+    return k;
   }
-  function distanciaAbanico(dir, [a, b]) {
-    const ancho = (b - a + 360) % 360;
-    if ((dir - a + 360) % 360 <= ancho) return 0;
-    return Math.min(difAng(dir, a), difAng(dir, b));
+  // Ángulo de llegada a 10 m de fondo respecto a la normal de la playa (Snell desde aguas profundas)
+  function anguloLlegada(dir, T, atlasPlaya, playa) {
+    const normal = valido(atlasPlaya?.normal) ? atlasPlaya.normal : playa?.orient;
+    if (!valido(dir) || !valido(normal) || !valido(T)) return null;
+    const t0 = difAng(dir, normal);
+    if (t0 >= 90) return 90;
+    const c0 = G * T / (2 * Math.PI);
+    const c10 = (2 * Math.PI / T) / numeroOnda(T, 10);
+    const s10 = Math.sin(t0 * Math.PI / 180) * c10 / c0;
+    return Math.asin(clamp(s10, -1, 1)) * 180 / Math.PI;
   }
-  function factorDireccion(parts, playa) {
-    const ab = abanicoIdeal(playa);
-    if (!ab) return { f: 1, dist: 0, dir: null };
-    const sw = parts.filter(p => p.tipo !== 'viento' && valido(p.dir) && p.hLocal > 0);
-    const base = sw.length ? sw : parts.filter(p => valido(p.dir) && p.hLocal > 0);
-    if (!base.length) return { f: 1, dist: 0, dir: null };
-    // dirección media ponderada por energía local (media circular)
-    let x = 0, y = 0;
-    for (const p of base) { const w = p.hLocal * p.hLocal * p.T; x += w * Math.cos(p.dir * Math.PI / 180); y += w * Math.sin(p.dir * Math.PI / 180); }
-    const dir = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-    const dist = distanciaAbanico(dir, ab);
+  // Forma: de frente (< 4°) en arena tiende a cerrar; 10–25° abre la ola; muy de lado pierde fuerza
+  // y genera corriente lateral. Prior de la ronda 6 (D); en puntas y arrecifes pesa menos.
+  function factorForma(angulo, playa) {
+    if (!valido(angulo)) return 1;
     let f;
-    if (dist <= 22.5) f = 1;
-    else if (dist <= 67.5) f = lerp(dist, 22.5, 67.5, 1, 0.6);
-    else f = Math.max(0.45, lerp(dist, 67.5, 112.5, 0.6, 0.45));
-    return { f, dist, dir };
+    if (angulo < 4) f = 0.7;
+    else if (angulo < 10) f = lerp(angulo, 4, 10, 0.7, 1);
+    else if (angulo <= 25) f = 1;
+    else if (angulo <= 35) f = lerp(angulo, 25, 35, 1, 0.8);
+    else f = Math.max(0.6, lerp(angulo, 35, 50, 0.8, 0.6));
+    const arena = !playa?.tipoRompiente || playa.tipoRompiente === 'beach' || playa.tipoRompiente === 'abierta';
+    return arena ? f : 1 - (1 - f) * 0.4;
+  }
+  // Pendiente del oleaje s = Hs/L0p: mar joven y con bultos aunque el modelo lo llame mar de fondo
+  function factorPendiente(hs, tp) {
+    if (!valido(hs) || !valido(tp) || tp <= 0) return 1;
+    const s = hs / (G * tp * tp / (2 * Math.PI));
+    if (s <= 0.005) return 1;
+    if (s <= 0.010) return lerp(s, 0.005, 0.010, 1, 0.8);
+    if (s <= 0.015) return lerp(s, 0.010, 0.015, 0.8, 0.62);
+    return Math.max(0.5, lerp(s, 0.015, 0.02, 0.62, 0.5));
+  }
+  // Fuerza: período de pico según el nivel (intermedio ideal 12–15 s)
+  const FUERZA = {
+    principiante: [[5, 0.5], [7, 0.75], [9, 0.95], [10, 1], [13, 1], [16, 0.9]],
+    intermedio:   [[5, 0.35], [7, 0.55], [9, 0.75], [11, 0.92], [12, 1], [15, 1], [18, 0.95]],
+    pro:          [[5, 0.25], [8, 0.45], [10, 0.7], [12, 0.88], [14, 1], [18, 1]],
+  };
+  function factorFuerza(T, nivel) {
+    const t = FUERZA[nivel] ?? FUERZA.intermedio;
+    if (!valido(T)) return 1;
+    if (T <= t[0][0]) return t[0][1];
+    for (let i = 0; i < t.length - 1; i++) if (T <= t[i + 1][0]) return lerp(T, t[i][0], t[i + 1][0], t[i][1], t[i + 1][1]);
+    return t[t.length - 1][1];
+  }
+  // Escala calibrada con la climatología: umbrales de Q para las notas 2…10 por nivel
+  // (los genera scripts/calibrar-escala.js en GitHub Actions sobre un año de archivo)
+  function calibracion() {
+    if (global.CALIBRACION_NOTA) return global.CALIBRACION_NOTA;
+    try { if (typeof require === 'function') return require('./calibracion-nota.js'); } catch (e) {}
+    return null;
+  }
+  function notaDesdeQ(Q, nivel) {
+    const c = calibracion()?.niveles?.[nivel];
+    if (!c || c.length !== 9) return 1 + 9 * Q;
+    const u = [0, ...c, 1];                // u[k] = Q mínima para la nota k+1
+    for (let k = u.length - 2; k >= 0; k--) {
+      if (Q >= u[k]) return k + 1 + clamp((Q - u[k]) / Math.max(1e-6, u[k + 1] - u[k]), 0, 0.999);
+    }
+    return 1;
   }
 
   // Cruce de swells: solo entre particiones de swell ya transferidas a la playa
@@ -240,9 +278,17 @@
       { tipo: 'swell2', h: d.swell2H, T: d.swell2T, dir: d.swell2Dir },
       { tipo: 'viento', h: d.vientoMarH, T: d.vientoMarTp ?? d.vientoMarT, dir: d.vientoMarDir },
     ].filter(p => valido(p.h) && p.h > 0.02);
-    let parts = crudas.map(p => ({ ...p, T: valido(p.T) ? p.T : (p.tipo === 'viento' ? 5 : (valido(d.tTotal) ? d.tTotal : 10)), dir: valido(p.dir) ? p.dir : d.dirTotal }));
+    // Período de pico: si la API no lo da, Tp ≈ 1,2·Tm en mar de fondo y 1,3·Tm en mar de viento
+    // (relaciones espectrales típicas; ronda 6: A, C y D coinciden)
+    const pico = (p, tm, tp) => valido(tp) ? tp : (valido(tm) ? tm * (p.tipo === 'viento' ? 1.3 : 1.2) : null);
+    let parts = crudas.map(p => {
+      const tp = p.tipo === 'swell' ? pico(p, d.swellT, d.swellTp) : p.tipo === 'swell2' ? pico(p, d.swell2T, d.swell2Tp)
+        : pico(p, d.vientoMarT, d.vientoMarTp);
+      const T = valido(tp) ? tp : (p.tipo === 'viento' ? 5 : (valido(d.tTotal) ? d.tTotal * 1.2 : 12));
+      return { ...p, T, dir: valido(p.dir) ? p.dir : d.dirTotal };
+    });
     // Si la API no trae particiones, usar el total como una sola partición de swell
-    if (!parts.length && valido(d.hTotal)) parts = [{ tipo: 'swell', h: d.hTotal, T: d.tTotal ?? 10, dir: d.dirTotal }];
+    if (!parts.length && valido(d.hTotal)) parts = [{ tipo: 'swell', h: d.hTotal, T: valido(d.tTotal) ? d.tTotal * 1.2 : 12, dir: d.dirTotal }];
     return parts.map(p => {
       const K = transmision(atlasPlaya, p.dir, p.T, p.tipo);
       const Kf = K == null ? (playa?.exposicion ?? 0.5) : K;   // sin atlas: escalar antiguo
@@ -255,25 +301,39 @@
     const parts = prepararParticiones(d, playa, atlasPlaya);
     const hLocal = Math.sqrt(parts.reduce((s, p) => s + p.hLocal * p.hLocal, 0));
     const hb = alturaRompiente(parts);
+    const dom = dominante(parts);
+    // Tamaño (puerta multiplicativa): ajuste al nivel y capacidad con las SERIES (≈ 1,27·Hb)
     const fT = factorTamano(hb, nivel);
-    const fCap = factorCapacidad(hb, playa);
+    const fCap = factorCapacidad(1.27 * hb, playa);
     const tamano = Math.min(fT, fCap);
+    // Forma
+    const angulo = anguloLlegada(dom.dir, dom.T, atlasPlaya, playa);
+    const forma = factorForma(angulo, playa);
+    // Limpieza: lo peor de viento, mar de viento, pendiente del oleaje y cruce
     const viento = factorViento(d.vientoVel, d.vientoDir, hb, playa, atlasPlaya);
-    const limpieza = factorLimpieza(parts);
-    const superficie = Math.min(limpieza, viento.f);
+    const marViento = factorLimpieza(parts);
+    const hsTot = valido(d.hTotal) ? d.hTotal : Math.sqrt(parts.reduce((s, p) => s + p.h * p.h, 0));
+    const tpMar = parts.length ? parts.reduce((m, p) => (p.h > m.h ? p : m), parts[0]).T : null;
+    const pendiente = factorPendiente(hsTot, tpMar);
     const cruce = factorCruce(parts);
+    const limpieza = Math.min(viento.f, marViento, pendiente, cruce);
+    // Fuerza y marea
+    const fuerza = factorFuerza(dom.T, nivel);
     const marea = factorMarea(d.marea, playa);
-    const periodo = factorPeriodo(parts);
-    const fDir = factorDireccion(parts, playa);
-    const direccion = fDir.f;
-    const bruto = 1 + 9 * tamano * superficie * periodo * direccion * cruce * marea;
+    // Q = tamaño × media geométrica ponderada del resto (un fallo no queda oculto; ninguno vale 1 «por defecto»)
+    const W = { forma: 0.33, limpieza: 0.33, fuerza: 0.2, marea: 0.14 };
+    const resto = Math.pow(forma, W.forma) * Math.pow(limpieza, W.limpieza) * Math.pow(fuerza, W.fuerza) * Math.pow(marea, W.marea);
+    const Q = clamp(tamano * resto, 0, 1);
+    // Cuello de botella: si algo está claramente mal (< 0,6), la nota queda por debajo de 1 + 6·mínimo
+    const minimo = Math.min(forma, limpieza, fuerza, marea);
+    const bruto = Math.min(notaDesdeQ(Q, nivel), minimo < 0.6 ? 1 + 6 * minimo : 10);
 
     // Período para los topes: el máximo de las particiones con altura local relevante
     const tpTopes = parts.filter(p => p.hLocal >= 0.3).reduce((m, p) => Math.max(m, p.T), 0);
     return {
-      parts, hLocal, hb, tpTopes,
-      factores: { tamano, ajusteNivel: fT, capacidad: fCap, superficie, limpieza, viento: viento.f, periodo, direccion, cruce, marea },
-      dirMar: fDir.dir,
+      parts, hLocal, hb, tpTopes, Q, angulo, dirMar: dom.dir, tpDominante: dom.T,
+      factores: { tamano, ajusteNivel: fT, capacidad: fCap, forma, superficie: limpieza, limpieza: marViento, viento: viento.f,
+                  pendiente, cruce, fuerza, marea },
       viento,
       bruto,
     };
@@ -322,7 +382,7 @@
   function textoLimitante(ev, nivel, playa) {
     const f = ev.factores;
     const cand = [
-      ['tamano', f.tamano], ['superficie', f.superficie], ['periodo', f.periodo ?? 1], ['direccion', f.direccion ?? 1], ['cruce', f.cruce], ['marea', f.marea],
+      ['tamano', f.tamano], ['superficie', f.superficie], ['forma', f.forma ?? 1], ['fuerza', f.fuerza ?? 1], ['marea', f.marea],
     ].sort((a, b) => a[1] - b[1]);
     const [clave, valor] = cand[0];
     const r = NIVELES[nivel] ?? NIVELES.pro;
@@ -333,18 +393,18 @@
     }
     let texto;
     if (clave === 'tamano') {
-      if (f.capacidad < f.ajusteNivel) texto = 'La playa podría cerrar con este tamaño';
+      if (f.capacidad < f.ajusteNivel) texto = 'Series que podrían cerrar con este tamaño';
       else if (ev.hb < r.idealMin) texto = ev.hb < 0.3 ? 'Apenas parece entrar ola en esta playa' : `Podría quedarse pequeño ${paraNivel}`;
       else texto = `Podría estar grande ${paraNivel}`;
     } else if (clave === 'superficie') {
-      texto = f.limpieza < f.viento ? 'Mucho mar de viento: las olas podrían estar desordenadas'
-        : (ev.viento.tipo === 'off' ? 'Viento de tierra fuerte' : `Viento ${ev.viento.etiqueta.toLowerCase()} que podría estropear la ola`);
-    } else if (clave === 'periodo') texto = 'Mar de período corto: olas con poca fuerza';
-    else if (clave === 'direccion') {
-      const r8 = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'][Math.round(((ev.dirMar ?? 0) % 360) / 45) % 8];
-      texto = `Mar del ${r8}: esta playa funciona mejor con mar del ${playa?.swell ?? '—'}`;
-    }
-    else if (clave === 'cruce') texto = 'Dos mares cruzados: picos que podrían estar desordenados';
+      const peor = Math.min(f.viento, f.limpieza, f.pendiente, f.cruce);
+      if (peor === f.viento) texto = ev.viento.tipo === 'off' ? 'Viento de tierra fuerte' : `Viento ${ev.viento.etiqueta.toLowerCase()} que podría estropear la ola`;
+      else if (peor === f.cruce) texto = 'Dos mares cruzados: picos que podrían estar desordenados';
+      else if (peor === f.pendiente) texto = 'Mar todavía revuelto (ola corta y con bultos), aunque haya poco viento';
+      else texto = 'Mucho mar de viento: las olas podrían estar desordenadas';
+    } else if (clave === 'forma') {
+      texto = (ev.angulo ?? 0) < 10 ? 'Mar de frente a la playa: las olas podrían cerrar' : 'Mar muy de lado: pierde fuerza y puede haber corriente lateral';
+    } else if (clave === 'fuerza') texto = 'Período corto: olas con poca fuerza';
     else texto = 'La marea podría no acompañar a esta hora';
     return { clave, texto };
   }
@@ -410,6 +470,7 @@
       limitante: lim,
       avisos,
       topeAplicado: maxTope < 10 ? maxTope : null,
+      Q: ev.Q, angulo: ev.angulo, tpDominante: ev.tpDominante,
       potenciaMar: potencia(d.hTotal, d.swellTp ?? d.tTotal),
       potenciaLlega: potencia(ev.hLocal, ev.parts.length ? ev.parts.reduce((m, p) => p.hLocal > m.h ? { h: p.hLocal, T: p.T } : m, { h: -1, T: 10 }).T : null),
     };
@@ -504,7 +565,7 @@
 
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
-    evaluar, evaluarBano, transmision, factorPeriodo, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
+    evaluar, evaluarBano, transmision, calidadQ: (d, playa, nivel, atlas) => evaluarSurf(d, playa, nivel, atlas).Q, factorFuerza, factorForma, factorPendiente, anguloLlegada, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
     clasificarViento, direccionOffshore, prepararParticiones, frase, titular, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;

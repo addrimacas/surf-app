@@ -1,0 +1,32 @@
+name: Calibrar la escala de la nota (climatología)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['motor-v1.js', 'scripts/calibrar-escala.js']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: calibrar-escala
+  cancel-in-progress: true
+
+jobs:
+  calibrar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Calcular umbrales con el último año
+        run: node scripts/calibrar-escala.js 365
+      - name: Commit de la calibración
+        run: |
+          git config user.name  "salitre-bot"
+          git config user.email "salitre-bot@users.noreply.github.com"
+          git add calibracion-nota.js
+          if git diff --cached --quiet; then echo "Sin cambios"; else git commit -m "calibración de la escala de la nota ($(date +%F))"; git pull --rebase; git push; fi
