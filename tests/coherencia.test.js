@@ -215,3 +215,12 @@ test('período: el factor nunca baja al alargar el período, y un mar de 6 s nun
     assert.ok(r.nota <= 9, `${n} ${h} m 6 s: ${r.nota}`);
   }
 });
+
+test('titular: con nota baja manda lo que la hunde, nunca «Sin apenas viento» como titular', () => {
+  for (const n of Object.keys(PLAYAS)) for (const h of [0.3, 1.5, 4]) for (const dir of [0, 180, 300]) {
+    const r = ev(n, mar(h, 10, dir, { vientoVel: 3 }), 'intermedio');
+    const t = M.titular(r);
+    if (r.nota <= 6 && r.limitante?.clave) assert.strictEqual(t.titulo, r.limitante.texto, `${n} ${h} m ${dir}°`);
+    if (r.nota <= 6) assert.notStrictEqual(t.titulo, 'Sin apenas viento', `${n} ${h} m ${dir}°: nota ${r.nota}`);
+  }
+});

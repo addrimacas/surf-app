@@ -184,6 +184,7 @@
     .pp-dato .pl { font-size:9px; color:#8899aa; text-transform:uppercase; letter-spacing:0.4px; }
     .pp-dato .pv { font-size:13px; font-weight:700; margin-top:2px; }
     .pp-aviso { font-size:11px; color:#ff8844; margin-bottom:8px; }
+    .pp-marea { font-size:12px; color:#8899aa; margin:-2px 0 10px; }
     .pp-btn { width:100%; padding:9px; border-radius:12px; border:none; background:#4db8ff; color:#06182c; font-weight:700; font-size:13px; cursor:pointer; }
     .popup-playa h3 { font-size:15px; font-weight:700; margin-bottom:8px; color:#0a1628; }
     .popup-playa .popup-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
@@ -1524,7 +1525,7 @@ function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha
   const nivel = score <= 3 ? 'bajo' : score <= 5 ? 'medio' : score <= 7 ? 'bien' : score < 9.5 ? 'bueno' : 'top';
   const perfil = (typeof perfilActivo !== 'undefined' ? perfilActivo : null) ?? 'pro';
   // Motor v1: frase concreta generada con los datos (tamaño y viento); el veredicto por nivel va debajo
-  const texto  = (v1 && MotorV1.frase(v1)) || (TEXTOS[perfil] ?? TEXTOS.pro)[nivel];
+  const texto  = (v1 && MotorV1.titular(v1).titulo) || (TEXTOS[perfil] ?? TEXTOS.pro)[nivel];
   const color  = score <= 3 ? '#ff4444' : score <= 5 ? '#FF6B00' : score <= 7 ? '#e6a817' : '#00cc88';
   const bg     = score <= 3 ? '#fff0f0' : score <= 5 ? '#fff4ee' : score <= 7 ? '#fffbee' : '#f0fff8';
 
@@ -1572,7 +1573,7 @@ function renderExplicacionV1(r) {
   const confColor = r.confianza === 'alta' ? '#44cc88' : r.confianza === 'media' ? '#e6a817' : '#8899aa';
   const aviso = (r.avisos || [])[0];
   return `<div style="font-size:12px;margin-top:6px;color:#8899aa;line-height:1.45;">
-      ${r.limitante?.texto ?? ''} · confianza <span style="color:${confColor};font-weight:600;">${r.confianza}</span>
+      ${MotorV1.titular(r).detalle} · confianza <span style="color:${confColor};font-weight:600;">${r.confianza}</span>
       ${aviso ? `<div style="color:#ff8844;margin-top:3px;">⚠ ${aviso}</div>` : ''}
     </div>`;
 }
@@ -2121,8 +2122,27 @@ async function curvaMarea(playa) {
       }
       return null;
     },
+    infoEn(fecha) {
+      const T = (fecha.getTime() - medianoche) / 60000;
+      for (let i = 0; i < puntos.length - 1; i++) {
+        const A = puntos[i], B = puntos[i + 1];
+        if (T >= A.min && T <= B.min) {
+          const r = (T - A.min) / (B.min - A.min);
+          return { h: A.h + (B.h - A.h) * (1 - Math.cos(Math.PI * r)) / 2, subiendo: B.h > A.h };
+        }
+      }
+      return null;
+    },
   };
 }
+// Curvas de marea por puerto (varias playas comparten puerto)
+const _curvasPuerto = new Map();
+function curvaMareaPuerto(playa) {
+  const port = playa.portIHM || 'coruna';
+  if (!_curvasPuerto.has(port)) _curvasPuerto.set(port, curvaMarea(playa).catch(() => null));
+  return _curvasPuerto.get(port);
+}
+const mareaDe = (curva, ts) => { const fr = curva?.fracEn(new Date(ts * 1000)); return fr == null ? null : { frac: fr }; };
 
 async function htmlMareas(playa, tempAgua) {
   const port = playa.portIHM || 'coruna';
@@ -2808,11 +2828,14 @@ async function pedirLote(playas, { hourly = false, dias = 2 } = {}) {
     if (ms.length !== ps.length || ms.some(x => !x || x.error)) throw new Error('lote');
     return ps.map((p, i) => ({ playa: p, mar: ms[i], viento: vs.length === ps.length ? vs[i] : null }));
   };
-  try { return await pedir(playas); }
+  let res;
+  try { res = await pedir(playas); }
   catch (e) {
     const sueltos = await Promise.allSettled(playas.map(p => pedir([p])));
-    return sueltos.filter(r => r.status === 'fulfilled').map(r => r.value[0]);
+    res = sueltos.filter(r => r.status === 'fulfilled').map(r => r.value[0]);
   }
+  await Promise.all(res.map(async r => { r.curva = await curvaMareaPuerto(r.playa); }));
+  return res;
 }
 function vientoEn(v, i) {
   const g = k => i == null ? v?.current?.[k] : v?.hourly?.[k]?.[i];
@@ -2826,7 +2849,8 @@ function estadoAhora(r) {
   if (!c) return clasificar(null);
   const w = vientoEn(r.viento, null);
   return clasificar(c.wave_height, c.wave_direction, r.playa, periodoDe(c, null), w.dir, w.vel, w.racha,
-    c.swell_wave_height, c.wind_wave_height, null, null, null, datosMotor(c, null, w, { diasVista: 0 }));
+    c.swell_wave_height, c.wind_wave_height, null, null, null,
+    datosMotor(c, null, w, { diasVista: 0, marea: mareaDe(r.curva, Date.now() / 1000) }));
 }
 // Mejor franja (7–21 h) de un día para el perfil activo
 function mejorFranja(r, cualDia) {
@@ -2847,7 +2871,8 @@ function mejorFranja(r, cualDia) {
     const w = j != null ? vientoEn(r.viento, j) : {};
     if (w.esDeDia === false) continue;   // de noche no se propone
     const e = clasificar(mh.wave_height[i], mh.wave_direction[i], r.playa, periodoDe(mh, i), w.dir, w.vel, w.racha,
-      mh.swell_wave_height?.[i], mh.wind_wave_height?.[i], null, null, null, datosMotor(mh, i, w, { diasVista: diasDesdeAhora(t) }));
+      mh.swell_wave_height?.[i], mh.wind_wave_height?.[i], null, null, null,
+      datosMotor(mh, i, w, { diasVista: diasDesdeAhora(t), marea: mareaDe(r.curva, t) }));
     horas.push({ h, e });
   }
   if (!horas.length) return null;
@@ -2914,8 +2939,8 @@ async function cargarMejoresOlas() {
   contenedor.innerHTML = cabecera + (pocoUtil ? `<div style="font-size:12px;color:#8899aa;padding:6px 0;">${_dondeDia === 'hoy' ? 'Hoy' : 'Mañana'} no parece buen día en ninguna playa cercana para tu nivel. Estas son las menos malas:</div>` : '') +
     filas.map(({ r, f, km }) => {
       const e = f.estado, v1 = e.v1;
-      const frase = v1 ? MotorV1.frase(v1) : e.texto;
-      const veredicto = v1?.limitante?.texto ?? '';
+      const tl = v1 ? MotorV1.titular(v1) : { titulo: e.texto, detalle: '' };
+      const frase = tl.titulo, veredicto = tl.detalle;
       const aviso = v1?.avisos?.[0];
       const badge = r.playa.aptoParaPrincipiantes && aprender
         ? '<span style="font-size:10px;color:#44cc88;border:1px solid #44cc8866;border-radius:6px;padding:0 5px;font-weight:600;">buena para aprender</span>' : '';
@@ -3058,8 +3083,8 @@ function renderMarcador(playa, r){
   const estado = r ? estadoAhora(r) : clasificar(null);
   const c = r?.mar?.current, w = r ? vientoEn(r.viento, null) : {};
   const v1 = estado.v1;
-  const frase = v1 ? MotorV1.frase(v1) : (estado.texto || '');
-  const veredicto = v1?.limitante?.texto || '';
+  const tl = v1 ? MotorV1.titular(v1) : { titulo: estado.texto || '', detalle: '' };
+  const frase = tl.titulo, veredicto = tl.detalle;
   const aviso = v1?.avisos?.[0];
   const nombreJS = JSON.stringify(playa.nombre).replace(/"/g, '&quot;');
   return L.marker([playa.lat,playa.lon],{icon:crearIcono(estado.color)})
@@ -3074,6 +3099,7 @@ function renderMarcador(playa, r){
           <div class="pp-dato"><div class="pl">Mar fuera</div><div class="pv">${fmt(c?.wave_height)} m · ${rnd(periodoDe(c || {}, null))} s</div></div>
           <div class="pp-dato"><div class="pl">Viento</div><div class="pv">${w.vel != null ? rnd(w.vel) + ' ' + dirTxt(w.dir) : '—'}</div></div>
         </div>
+        ${(() => { const m = r?.curva?.infoEn(new Date()); return m ? `<div class="pp-marea">Marea ${m.subiendo ? 'subiendo ↑' : 'bajando ↓'} · ${fmt(m.h)} m</div>` : ''; })()}
         ${aviso ? `<div class="pp-aviso">⚠ ${aviso}</div>` : ''}
         <button class="pp-btn" onclick="abrirPlayaDesdeMapa(${nombreJS})">Ver previsión</button>
       </div>`,{maxWidth:280, minWidth:240});
@@ -3345,6 +3371,7 @@ async function plCargarTabla() {
   ahora2.setDate(ahora2.getDate() + diaOffset);
   const diaStr = ahora2.toDateString();
 
+  const curvaT = await curvaMareaPuerto(p).catch(() => null);
   // Filtrar horas del día seleccionado, cada 2h
   const horas = [], heights = [], periods = [], dirs = [], vels = [], vdirs = [], wcodes = [], temps = [], datosV1 = [];
   const ahoraTs = Date.now() / 1000;
@@ -3369,7 +3396,7 @@ async function plCargarTabla() {
       vel: vels[vels.length - 1], dir: vdirs[vdirs.length - 1],
       racha: ai >= 0 ? atmosfera.hourly.wind_gusts_10m?.[ai] : null,
       codigo: wcodes[wcodes.length - 1], esDeDia: esDia == null ? null : esDia == 1,
-    }, { diasVista: diasDesdeAhora(ts) }));
+    }, { diasVista: diasDesdeAhora(ts), marea: mareaDe(curvaT, ts) }));
   }
 
   if (horas.length === 0) {
@@ -3447,32 +3474,6 @@ async function plCargarTabla() {
     // Energía por ola en mar abierto, kJ (antes salía W/m etiquetado como kJ: «1598 kJ»)
     const e = energiaKJ(heights[i], periods[i]);
     html += cel(`<div class="pl-energia">${e ?? '—'} kJ</div>`, esAhoraH(h));
-  });
-  html += `</div>`;
-
-  // ¿Merece? Veredicto del motor (antes comparaba con rangos escritos a mano por playa,
-  // que contradecían la nota: «✗ dir.» con un 10)
-  html += `<div class="pl-fila ideal"><div class="pl-fila-label">Merece</div>`;
-  const CORTO = { tamano: 'tamaño', superficie: 'viento', periodo: 'período', cruce: 'cruce', marea: 'marea', noche: 'noche' };
-  horas.forEach((h, i) => {
-    const ev = clasificar(heights[i], dirs[i], p, periods[i], vdirs[i], vels[i], null, null, null, null, null, null, datosV1[i]);
-    if (ev.v1) {
-      const ok = ev.v1.nota >= 7;
-      const det = ok ? '' : (CORTO[ev.v1.limitante?.clave] || '');
-      html += cel(ok ? `<span class="pl-ideal-ok">✓</span>`
-        : `<span class="pl-ideal-no">✗</span>${det ? `<span style="font-size:9px;color:#5a7a9a;">${det}</span>` : ''}`, esAhoraH(h));
-      return;
-    }
-    const diffDir = dirs[i] != null ? diffSwellRespectoPlaya(dirs[i], p) : 999;
-    const altOk = heights[i] >= p.hMin && heights[i] <= p.hMax;
-    const dirOk = diffDir <= p.tol;
-    const perOk = periods[i] >= p.pMin;
-    const ok = altOk && dirOk && perOk;
-    const detalle = !altOk ? 'altura' : !dirOk ? 'dir.' : !perOk ? 'período' : '';
-    html += cel(ok
-      ? `<span class="pl-ideal-ok">✓</span>`
-      : `<span class="pl-ideal-no">✗</span>${detalle ? `<span style="font-size:9px;color:#5a7a9a;">${detalle}</span>` : ''}`,
-      esAhoraH(h));
   });
   html += `</div>`;
 

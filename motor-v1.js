@@ -450,10 +450,19 @@
     return t || 'Sin datos de viento';
   }
 
+  // Titular y detalle de la tarjeta: si la nota es baja, manda lo que la hunde (no «Sin apenas
+  // viento» con un 1); si es buena, el estado del viento/mar y debajo el veredicto para el nivel.
+  function titular(r) {
+    if (!r) return { titulo: '', detalle: '' };
+    const f = frase(r), lim = r.limitante?.texto || '';
+    if (r.nota <= 6 && r.limitante?.clave) return { titulo: lim, detalle: f };
+    return { titulo: f, detalle: lim };
+  }
+
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
     evaluar, evaluarBano, transmision, factorPeriodo, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
-    clasificarViento, direccionOffshore, prepararParticiones, frase, tallaTexto,
+    clasificarViento, direccionOffshore, prepararParticiones, frase, titular, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   global.MotorV1 = API;
