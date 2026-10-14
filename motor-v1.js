@@ -15,7 +15,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v2.0.0';
+  const VERSION = 'v2.0.1';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -326,7 +326,11 @@
     const Q = clamp(tamano * resto, 0, 1);
     // Cuello de botella: si algo está claramente mal (< 0,6), la nota queda por debajo de 1 + 6·mínimo
     const minimo = Math.min(forma, limpieza, fuerza, marea);
-    const bruto = Math.min(notaDesdeQ(Q, nivel), minimo < 0.6 ? 1 + 6 * minimo : 10);
+    // Un 10 exige que TODO sea perfecto a la vez (tamaño, dirección/forma, limpieza y viento, fuerza y marea):
+    // todos los componentes ≥ 0,95. Un 9, todos ≥ 0,85. La calibración ordena; esto pone el listón absoluto.
+    const peor = Math.min(tamano, forma, limpieza, fuerza, marea);
+    const techo = peor >= 0.95 ? 10 : peor >= 0.85 ? 9.49 : 8.49;
+    const bruto = Math.min(notaDesdeQ(Q, nivel), minimo < 0.6 ? 1 + 6 * minimo : 10, techo);
 
     // Período para los topes: el máximo de las particiones con altura local relevante
     const tpTopes = parts.filter(p => p.hLocal >= 0.3).reduce((m, p) => Math.max(m, p.T), 0);

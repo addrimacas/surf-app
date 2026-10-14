@@ -170,7 +170,7 @@ test('energía: cuadra con las 23 filas de Surf-Forecast dentro del redondeo de 
 test('energía: cuadra con todos los trenes de oleaje de la página guardada de Surf-Forecast', () => {
   const zlib = require('zlib');
   const { leerTabla } = require('../scripts/leer-surf-forecast.js');
-  const html = zlib.gunzipSync(fs.readFileSync(path.join(__dirname, '..', 'registro', 'surf-forecast', '2026', '10', '2026-10-14-Patos.html.gz'))).toString();
+  const html = zlib.gunzipSync(fs.readFileSync(path.join(__dirname, 'datos', 'surf-forecast-patos-2026-10-14.html.gz'))).toString();
   const filas = leerTabla(html);
   assert.ok(filas.length >= 20, `filas ${filas.length}`);
   const htmlApp = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
