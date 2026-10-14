@@ -73,7 +73,7 @@ setTimeout(async () => {
   // Pestaña Playas
   await w.eval('plPlayaActiva = playaActiva; plCargarTabla()');
   const tabla = doc.getElementById('pl-tabla')?.innerHTML || '';
-  console.log('Tabla Playas: puntuaciones', (tabla.match(/pl-score/g) || []).length, '| fila "En playa":', tabla.includes('En playa'), '| kW/m:', tabla.includes('kW/m'));
+  console.log('Tabla Playas: puntuaciones', (tabla.match(/pl-score/g) || []).length, '| fila "En playa":', tabla.includes('En playa'), '| kJ:', tabla.includes(' kJ'));
   // perfiles
   for (const perf of ['banista', 'principiante', 'intermedio', 'pro']) {
     w.eval(`perfilActivo='${perf}'`); await w.eval('cargarInicio()');

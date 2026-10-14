@@ -316,6 +316,8 @@
       confianza,
       hb: ev.hb,
       hLocal: ev.hLocal,
+      // período dominante en la playa (el de la partición con más energía local)
+      periodoLocal: ev.parts.reduce((m, p) => (p.T * p.hLocal * p.hLocal > m.e ? { e: p.T * p.hLocal * p.hLocal, T: p.T } : m), { e: -1, T: null }).T,
       particiones: ev.parts,
       factores: ev.factores,
       viento: ev.viento,
