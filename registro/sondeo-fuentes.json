@@ -1,0 +1,72 @@
+{
+ "ihc_catalogo_galicia": {
+  "url": "https://ihthredds.ihcantabria.com/thredds/catalog/meteogaliciaswan/Galicia/catalog.xml",
+  "estado": 200,
+  "tipo": "application/xml;charset=UTF-8",
+  "bytes": 1322,
+  "inicio": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0.1\">\r\n  <service name=\"all\" serviceType=\"Compound\" base=\"\">\r\n    <service name=\"odap\" serviceType=\"OPENDAP\" base=\"/thredds/dodsC/\" />\r\n    <service name=\"http\" serviceType=\"HTTPServer\" base=\"/thredds/fileServer/\" />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/thredds/wms/\" />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/thredds/wcs/\" />\r\n    <service name=\"ncss\" serviceType=\"NetcdfSubset\" base=\"/thredds/ncss/grid/\" />\r\n  </service>\r\n  <service name=\"latest\" serviceType=\"Resolver\" base=\"\" />\r\n  <dataset name=\"Galicia\" ID=\"MeteoGalicia_SWAN/Galicia\">\r\n    <metadata inherited=\"true\">\r\n      <serviceName>all</serviceName>\r\n      <dataType>GRID</dataType>\r\n    </metadata>\r\n    <dataset name=\"latest.xml\" ID=\"MeteoGalicia_SWAN/Galicia/latest.xml\" urlPath=\"latest.xml\">\r\n      <serviceName>latest</serviceName>\r\n    </dataset>\r\n    <dataset name=\"Galicia_2026101300.nc\" ID=\"MeteoGalicia_SWAN/Galicia/Galicia_2026101300.nc\" urlPath=\"meteogaliciaswan/Galicia/Galicia_2026101300.nc\">\r\n      <dataSize units=\"Mbytes\">194.2</dataSize>\r\n      <date type=\"modified\">2026-10-14T00:41:31.167Z</date>\r\n    </dataset>\r\n  </dataset>\r\n</catalog>\r\n"
+ },
+ "ihc_catalogo_artabro": {
+  "url": "https://ihthredds.ihcantabria.com/thredds/catalog/meteogaliciaswan/Artabro/catalog.xml",
+  "estado": 200,
+  "tipo": "application/xml;charset=UTF-8",
+  "bytes": 1322,
+  "inicio": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0.1\">\r\n  <service name=\"all\" serviceType=\"Compound\" base=\"\">\r\n    <service name=\"odap\" serviceType=\"OPENDAP\" base=\"/thredds/dodsC/\" />\r\n    <service name=\"http\" serviceType=\"HTTPServer\" base=\"/thredds/fileServer/\" />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/thredds/wms/\" />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/thredds/wcs/\" />\r\n    <service name=\"ncss\" serviceType=\"NetcdfSubset\" base=\"/thredds/ncss/grid/\" />\r\n  </service>\r\n  <service name=\"latest\" serviceType=\"Resolver\" base=\"\" />\r\n  <dataset name=\"Artabro\" ID=\"MeteoGalicia_SWAN/Artabro\">\r\n    <metadata inherited=\"true\">\r\n      <serviceName>all</serviceName>\r\n      <dataType>GRID</dataType>\r\n    </metadata>\r\n    <dataset name=\"latest.xml\" ID=\"MeteoGalicia_SWAN/Artabro/latest.xml\" urlPath=\"latest.xml\">\r\n      <serviceName>latest</serviceName>\r\n    </dataset>\r\n    <dataset name=\"Artabro_2026101312.nc\" ID=\"MeteoGalicia_SWAN/Artabro/Artabro_2026101312.nc\" urlPath=\"meteogaliciaswan/Artabro/Artabro_2026101312.nc\">\r\n      <dataSize units=\"Mbytes\">410.9</dataSize>\r\n      <date type=\"modified\">2026-10-14T00:47:34.505Z</date>\r\n    </dataset>\r\n  </dataset>\r\n</catalog>\r\n"
+ },
+ "ihc_catalogo_raiz": {
+  "url": "https://ihthredds.ihcantabria.com/thredds/catalog/meteogaliciaswan/catalog.xml",
+  "estado": 200,
+  "tipo": "application/xml;charset=UTF-8",
+  "bytes": 1182,
+  "inicio": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0.1\">\r\n  <service name=\"all\" serviceType=\"Compound\" base=\"\">\r\n    <service name=\"odap\" serviceType=\"OPENDAP\" base=\"/thredds/dodsC/\" />\r\n    <service name=\"http\" serviceType=\"HTTPServer\" base=\"/thredds/fileServer/\" />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/thredds/wms/\" />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/thredds/wcs/\" />\r\n    <service name=\"ncss\" serviceType=\"NetcdfSubset\" base=\"/thredds/ncss/grid/\" />\r\n  </service>\r\n  <dataset name=\"MeteoGalicia SWAN\" ID=\"MeteoGalicia_SWAN\">\r\n    <metadata inherited=\"true\">\r\n      <serviceName>all</serviceName>\r\n      <dataType>GRID</dataType>\r\n    </metadata>\r\n    <catalogRef xlink:href=\"RiasBaixas/catalog.xml\" xlink:title=\"RiasBaixas\" ID=\"MeteoGalicia_SWAN/RiasBaixas\" name=\"\" />\r\n    <catalogRef xlink:href=\"Galicia/catalog.xml\" xlink:title=\"Galicia\" ID=\"MeteoGalicia_SWAN/Galicia\" name=\"\" />\r\n    <catalogRef xlink:href=\"Artabro/catalog.xml\" xlink:title=\"Artabro\" ID=\"MeteoGalicia_SWAN/Artabro\" name=\"\" />\r\n  </dataset>\r\n</catalog>\r\n"
+ },
+ "mg_thredds_raiz": {
+  "url": "https://mandeo.meteogalicia.es/thredds/catalog.xml",
+  "estado": 502,
+  "tipo": "text/html; charset=iso-8859-1",
+  "bytes": 364,
+  "inicio": "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>502 Proxy Error</title>\n</head><body>\n<h1>Proxy Error</h1>\n<p>The proxy server received an invalid\r\nresponse from an upstream server.<br />\r\nThe proxy server could not handle the request<p>Reason: <strong>DNS lookup failure for: prd-tomcat-c02-0001.xunta.local</strong></p></p>\n</body></html>\n"
+ },
+ "mg_thredds_swan": {
+  "url": "https://mandeo.meteogalicia.es/thredds/catalog/modelos/SWAN/catalog.xml",
+  "estado": 502,
+  "tipo": "text/html; charset=iso-8859-1",
+  "bytes": 364,
+  "inicio": "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>502 Proxy Error</title>\n</head><body>\n<h1>Proxy Error</h1>\n<p>The proxy server received an invalid\r\nresponse from an upstream server.<br />\r\nThe proxy server could not handle the request<p>Reason: <strong>DNS lookup failure for: prd-tomcat-c02-0001.xunta.local</strong></p></p>\n</body></html>\n"
+ },
+ "mg_thredds_swan2": {
+  "url": "https://mandeo.meteogalicia.es/thredds/catalog/swan/catalog.xml",
+  "estado": 502,
+  "tipo": "text/html; charset=iso-8859-1",
+  "bytes": 364,
+  "inicio": "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>502 Proxy Error</title>\n</head><body>\n<h1>Proxy Error</h1>\n<p>The proxy server received an invalid\r\nresponse from an upstream server.<br />\r\nThe proxy server could not handle the request<p>Reason: <strong>DNS lookup failure for: prd-tomcat-c02-0001.xunta.local</strong></p></p>\n</body></html>\n"
+ },
+ "emodnet_profundidad": {
+  "url": "https://rest.emodnet-bathymetry.eu/depth_sample?geom=POINT(-8.98%2042.74)",
+  "estado": 200,
+  "tipo": "application/json",
+  "bytes": 128,
+  "inicio": "{\"avg\":28.240032,\"elementarySurfaces\":1,\"interpolationType\":false,\"smoothed\":30.08082,\"smoothedOffset\":1.8407879,\"reference\":{}}"
+ },
+ "emodnet_perfil": {
+  "url": "https://rest.emodnet-bathymetry.eu/depth_profile?geom=LINESTRING(-8.98%2042.74,-9.15%2042.71)",
+  "estado": 200,
+  "tipo": "application/json",
+  "bytes": 9981,
+  "inicio": "[28.240032,28.240032,31.541637,31.541637,31.541637,31.541637,31.541637,31.541637,37.54674,37.54674,37.54674,37.54674,37.54674,41.577938,46.2273,46.2273,46.2273,46.2273,46.2273,48.66344,48.66344,48.66344,48.66344,48.66344,48.66344,60.8363,60.8363,60.8363,60.8363,60.8363,60.8363,74.961105,74.961105,74.961105,74.961105,74.961105,74.961105,79.906044,79.906044,79.906044,79.906044,79.906044,79.906044,65.7369,65.7369,65.7369,65.7369,55.15632,55.15632,44.091915,44.091915,44.091915,44.091915,44.091915,44.091915,25.417116,25.417116,25.417116,25.417116,25.417116,25.417116,0.9224129,0.9224129,0.9224129,0.9224129,0.9224129,-5.7034917,-5.7034917,-5.7034917,-5.7034917,-5.7034917,-5.7034917,-6.1394176,-6.1394176,-6.1394176,-6.1394176,-6.1394176,-6.1394176,-6.5034513,-6.5034513,-6.0996,-6.0996,-6.0996,-6.0996,-6.0496,-6.0496,-6.0496,-6.0496,-6.0496,-6.0496,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0088,-6.0088,-6.0088,-6.0088,-6.0088,-6.0088,-7.1088,-7.1088,-7.1088,-7.1088,-7.1088,-8.1936,-7.261848,-7.261848,-7.261848,-7.261848,-7.261848,-6.6607122,-6.6607122,-6.6607122,-6.6607122,-6.6607122,-6.6607122,-6.2652373,-6.2652373,-6.2652373,-6.2652373,-6.2652373,-6.2652373,-6.0870028,-6.0870028,-6.0870028,-6.0870028,-6.0870028,-6.0870028,-6.0192394,-6.0192394,-6.0192394,-6.0192394,-6.0192394,-6.0192394,-6.33783,-6.33783,-6.33783,-6.33783,-6.28717,-6.28717,-6.310838,-6.310838,-6.310838,-6.310838,-6.310838,-6.310838,-9.265458,-9.265458,-9.265458,-9.265458,-9.265458,-9.265458,-11."
+ },
+ "ncss_hs": {
+  "url": "https://ihthredds.ihcantabria.com/thredds/ncss/grid/meteogaliciaswan/Galicia/Galicia_2026101300.nc?var=hs&latitude=42.74&longitude=-8.99&accept=csv",
+  "estado": 200,
+  "tipo": "text/plain;charset=UTF-8",
+  "bytes": 117,
+  "inicio": "time,latitude[unit=\"degrees_north\"],longitude[unit=\"degrees_east\"],hs[unit=\"m\"]\n2026-10-14T16:00:00Z,42.74,-8.99,NaN\n"
+ },
+ "dods_dds": {
+  "url": "https://ihthredds.ihcantabria.com/thredds/dodsC/meteogaliciaswan/Galicia/Galicia_2026101300.nc.dds",
+  "estado": 200,
+  "tipo": "text/plain",
+  "bytes": 2463,
+  "inicio": "Dataset {\n    Float64 latitude[latitude = 400];\n    Float64 time[time = 97];\n    Float64 longitude[longitude = 400];\n    Grid {\n     ARRAY:\n        Float64 u[time = 97][latitude = 400][longitude = 400];\n     MAPS:\n        Float64 time[time = 97];\n        Float64 latitude[latitude = 400];\n        Float64 longitude[longitude = 400];\n    } u;\n    Grid {\n     ARRAY:\n        Float64 v[time = 97][latitude = 400][longitude = 400];\n     MAPS:\n        Float64 time[time = 97];\n        Float64 latitude[latitude = 400];\n        Float64 longitude[longitude = 400];\n    } v;\n    Grid {\n     ARRAY:\n        Float64 hs[time = 97][latitude = 400][longitude = 400];\n     MAPS:\n        Float64 time[time = 97];\n        Float64 latitude[latitude = 400];\n        Float64 longitude[longitude = 400];\n    } hs;\n    Grid {\n     ARRAY:\n        Float64 hswe[time = 97][latitude = 400][longitude = 400];\n     MAPS:\n        Float64 time[time = 97];\n        Float64 latitude[latitude = 400];\n        Float64 longitude[longitude = 400];\n    } hswe;\n    Grid {\n     ARRAY:\n        Float64 theta0[time = 97][latitude = 400][longitude = 400];\n     MAPS:\n        Float64 time[time = 97];\n        Float64 latitude[latitude = 400];\n        Float64 longitude[longitude = 400];\n    } theta0;\n    Grid {\n     ARRAY:\n        Float64 thetap[time = 97][latitude = 400][longitude = 400];\n     MAPS:\n        Float64 time[time = 97];\n        Float64 latitude[latitude = 400];\n        Float64 longitude[longitude = 400];\n    } thetap;\n    G"
+ }
+}
