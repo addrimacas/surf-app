@@ -10,7 +10,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v1.1.0';
+  const VERSION = 'v1.1.1';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -78,7 +78,7 @@
 
   // ---------------------------------------------------------------- tablas por nivel (Hb, m) — prior
   const NIVELES = {
-    principiante: { aceptMin: 0.3, idealMin: 0.4, idealMax: 1.0, aceptMax: 1.4, duro: 1.6 },
+    principiante: { aceptMin: 0.3, idealMin: 0.4, idealMax: 0.8, aceptMax: 1.2, duro: 1.5 },
     intermedio:   { aceptMin: 0.5, idealMin: 0.8, idealMax: 1.8, aceptMax: 2.5, duro: 3.0 },
     pro:          { aceptMin: 0.8, idealMin: 1.5, idealMax: 3.5, aceptMax: 5.0, duro: 6.5 },
   };
@@ -220,10 +220,10 @@
     const vel = d.vientoVel ?? 0;
     const tipoV = alto.viento.tipo;
     if (nivel === 'principiante') {
-      if (alto.hb > 1.6) cap(2, 'Olas que podrían ser grandes para tu nivel');
-      else if (alto.hb > 1.3) cap(5, 'Olas algo grandes para tu nivel');
+      if (alto.hb > 1.5) cap(2, 'Olas que podrían ser grandes para tu nivel');
+      else if (alto.hb > 1.2) cap(4, 'Olas algo grandes para tu nivel');
       if (alto.tpTopes >= 16) cap(3, 'Mar de fondo largo: podrían entrar series inesperadas');
-      else if (alto.tpTopes >= 14 && alto.hb > 1.0) cap(4, 'Mar de fondo largo: podrían entrar series inesperadas');
+      else if (alto.tpTopes >= 14 && alto.hb > 0.8) cap(4, 'Mar de fondo largo: podrían entrar series inesperadas');
       if (tipoV === 'off' && vel > 30) cap(4, 'Viento de tierra fuerte');
       if (tipoV === 'on' && vel > 35) cap(3, 'Viento de mar fuerte');
     } else if (nivel === 'intermedio') {
