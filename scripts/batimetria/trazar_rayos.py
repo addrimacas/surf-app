@@ -24,8 +24,8 @@ PASO_DIR = 5
 DS = 0.08          # km por paso (menor que la celda de ~115 m)
 DIST0 = 25.0       # km mar adentro donde nace el frente
 ANCHO = 14.0       # km de frente
-DELTA = 0.04       # km entre rayos
-RADIO = 0.3        # km del disco de llegada
+DELTA = 0.01       # km entre rayos (≈100 rayos por Kr=1 en el disco)
+RADIO = 0.5        # km del disco de llegada
 
 
 def cargar():

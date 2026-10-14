@@ -15,7 +15,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v2.0.1';
+  const VERSION = 'v2.1.0';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -69,6 +69,33 @@
     }
     // Atenuación global por recorrido en aguas confinadas (rías, bahías), calculada en el atlas
     return Math.sqrt(suma / pesos) * (atlasPlaya.factorConfinamiento ?? 1);
+  }
+
+  // ---------------------------------------------------------------- refracción sobre el fondo real
+  // atlas-batimetria.js (EMODnet ~115 m + trazado de rayos hasta la isobata de 10 m) da Kr[T][dir]:
+  // concentración (Kr>1) o dispersión (Kr<1) de la energía por la forma del fondo. Se suaviza con la
+  // misma dispersión direccional que la transmisión y solo cuenta las direcciones cuyos rayos llegan:
+  // la sombra de la costa ya la pone el atlas de exposición (no se cuenta dos veces). Sin datos → 1.
+  let BATI = global.ATLAS_BATIMETRIA || null;
+  if (!BATI && typeof require === 'function') { try { BATI = require('./atlas-batimetria.js'); } catch (e) { BATI = null; } }
+  function factorBatimetria(nombre, dir, T, tipo) {
+    const b = BATI && nombre && BATI.playas[nombre];
+    if (!b || !valido(dir) || !valido(T)) return 1;
+    const per = BATI.meta.periodos, paso = BATI.meta.pasoDireccion, n = 360 / paso;
+    const Tc = clamp(T, per[0], per[per.length - 1]);
+    let i = 0; while (i < per.length - 2 && Tc > per[i + 1]) i++;
+    const f = (Tc - per[i]) / (per[i + 1] - per[i]);
+    const s = SIGMA[tipo] ?? 20;
+    let suma = 0, pesos = 0, total = 0;
+    for (let d = -3 * s; d <= 3 * s; d += paso) {
+      const w = Math.exp(-0.5 * (d / s) * (d / s));
+      const k = ((Math.round((dir + d) / paso) % n) + n) % n;
+      const kr = (1 - f) * b.kr[i][k] + f * b.kr[i + 1][k];
+      total += w;
+      if (kr > 0) { suma += w * kr * kr; pesos += w; }   // promedio de energía (Kr²)
+    }
+    if (pesos < 0.3 * total) return 1;
+    return clamp(Math.sqrt(suma / pesos), 0.6, 1.5);
   }
 
   // ---------------------------------------------------------------- física
@@ -291,8 +318,9 @@
     if (!parts.length && valido(d.hTotal)) parts = [{ tipo: 'swell', h: d.hTotal, T: valido(d.tTotal) ? d.tTotal * 1.2 : 12, dir: d.dirTotal }];
     return parts.map(p => {
       const K = transmision(atlasPlaya, p.dir, p.T, p.tipo);
-      const Kf = K == null ? (playa?.exposicion ?? 0.5) : K;   // sin atlas: escalar antiguo
-      return { ...p, K: Kf, hLocal: Kf * p.h };
+      const Kr = factorBatimetria(playa?.nombre, p.dir, p.T, p.tipo);
+      const Kf = (K == null ? (playa?.exposicion ?? 0.5) : K) * Kr;   // sin atlas: escalar antiguo
+      return { ...p, K: Kf, Kr, hLocal: Kf * p.h };
     });
   }
 
