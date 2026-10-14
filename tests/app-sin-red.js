@@ -37,6 +37,7 @@ function atmos(u) {
   j.daily = { temperature_2m_max: [19], temperature_2m_min: [12], sunrise: [Date.now() / 1000 - 3600 * 5], sunset: [Date.now() / 1000 + 3600 * 5] };
   return j;
 }
+function multiCoord(u) { const q = new URL(u).searchParams; const la = (q.get('latitude') || '').split(','); if (la.length < 2) return null; const lo = q.get('longitude').split(','); return la.map((x, i) => [x, lo[i]]); }
 const resp = (obj, ok = true, status = 200) => Promise.resolve({ ok, status, json: () => Promise.resolve(obj), text: () => Promise.resolve(JSON.stringify(obj)) });
 const dom = new JSDOM(html, {
   url, runScripts: 'dangerously', pretendToBeVisual: true,
@@ -44,6 +45,8 @@ const dom = new JSDOM(html, {
     w.HTMLCanvasElement.prototype.getContext = () => new Proxy({}, { get: (t, k) => (k in t ? t[k] : (() => ({ addColorStop() {} }))), set: (t, k, v) => (t[k] = v, true) });
     w.fetch = (u) => {
       u = String(u); peticiones.push(u);
+      if (u.includes('marine-api') && multiCoord(u)) return resp(multiCoord(u).map(([la, lo]) => marina(u.replace(/latitude=[^&]+/, 'latitude=' + la).replace(/longitude=[^&]+/, 'longitude=' + lo))));
+      if (u.includes('api.open-meteo.com') && multiCoord(u)) return resp(multiCoord(u).map(() => atmos(u)));
       if (u.includes('marine-api')) {
         if (MODO === 'rechazo' && u.includes('models=')) return resp({ error: true, reason: 'simulado' }, false, 400);
         return resp(marina(u));

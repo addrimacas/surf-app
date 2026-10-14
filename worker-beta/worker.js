@@ -177,20 +177,20 @@ export default {
         if (!playa || !/^\d{4}-\d{2}-\d{2}$/.test(fecha || '') || !Number.isInteger(nota) || nota < 1 || nota > 10)
           return json({ error: 'datos no válidos' }, 400, origen);
         const coincidio = ['si', 'mas_grande', 'mas_pequena'].includes(d.coincidio) ? d.coincidio : null;
-        await env.DB.prepare(`INSERT INTO valoraciones (recibida, dispositivo, playa, fecha, nota, coincidio, perfil, comentario, prediccion)
-            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
-            ON CONFLICT (dispositivo, playa, fecha) DO UPDATE SET recibida = ?1, nota = ?5, coincidio = ?6, perfil = ?7, comentario = ?8, prediccion = ?9`)
+        await env.DB.prepare(`INSERT INTO valoraciones (recibida, dispositivo, playa, fecha, nota, coincidio, perfil, comentario, prediccion, alias)
+            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
+            ON CONFLICT (dispositivo, playa, fecha) DO UPDATE SET recibida = ?1, nota = ?5, coincidio = ?6, perfil = ?7, comentario = ?8, prediccion = ?9, alias = ?10`)
           .bind(ahora, dispositivo, playa, fecha, nota, coincidio, texto(d.perfil, 20), texto(d.comentario, 2000),
-                d.prediccion ? JSON.stringify(d.prediccion).slice(0, 20000) : null).run();
+                d.prediccion ? JSON.stringify(d.prediccion).slice(0, 20000) : null, texto(d.alias, 60)).run();
         return json({ ok: true }, 200, origen);
       }
       if (url.pathname === '/v1/comentario') {
         const t = texto(d.texto, 4000);
         if (!t) return json({ error: 'comentario vacío' }, 400, origen);
-        await env.DB.prepare(`INSERT INTO comentarios (recibida, dispositivo, texto, playa, contacto, version_app, navegador)
-            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`)
+        await env.DB.prepare(`INSERT INTO comentarios (recibida, dispositivo, texto, playa, contacto, version_app, navegador, alias)
+            VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`)
           .bind(ahora, dispositivo, t, texto(d.playa, 80), texto(d.contacto, 200), texto(d.version_app, 40),
-                texto(req.headers.get('User-Agent'), 300)).run();
+                texto(req.headers.get('User-Agent'), 300), texto(d.alias, 60)).run();
         return json({ ok: true }, 200, origen);
       }
       if (url.pathname === '/v1/suscripcion') {

@@ -50,7 +50,7 @@ test('worker beta: valoraciones, comentarios, exportación', async () => {
   assert.strictEqual(r.status, 200);
   assert.strictEqual((await post('/v1/valoracion', { dispositivo: 'abc', playa: 'Razo', fecha: '2026-10-14', nota: 11 })).status, 400);
   assert.strictEqual((await post('/v1/valoracion', { dispositivo: 'abc', playa: 'Razo', fecha: '2026-10-14', nota: 5 }, 'https://malo.com')).status, 403);
-  assert.strictEqual((await post('/v1/comentario', { dispositivo: 'abc', texto: 'La luna mola', playa: 'Razo' })).status, 200);
+  assert.strictEqual((await post('/v1/comentario', { dispositivo: 'abc', alias: 'Adri', texto: 'La luna mola', playa: 'Razo' })).status, 200);
   assert.strictEqual((await post('/v1/comentario', { dispositivo: 'abc', texto: '   ' })).status, 400);
   assert.strictEqual((await worker.fetch(new Request('https://x/v1/exportar'), env)).status, 401);
   const exp = await (await worker.fetch(new Request('https://x/v1/exportar?tabla=valoraciones', { headers: { Authorization: 'Bearer secreto' } }), env)).json();

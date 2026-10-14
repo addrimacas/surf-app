@@ -43,3 +43,7 @@ CREATE TABLE IF NOT EXISTS avisos (
   entregado   TEXT
 );
 CREATE UNIQUE INDEX IF NOT EXISTS aviso_unico ON avisos (dispositivo, playa, objetivo);
+
+-- Alias opcional de la persona (añadido el 14-oct-2026). En una base ya creada, ejecutar una vez:
+ALTER TABLE valoraciones ADD COLUMN alias TEXT;
+ALTER TABLE comentarios ADD COLUMN alias TEXT;

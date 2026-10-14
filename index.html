@@ -170,7 +170,21 @@
     .btn-estilo { flex:1; padding:10px; border-radius:10px; border:1px solid #1a4a6e; background:rgba(10,22,40,0.6); color:#8899aa; font-size:13px; cursor:pointer; }
     .btn-estilo.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
     #mapa { height:420px; border-radius:16px; overflow:hidden; max-width:420px; margin:0 auto; }
-    .popup-playa { font-family:-apple-system,sans-serif; min-width:180px; }
+    .popup-playa { font-family:'Nunito',-apple-system,sans-serif; min-width:220px; color:#e8f0f8; }
+    .leaflet-popup-content-wrapper { background:#0d1f35 !important; color:#e8f0f8 !important; border:1px solid rgba(255,255,255,0.12); border-radius:16px !important; box-shadow:0 10px 30px rgba(0,0,0,0.55) !important; }
+    .leaflet-popup-tip { background:#0d1f35 !important; border:1px solid rgba(255,255,255,0.12); }
+    .leaflet-popup-content { margin:14px 14px 12px !important; }
+    .leaflet-container a.leaflet-popup-close-button { color:#8899aa !important; top:6px !important; right:6px !important; }
+    .pp-cab { display:flex; align-items:center; gap:10px; margin-bottom:8px; padding-right:14px; }
+    .pp-nota { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; color:#fff; flex-shrink:0; }
+    .pp-nombre { font-size:16px; font-weight:700; line-height:1.15; }
+    .pp-frase { font-size:12px; color:#8899aa; margin-top:2px; }
+    .pp-datos { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin:8px 0 10px; }
+    .pp-dato { background:rgba(255,255,255,0.05); border-radius:10px; padding:6px 4px; text-align:center; }
+    .pp-dato .pl { font-size:9px; color:#8899aa; text-transform:uppercase; letter-spacing:0.4px; }
+    .pp-dato .pv { font-size:13px; font-weight:700; margin-top:2px; }
+    .pp-aviso { font-size:11px; color:#ff8844; margin-bottom:8px; }
+    .pp-btn { width:100%; padding:9px; border-radius:12px; border:none; background:#4db8ff; color:#06182c; font-weight:700; font-size:13px; cursor:pointer; }
     .popup-playa h3 { font-size:15px; font-weight:700; margin-bottom:8px; color:#0a1628; }
     .popup-playa .popup-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
     .popup-playa .popup-dato { background:#f0f4f8; border-radius:8px; padding:8px; text-align:center; }
@@ -912,6 +926,11 @@
         </div>
       </div>
     </div>
+    <div style="margin-top:16px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:2px;">Tu nombre o alias <span style="font-weight:500;color:#8899aa;font-size:12px;">(opcional)</span></div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:6px;">Se envía junto a tus valoraciones y comentarios para saber de quién son. Sin correo ni contraseña.</div>
+      <input id="input-alias" maxlength="60" placeholder="Ej.: Adri de Razo" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:9px 10px;font:inherit;font-size:14px;">
+    </div>
     <div id="bloque-avisos" style="margin-top:16px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"></div>
     <button type="button" id="btn-menu-comentario" style="margin-top:14px;width:100%;background:rgba(255,179,71,0.10);border:1px solid rgba(255,179,71,0.4);border-radius:12px;padding:11px 12px;color:#ffb347;font-size:14px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
   </div>
@@ -1086,6 +1105,11 @@ function initPerfilUI() {
   }
 
   btn.addEventListener('click', () => { setPerfilOverlayAbierto(true); pintarBloqueAvisos(); });
+  const inAlias = document.getElementById('input-alias');
+  if (inAlias) {
+    inAlias.value = leerAlias() || '';
+    inAlias.addEventListener('input', () => { try { localStorage.setItem('salitre_alias', inAlias.value.trim()); } catch (e) {} });
+  }
   document.getElementById('btn-menu-comentario')?.addEventListener('click', () => { setPerfilOverlayAbierto(false); abrirComentario(); });
   overlay.addEventListener('click', e => {
     if (e.target === overlay) setPerfilOverlayAbierto(false);
@@ -1830,7 +1854,7 @@ function abrirValoracion() {
     };
     lista.push(val);
     const ok = guardarValoraciones(lista);
-    enviarBeta('/v1/valoracion', { ...val, dispositivo: idDispositivo() });
+    enviarBeta('/v1/valoracion', { ...val, dispositivo: idDispositivo(), alias: leerAlias() });
     document.getElementById('val-estado').textContent = ok
       ? 'Guardada. Gracias, nos ayuda a afinar esta playa.'
       : 'No se ha podido guardar en este navegador.';
@@ -1854,6 +1878,7 @@ function abrirValoracion() {
 // Si no hay conexión o el servicio falla, se guarda en una cola y se reintenta al abrir la app.
 const API_BETA = 'https://salitre-beta.adrimacas.workers.dev';
 const CLAVE_PENDIENTES = 'salitre_pendientes';
+function leerAlias() { try { return localStorage.getItem('salitre_alias') || null; } catch (e) { return null; } }
 function idDispositivo() {
   try {
     let id = localStorage.getItem('salitre_dispositivo');
@@ -1912,7 +1937,7 @@ function abrirComentario() {
     const estado = document.getElementById('com-estado');
     if (!texto) { estado.textContent = 'Escribe algo antes de enviar.'; return; }
     const ok = await enviarBeta('/v1/comentario', {
-      dispositivo: idDispositivo(), texto, playa,
+      dispositivo: idDispositivo(), alias: leerAlias(), texto, playa,
       contacto: document.getElementById('com-contacto').value.trim() || null,
       version_app: (typeof MotorV1 !== 'undefined' ? MotorV1.VERSION : ''),
     });
@@ -1973,8 +1998,8 @@ async function pintarBloqueAvisos() {
   el.innerHTML = `
     <div style="font-size:14px;font-weight:700;margin-bottom:2px;">Avisos</div>
     <div style="font-size:12px;color:#8899aa;margin-bottom:10px;">Cuando valores una sesión con 7 o más, te avisamos si el mar previsto vuelve a parecerse en esa playa.</div>
-    <div style="display:flex;gap:8px;">${est === 'activados' ? btn('av-probar', 'Probar aviso') + btn('av-off', 'Desactivar', '#8899aa') : btn('av-on', 'Activar avisos')}</div>
-    <div id="av-estado" style="font-size:12px;color:#8899aa;margin-top:8px;">${TEXTO_ERROR_AVISOS[est] && est !== 'no-soportado' ? TEXTO_ERROR_AVISOS[est] : (est === 'activados' ? 'Activados en este dispositivo.' : '')}</div>`;
+    <div style="display:flex;gap:8px;">${est === 'activados' ? btn('av-probar', 'Probar aviso') + btn('av-off', 'Desactivar', '#8899aa') : est === 'desactivados' ? btn('av-on', 'Activar avisos') : ''}</div>
+    <div id="av-estado" style="font-size:12px;color:#8899aa;margin-top:8px;">${TEXTO_ERROR_AVISOS[est] || (est === 'activados' ? 'Activados en este dispositivo.' : '')}</div>`;
   const estado = t => { const e = document.getElementById('av-estado'); if (e) e.textContent = t; };
   document.getElementById('av-on')?.addEventListener('click', async () => {
     estado('Activando...');
@@ -2740,7 +2765,7 @@ function renderPrevision(marine, atmo, ahora, mareaEn = () => null) {
       <div id="prev-10d" class="prev-lista" style="display:none;">${diezItems}</div>
     </div>
     <div style="max-width:420px;margin:16px auto 0;background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;">
-      <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Mejores olas cerca</div>
+      <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">¿Dónde vamos?</div>
       <div id="mejores-olas"></div>
     </div>`;
 }
@@ -2760,80 +2785,149 @@ function haversine(lat1,lon1,lat2,lon2){
   return R*2*Math.asin(Math.sqrt(a));
 }
 
+// ── ¿Dónde vamos? Mejores playas cerca para TU nivel, con la mejor franja de hoy o mañana ──────
+// Dos peticiones para todas las playas (Open-Meteo admite varias coordenadas a la vez).
+// Si la petición conjunta falla, se hace playa a playa.
+const arrLote = x => Array.isArray(x) ? x : (x ? [x] : []);
+async function pedirLote(playas, { hourly = false, dias = 2 } = {}) {
+  const VV = 'wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day';
+  const urlMar = cs => `https://marine-api.open-meteo.com/v1/marine?latitude=${cs.map(c => c.lat).join(',')}&longitude=${cs.map(c => c.lon).join(',')}`
+    + `&timeformat=unixtime&models=${MODELO_OLEAJE}` + (hourly ? `&hourly=${VARS_OLEAJE_V1}&forecast_days=${dias}` : `&current=${VARS_OLEAJE_V1}`);
+  const urlViento = ps => `https://api.open-meteo.com/v1/forecast?latitude=${ps.map(p => p.lat).join(',')}&longitude=${ps.map(p => p.lon).join(',')}`
+    + `&timeformat=unixtime&wind_speed_unit=kmh` + (hourly ? `&hourly=${VV}&forecast_days=${dias}` : `&current=${VV}`);
+  const pedir = async ps => {
+    const [m, v] = await Promise.all([
+      fetch(urlMar(ps.map(coordsOleaje))).then(r => r.json()),
+      fetch(urlViento(ps)).then(r => r.json()).catch(() => null),
+    ]);
+    const ms = arrLote(m), vs = arrLote(v);
+    if (ms.length !== ps.length || ms.some(x => !x || x.error)) throw new Error('lote');
+    return ps.map((p, i) => ({ playa: p, mar: ms[i], viento: vs.length === ps.length ? vs[i] : null }));
+  };
+  try { return await pedir(playas); }
+  catch (e) {
+    const sueltos = await Promise.allSettled(playas.map(p => pedir([p])));
+    return sueltos.filter(r => r.status === 'fulfilled').map(r => r.value[0]);
+  }
+}
+function vientoEn(v, i) {
+  const g = k => i == null ? v?.current?.[k] : v?.hourly?.[k]?.[i];
+  const dia = g('is_day');
+  return { vel: g('wind_speed_10m') ?? null, dir: g('wind_direction_10m') ?? null, racha: g('wind_gusts_10m') ?? null,
+           codigo: g('weather_code') ?? null, esDeDia: dia == null ? null : dia == 1 };
+}
+// Estado de una playa ahora mismo (oleaje + viento de la propia playa)
+function estadoAhora(r) {
+  const c = r.mar?.current;
+  if (!c) return clasificar(null);
+  const w = vientoEn(r.viento, null);
+  return clasificar(c.wave_height, c.wave_direction, r.playa, periodoDe(c, null), w.dir, w.vel, w.racha,
+    c.swell_wave_height, c.wind_wave_height, null, null, null, datosMotor(c, null, w, { diasVista: 0 }));
+}
+// Mejor franja (7–21 h) de un día para el perfil activo
+function mejorFranja(r, cualDia) {
+  const mh = r.mar?.hourly;
+  if (!mh?.time) return null;
+  const vt = r.viento?.hourly?.time || [];
+  const vIdx = new Map(vt.map((t, k) => [t, k]));
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const inicio = hoy.getTime() / 1000 + (cualDia === 'manana' ? 86400 : 0);
+  const ahora = Date.now() / 1000;
+  const horas = [];
+  for (let i = 0; i < mh.time.length; i++) {
+    const t = mh.time[i];
+    if (t < inicio || t >= inicio + 86400 || t < ahora - 1800) continue;
+    const h = new Date(t * 1000).getHours();
+    if (h < 7 || h > 20) continue;
+    const j = vIdx.get(t);
+    const w = j != null ? vientoEn(r.viento, j) : {};
+    const e = clasificar(mh.wave_height[i], mh.wave_direction[i], r.playa, periodoDe(mh, i), w.dir, w.vel, w.racha,
+      mh.swell_wave_height?.[i], mh.wind_wave_height?.[i], null, null, null, datosMotor(mh, i, w, { diasVista: diasDesdeAhora(t) }));
+    horas.push({ h, e });
+  }
+  if (!horas.length) return null;
+  const mejor = horas.reduce((a, b) => (b.e.score > a.e.score ? b : a));
+  // ampliar la franja a las horas contiguas con nota a 1 punto o menos de la mejor
+  const k = horas.indexOf(mejor);
+  let a = k, b = k;
+  while (a > 0 && horas[a - 1].h === horas[a].h - 1 && horas[a - 1].e.score >= mejor.e.score - 1) a--;
+  while (b < horas.length - 1 && horas[b + 1].h === horas[b].h + 1 && horas[b + 1].e.score >= mejor.e.score - 1) b++;
+  return { estado: mejor.e, desde: horas[a].h, hasta: horas[b].h + 1 };
+}
+
+let _dondeDia = 'hoy';
+let _dondeOrigen = null;   // {lat, lon, nombre} si el usuario comparte su ubicación
+function origenDonde() {
+  return _dondeOrigen || { lat: playaActiva.lat, lon: playaActiva.lon, nombre: playaActiva.nombre };
+}
+function usarMiUbicacion() {
+  const est = document.getElementById('donde-estado');
+  if (!navigator.geolocation) { if (est) est.textContent = 'Este navegador no puede darnos la ubicación.'; return; }
+  if (est) est.textContent = 'Buscando tu ubicación...';
+  navigator.geolocation.getCurrentPosition(
+    pos => { _dondeOrigen = { lat: pos.coords.latitude, lon: pos.coords.longitude, nombre: 'tu ubicación' }; cargarMejoresOlas(); },
+    () => { if (est) est.textContent = 'No se ha podido obtener la ubicación (permiso denegado o sin señal).'; },
+    { maximumAge: 600000, timeout: 10000 });
+}
+function cambiarDondeDia(dia) { _dondeDia = dia; cargarMejoresOlas(); }
+
 async function cargarMejoresOlas() {
   const contenedor = document.getElementById('mejores-olas');
   if (!contenedor) return;
-  contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando mejores condiciones cerca...</div>`;
-  const uLat = playaActiva.lat, uLon = playaActiva.lon;
-  const todasPlayas = todasLasPlayas().filter(p => p.nombre !== playaActiva.nombre);
-  todasPlayas.sort((a,b) => haversine(uLat,uLon,a.lat,a.lon) - haversine(uLat,uLon,b.lat,b.lon));
-  const playas = todasPlayas.slice(0, 10);
-  const resultados = [];
+  const o = origenDonde();
+  const tab = (id, txt) => `<button type="button" onclick="cambiarDondeDia('${id}')" style="flex:1;padding:7px;border-radius:10px;border:1px solid ${_dondeDia === id ? '#4db8ff' : 'rgba(255,255,255,0.12)'};background:${_dondeDia === id ? 'rgba(77,184,255,0.15)' : 'none'};color:${_dondeDia === id ? '#4db8ff' : '#8899aa'};font-size:13px;font-weight:600;cursor:pointer;">${txt}</button>`;
+  const cabecera = `
+    <div style="display:flex;gap:6px;margin-bottom:8px;">${tab('hoy', 'Hoy')}${tab('manana', 'Mañana')}</div>
+    <div style="font-size:12px;color:#8899aa;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px;align-items:center;">
+      <span>Cerca de ${o.nombre} · para nivel ${perfilActivo === 'banista' ? 'bañista' : perfilActivo}</span>
+      ${_dondeOrigen ? '' : '<button type="button" onclick="usarMiUbicacion()" style="background:none;border:none;color:#4db8ff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0;">Usar mi ubicación</button>'}
+    </div>
+    <div id="donde-estado" style="font-size:12px;color:#8899aa;"></div>`;
+  contenedor.innerHTML = cabecera + `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando dónde está mejor...</div>`;
 
-  for (const playa of playas) {
-    try {
-      const data = await pedirOleaje(playa, { current: true, hourly: false });
-      const c = data.current;
-      const estado = clasificar(c.wave_height, c.wave_direction, playa, c.wave_period, null, null, null, c.swell_wave_height, c.wind_wave_height,
-        null, null, null, datosMotor(c, null, {}, { diasVista: 0 }));
-      const km = Math.round(haversine(uLat, uLon, playa.lat, playa.lon));
-      if (estado.score >= 5) resultados.push({ playa, estado, km, altura: c.wave_height, periodo: c.wave_period });
-    } catch(e) {}
-  }
+  // Las 15 playas más cercanas (incluida la que estás viendo)
+  const cercanas = todasLasPlayas()
+    .map(p => ({ p, km: haversine(o.lat, o.lon, p.lat, p.lon) }))
+    .sort((a, b) => a.km - b.km).slice(0, 15);
+  let lote;
+  try { lote = await pedirLote(cercanas.map(x => x.p), { hourly: true, dias: 2 }); }
+  catch (e) { lote = []; }
+  const km = new Map(cercanas.map(x => [x.p.nombre, Math.round(x.km)]));
+  let filas = lote.map(r => ({ r, f: mejorFranja(r, _dondeDia), km: km.get(r.playa.nombre) })).filter(x => x.f);
 
-  // Ordenar por scoreRanking (rareza + score)
-  resultados.sort((a,b) =>
-    scoreRanking(b.estado.score, b.playa.consistencia) -
-    scoreRanking(a.estado.score, a.playa.consistencia)
-  );
+  const aprender = perfilActivo === 'principiante' || perfilActivo === 'banista';
+  // (para aprender, una playa marcada como buena para aprender cuenta como 1,5 puntos más al ordenar)
+  const extra = x => (aprender && x.r.playa.aptoParaPrincipiantes ? 1.5 : 0);
+  filas.sort((a, b) => (b.f.estado.score + extra(b)) - (a.f.estado.score + extra(a)) || a.km - b.km);
+  filas = filas.slice(0, 6);
 
-  const top = resultados.slice(0, 8);
-  if (top.length === 0) {
-    contenedor.innerHTML = `<div style="font-size:12px;color:#8899aa;text-align:center;padding:12px;">Sin buenas condiciones cerca ahora mismo.</div>`;
+  if (!filas.length) {
+    contenedor.innerHTML = cabecera + `<div style="font-size:12px;color:#8899aa;text-align:center;padding:12px;">No se han podido cargar las playas cercanas. Prueba en un rato.</div>`;
     return;
   }
-
-  function textoFactorDiferencial(componentes, playa) {
-    if (playa.consistencia < 0.25 && (componentes.dir > 6 || componentes.alt > 6)) {
-      return 'Día poco habitual en esta playa';
-    }
-    const PESOS = { dir:0.30, per:0.30, alt:0.25, vie:0.15 };
-    const top = Object.keys(componentes)
-      .filter(k => PESOS[k])
-      .map(k => ({ k, aporte: (componentes[k] ?? 5) * (PESOS[k] ?? 0) }))
-      .sort((a, b) => b.aporte - a.aporte)[0];
-    if (!top) return '';
-    const val = componentes[top.k] ?? 5;
-    const textos = {
-      dir: { alto:'Dirección de swell perfecta', med:'Buena dirección de swell' },
-      per: { alto:'Período excelente hoy',        med:'Buen período'             },
-      alt: { alto:'Altura ideal',                 med:'Altura razonable'        },
-      vie: { alto:'Viento muy favorable',          med:'Viento aceptable'        },
-    };
-    const nivel = val >= 8.5 ? 'alto' : 'med';
-    return textos[top.k]?.[nivel] ?? '';
-  }
-
-  contenedor.innerHTML = top.map(r => {
-    const factor = r.estado.v1
-      ? `~${fmt(r.estado.v1.hb)} m en la playa`
-      : textoFactorDiferencial(r.estado.componentes ?? {}, r.playa);
-    const esPoco = r.playa.consistencia < 0.25 && r.estado.score >= 7;
-    return `
-    <div onclick="seleccionarPlayaPorNombre('${r.playa.nombre}')"
-      style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
-      <div style="width:36px;height:36px;border-radius:50%;background:${r.estado.color};box-shadow:0 0 10px ${r.estado.color}88;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <span style="font-size:14px;font-weight:800;color:white;">${r.estado.score}</span>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;">
-          ${r.playa.nombre}
-          ${esPoco ? '<span style="font-size:10px;color:#f0a500;font-weight:500;">· Día poco habitual</span>' : ''}
+  const pocoUtil = filas[0].f.estado.score <= 3;
+  contenedor.innerHTML = cabecera + (pocoUtil ? `<div style="font-size:12px;color:#8899aa;padding:6px 0;">${_dondeDia === 'hoy' ? 'Hoy' : 'Mañana'} no parece buen día en ninguna playa cercana para tu nivel. Estas son las menos malas:</div>` : '') +
+    filas.map(({ r, f, km }) => {
+      const e = f.estado, v1 = e.v1;
+      const frase = v1 ? MotorV1.frase(v1) : e.texto;
+      const veredicto = v1?.limitante?.texto ?? '';
+      const aviso = v1?.avisos?.[0];
+      const badge = r.playa.aptoParaPrincipiantes && aprender
+        ? '<span style="font-size:10px;color:#44cc88;border:1px solid #44cc8866;border-radius:6px;padding:0 5px;font-weight:600;">buena para aprender</span>' : '';
+      return `
+      <div onclick='seleccionarPlayaPorNombre(${JSON.stringify(r.playa.nombre)})'
+        style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
+        <div style="width:38px;height:38px;border-radius:50%;background:${e.color};box-shadow:0 0 10px ${e.color}88;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span style="font-size:15px;font-weight:800;color:white;">${e.score}</span>
         </div>
-        <div style="font-size:11px;color:#8899aa;margin-top:1px;">${r.km} km${factor ? ' · ' + factor : ''}</div>
-      </div>
-    </div>`;
-  }).join('');
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${r.playa.nombre}${r.playa.nombre === playaActiva.nombre ? ' <span style="font-size:10px;color:#8899aa;font-weight:500;">(la que ves)</span>' : ''} ${badge}</div>
+          <div style="font-size:12px;color:#ccddee;margin-top:2px;">Mejor de ${f.desde} a ${f.hasta} h · ${frase}</div>
+          <div style="font-size:11px;color:#8899aa;margin-top:1px;">${km} km${veredicto ? ' · ' + veredicto : ''}${v1?.hb != null ? ' · ~' + fmt(v1.hb) + ' m en la orilla' : ''}</div>
+          ${aviso ? `<div style="font-size:11px;color:#ff8844;margin-top:2px;">⚠ ${aviso}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
 }
 
 function seleccionarPlayaPorNombre(nombre) {
@@ -2955,38 +3049,44 @@ function boundsTodasLasPlayas() {
 function crearIcono(color){
   return L.divIcon({className:'',html:`<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-14]});
 }
-async function cargarDatosPlaya(playa){
-  const data=await pedirOleaje(playa,{current:true,hourly:false});
-  return {playa,c:data.current};
-}
-function renderMarcador(playa,c){
-  const h=c?.wave_height,p=c?.wave_period,d=c?.wave_direction;
-  const estado=clasificar(h,d,playa,p,null,null,null,c?.swell_wave_height,c?.wind_wave_height,null,null,null,
-    c?datosMotor(c,null,{},{diasVista:0}):null);
+function renderMarcador(playa, r){
+  const estado = r ? estadoAhora(r) : clasificar(null);
+  const c = r?.mar?.current, w = r ? vientoEn(r.viento, null) : {};
+  const v1 = estado.v1;
+  const frase = v1 ? MotorV1.frase(v1) : (estado.texto || '');
+  const veredicto = v1?.limitante?.texto || '';
+  const aviso = v1?.avisos?.[0];
+  const nombreJS = JSON.stringify(playa.nombre).replace(/"/g, '&quot;');
   return L.marker([playa.lat,playa.lon],{icon:crearIcono(estado.color)})
     .bindPopup(`
       <div class="popup-playa">
-        <h3>🏄 ${playa.nombre}</h3>
-        <div class="popup-grid">
-          <div class="popup-dato"><div class="pl">Altura</div><div class="pv" style="color:#1a6faa">${fmt(h)}m</div></div>
-          <div class="popup-dato"><div class="pl">Período</div><div class="pv" style="color:#0a8a5a">${rnd(p)}s</div></div>
-          <div class="popup-dato"><div class="pl">Dirección</div><div class="pv">${dirTxt(d)}</div></div>
-          <div class="popup-dato"><div class="pl">Estado</div><div class="pv" style="color:${estado.color};font-size:12px;">${estado.texto}</div></div>
+        <div class="pp-cab">
+          <div class="pp-nota" style="background:${estado.color};box-shadow:0 0 12px ${estado.color}88;">${estado.score || '—'}</div>
+          <div><div class="pp-nombre">${playa.nombre}</div><div class="pp-frase">${frase}${veredicto ? ' · ' + veredicto : ''}</div></div>
         </div>
-        <div class="popup-estado" style="background:${estado.bg};color:${estado.color};">${estado.texto}</div>
-      </div>`,{maxWidth:220});
+        <div class="pp-datos">
+          <div class="pp-dato"><div class="pl">En la orilla</div><div class="pv" style="color:#4db8ff">${v1?.hb != null ? '~' + fmt(v1.hb) + ' m' : '—'}</div></div>
+          <div class="pp-dato"><div class="pl">Mar fuera</div><div class="pv">${fmt(c?.wave_height)} m · ${rnd(periodoDe(c || {}, null))} s</div></div>
+          <div class="pp-dato"><div class="pl">Viento</div><div class="pv">${w.vel != null ? rnd(w.vel) + ' ' + dirTxt(w.dir) : '—'}</div></div>
+        </div>
+        ${aviso ? `<div class="pp-aviso">⚠ ${aviso}</div>` : ''}
+        <button class="pp-btn" onclick="abrirPlayaDesdeMapa(${nombreJS})">Ver previsión</button>
+      </div>`,{maxWidth:280, minWidth:240});
+}
+function abrirPlayaDesdeMapa(nombre){
+  if (mapa) mapa.closePopup();
+  irA('inicio', document.querySelector('.nav-item'));
+  seleccionarPlayaPorNombre(nombre);
 }
 async function refrescarMarcadores(){
   if(!mapa) return;
   if(capaMarcadores) capaMarcadores.clearLayers();
   else{capaMarcadores=L.layerGroup();capaMarcadores.addTo(mapa);}
   const lista = todasLasPlayas();
-  const resultados=await Promise.allSettled(lista.map(cargarDatosPlaya));
-  resultados.forEach((r,i)=>{
-    const playa=lista[i];
-    const c=r.status==='fulfilled'?r.value.c:null;
-    renderMarcador(playa,c).addTo(capaMarcadores);
-  });
+  let lote = [];
+  try { lote = await pedirLote(lista, { hourly: false }); } catch (e) {}
+  const porNombre = new Map(lote.map(r => [r.playa.nombre, r]));
+  lista.forEach(playa => renderMarcador(playa, porNombre.get(playa.nombre) || null).addTo(capaMarcadores));
 }
 /** Tras mostrar de nuevo el contenedor del mapa (estaba oculto), Leaflet necesita recalcular tamaño y vista. */
 function ajustarVistaMapa(){
