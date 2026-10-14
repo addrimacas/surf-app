@@ -15,7 +15,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v2.1.0';
+  const VERSION = 'v2.2.0';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -78,40 +78,54 @@
   // la sombra de la costa ya la pone el atlas de exposición (no se cuenta dos veces). Sin datos → 1.
   let BATI = global.ATLAS_BATIMETRIA || null;
   if (!BATI && typeof require === 'function') { try { BATI = require('./atlas-batimetria.js'); } catch (e) { BATI = null; } }
-  // Nivel absoluto: el trazado a 115 m pierde rayos (islotes, bajos sin resolver) y sesga Kr a la baja.
-  // La altura absoluta ya está validada contra Surf-Forecast (sobre todo en playas abiertas) con el atlas
-  // de exposición, así que de la batimetría se toma la diferencia RELATIVA: Kr / Kr de referencia, con la
-  // referencia en el percentil 75 (fondo de costa abierta). Concentrar por encima de eso no está validado
-  // (tope 1,1); dispersar sí se aplica (hasta 0,6): bajos, plataformas y fondos de ría pierden energía.
+  // Kr de refracción = Kr con fondo real / Kr de los mismos rayos en línea recta (krel): así la sombra
+  // de cabos e islas, que ya pone el atlas de exposición, no se cuenta dos veces. krel = -1 marca
+  // direcciones que solo llegan rodeando la costa: ahí manda el atlas (factor 1).
+  function interpT(BT, T) {
+    const per = BT.meta.periodos, Tc = clamp(T, per[0], per[per.length - 1]);
+    let i = 0; while (i < per.length - 2 && Tc > per[i + 1]) i++;
+    return [i, (Tc - per[i]) / (per[i + 1] - per[i])];
+  }
+  function ventana(b, campo, dir, T, tipo, valida) {
+    const paso = BATI.meta.pasoDireccion, n = 360 / paso, [i, f] = interpT(BATI, T), s = SIGMA[tipo] ?? 20;
+    let suma = 0, pesos = 0, total = 0;
+    for (let d = -3 * s; d <= 3 * s; d += paso) {
+      const w = Math.exp(-0.5 * (d / s) * (d / s)), k = ((Math.round((dir + d) / paso) % n) + n) % n;
+      const v0 = b[campo][i][k], v1 = b[campo][i + 1][k];
+      total += w;
+      if (valida(v0) && valida(v1)) { suma += w * ((1 - f) * v0 + f * v1); pesos += w; }
+    }
+    return pesos < 0.25 * total ? null : suma / pesos;
+  }
+  // Referencia absoluta para las direcciones que solo llegan rodeando: el Kr absoluto del trazado
+  // (sesgado a la baja por pérdida de rayos) relativo al de costa abierta (percentil 75).
   const KR_REF = (() => {
     if (!BATI) return 1;
     const v = [];
     for (const b of Object.values(BATI.playas)) BATI.meta.periodos.forEach((T, i) => {
-      if (T >= 10 && T <= 16) for (const k of b.kr[i]) if (k > 0) v.push(k);
+      if (T >= 10 && T <= 16) b.kr[i].forEach((k, j) => { if (k > 0 && (!b.krel || b.krel[i][j] > 0)) v.push(k); });
     });
     v.sort((a, b) => a - b);
     return v.length ? v[Math.floor(v.length * 0.75)] : 1;
   })();
   function factorBatimetria(nombre, dir, T, tipo) {
     const b = BATI && nombre && BATI.playas[nombre];
-    if (!b || !valido(dir) || !valido(T)) return 1;
-    const per = BATI.meta.periodos, paso = BATI.meta.pasoDireccion, n = 360 / paso;
-    const Tc = clamp(T, per[0], per[per.length - 1]);
-    let i = 0; while (i < per.length - 2 && Tc > per[i + 1]) i++;
-    const f = (Tc - per[i]) / (per[i + 1] - per[i]);
-    const s = SIGMA[tipo] ?? 20;
-    let suma = 0, pesos = 0, total = 0;
-    for (let d = -3 * s; d <= 3 * s; d += paso) {
-      const w = Math.exp(-0.5 * (d / s) * (d / s));
-      const k = ((Math.round((dir + d) / paso) % n) + n) % n;
-      const kr = (1 - f) * b.kr[i][k] + f * b.kr[i + 1][k];
-      total += w;
-      // Solo direcciones cuyos rayos llegan: la sombra por tierra ya la pone el atlas de exposición
-      // (contarla aquí otra vez la duplicaría). Promedio en energía (Kr²).
-      if (kr > 0) { suma += w * kr * kr; pesos += w; }
-    }
-    if (pesos < 0.25 * total) return 1;          // casi ningún rayo llega en esa ventana: sin dato fiable
-    return clamp(Math.sqrt(suma / pesos) / KR_REF, 0.6, 1.1);
+    if (!b || !b.krel || !valido(dir) || !valido(T)) return 1;
+    // energía (Kr²) por dirección: krel donde hay camino recto; donde solo llega rodeando la costa,
+    // Kr absoluto / referencia, sin pasar de 1 (rodear nunca concentra más que llegar de frente)
+    const e = b._e || (b._e = b.krel.map((fila, i) => fila.map((v, j) => v > 0 ? v * v
+      : v < 0 && b.kr[i][j] > 0 ? Math.min(1, (b.kr[i][j] / KR_REF) ** 2) : 0)));
+    const k2 = ventana({ e }, 'e', dir, T, tipo, v => v > 0);
+    return k2 == null ? 1 : clamp(Math.sqrt(k2), 0.5, 1.5);
+  }
+  // Fricción de fondo (arena, f=0,015) en el recorrido sobre la plataforma y del punto de 10 m a 3 m:
+  // dH/ds = -a·H² → H = H0 / (1 + H0·∫a ds). Devuelve ∫a ds (1/m).
+  function friccionBatimetria(nombre, dir, T, tipo) {
+    const b = BATI && nombre && BATI.playas[nombre];
+    if (!b || !b.fr || !valido(dir) || !valido(T)) return 0;
+    const [i, f] = interpT(BATI, T);
+    const fr = ventana(b, 'fr', dir, T, tipo, v => v > 0) ?? 0;
+    return fr + (1 - f) * b.fi[i] + f * b.fi[i + 1];
   }
 
   // ---------------------------------------------------------------- física
@@ -336,7 +350,9 @@
       const K = transmision(atlasPlaya, p.dir, p.T, p.tipo);
       const Kr = factorBatimetria(playa?.nombre, p.dir, p.T, p.tipo);
       const Kf = (K == null ? (playa?.exposicion ?? 0.5) : K) * Kr;   // sin atlas: escalar antiguo
-      return { ...p, K: Kf, Kr, hLocal: Kf * p.h };
+      const H0 = Kf * p.h, I = friccionBatimetria(playa?.nombre, p.dir, p.T, p.tipo);
+      const hLocal = H0 / (1 + H0 * I);
+      return { ...p, K: hLocal / (p.h || 1), Kr, hLocal };
     });
   }
 
@@ -613,7 +629,7 @@
 
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
-    evaluar, evaluarBano, transmision, factorBatimetria, calidadQ: (d, playa, nivel, atlas) => evaluarSurf(d, playa, nivel, atlas).Q, factorFuerza, factorForma, factorPendiente, anguloLlegada, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
+    evaluar, evaluarBano, transmision, factorBatimetria, friccionBatimetria, calidadQ: (d, playa, nivel, atlas) => evaluarSurf(d, playa, nivel, atlas).Q, factorFuerza, factorForma, factorPendiente, anguloLlegada, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
     clasificarViento, direccionOffshore, prepararParticiones, frase, titular, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;

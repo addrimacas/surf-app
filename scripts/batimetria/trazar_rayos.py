@@ -41,6 +41,21 @@ def kh_de(w2h_g):
     return x / np.tanh(np.power(x, 0.75)) ** (2 / 3)
 
 
+FW = 0.015          # factor de fricción de fondo para arena (Soulsby; 0,01–0,02 en fondos arenosos)
+
+
+def friccion(h, T):
+    """Coeficiente a(h,T) [1/m²] de dH/ds = -a·H² por fricción de fondo (onda lineal, D = 2ρf·u³/3π)."""
+    w = 2 * math.pi / T
+    hh = np.maximum(h, 0.05)
+    kh = kh_de(w * w * hh / G)
+    k = kh / hh
+    n = 0.5 * (1 + 2 * kh / np.sinh(np.minimum(2 * kh, 50)))
+    cg = n * w / k
+    a = 8 * FW * math.pi ** 2 / (3 * G * cg * T ** 3 * np.sinh(np.minimum(kh, 25)) ** 3)
+    return np.where(h >= 3.0, a, 0.0)   # por debajo de ~3 m la ola ya rompe: no es fricción de propagación
+
+
 def celeridad(h, T):
     w = 2 * math.pi / T
     hh = np.maximum(h, 0.05)
@@ -74,7 +89,7 @@ def main():
         c = celeridad(prof, T)
         cz = np.where(np.isfinite(c), c, 0.0)
         gy, gx = np.gradient(cz, kmy, kmx)               # d/dfila (y hacia el sur), d/dcolumna
-        campos[T] = (cz, gx, gy)
+        campos[T] = (cz, gx, gy, friccion(np.where(np.isfinite(prof), prof, 0.0), T))
 
     def pesos(x, y):
         j = x / kmx; i = y / kmy
@@ -98,9 +113,12 @@ def main():
         lon10 = p['lon'] + d10 / (111.2 * math.cos(math.radians(p['lat']))) * math.sin(r)
         X0, Y0 = a_km(lat10, lon10)
         tabla = np.zeros((len(PERIODOS), 360 // PASO_DIR), dtype=float)
+        tablaRel = np.zeros_like(tabla)                   # Kr real / Kr en línea recta (sin la sombra de tierra)
+        tablaFr = np.zeros_like(tabla)                    # ∫a·ds a lo largo de los rayos que llegan (1/m)
+        rectos = {}
         hmin = np.full((len(PERIODOS), 360 // PASO_DIR), np.nan)
         for it, T in enumerate(PERIODOS):
-            c, gx, gy = campos[T]
+            c, gx, gy, fa = campos[T]
             for idr, desde in enumerate(range(0, 360, PASO_DIR)):
                 # solo direcciones que pueden llegar (±100° de la normal)
                 dn = (desde - normal + 540) % 360 - 180
@@ -115,6 +133,15 @@ def main():
                 ang = np.full_like(x, math.atan2(uy, ux))
                 llego = np.zeros_like(x, dtype=bool)
                 hm = np.full_like(x, 1e9)
+                fr = np.zeros_like(x)
+                if idr not in rectos:
+                    # mismos rayos sin refracción: cuántos llegan solo por geometría (la sombra de la costa)
+                    xr, yr = x.copy(), y.copy(); okr = interp(prof, pesos(xr, yr)) > 0.5; llr = np.zeros_like(okr)
+                    for _ in range(int((DIST0 + 4) / DS)):
+                        xr = xr + DS * ux; yr = yr + DS * uy
+                        okr &= interp(prof, pesos(xr, yr)) > 0.5
+                        llr |= okr & (np.hypot(xr - X0, yr - Y0) <= RADIO)
+                    rectos[idr] = int(llr.sum())
                 vivo = interp(c, pesos(x, y)) > 0
                 for paso in range(int((DIST0 + 4) / DS)):
                     idx = np.nonzero(vivo)[0]
@@ -124,6 +151,7 @@ def main():
                     cv = interp(c, w); hv = interp(prof, w)
                     ok = (cv > 0) & (hv > 0.5)
                     hm[idx] = np.where(ok, np.minimum(hm[idx], hv), hm[idx])
+                    fr[idx] += np.where(ok, interp(fa, w), 0.0) * DS * 1000
                     dcx = interp(gx, w); dcy = interp(gy, w)
                     av = av + DS * (np.sin(av) * dcx - np.cos(av) * dcy) / np.where(cv > 0, cv, 1.0)
                     xv = xv + DS * np.cos(av); yv = yv + DS * np.sin(av)
@@ -135,15 +163,31 @@ def main():
                     vivo[idx[~ok | dentro | (dist > DIST0 + 6)]] = False
                 n = int(llego.sum())
                 tabla[it, idr] = math.sqrt(n * DELTA / (2 * RADIO)) if n else 0.0
-                if n: hmin[it, idr] = float(np.median(hm[llego]))
+                if n:
+                    hmin[it, idr] = float(np.median(hm[llego]))
+                    tablaFr[it, idr] = float(np.median(fr[llego]))
+                    nr = rectos[idr]
+                    tablaRel[it, idr] = math.sqrt(n / nr) if nr else -1.0   # -1: solo llega rodeando (difracción/refracción)
+        fi = []   # fricción del punto de 10 m a la orilla, hasta 3 m (más dentro la ola ya rompe)
+        for it, T in enumerate(PERIODOS):
+            fa = campos[T][3]; tot = 0.0
+            for k in range(int(d10 / 0.05) + 1):
+                d = d10 - k * 0.05
+                la = p['lat'] + d / 111.2 * math.cos(r); lo = p['lon'] + d / (111.2 * math.cos(math.radians(p['lat']))) * math.sin(r)
+                xx, yy = a_km(la, lo); ww = pesos(np.array([xx]), np.array([yy]))
+                hh = float(interp(prof, ww)[0])
+                if 3.0 < hh < 10.5: tot += float(interp(fa, ww)[0]) * 50.0
+            fi.append(round(tot, 4))
         salida[p['nombre']] = dict(
             punto10=[round(lat10, 5), round(lon10, 5)], d10_km=d10,
             kr=[[round(v, 3) for v in fila] for fila in tabla],
+            krel=[[round(v, 3) for v in fila] for fila in tablaRel],
+            fr=[[round(v, 4) for v in fila] for fila in tablaFr], fi=fi,
             hmin=[[None if not np.isfinite(v) else round(v, 1) for v in fila] for fila in hmin])
         kmax = tabla.max()
         print(f"{p['nombre']}: Kr máx {kmax:.2f} · Kr(12 s, normal) {tabla[3, int(round(normal / PASO_DIR)) % (360 // PASO_DIR)]:.2f} · {time.time() - t_ini:.0f} s", flush=True)
 
-    meta = dict(version=1, generado=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), fuente='EMODnet DTM ~115 m, trazado de rayos',
+    meta = dict(version=2, friccion=FW, generado=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), fuente='EMODnet DTM ~115 m, trazado de rayos',
                 periodos=PERIODOS, pasoDireccion=PASO_DIR, radioLlegada_km=RADIO)
     js = ('// atlas-batimetria.js — GENERADO por scripts/batimetria/trazar_rayos.py (no editar a mano)\n'
           '// Kr[periodo][direccion de procedencia cada 5°]: coeficiente de refracción sobre el fondo hasta 10 m.\n'
