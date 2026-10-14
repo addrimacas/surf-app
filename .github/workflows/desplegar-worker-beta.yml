@@ -1,0 +1,76 @@
+name: Desplegar servicio de la beta (Cloudflare)
+
+# Crea (si no existe) la base D1 «salitre-beta», le aplica el esquema y publica el Worker «salitre-beta».
+# Necesita dos secretos del repositorio: CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID.
+# Opcional: EXPORT_TOKEN (contraseña para descargar los datos por la API).
+on:
+  push:
+    branches: [main]
+    paths: ['worker-beta/**', '.github/workflows/desplegar-worker-beta.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: desplegar-worker-beta
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Comprobar secretos
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::warning::Faltan CLOUDFLARE_API_TOKEN o CLOUDFLARE_ACCOUNT_ID en los secretos del repositorio. No se despliega."
+            echo "SALTAR=1" >> "$GITHUB_ENV"
+          fi
+
+      - name: Crear la base D1 si no existe y preparar la configuración
+        if: env.SALTAR != '1'
+        working-directory: worker-beta
+        run: |
+          npx --yes wrangler@3 d1 list --json > lista.json
+          ID=$(node -e "const l=require('./lista.json');const d=l.find(x=>x.name==='salitre-beta');console.log(d?d.uuid:'')")
+          if [ -z "$ID" ]; then
+            npx --yes wrangler@3 d1 create salitre-beta
+            npx --yes wrangler@3 d1 list --json > lista.json
+            ID=$(node -e "const l=require('./lista.json');console.log(l.find(x=>x.name==='salitre-beta').uuid)")
+          fi
+          cat > wrangler.toml <<TOML
+          name = "salitre-beta"
+          main = "worker.js"
+          compatibility_date = "2026-10-01"
+          workers_dev = true
+
+          [[d1_databases]]
+          binding = "DB"
+          database_name = "salitre-beta"
+          database_id = "$ID"
+          TOML
+          cat wrangler.toml
+
+      - name: Aplicar el esquema (no borra datos)
+        if: env.SALTAR != '1'
+        working-directory: worker-beta
+        run: npx --yes wrangler@3 d1 execute salitre-beta --remote --file esquema.sql
+
+      - name: Publicar el Worker
+        if: env.SALTAR != '1'
+        working-directory: worker-beta
+        run: npx --yes wrangler@3 deploy
+
+      - name: Guardar la contraseña de exportación
+        if: env.SALTAR != '1'
+        working-directory: worker-beta
+        env:
+          EXPORT_TOKEN: ${{ secrets.EXPORT_TOKEN }}
+        run: |
+          if [ -n "$EXPORT_TOKEN" ]; then echo "$EXPORT_TOKEN" | npx --yes wrangler@3 secret put EXPORT_TOKEN; else echo "Sin EXPORT_TOKEN: los datos se consultan desde la consola de D1."; fi
