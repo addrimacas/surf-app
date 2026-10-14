@@ -50,6 +50,7 @@
       /* Borde suave del alpha sobre el canvas */
       filter: drop-shadow(0 0 0.5px rgba(7, 17, 31, 0.9));
     }
+    .etiqueta-beta { align-self:flex-start; margin-top:4px; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#ffb347; border:1px solid rgba(255,179,71,0.55); border-radius:6px; padding:1px 5px; flex-shrink:0; }
     .logo-wordmark {
       font-size: clamp(1.85rem, 11vw, 3.35rem);
       font-weight: 700;
@@ -293,6 +294,7 @@
     <div class="logo-wrapper">
       <img src="logo-simbolo.png" alt="" class="logo-simbolo" role="presentation">
       <span class="titulo-marca-gradient logo-wordmark">salitre</span>
+      <span class="etiqueta-beta">beta</span>
     </div>
     <div class="perfil-spacer"></div>
   </header>
@@ -303,6 +305,8 @@
     <div style="color:#8899aa;">Esta app no es una herramienta de seguridad: respeta siempre la bandera y las indicaciones del socorrista.</div>
     <div style="margin-top:6px;">Oleaje y tiempo: <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:inherit;">Open-Meteo.com</a> (CC BY 4.0) · Mareas: Instituto Hidrográfico de la Marina · Costa: GSHHG · Mapas: © OpenStreetMap</div>
     <div id="pie-motor" style="margin-top:6px;"></div>
+    <div style="margin-top:6px;">Beta: tus valoraciones y comentarios se envían de forma anónima (playa, día, nota y lo que escribas) para mejorar las previsiones. No se guarda tu nombre ni tu ubicación.</div>
+    <button type="button" onclick="abrirComentario()" style="margin:10px 0 4px;width:100%;background:rgba(255,179,71,0.10);border:1px solid rgba(255,179,71,0.4);border-radius:12px;padding:9px 12px;color:#ffb347;font-size:13px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
   </footer>
 </div>
 <div id="pantalla-mapa" class="pantalla">
@@ -908,6 +912,7 @@
         </div>
       </div>
     </div>
+    <button type="button" id="btn-menu-comentario" style="margin-top:14px;width:100%;background:rgba(255,179,71,0.10);border:1px solid rgba(255,179,71,0.4);border-radius:12px;padding:11px 12px;color:#ffb347;font-size:14px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
   </div>
 </div>
 <div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
@@ -1080,6 +1085,7 @@ function initPerfilUI() {
   }
 
   btn.addEventListener('click', () => setPerfilOverlayAbierto(true));
+  document.getElementById('btn-menu-comentario')?.addEventListener('click', () => { setPerfilOverlayAbierto(false); abrirComentario(); });
   overlay.addEventListener('click', e => {
     if (e.target === overlay) setPerfilOverlayAbierto(false);
   });
@@ -1787,7 +1793,8 @@ function abrirValoracion() {
       <div style="font-size:12px;color:#8899aa;margin-bottom:14px;">La previsión daba un ${ev.nota}${ev.hb != null ? ' con ~' + ev.hb.toFixed(1) + ' m en la playa' : ''}. Tu valoración ayuda a afinar esta playa.${previa ? ' Ya valoraste hoy: se sustituirá.' : ''}</div>
       <div style="display:flex;gap:4px;margin-bottom:16px;">${botonesNota}</div>
       <div style="font-size:13px;color:#ccddee;margin-bottom:8px;">¿El tamaño coincidió con la previsión?</div>
-      <div style="display:flex;gap:6px;margin-bottom:18px;">${botonesCoinc}</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px;">${botonesCoinc}</div>
+      <textarea id="val-comentario" maxlength="2000" rows="2" placeholder="Comentario (opcional): cómo estaba el mar, qué falló..." style="width:100%;box-sizing:border-box;margin-bottom:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:8px 10px;font:inherit;font-size:13px;resize:vertical;">${previa?.comentario ? previa.comentario.replace(/</g, '&lt;') : ''}</textarea>
       <div style="display:flex;gap:8px;">
         <button onclick="cerrarValoracion()" style="flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:none;color:#8899aa;font-size:14px;cursor:pointer;">Cancelar</button>
         <button id="val-guardar" disabled style="flex:2;padding:11px;border-radius:12px;border:none;background:#4db8ff;color:#06182c;font-size:14px;font-weight:700;cursor:pointer;opacity:0.4;">Guardar</button>
@@ -1813,21 +1820,97 @@ function abrirValoracion() {
   fondo.querySelectorAll('.val-coinc').forEach(b => b.addEventListener('click', () => { coinc = b.dataset.coinc; marcar(); }));
   document.getElementById('val-guardar').addEventListener('click', () => {
     const lista = leerValoraciones().filter(v => !(v.playa === ev.playa && v.fecha === hoyLocal()));
-    lista.push({
+    const comentario = (document.getElementById('val-comentario')?.value || '').trim() || null;
+    const val = {
       version: 1, playa: ev.playa, fecha: hoyLocal(), registrada: new Date().toISOString(),
-      nota, coincidio: coinc, perfil: ev.perfil,
+      nota, coincidio: coinc, perfil: ev.perfil, comentario,
       prediccion: { nota: ev.nota, hb: ev.hb, confianza: ev.confianza, motor: ev.motor, modelo: ev.modelo,
                     calculada: new Date(ev.ts).toISOString(), datos: ev.datos },
-    });
+    };
+    lista.push(val);
     const ok = guardarValoraciones(lista);
+    enviarBeta('/v1/valoracion', { ...val, dispositivo: idDispositivo() });
     document.getElementById('val-estado').textContent = ok
-      ? 'Guardada en este dispositivo. Gracias.'
+      ? 'Guardada. Gracias, nos ayuda a afinar esta playa.'
       : 'No se ha podido guardar en este navegador.';
     if (ok) setTimeout(cerrarValoracion, 900);
   });
   marcar();
   fondo.style.display = 'flex';
 }
+// ── Envío a la beta (Cloudflare Worker «salitre-beta») ─────────────────────────
+// Si no hay conexión o el servicio falla, se guarda en una cola y se reintenta al abrir la app.
+const API_BETA = 'https://salitre-beta.adrimacas.workers.dev';
+const CLAVE_PENDIENTES = 'salitre_pendientes';
+function idDispositivo() {
+  try {
+    let id = localStorage.getItem('salitre_dispositivo');
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+      localStorage.setItem('salitre_dispositivo', id);
+    }
+    return id;
+  } catch (e) { return 'sin-almacenamiento'; }
+}
+function leerPendientes() { try { return JSON.parse(localStorage.getItem(CLAVE_PENDIENTES) || '[]'); } catch (e) { return []; } }
+function guardarPendientes(l) { try { localStorage.setItem(CLAVE_PENDIENTES, JSON.stringify(l.slice(-50))); } catch (e) {} }
+async function postBeta(ruta, datos) {
+  const r = await fetch(API_BETA + ruta, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datos) });
+  if (r.status >= 500) throw new Error('HTTP ' + r.status);
+  return r.ok;   // 4xx: datos rechazados; no se reintenta
+}
+async function enviarBeta(ruta, datos) {
+  try { return await postBeta(ruta, datos); }
+  catch (e) { guardarPendientes([...leerPendientes(), { ruta, datos }]); return false; }
+}
+async function reintentarPendientes() {
+  const lista = leerPendientes();
+  if (!lista.length) return;
+  const quedan = [];
+  for (const p of lista) { try { await postBeta(p.ruta, p.datos); } catch (e) { quedan.push(p); } }
+  guardarPendientes(quedan);
+}
+window.addEventListener('load', () => setTimeout(reintentarPendientes, 4000));
+
+function abrirComentario() {
+  let fondo = document.getElementById('comentario-overlay');
+  if (!fondo) {
+    fondo = document.createElement('div');
+    fondo.id = 'comentario-overlay';
+    fondo.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:flex-end;justify-content:center;';
+    fondo.addEventListener('click', e => { if (e.target === fondo) fondo.style.display = 'none'; });
+    document.body.appendChild(fondo);
+  }
+  const playa = typeof playaActiva !== 'undefined' && playaActiva ? playaActiva.nombre : null;
+  fondo.innerHTML = `
+    <div style="width:100%;max-width:440px;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:18px 16px 24px;">
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Comentario o error</div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:12px;">Qué no te cuadra, qué echas en falta o qué falla. Se envía de forma anónima${playa ? ' con la playa que estás viendo (' + playa + ')' : ''}.</div>
+      <textarea id="com-texto" maxlength="4000" rows="5" placeholder="Escribe aquí..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:10px;font:inherit;font-size:14px;resize:vertical;"></textarea>
+      <input id="com-contacto" maxlength="200" placeholder="Contacto (opcional, solo si quieres respuesta)" style="width:100%;box-sizing:border-box;margin-top:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:9px 10px;font:inherit;font-size:13px;">
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button id="com-cancelar" style="flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:none;color:#8899aa;font-size:14px;cursor:pointer;">Cancelar</button>
+        <button id="com-enviar" style="flex:2;padding:11px;border-radius:12px;border:none;background:#ffb347;color:#1a1000;font-size:14px;font-weight:700;cursor:pointer;">Enviar</button>
+      </div>
+      <div id="com-estado" style="font-size:12px;color:#8899aa;margin-top:10px;text-align:center;"></div>
+    </div>`;
+  document.getElementById('com-cancelar').addEventListener('click', () => { fondo.style.display = 'none'; });
+  document.getElementById('com-enviar').addEventListener('click', async () => {
+    const texto = document.getElementById('com-texto').value.trim();
+    const estado = document.getElementById('com-estado');
+    if (!texto) { estado.textContent = 'Escribe algo antes de enviar.'; return; }
+    const ok = await enviarBeta('/v1/comentario', {
+      dispositivo: idDispositivo(), texto, playa,
+      contacto: document.getElementById('com-contacto').value.trim() || null,
+      version_app: (typeof MotorV1 !== 'undefined' ? MotorV1.VERSION : ''),
+    });
+    estado.textContent = ok ? 'Enviado. Gracias.' : 'Sin conexión ahora mismo: se enviará solo la próxima vez que abras la app.';
+    setTimeout(() => { fondo.style.display = 'none'; }, 1400);
+  });
+  fondo.style.display = 'flex';
+  setTimeout(() => document.getElementById('com-texto')?.focus(), 50);
+}
+
 function cerrarValoracion() {
   const f = document.getElementById('valoracion-overlay');
   if (f) f.style.display = 'none';

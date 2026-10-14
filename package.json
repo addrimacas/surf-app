@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node --test tests/coherencia.test.js tests/panel.test.js",
+    "test": "node --test tests/coherencia.test.js tests/panel.test.js tests/worker-beta.test.mjs",
     "atlas": "node scripts/calcular-atlas.js",
     "registro": "node scripts/registrar-prevision.js",
     "test:app": "npm i --no-save jsdom@24 && node tests/app-sin-red.js . v1 && node tests/app-sin-red.js . rechazo && node tests/app-sin-red.js . v0",
