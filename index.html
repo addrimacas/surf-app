@@ -1496,20 +1496,29 @@ function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha
   return { color, texto, bg, score, componentes, v1 };
 }
 
-// Oleaje por componentes (mar abierto): primario, secundario y mar de viento, como en otras webs.
+// Oleaje por componentes. El modelo etiqueta «primario» y «secundario» por energía en mar abierto y
+// las etiquetas se intercambian de una hora a otra, así que se ordenan por la energía que LLEGA a la
+// playa (altura local² × período). El secundario solo se enseña si aporta al menos el 20 % de esa
+// energía. El mar de viento no va aquí: cuenta en la superficie («mar desordenado»).
 function renderParticiones(parts) {
-  const nombre = { swell: 'Oleaje primario', swell2: 'Oleaje secundario', viento: 'Mar de viento' };
-  const filas = (parts || []).filter(p => p.h != null && p.h >= 0.1)
-    .sort((a, b) => ({ swell: 0, swell2: 1, viento: 2 }[a.tipo] - { swell: 0, swell2: 1, viento: 2 }[b.tipo]));
-  if (!filas.length) return '';
-  return filas.map(p => `
+  const trenes = (parts || []).filter(p => p.tipo !== 'viento' && p.h != null && p.h >= 0.1)
+    .map(p => ({ ...p, eLocal: (p.hLocal ?? 0) ** 2 * (p.T ?? 0) }))
+    .sort((a, b) => b.eLocal - a.eLocal);
+  if (!trenes.length) return '';
+  const total = trenes.reduce((s, p) => s + p.eLocal, 0);
+  const visibles = trenes.filter((p, k) => k === 0 || (total > 0 && p.eLocal / total >= 0.2));
+  const nombre = ['Oleaje principal', 'Oleaje secundario'];
+  return visibles.map((p, k) => {
+    const entra = p.h > 0 ? Math.round(100 * (p.hLocal ?? 0) / p.h) : null;
+    return `
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#8899aa;font-weight:500;">${nombre[p.tipo] ?? p.tipo}</span>
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">${nombre[k]}</span>
               <span style="font-size:13px;color:white;font-weight:600;display:flex;align-items:center;gap:6px;">
-                ${fmt(p.h)} m · ${rnd(p.T)} s · ${flechaDireccion(p.dir, '#4db8ff', 16)}${dirTxt(p.dir)}
+                ${fmt(p.h)} m · ${rnd(p.T)} s · ${flechaDireccion(p.dir, '#4db8ff', 16)}${dirTxt(p.dir)}${entra != null ? ` <span style="color:#8899aa;font-weight:500;">· entra ${entra} %</span>` : ''}
               </span>
-            </div>`).join('');
+            </div>`;
+  }).join('');
 }
 
 // Resumen del mar abierto a partir de las particiones (motor v1)
