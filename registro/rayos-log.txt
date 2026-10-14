@@ -1,61 +1,61 @@
-Patos: Kr máx 1.13 · Kr(12 s, normal) 0.52 · 17 s
-Prado: Kr máx 1.06 · Kr(12 s, normal) 0.26 · 31 s
-Vao: Kr máx 0.93 · Kr(12 s, normal) 0.86 · 45 s
-Samil: Kr máx 0.58 · Kr(12 s, normal) 0.00 · 58 s
-Nerga: Kr máx 0.68 · Kr(12 s, normal) 0.00 · 70 s
-Melide: Kr máx 1.03 · Kr(12 s, normal) 0.45 · 85 s
-Caneliñas: Kr máx 1.13 · Kr(12 s, normal) 0.63 · 97 s
-Canelas: Kr máx 1.03 · Kr(12 s, normal) 0.58 · 109 s
-Montalvo: Kr máx 1.21 · Kr(12 s, normal) 0.26 · 123 s
-Foxos: Kr máx 1.10 · Kr(12 s, normal) 0.82 · 137 s
-Lanzada: Kr máx 1.18 · Kr(12 s, normal) 0.89 · 151 s
-Vilar: Kr máx 1.15 · Kr(12 s, normal) 0.73 · 167 s
-Ladeira: Kr máx 1.13 · Kr(12 s, normal) 0.45 · 181 s
-Balieiros: Kr máx 1.37 · Kr(12 s, normal) 1.03 · 197 s
-Seráns: Kr máx 1.15 · Kr(12 s, normal) 0.68 · 212 s
-Furnas: Kr máx 1.37 · Kr(12 s, normal) 0.73 · 227 s
-Río Sieira: Kr máx 1.29 · Kr(12 s, normal) 0.89 · 243 s
-Queiruga: Kr máx 1.48 · Kr(12 s, normal) 0.58 · 259 s
-Baroña: Kr máx 1.69 · Kr(12 s, normal) 1.21 · 274 s
-Fonforrón: Kr máx 1.34 · Kr(12 s, normal) 0.58 · 289 s
-Aguieira: Kr máx 1.21 · Kr(12 s, normal) 0.97 · 303 s
-Ancoradoiro: Kr máx 1.39 · Kr(12 s, normal) 0.58 · 318 s
-Lariño: Kr máx 1.86 · Kr(12 s, normal) 1.57 · 334 s
-Carnota: Kr máx 1.10 · Kr(12 s, normal) 0.45 · 348 s
-Mar de Fora: Kr máx 1.48 · Kr(12 s, normal) 0.58 · 365 s
-Rostro: Kr máx 1.75 · Kr(12 s, normal) 1.15 · 380 s
-Nemiña: Kr máx 1.26 · Kr(12 s, normal) 0.37 · 396 s
-Traba: Kr máx 1.73 · Kr(12 s, normal) 1.21 · 411 s
-Soesto: Kr máx 1.55 · Kr(12 s, normal) 0.89 · 427 s
-Seaia: Kr máx 1.21 · Kr(12 s, normal) 0.82 · 443 s
-Malpica: Kr máx 1.24 · Kr(12 s, normal) 0.97 · 459 s
-Razo: Kr máx 1.59 · Kr(12 s, normal) 0.89 · 474 s
-Baldaio: Kr máx 1.83 · Kr(12 s, normal) 1.18 · 490 s
-Caión: Kr máx 1.77 · Kr(12 s, normal) 0.93 · 505 s
-Barrañán: Kr máx 1.41 · Kr(12 s, normal) 0.63 · 519 s
-Valcovo: Kr máx 2.05 · Kr(12 s, normal) 1.13 · 532 s
-Repibelo: Kr máx 1.84 · Kr(12 s, normal) 1.13 · 546 s
-Sabón: Kr máx 1.21 · Kr(12 s, normal) 0.00 · 559 s
-Orzán: Kr máx 0.68 · Kr(12 s, normal) 0.26 · 573 s
-Riazor: Kr máx 0.89 · Kr(12 s, normal) 0.45 · 586 s
-Matadero: Kr máx 1.03 · Kr(12 s, normal) 0.58 · 600 s
-Santa Cristina: Kr máx 0.45 · Kr(12 s, normal) 0.00 · 610 s
-Bastiagueiro: Kr máx 1.06 · Kr(12 s, normal) 0.45 · 620 s
-Doniños: Kr máx 1.39 · Kr(12 s, normal) 0.93 · 636 s
-San Jorge: Kr máx 1.18 · Kr(12 s, normal) 0.68 · 651 s
-Santa Comba: Kr máx 1.46 · Kr(12 s, normal) 0.52 · 665 s
-Ponzos: Kr máx 1.44 · Kr(12 s, normal) 0.63 · 680 s
-Campelo: Kr máx 1.37 · Kr(12 s, normal) 0.82 · 695 s
-Valdoviño: Kr máx 1.81 · Kr(12 s, normal) 1.61 · 711 s
-Pantín: Kr máx 1.57 · Kr(12 s, normal) 1.06 · 727 s
-Vilarrube: Kr máx 1.03 · Kr(12 s, normal) 0.37 · 742 s
-A Concha: Kr máx 1.06 · Kr(12 s, normal) 0.86 · 757 s
-San Antón: Kr máx 1.88 · Kr(12 s, normal) 0.63 · 773 s
-Sarridal: Kr máx 1.95 · Kr(12 s, normal) 1.41 · 789 s
-Bares: Kr máx 1.59 · Kr(12 s, normal) 1.59 · 802 s
-Esteiro: Kr máx 1.44 · Kr(12 s, normal) 0.45 · 816 s
-Peizás: Kr máx 1.57 · Kr(12 s, normal) 1.03 · 831 s
-Rapadoira: Kr máx 1.65 · Kr(12 s, normal) 0.93 · 846 s
-San Cosme: Kr máx 1.21 · Kr(12 s, normal) 0.63 · 861 s
-Reinante: Kr máx 1.48 · Kr(12 s, normal) 1.15 · 876 s
+Patos: Kr máx 1.01 · Kr(12 s, normal) 0.45 · 19 s
+Prado: Kr máx 0.93 · Kr(12 s, normal) 0.28 · 36 s
+Vao: Kr máx 0.96 · Kr(12 s, normal) 0.84 · 51 s
+Samil: Kr máx 0.57 · Kr(12 s, normal) 0.14 · 65 s
+Nerga: Kr máx 0.65 · Kr(12 s, normal) 0.14 · 79 s
+Melide: Kr máx 0.99 · Kr(12 s, normal) 0.35 · 99 s
+Caneliñas: Kr máx 1.02 · Kr(12 s, normal) 0.54 · 112 s
+Canelas: Kr máx 1.06 · Kr(12 s, normal) 0.73 · 126 s
+Montalvo: Kr máx 1.03 · Kr(12 s, normal) 0.24 · 141 s
+Foxos: Kr máx 1.07 · Kr(12 s, normal) 0.73 · 158 s
+Lanzada: Kr máx 1.08 · Kr(12 s, normal) 0.83 · 174 s
+Vilar: Kr máx 0.99 · Kr(12 s, normal) 0.57 · 194 s
+Ladeira: Kr máx 0.99 · Kr(12 s, normal) 0.54 · 213 s
+Balieiros: Kr máx 1.24 · Kr(12 s, normal) 1.00 · 233 s
+Seráns: Kr máx 1.14 · Kr(12 s, normal) 0.66 · 252 s
+Furnas: Kr máx 1.28 · Kr(12 s, normal) 0.75 · 272 s
+Río Sieira: Kr máx 1.19 · Kr(12 s, normal) 0.87 · 291 s
+Queiruga: Kr máx 1.29 · Kr(12 s, normal) 0.77 · 311 s
+Baroña: Kr máx 1.53 · Kr(12 s, normal) 1.10 · 330 s
+Fonforrón: Kr máx 1.12 · Kr(12 s, normal) 0.52 · 347 s
+Aguieira: Kr máx 1.12 · Kr(12 s, normal) 0.84 · 364 s
+Ancoradoiro: Kr máx 1.31 · Kr(12 s, normal) 0.54 · 383 s
+Lariño: Kr máx 1.61 · Kr(12 s, normal) 1.61 · 404 s
+Carnota: Kr máx 1.09 · Kr(12 s, normal) 0.49 · 422 s
+Mar de Fora: Kr máx 1.35 · Kr(12 s, normal) 0.84 · 444 s
+Rostro: Kr máx 1.58 · Kr(12 s, normal) 0.96 · 464 s
+Nemiña: Kr máx 1.25 · Kr(12 s, normal) 0.39 · 484 s
+Traba: Kr máx 1.62 · Kr(12 s, normal) 1.10 · 503 s
+Soesto: Kr máx 1.25 · Kr(12 s, normal) 0.85 · 523 s
+Seaia: Kr máx 1.09 · Kr(12 s, normal) 0.87 · 544 s
+Malpica: Kr máx 1.01 · Kr(12 s, normal) 0.87 · 565 s
+Razo: Kr máx 1.37 · Kr(12 s, normal) 0.85 · 584 s
+Baldaio: Kr máx 1.71 · Kr(12 s, normal) 1.14 · 603 s
+Caión: Kr máx 1.66 · Kr(12 s, normal) 0.94 · 623 s
+Barrañán: Kr máx 1.47 · Kr(12 s, normal) 0.65 · 639 s
+Valcovo: Kr máx 1.79 · Kr(12 s, normal) 1.02 · 656 s
+Repibelo: Kr máx 1.58 · Kr(12 s, normal) 1.05 · 673 s
+Sabón: Kr máx 1.18 · Kr(12 s, normal) 0.22 · 689 s
+Orzán: Kr máx 0.71 · Kr(12 s, normal) 0.33 · 706 s
+Riazor: Kr máx 0.85 · Kr(12 s, normal) 0.39 · 722 s
+Matadero: Kr máx 0.96 · Kr(12 s, normal) 0.62 · 740 s
+Santa Cristina: Kr máx 0.30 · Kr(12 s, normal) 0.00 · 752 s
+Bastiagueiro: Kr máx 0.84 · Kr(12 s, normal) 0.32 · 764 s
+Doniños: Kr máx 1.31 · Kr(12 s, normal) 0.84 · 784 s
+San Jorge: Kr máx 1.24 · Kr(12 s, normal) 0.66 · 803 s
+Santa Comba: Kr máx 1.26 · Kr(12 s, normal) 0.56 · 822 s
+Ponzos: Kr máx 1.21 · Kr(12 s, normal) 0.77 · 840 s
+Campelo: Kr máx 1.26 · Kr(12 s, normal) 0.84 · 861 s
+Valdoviño: Kr máx 1.60 · Kr(12 s, normal) 1.51 · 881 s
+Pantín: Kr máx 1.35 · Kr(12 s, normal) 1.09 · 902 s
+Vilarrube: Kr máx 0.87 · Kr(12 s, normal) 0.40 · 921 s
+A Concha: Kr máx 1.14 · Kr(12 s, normal) 0.75 · 940 s
+San Antón: Kr máx 1.82 · Kr(12 s, normal) 0.95 · 960 s
+Sarridal: Kr máx 1.61 · Kr(12 s, normal) 1.20 · 980 s
+Bares: Kr máx 1.55 · Kr(12 s, normal) 1.36 · 997 s
+Esteiro: Kr máx 1.49 · Kr(12 s, normal) 0.36 · 1014 s
+Peizás: Kr máx 1.30 · Kr(12 s, normal) 0.95 · 1034 s
+Rapadoira: Kr máx 1.30 · Kr(12 s, normal) 0.81 · 1052 s
+San Cosme: Kr máx 1.12 · Kr(12 s, normal) 0.65 · 1070 s
+Reinante: Kr máx 1.22 · Kr(12 s, normal) 1.05 · 1089 s
 escrito /home/runner/work/surf-app/surf-app/scripts/batimetria/../../atlas-batimetria.js
