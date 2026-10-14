@@ -78,6 +78,18 @@
   // la sombra de la costa ya la pone el atlas de exposición (no se cuenta dos veces). Sin datos → 1.
   let BATI = global.ATLAS_BATIMETRIA || null;
   if (!BATI && typeof require === 'function') { try { BATI = require('./atlas-batimetria.js'); } catch (e) { BATI = null; } }
+  // Nivel absoluto: el trazado a 115 m pierde rayos (islotes, bajos sin resolver) y sesga Kr a la baja.
+  // La altura absoluta ya está validada contra Surf-Forecast con el atlas de exposición, así que de la
+  // batimetría se toma la diferencia RELATIVA entre playas: Kr / mediana de Kr (10–16 s, rayos que llegan).
+  const KR_REF = (() => {
+    if (!BATI) return 1;
+    const v = [];
+    for (const b of Object.values(BATI.playas)) BATI.meta.periodos.forEach((T, i) => {
+      if (T >= 10 && T <= 16) for (const k of b.kr[i]) if (k > 0) v.push(k);
+    });
+    v.sort((a, b) => a - b);
+    return v.length ? v[Math.floor(v.length / 2)] : 1;
+  })();
   function factorBatimetria(nombre, dir, T, tipo) {
     const b = BATI && nombre && BATI.playas[nombre];
     if (!b || !valido(dir) || !valido(T)) return 1;
@@ -95,7 +107,7 @@
       if (kr > 0) { suma += w * kr * kr; pesos += w; }   // promedio de energía (Kr²)
     }
     if (pesos < 0.3 * total) return 1;
-    return clamp(Math.sqrt(suma / pesos), 0.6, 1.5);
+    return clamp(Math.sqrt(suma / pesos) / KR_REF, 0.6, 1.5);
   }
 
   // ---------------------------------------------------------------- física
@@ -597,7 +609,7 @@
 
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
-    evaluar, evaluarBano, transmision, calidadQ: (d, playa, nivel, atlas) => evaluarSurf(d, playa, nivel, atlas).Q, factorFuerza, factorForma, factorPendiente, anguloLlegada, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
+    evaluar, evaluarBano, transmision, factorBatimetria, calidadQ: (d, playa, nivel, atlas) => evaluarSurf(d, playa, nivel, atlas).Q, factorFuerza, factorForma, factorPendiente, anguloLlegada, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
     clasificarViento, direccionOffshore, prepararParticiones, frase, titular, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
