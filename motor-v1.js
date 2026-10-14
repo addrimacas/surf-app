@@ -401,20 +401,14 @@
     if (desordenado) t = t ? `${t} y mar desordenado` : 'con mar desordenado';
     return t;
   }
+  // Sin traducir el tamaño a referencias del cuerpo (demasiado arriesgado): solo viento y orden del mar.
   function frase(r) {
     if (!r) return '';
-    if (r.esBano) {
-      const hb = r.hb;
-      const mar = hb <= 0.4 ? 'Mar en calma en la orilla' : hb <= 0.7 ? 'Algo de ola en la orilla'
-        : hb <= 1.0 ? 'Mar movido en la orilla' : 'Mar fuerte para el baño';
-      const v = r.viento?.tipo === 'off' ? ', con viento de tierra' : r.viento?.tipo ? ', con viento de mar' : '';
-      return `Se espera: ${mar.charAt(0).toLowerCase() + mar.slice(1)}${v}`;
-    }
-    const talla = tallaTexto(r.hb);
-    if (!talla) return '';
-    if (talla === 'casi sin ola') return 'Se espera casi sin ola';
-    const sup = superficieTexto(r);
-    return `Se esperan ${talla}${sup ? ', ' + sup : ''}`;
+    const v = r.viento || {};
+    let t = v.tipo === 'glassy' ? 'Sin apenas viento' : v.tipo === 'off' ? 'Viento de tierra'
+      : v.tipo === 'cross' ? 'Viento cruzado' : v.tipo === 'on' ? 'Viento de mar' : '';
+    if (!r.esBano && r.factores?.limpieza != null && r.factores.limpieza < 0.7) t = t ? `${t}, mar desordenado` : 'Mar desordenado';
+    return t || 'Sin datos de viento';
   }
 
   const API = {

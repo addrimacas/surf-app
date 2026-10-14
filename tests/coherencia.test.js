@@ -128,7 +128,7 @@ test('barrido: frase y veredicto coherentes con el tamaño en todas las playas',
       for (const nivel of ['banista', 'principiante', 'intermedio', 'pro']) {
         const r = ev(nombre, mar(h, T, dir, vi), nivel);
         const f = M.frase(r);
-        assert.ok(f && f.startsWith('Se espera'), `${nombre} ${nivel}: frase vacía`);
+        assert.ok(f && !/rodilla|cintura|pecho|cabeza/.test(f), `${nombre} ${nivel}: frase «${f}»`);
         assert.ok(r.limitante?.texto, `${nombre} ${nivel}: sin veredicto`);
         if (nivel === 'banista') continue;
         const R = M.NIVELES[nivel];

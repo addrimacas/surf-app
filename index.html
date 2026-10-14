@@ -1496,6 +1496,22 @@ function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha
   return { color, texto, bg, score, componentes, v1 };
 }
 
+// Oleaje por componentes (mar abierto): primario, secundario y mar de viento, como en otras webs.
+function renderParticiones(parts) {
+  const nombre = { swell: 'Oleaje primario', swell2: 'Oleaje secundario', viento: 'Mar de viento' };
+  const filas = (parts || []).filter(p => p.h != null && p.h >= 0.1)
+    .sort((a, b) => ({ swell: 0, swell2: 1, viento: 2 }[a.tipo] - { swell: 0, swell2: 1, viento: 2 }[b.tipo]));
+  if (!filas.length) return '';
+  return filas.map(p => `
+            <div style="height:0.5px;background:#ffffff15;"></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">${nombre[p.tipo] ?? p.tipo}</span>
+              <span style="font-size:13px;color:white;font-weight:600;display:flex;align-items:center;gap:6px;">
+                ${fmt(p.h)} m · ${rnd(p.T)} s · ${flechaDireccion(p.dir, '#4db8ff', 16)}${dirTxt(p.dir)}
+              </span>
+            </div>`).join('');
+}
+
 // Resumen del mar abierto a partir de las particiones (motor v1)
 function resumenV1(r) {
   const ps = (r?.particiones || []).filter(p => p.h >= 0.2).sort((a, b) => b.h * b.h * b.T - a.h * a.h * a.T);
@@ -2272,7 +2288,7 @@ async function cargarInicio() {
               <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía${estado.v1 ? ' mar abierto' : ''}</span>
               <span style="font-size:13px;color:white;font-weight:600;">${energia ?? '—'} kJ</span>
             </div>
-            ${estado.v1 ? `
+            ${estado.v1 ? renderParticiones(estado.v1.particiones) : ''}            ${estado.v1 ? `
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
               <span style="font-size:13px;color:#8899aa;font-weight:500;">Ola en la playa (estimada)</span>
