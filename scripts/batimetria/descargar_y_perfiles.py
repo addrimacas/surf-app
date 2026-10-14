@@ -17,6 +17,15 @@ COBERTURAS = ['emodnet__mean', 'emodnet:mean', 'emodnet__mean_2022', 'emodnet:me
 
 
 def descargar():
+    # Capacidades del servicio (para ver los nombres reales de las coberturas)
+    try:
+        with urllib.request.urlopen('https://ows.emodnet-bathymetry.eu/wcs?service=WCS&version=2.0.1&request=GetCapabilities', timeout=120) as r:
+            cap = r.read().decode('utf8', 'replace')
+        ids = re.findall(r'<wcs:CoverageId>([^<]+)</wcs:CoverageId>', cap)
+        print('Coberturas WCS:', ids[:40])
+        COBERTURAS[:0] = [i for i in ids if 'mean' in i.lower()][:4]
+    except Exception as e:
+        print('GetCapabilities error', e)
     for cov in COBERTURAS:
         u = ('https://ows.emodnet-bathymetry.eu/wcs?service=WCS&version=2.0.1&request=GetCoverage'
              f'&coverageId={cov}&subset=Lat({BBOX["lat0"]},{BBOX["lat1"]})&subset=Long({BBOX["lon0"]},{BBOX["lon1"]})'
@@ -27,7 +36,7 @@ def descargar():
             if datos[:2] in (b'II', b'MM'):
                 print('WCS OK', cov, len(datos), 'bytes')
                 return datos
-            print('WCS', cov, 'no es TIFF:', datos[:200])
+            print('WCS', cov, 'no es TIFF:', datos[:600])
         except Exception as e:
             print('WCS', cov, 'error', e)
     sys.exit('No se pudo descargar la batimetría')
