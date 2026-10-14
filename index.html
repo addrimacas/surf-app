@@ -2845,6 +2845,7 @@ function mejorFranja(r, cualDia) {
     if (h < 7 || h > 20) continue;
     const j = vIdx.get(t);
     const w = j != null ? vientoEn(r.viento, j) : {};
+    if (w.esDeDia === false) continue;   // de noche no se propone
     const e = clasificar(mh.wave_height[i], mh.wave_direction[i], r.playa, periodoDe(mh, i), w.dir, w.vel, w.racha,
       mh.swell_wave_height?.[i], mh.wind_wave_height?.[i], null, null, null, datosMotor(mh, i, w, { diasVista: diasDesdeAhora(t) }));
     horas.push({ h, e });
@@ -3449,9 +3450,19 @@ async function plCargarTabla() {
   });
   html += `</div>`;
 
-  // Ideal mar
-  html += `<div class="pl-fila ideal"><div class="pl-fila-label">Ideal</div>`;
+  // ¿Merece? Veredicto del motor (antes comparaba con rangos escritos a mano por playa,
+  // que contradecían la nota: «✗ dir.» con un 10)
+  html += `<div class="pl-fila ideal"><div class="pl-fila-label">Merece</div>`;
+  const CORTO = { tamano: 'tamaño', superficie: 'viento', periodo: 'período', cruce: 'cruce', marea: 'marea', noche: 'noche' };
   horas.forEach((h, i) => {
+    const ev = clasificar(heights[i], dirs[i], p, periods[i], vdirs[i], vels[i], null, null, null, null, null, null, datosV1[i]);
+    if (ev.v1) {
+      const ok = ev.v1.nota >= 7;
+      const det = ok ? '' : (CORTO[ev.v1.limitante?.clave] || '');
+      html += cel(ok ? `<span class="pl-ideal-ok">✓</span>`
+        : `<span class="pl-ideal-no">✗</span>${det ? `<span style="font-size:9px;color:#5a7a9a;">${det}</span>` : ''}`, esAhoraH(h));
+      return;
+    }
     const diffDir = dirs[i] != null ? diffSwellRespectoPlaya(dirs[i], p) : 999;
     const altOk = heights[i] >= p.hMin && heights[i] <= p.hMax;
     const dirOk = diffDir <= p.tol;

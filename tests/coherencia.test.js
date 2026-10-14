@@ -195,3 +195,23 @@ test('viento: el de tierra sale de la costa del atlas en las 60 playas y es opue
     }
   }
 });
+
+test('noche: nota 1 en todos los niveles y playas', () => {
+  for (const n of Object.keys(PLAYAS)) for (const nivel of ['banista', 'principiante', 'intermedio', 'pro']) {
+    const r = ev(n, mar(1.5, 12, 300, { esDeDia: false }), nivel);
+    assert.strictEqual(r.nota, 1, `${n} ${nivel}`);
+  }
+});
+
+test('período: el factor nunca baja al alargar el período, y un mar de 6 s nunca es un 10', () => {
+  let prev = 0;
+  for (let T = 3; T <= 18; T += 0.5) {
+    const f = M.factorPeriodo([{ hLocal: 1, T }]);
+    assert.ok(f >= prev, `T ${T}`); prev = f;
+  }
+  for (const n of Object.keys(PLAYAS)) for (const h of [0.8, 1.2, 1.6, 2.2]) {
+    const off = M.direccionOffshore(PLAYAS[n], ATLAS.playas[n]);
+    const r = ev(n, mar(h, 6, 300, { swellT: 6, swellTp: 6, vientoVel: 3, vientoDir: off }), 'intermedio');
+    assert.ok(r.nota <= 9, `${n} ${h} m 6 s: ${r.nota}`);
+  }
+});

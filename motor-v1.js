@@ -10,7 +10,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v1.1.2';
+  const VERSION = 'v1.2.0';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -158,6 +158,20 @@
     return 1 - 0.6 * (ev / e);
   }
 
+  // Calidad por período: un mar de 6 s, aunque tenga buen tamaño y no haya viento, no es un 10.
+  // Período ponderado por la energía que llega a la playa. Ojo: el modelo da período MEDIO
+  // (unos 0,8 del de pico): 10 s medio ≈ 12–13 s de pico.
+  function factorPeriodo(parts) {
+    const e = parts.reduce((s, p) => s + p.hLocal * p.hLocal, 0);
+    if (e <= 0) return 1;
+    const T = parts.reduce((s, p) => s + p.T * p.hLocal * p.hLocal, 0) / e;
+    if (T >= 11) return 1;
+    if (T >= 9) return lerp(T, 9, 11, 0.9, 1);
+    if (T >= 7) return lerp(T, 7, 9, 0.75, 0.9);
+    if (T >= 5) return lerp(T, 5, 7, 0.55, 0.75);
+    return 0.55;
+  }
+
   // Cruce de swells: solo entre particiones de swell ya transferidas a la playa
   function factorCruce(parts) {
     const sw = parts.filter(p => p.tipo !== 'viento' && p.hLocal > 0.05 && valido(p.dir))
@@ -213,13 +227,14 @@
     const superficie = Math.min(limpieza, viento.f);
     const cruce = factorCruce(parts);
     const marea = factorMarea(d.marea, playa);
-    const bruto = 1 + 9 * tamano * superficie * cruce * marea;
+    const periodo = factorPeriodo(parts);
+    const bruto = 1 + 9 * tamano * superficie * periodo * cruce * marea;
 
     // Período para los topes: el máximo de las particiones con altura local relevante
     const tpTopes = parts.filter(p => p.hLocal >= 0.3).reduce((m, p) => Math.max(m, p.T), 0);
     return {
       parts, hLocal, hb, tpTopes,
-      factores: { tamano, ajusteNivel: fT, capacidad: fCap, superficie, limpieza, viento: viento.f, cruce, marea },
+      factores: { tamano, ajusteNivel: fT, capacidad: fCap, superficie, limpieza, viento: viento.f, periodo, cruce, marea },
       viento,
       bruto,
     };
@@ -268,7 +283,7 @@
   function textoLimitante(ev, nivel) {
     const f = ev.factores;
     const cand = [
-      ['tamano', f.tamano], ['superficie', f.superficie], ['cruce', f.cruce], ['marea', f.marea],
+      ['tamano', f.tamano], ['superficie', f.superficie], ['periodo', f.periodo ?? 1], ['cruce', f.cruce], ['marea', f.marea],
     ].sort((a, b) => a[1] - b[1]);
     const [clave, valor] = cand[0];
     const r = NIVELES[nivel] ?? NIVELES.pro;
@@ -285,7 +300,8 @@
     } else if (clave === 'superficie') {
       texto = f.limpieza < f.viento ? 'Mucho mar de viento: las olas podrían estar desordenadas'
         : (ev.viento.tipo === 'off' ? 'Viento de tierra fuerte' : `Viento ${ev.viento.etiqueta.toLowerCase()} que podría estropear la ola`);
-    } else if (clave === 'cruce') texto = 'Dos mares cruzados: picos que podrían estar desordenados';
+    } else if (clave === 'periodo') texto = 'Mar de período corto: olas con poca fuerza';
+    else if (clave === 'cruce') texto = 'Dos mares cruzados: picos que podrían estar desordenados';
     else texto = 'La marea podría no acompañar a esta hora';
     return { clave, texto };
   }
@@ -297,7 +313,17 @@
    *      codigoTiempo, esDeDia, marea:{frac}, diasVista }
    * nivel: 'principiante' | 'intermedio' | 'pro'
    */
+  // De noche la nota es 1 en todos los niveles (tope de seguridad: horas de luz)
   function evaluar(d, playa, nivel, atlasPlaya) {
+    const r = evaluarNivel(d, playa, nivel, atlasPlaya);
+    if (d?.esDeDia === false) {
+      r.nota = 1; r.rango = null;
+      r.limitante = { clave: 'noche', texto: 'De noche: sin luz para entrar al agua' };
+    }
+    return r;
+  }
+
+  function evaluarNivel(d, playa, nivel, atlasPlaya) {
     if (nivel === 'banista') return evaluarBano(d, playa, atlasPlaya);
     const ev = evaluarSurf(d, playa, nivel, atlasPlaya);
     const dias = clamp(d.diasVista ?? 0, 0, 10);
@@ -426,7 +452,7 @@
 
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
-    evaluar, evaluarBano, transmision, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
+    evaluar, evaluarBano, transmision, factorPeriodo, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
     clasificarViento, direccionOffshore, prepararParticiones, frase, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
