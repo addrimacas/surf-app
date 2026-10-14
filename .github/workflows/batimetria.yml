@@ -1,0 +1,18 @@
+name: Batimetría (EMODnet) por playa
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  batimetria:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install numpy tifffile
+      - run: python scripts/batimetria/descargar_y_perfiles.py
+      - run: |
+          git config user.name "salitre-bot"; git config user.email "salitre-bot@users.noreply.github.com"
+          git add data/batimetria-playas.json data/batimetria-galicia.npz
+          git commit -m "batimetría EMODnet: malla de Galicia y perfiles por playa" || true
+          git pull --rebase && git push
