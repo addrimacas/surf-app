@@ -105,10 +105,12 @@
       const w = Math.exp(-0.5 * (d / s) * (d / s));
       const k = ((Math.round((dir + d) / paso) % n) + n) % n;
       const kr = (1 - f) * b.kr[i][k] + f * b.kr[i + 1][k];
-      suma += w * kr * kr; pesos += w;          // promedio de energía (Kr²); sin rayos = sombra = 0
-      if (kr > 0) total += w;
+      total += w;
+      // Solo direcciones cuyos rayos llegan: la sombra por tierra ya la pone el atlas de exposición
+      // (contarla aquí otra vez la duplicaría). Promedio en energía (Kr²).
+      if (kr > 0) { suma += w * kr * kr; pesos += w; }
     }
-    if (!total) return 1;                        // ningún rayo llega en esa ventana: sin dato fiable
+    if (pesos < 0.25 * total) return 1;          // casi ningún rayo llega en esa ventana: sin dato fiable
     return clamp(Math.sqrt(suma / pesos) / KR_REF, 0.6, 1.1);
   }
 
