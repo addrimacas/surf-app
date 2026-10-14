@@ -1356,10 +1356,10 @@ const MOTOR_ACTIVO = (() => {
   return pref === 'v1' && hayV1 ? 'v1' : 'v0';
 })();
 const MODELO_OLEAJE = 'meteofrance_wave';   // modelo fijado (spec v1.1, punto 2)
-// Energía de una ola por metro de cresta, en kJ: E = ρ·g²·H²·T² / (32π) ≈ 0,98·H²·T².
-// Es la magnitud que más se parece a la cifra en kJ de Surf-Forecast. Constante provisional
-// hasta contrastarla con lecturas reales de Surf-Forecast (spec v1.1, punto 9).
-const K_ENERGIA_KJ = 1025 * 9.81 * 9.81 / (32 * Math.PI) / 1000;
+// Energía en kJ con la misma fórmula que Surf-Forecast: E = ρ·g²·H²·T² / (16π) ≈ 1,96·H²·T².
+// Deducida de su tabla de Playa de Patos (14-oct-2026, 23 horas): las 23 filas cuadran dentro del
+// redondeo de su tabla (altura a 0,1 m y período en segundos enteros); error medio 3,7 %.
+const K_ENERGIA_KJ = 1025 * 9.81 * 9.81 / (16 * Math.PI) / 1000;
 function energiaKJ(h, t) {
   if (h == null || t == null || Number.isNaN(h) || Number.isNaN(t)) return null;
   return Math.round(K_ENERGIA_KJ * h * h * t * t);

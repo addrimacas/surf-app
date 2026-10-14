@@ -153,3 +153,15 @@ test('barrido: con el mismo viento, más mar fuera nunca da menos ola en la play
     }
   }
 });
+
+// La energía en kJ usa la fórmula de Surf-Forecast: comprobada contra su tabla real de Patos.
+test('energía: cuadra con las 23 filas de Surf-Forecast dentro del redondeo de su tabla', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const K = eval(html.match(/const K_ENERGIA_KJ = ([^;]+);/)[1]);
+  const filas = fs.readFileSync(path.join(__dirname, 'datos', 'surf-forecast-patos-2026-10-14.csv'), 'utf8')
+    .trim().split('\n').slice(1).map(l => l.split(',').map(Number));
+  for (const [H, T, E] of filas) {
+    const min = K * (H - 0.05) ** 2 * (T - 0.5) ** 2, max = K * (H + 0.05) ** 2 * (T + 0.5) ** 2;
+    assert.ok(E >= min && E <= max, `H ${H} T ${T}: Surf-Forecast ${E} kJ fuera de [${min.toFixed(0)}, ${max.toFixed(0)}]`);
+  }
+});
