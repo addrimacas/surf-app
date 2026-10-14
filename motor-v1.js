@@ -10,7 +10,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v1.2.0';
+  const VERSION = 'v1.3.0';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -172,6 +172,42 @@
     return 0.55;
   }
 
+  // Dirección: cada playa tiene una dirección de mar de fondo con la que funciona bien (el «Swell
+  // ideal» que enseña la app: SO, O-NO, N-NO…). Aunque el mar entre con tamaño, si viene de otra
+  // dirección la ola suele ser peor (cierra, sale de lado, sin forma). Se compara la dirección
+  // dominante en mar abierto (ponderada por la energía que llega a la playa) con ese abanico.
+  const RUMBOS = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SO: 225, O: 270, NO: 315 };
+  function abanicoIdeal(playa) {
+    const ps = String(playa?.swell || '').split('-').map(x => RUMBOS[x.trim()]).filter(v => v != null);
+    if (!ps.length) return null;
+    if (ps.length === 1) return [ps[0], ps[0]];
+    let [a, b] = ps;
+    if (difAng(a, b) !== ((b - a + 360) % 360)) [a, b] = [b, a];   // de a a b en sentido horario por el lado corto
+    return [a, b];
+  }
+  function distanciaAbanico(dir, [a, b]) {
+    const ancho = (b - a + 360) % 360;
+    if ((dir - a + 360) % 360 <= ancho) return 0;
+    return Math.min(difAng(dir, a), difAng(dir, b));
+  }
+  function factorDireccion(parts, playa) {
+    const ab = abanicoIdeal(playa);
+    if (!ab) return { f: 1, dist: 0, dir: null };
+    const sw = parts.filter(p => p.tipo !== 'viento' && valido(p.dir) && p.hLocal > 0);
+    const base = sw.length ? sw : parts.filter(p => valido(p.dir) && p.hLocal > 0);
+    if (!base.length) return { f: 1, dist: 0, dir: null };
+    // dirección media ponderada por energía local (media circular)
+    let x = 0, y = 0;
+    for (const p of base) { const w = p.hLocal * p.hLocal * p.T; x += w * Math.cos(p.dir * Math.PI / 180); y += w * Math.sin(p.dir * Math.PI / 180); }
+    const dir = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+    const dist = distanciaAbanico(dir, ab);
+    let f;
+    if (dist <= 22.5) f = 1;
+    else if (dist <= 67.5) f = lerp(dist, 22.5, 67.5, 1, 0.6);
+    else f = Math.max(0.45, lerp(dist, 67.5, 112.5, 0.6, 0.45));
+    return { f, dist, dir };
+  }
+
   // Cruce de swells: solo entre particiones de swell ya transferidas a la playa
   function factorCruce(parts) {
     const sw = parts.filter(p => p.tipo !== 'viento' && p.hLocal > 0.05 && valido(p.dir))
@@ -228,13 +264,16 @@
     const cruce = factorCruce(parts);
     const marea = factorMarea(d.marea, playa);
     const periodo = factorPeriodo(parts);
-    const bruto = 1 + 9 * tamano * superficie * periodo * cruce * marea;
+    const fDir = factorDireccion(parts, playa);
+    const direccion = fDir.f;
+    const bruto = 1 + 9 * tamano * superficie * periodo * direccion * cruce * marea;
 
     // Período para los topes: el máximo de las particiones con altura local relevante
     const tpTopes = parts.filter(p => p.hLocal >= 0.3).reduce((m, p) => Math.max(m, p.T), 0);
     return {
       parts, hLocal, hb, tpTopes,
-      factores: { tamano, ajusteNivel: fT, capacidad: fCap, superficie, limpieza, viento: viento.f, periodo, cruce, marea },
+      factores: { tamano, ajusteNivel: fT, capacidad: fCap, superficie, limpieza, viento: viento.f, periodo, direccion, cruce, marea },
+      dirMar: fDir.dir,
       viento,
       bruto,
     };
@@ -280,10 +319,10 @@
     tamano: 'el tamaño', superficie: 'el viento y el estado de la superficie', cruce: 'el cruce de mares', marea: 'la marea',
   };
 
-  function textoLimitante(ev, nivel) {
+  function textoLimitante(ev, nivel, playa) {
     const f = ev.factores;
     const cand = [
-      ['tamano', f.tamano], ['superficie', f.superficie], ['periodo', f.periodo ?? 1], ['cruce', f.cruce], ['marea', f.marea],
+      ['tamano', f.tamano], ['superficie', f.superficie], ['periodo', f.periodo ?? 1], ['direccion', f.direccion ?? 1], ['cruce', f.cruce], ['marea', f.marea],
     ].sort((a, b) => a[1] - b[1]);
     const [clave, valor] = cand[0];
     const r = NIVELES[nivel] ?? NIVELES.pro;
@@ -301,6 +340,10 @@
       texto = f.limpieza < f.viento ? 'Mucho mar de viento: las olas podrían estar desordenadas'
         : (ev.viento.tipo === 'off' ? 'Viento de tierra fuerte' : `Viento ${ev.viento.etiqueta.toLowerCase()} que podría estropear la ola`);
     } else if (clave === 'periodo') texto = 'Mar de período corto: olas con poca fuerza';
+    else if (clave === 'direccion') {
+      const r8 = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'][Math.round(((ev.dirMar ?? 0) % 360) / 45) % 8];
+      texto = `Mar del ${r8}: esta playa funciona mejor con mar del ${playa?.swell ?? '—'}`;
+    }
     else if (clave === 'cruce') texto = 'Dos mares cruzados: picos que podrían estar desordenados';
     else texto = 'La marea podría no acompañar a esta hora';
     return { clave, texto };
@@ -348,7 +391,7 @@
     if (!playa?.validada) nivelConf = Math.max(0, nivelConf - 1);   // ninguna playa validada aún
     const confianza = ['baja', 'media', 'alta'][nivelConf];
 
-    const lim = textoLimitante(ev, nivel);
+    const lim = textoLimitante(ev, nivel, playa);
     const avisos = ts.map(t => t.motivo);
     if (d.esDeDia === false) avisos.push('Fuera de horas de luz: no recomendado');
 

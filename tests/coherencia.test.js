@@ -224,3 +224,16 @@ test('titular: con nota baja manda lo que la hunde, nunca «Sin apenas viento» 
     if (r.nota <= 6) assert.notStrictEqual(t.titulo, 'Sin apenas viento', `${n} ${h} m ${dir}°: nota ${r.nota}`);
   }
 });
+
+test('dirección: con el mismo mar, venir de la dirección ideal de la playa nunca puntúa menos que venir de fuera de ella', () => {
+  const R = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SO: 225, O: 270, NO: 315 };
+  for (const n of Object.keys(PLAYAS)) {
+    const ideal = R[String(PLAYAS[n].swell).split('-')[0]];
+    if (ideal == null) continue;
+    const off = M.direccionOffshore(PLAYAS[n], ATLAS.playas[n]);
+    const a = ev(n, mar(1.6, 12, ideal, { vientoVel: 3, vientoDir: off }), 'intermedio');
+    const fuera = ev(n, mar(1.6, 12, (ideal + 80) % 360, { vientoVel: 3, vientoDir: off }), 'intermedio');
+    assert.ok(a.factores.direccion >= fuera.factores.direccion, n);
+    assert.ok(a.factores.direccion === 1, `${n}: ideal ${PLAYAS[n].swell} da ${a.factores.direccion}`);
+  }
+});
