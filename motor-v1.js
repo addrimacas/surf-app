@@ -79,8 +79,10 @@
   let BATI = global.ATLAS_BATIMETRIA || null;
   if (!BATI && typeof require === 'function') { try { BATI = require('./atlas-batimetria.js'); } catch (e) { BATI = null; } }
   // Nivel absoluto: el trazado a 115 m pierde rayos (islotes, bajos sin resolver) y sesga Kr a la baja.
-  // La altura absoluta ya está validada contra Surf-Forecast con el atlas de exposición, así que de la
-  // batimetría se toma la diferencia RELATIVA entre playas: Kr / mediana de Kr (10–16 s, rayos que llegan).
+  // La altura absoluta ya está validada contra Surf-Forecast (sobre todo en playas abiertas) con el atlas
+  // de exposición, así que de la batimetría se toma la diferencia RELATIVA: Kr / Kr de referencia, con la
+  // referencia en el percentil 75 (fondo de costa abierta). Concentrar por encima de eso no está validado
+  // (tope 1,1); dispersar sí se aplica (hasta 0,6): bajos, plataformas y fondos de ría pierden energía.
   const KR_REF = (() => {
     if (!BATI) return 1;
     const v = [];
@@ -88,7 +90,7 @@
       if (T >= 10 && T <= 16) for (const k of b.kr[i]) if (k > 0) v.push(k);
     });
     v.sort((a, b) => a - b);
-    return v.length ? v[Math.floor(v.length / 2)] : 1;
+    return v.length ? v[Math.floor(v.length * 0.75)] : 1;
   })();
   function factorBatimetria(nombre, dir, T, tipo) {
     const b = BATI && nombre && BATI.playas[nombre];
@@ -103,11 +105,11 @@
       const w = Math.exp(-0.5 * (d / s) * (d / s));
       const k = ((Math.round((dir + d) / paso) % n) + n) % n;
       const kr = (1 - f) * b.kr[i][k] + f * b.kr[i + 1][k];
-      total += w;
-      if (kr > 0) { suma += w * kr * kr; pesos += w; }   // promedio de energía (Kr²)
+      suma += w * kr * kr; pesos += w;          // promedio de energía (Kr²); sin rayos = sombra = 0
+      if (kr > 0) total += w;
     }
-    if (pesos < 0.3 * total) return 1;
-    return clamp(Math.sqrt(suma / pesos) / KR_REF, 0.6, 1.5);
+    if (!total) return 1;                        // ningún rayo llega en esa ventana: sin dato fiable
+    return clamp(Math.sqrt(suma / pesos) / KR_REF, 0.6, 1.1);
   }
 
   // ---------------------------------------------------------------- física
