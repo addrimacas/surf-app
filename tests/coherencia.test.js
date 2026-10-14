@@ -165,3 +165,21 @@ test('energía: cuadra con las 23 filas de Surf-Forecast dentro del redondeo de 
     assert.ok(E >= min && E <= max, `H ${H} T ${T}: Surf-Forecast ${E} kJ fuera de [${min.toFixed(0)}, ${max.toFixed(0)}]`);
   }
 });
+
+test('energía: cuadra con todos los trenes de oleaje de la página guardada de Surf-Forecast', () => {
+  const zlib = require('zlib');
+  const { leerTabla } = require('../scripts/leer-surf-forecast.js');
+  const html = zlib.gunzipSync(fs.readFileSync(path.join(__dirname, '..', 'registro', 'surf-forecast', '2026', '10', '2026-10-14-Patos.html.gz'))).toString();
+  const filas = leerTabla(html);
+  assert.ok(filas.length >= 20, `filas ${filas.length}`);
+  const htmlApp = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const K = eval(htmlApp.match(/const K_ENERGIA_KJ = ([^;]+);/)[1]);
+  let n = 0;
+  for (const f of filas) for (const t of f.trenes) {
+    if (!(t.altura > 0) || t.energia == null) continue;   // Surf-Forecast trae algún tren con altura negativa: se ignora
+    const min = K * (t.altura - 0.05) ** 2 * (t.periodo - 0.5) ** 2, max = K * (t.altura + 0.05) ** 2 * (t.periodo + 0.5) ** 2;
+    assert.ok(t.energia >= min && t.energia <= max, `${f.fecha_texto}: ${JSON.stringify(t)}`);
+    n++;
+  }
+  assert.ok(n >= 40, `trenes comprobados ${n}`);
+});
