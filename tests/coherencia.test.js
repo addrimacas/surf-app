@@ -64,7 +64,7 @@ test('tormenta eléctrica: nota 1 en todos los niveles', () => {
 
 test('onshore fuerte hunde la nota aunque el mar sea bueno', () => {
   const bueno = ev('Pantín', mar(1.8, 13, 310), 'pro').nota;
-  const dirOn = ((PLAYAS['Pantín'].offshoreWindDeg ?? 135) + 180) % 360;   // viento de mar según beach-data
+  const dirOn = (M.direccionOffshore(PLAYAS['Pantín'], ATLAS.playas['Pantín']) + 180) % 360;   // viento de mar
   const onshore = ev('Pantín', mar(1.8, 13, 310, { vientoVel: 40, vientoDir: dirOn }), 'pro').nota;
   assert.ok(onshore <= 3 && bueno >= 7, `bueno ${bueno}, onshore ${onshore}`);
 });
@@ -99,7 +99,7 @@ test('cruce de swells: penalización máxima ×0,7 con energías iguales a 90°'
 
 test('baño: viento de tierra fuerte y mar grande limitan la nota', () => {
   const p = PLAYAS['Riazor'];
-  const off = (p.offshoreWindDeg ?? 135);
+  const off = M.direccionOffshore(p, ATLAS.playas['Riazor']);
   assert.ok(ev('Riazor', mar(0.3, 8, 330, { vientoVel: 35, vientoDir: off }), 'banista').nota <= 2);
   assert.ok(ev('Riazor', mar(2.0, 12, 330), 'banista').nota <= 2);
   assert.ok(ev('Riazor', mar(0.2, 7, 330), 'banista').nota >= 7);
@@ -121,7 +121,7 @@ test('barrido: frase y veredicto coherentes con el tamaño en todas las playas',
   const PERS = [7, 11, 15];
   let n = 0;
   for (const nombre of Object.keys(PLAYAS)) {
-    const off = PLAYAS[nombre].offshoreWindDeg ?? 90;
+    const off = M.direccionOffshore(PLAYAS[nombre], ATLAS.playas[nombre]);
     const VIENTOS = [{ vientoVel: 3, vientoDir: 0 }, { vientoVel: 15, vientoDir: off },
       { vientoVel: 15, vientoDir: (off + 90) % 360 }, { vientoVel: 25, vientoDir: (off + 180) % 360 }];
     for (const dir of DIRS) for (const h of ALTS) for (const T of PERS) for (const vi of VIENTOS) {
@@ -182,4 +182,16 @@ test('energía: cuadra con todos los trenes de oleaje de la página guardada de 
     n++;
   }
   assert.ok(n >= 40, `trenes comprobados ${n}`);
+});
+
+test('viento: el de tierra sale de la costa del atlas en las 60 playas y es opuesto a mirar al mar', () => {
+  for (const n of Object.keys(PLAYAS)) {
+    const a = ATLAS.playas[n];
+    const off = M.direccionOffshore(PLAYAS[n], a);
+    assert.ok(Number.isFinite(off), n);
+    if (a?.normal != null) {
+      assert.strictEqual(M.clasificarViento(off, PLAYAS[n], a).etiqueta, 'OFFSHORE', n);
+      assert.strictEqual(M.clasificarViento(a.normal, PLAYAS[n], a).etiqueta, 'ONSHORE', n);
+    }
+  }
 });

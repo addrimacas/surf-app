@@ -10,7 +10,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v1.1.1';
+  const VERSION = 'v1.1.2';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -107,8 +107,21 @@
   }
 
   // Viento: ángulo respecto al offshore de la playa + velocidad. Devuelve 0.15..1 (prior)
+  // Dirección del viento de tierra (offshore) de una playa. Única fuente para toda la app.
+  // 1.º la normal de la costa calculada en el atlas (GSHHG); 2.º el centro del arco de exposición;
+  // 3.º la orientación. (El antiguo offshoreWindDeg de beach-data era un valor por zona y fallaba
+  // en 38 de las 60 playas por más de 30°: ya no se usa.)
+  function direccionOffshore(playa, atlasPlaya) {
+    if (valido(atlasPlaya?.normal)) return (atlasPlaya.normal + 180) % 360;
+    if (valido(playa?.orientArcMin) && valido(playa?.orientArcMax)) {
+      const ap = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
+      return ((playa.orientArcMin + ap / 2 + 360) % 360 + 180) % 360;
+    }
+    return ((playa?.orient ?? 0) + 180) % 360;
+  }
+
   function clasificarViento(dirViento, playa, atlasPlaya) {
-    const offDeg = playa?.offshoreWindDeg ?? (((atlasPlaya?.normal ?? playa?.orient ?? 0) + 180) % 360);
+    const offDeg = direccionOffshore(playa, atlasPlaya);
     const d = difAng(dirViento, offDeg);
     if (d <= 20) return { etiqueta: 'OFFSHORE', base: 1.0, tipo: 'off' };
     if (d <= 55) return { etiqueta: 'CROSS-OFF', base: 0.95, tipo: 'off' };
@@ -414,7 +427,7 @@
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
     evaluar, evaluarBano, transmision, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
-    clasificarViento, prepararParticiones, frase, tallaTexto,
+    clasificarViento, direccionOffshore, prepararParticiones, frase, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   global.MotorV1 = API;

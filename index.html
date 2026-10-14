@@ -1227,7 +1227,7 @@ function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento, 
       return Math.max(0, s) * factorRacha;
     }
 
-    const offDeg = playa?.offshoreWindDeg ?? ((playa?.orient ?? 0) + 180) % 360;
+    const offDeg = MotorV1.direccionOffshore(playa, atlasDe(playa));
     let diff = Math.abs(dirViento - offDeg) % 360;
     if (diff > 180) diff = 360 - diff;
     let dirFactor;
@@ -1591,25 +1591,24 @@ function fmtDia(ts) {
 
 function vientoFavorable(dir, playa) {
   if (dir == null || Number.isNaN(dir) || !playa) return false;
-  const _aperturaVF = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
-  const _centroVF = (playa.orientArcMin + _aperturaVF / 2 + 360) % 360;
-  return angleDiff(dir, (_centroVF + 180) % 360) < 45;
+  return angleDiff(dir, MotorV1.direccionOffshore(playa, atlasDe(playa))) < 45;
 }
 
+// Etiqueta del viento: misma clasificación que el motor (una sola definición de viento de tierra)
 function etiquetaViento(dirViento, velViento, playa) {
-  if (velViento == null || Number.isNaN(velViento) || !playa)
+  if (velViento == null || Number.isNaN(velViento) || !playa || dirViento == null)
     return { label:'—', desc:'', color:'#8899aa' };
-  if (velViento < 5)
-    return { label:'GLASSY', desc:'Sin viento', color:'#44cc44' };
-  const _aperturaEV = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
-  const _centroEV = (playa.orientArcMin + _aperturaEV / 2 + 360) % 360;
-  const offshoreDir = (_centroEV + 180) % 360;
-  const diff = angleDiff(dirViento, offshoreDir);
-  if (diff <  36) return { label:'OFFSHORE',  desc:'Viento de tierra',             color:'#44cc44' };
-  if (diff <  72) return { label:'CROSS-OFF', desc:'Cruzado, tirando a offshore',  color:'#FF6B00' };
-  if (diff < 108) return { label:'CROSS',     desc:'Viento cruzado',               color:'#FF6B00' };
-  if (diff < 144) return { label:'CROSS-ON',  desc:'Cruzado, tirando a onshore',   color:'#ff4444' };
-  return               { label:'ONSHORE',   desc:'Viento del mar',               color:'#ff4444' };
+  if (velViento < 8)
+    return { label:'GLASSY', desc:'Sin apenas viento', color:'#44cc44' };
+  const c = MotorV1.clasificarViento(dirViento, playa, atlasDe(playa));
+  const DESC = {
+    'OFFSHORE':  ['Viento de tierra',            '#44cc44'],
+    'CROSS-OFF': ['Cruzado, tirando a tierra',   '#44cc44'],
+    'CROSS':     ['Viento cruzado',              '#FF6B00'],
+    'CROSS-ON':  ['Cruzado, tirando a mar',      '#ff4444'],
+    'ONSHORE':   ['Viento de mar',               '#ff4444'],
+  }[c.etiqueta];
+  return { label: c.etiqueta, desc: DESC[0], color: DESC[1] };
 }
 
 function cielo(codigo) {
