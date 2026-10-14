@@ -46,11 +46,21 @@ def leer(datos):
     with tifffile.TiffFile(io.BytesIO(datos)) as tif:
         pag = tif.pages[0]
         z = pag.asarray().astype('float32')
-        escala = pag.tags['ModelPixelScaleTag'].value
-        punto = pag.tags['ModelTiepointTag'].value
+        if z.ndim == 3: z = z[..., 0] if z.shape[-1] < 5 else z[0]
+        print('etiquetas TIFF:', [t.name for t in pag.tags.values()][:40])
+        escala = pag.tags.get('ModelPixelScaleTag'); punto = pag.tags.get('ModelTiepointTag')
+        trans = pag.tags.get('ModelTransformationTag')
         nodata = pag.tags.get('GDAL_NODATA')
-    lon0, lat0 = punto[3], punto[4]
-    dx, dy = escala[0], escala[1]
+    ny, nx = z.shape
+    if escala is not None and punto is not None:
+        dx, dy = escala.value[0], escala.value[1]; lon0, lat0 = punto.value[3], punto.value[4]
+    elif trans is not None:
+        m = trans.value; dx, dy = m[0], -m[5]; lon0, lat0 = m[3], m[7]
+    else:
+        # sin georreferencia en el fichero: la da la caja pedida
+        dx = (BBOX['lon1'] - BBOX['lon0']) / nx; dy = (BBOX['lat1'] - BBOX['lat0']) / ny
+        lon0, lat0 = BBOX['lon0'], BBOX['lat1']
+    print('georreferencia', lon0, lat0, dx, dy, 'forma', z.shape)
     if nodata is not None:
         try: z[z == float(nodata.value)] = np.nan
         except Exception: pass
