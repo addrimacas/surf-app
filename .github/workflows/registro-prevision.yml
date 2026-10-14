@@ -29,6 +29,10 @@ jobs:
       - name: Descargar y guardar previsión
         run: node scripts/registrar-prevision.js
 
+      - name: Guardar tabla de Surf-Forecast (calibración; no bloquea el registro)
+        continue-on-error: true
+        run: node scripts/registrar-surf-forecast.js
+
       - name: Commit del registro
         run: |
           git config user.name  "salitre-bot"
