@@ -21,7 +21,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Comprobar sintaxis
         run: node --check scripts/registrar-prevision.js
@@ -32,6 +32,10 @@ jobs:
       - name: Guardar tabla de Surf-Forecast (calibración; no bloquea el registro)
         continue-on-error: true
         run: node scripts/registrar-surf-forecast.js
+
+      - name: Comparar con el SWAN costero de MeteoGalicia (no bloquea el registro)
+        continue-on-error: true
+        run: node scripts/comparar-swan.js
 
       - name: Commit del registro
         run: |
