@@ -23,3 +23,23 @@ CREATE TABLE IF NOT EXISTS comentarios (
   version_app TEXT,
   navegador   TEXT
 );
+
+-- Avisos («se repite una sesión buena»). Añadido el 14-oct-2026.
+CREATE TABLE IF NOT EXISTS suscripciones (
+  dispositivo TEXT PRIMARY KEY,
+  endpoint    TEXT NOT NULL,
+  creada      TEXT NOT NULL,
+  activa      INTEGER NOT NULL DEFAULT 1
+);
+CREATE TABLE IF NOT EXISTS avisos (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  dispositivo TEXT NOT NULL,
+  playa       TEXT,
+  objetivo    TEXT,                       -- día del mar parecido (AAAA-MM-DD)
+  titulo      TEXT NOT NULL,
+  cuerpo      TEXT NOT NULL,
+  url         TEXT,
+  creado      TEXT NOT NULL,
+  entregado   TEXT
+);
+CREATE UNIQUE INDEX IF NOT EXISTS aviso_unico ON avisos (dispositivo, playa, objetivo);

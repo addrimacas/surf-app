@@ -912,6 +912,7 @@
         </div>
       </div>
     </div>
+    <div id="bloque-avisos" style="margin-top:16px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"></div>
     <button type="button" id="btn-menu-comentario" style="margin-top:14px;width:100%;background:rgba(255,179,71,0.10);border:1px solid rgba(255,179,71,0.4);border-radius:12px;padding:11px 12px;color:#ffb347;font-size:14px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
   </div>
 </div>
@@ -1084,7 +1085,7 @@ function initPerfilUI() {
     document.body.style.overflow = abierto ? 'hidden' : '';
   }
 
-  btn.addEventListener('click', () => setPerfilOverlayAbierto(true));
+  btn.addEventListener('click', () => { setPerfilOverlayAbierto(true); pintarBloqueAvisos(); });
   document.getElementById('btn-menu-comentario')?.addEventListener('click', () => { setPerfilOverlayAbierto(false); abrirComentario(); });
   overlay.addEventListener('click', e => {
     if (e.target === overlay) setPerfilOverlayAbierto(false);
@@ -1825,7 +1826,7 @@ function abrirValoracion() {
       version: 1, playa: ev.playa, fecha: hoyLocal(), registrada: new Date().toISOString(),
       nota, coincidio: coinc, perfil: ev.perfil, comentario,
       prediccion: { nota: ev.nota, hb: ev.hb, confianza: ev.confianza, motor: ev.motor, modelo: ev.modelo,
-                    calculada: new Date(ev.ts).toISOString(), datos: ev.datos },
+                    calculada: new Date(ev.ts).toISOString(), datos: ev.datos, coords: ev.coords },
     };
     lista.push(val);
     const ok = guardarValoraciones(lista);
@@ -1833,7 +1834,18 @@ function abrirValoracion() {
     document.getElementById('val-estado').textContent = ok
       ? 'Guardada. Gracias, nos ayuda a afinar esta playa.'
       : 'No se ha podido guardar en este navegador.';
-    if (ok) setTimeout(cerrarValoracion, 900);
+    if (ok && nota >= 7) {
+      estadoAvisos().then(est => {
+        if (est !== 'desactivados') { setTimeout(cerrarValoracion, 900); return; }
+        const e = document.getElementById('val-estado');
+        e.innerHTML = 'Guardada. ¿Te avisamos cuando se repita un mar parecido aquí? <button type="button" id="val-avisos" style="margin-top:8px;width:100%;padding:10px;border-radius:12px;border:none;background:#4db8ff;color:#06182c;font-weight:700;cursor:pointer;">Sí, avisarme</button>';
+        document.getElementById('val-avisos').addEventListener('click', async () => {
+          try { await activarAvisos(); e.textContent = 'Avisos activados.'; }
+          catch (err) { e.textContent = TEXTO_ERROR_AVISOS[err.message] || 'No se han podido activar.'; }
+          setTimeout(cerrarValoracion, 2500);
+        });
+      });
+    } else if (ok) setTimeout(cerrarValoracion, 900);
   });
   marcar();
   fondo.style.display = 'flex';
@@ -1911,6 +1923,75 @@ function abrirComentario() {
   setTimeout(() => document.getElementById('com-texto')?.focus(), 50);
 }
 
+// ── Avisos «se repite una sesión buena» (Web Push) ─────────────────────────────
+const VAPID_PUBLICA = 'BI-Zfa1OCC9DmZoHGIhOdFlmhq90YVMa0Dzc7602M9viuwObuKM12-qKoBoSZ6QaZIHwWZuV3OWA5S78f0TPxn8';
+const avisosSoportados = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const esIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent);
+const instaladaComoApp = () => window.matchMedia?.('(display-mode: standalone)').matches || navigator.standalone === true;
+function claveBytes(b64) {
+  const s = atob(b64.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - b64.length % 4) % 4));
+  return Uint8Array.from(s, c => c.charCodeAt(0));
+}
+let _registroSW = null;
+async function registroSW() {
+  if (!('serviceWorker' in navigator)) return null;
+  if (!_registroSW) _registroSW = navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready);
+  return _registroSW;
+}
+async function estadoAvisos() {
+  if (!avisosSoportados()) return esIOS() && !instaladaComoApp() ? 'ios-sin-instalar' : 'no-soportado';
+  if (Notification.permission === 'denied') return 'bloqueado';
+  try { const r = await registroSW(); return (await r.pushManager.getSubscription()) ? 'activados' : 'desactivados'; }
+  catch (e) { return 'no-soportado'; }
+}
+async function activarAvisos() {
+  if (!avisosSoportados()) throw new Error(esIOS() && !instaladaComoApp() ? 'ios-sin-instalar' : 'no-soportado');
+  const permiso = await Notification.requestPermission();
+  if (permiso !== 'granted') throw new Error('sin-permiso');
+  const r = await registroSW();
+  const sub = (await r.pushManager.getSubscription()) || await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: claveBytes(VAPID_PUBLICA) });
+  const ok = await postBeta('/v1/suscripcion', { dispositivo: idDispositivo(), endpoint: sub.endpoint });
+  if (!ok) throw new Error('servidor');
+  return true;
+}
+async function desactivarAvisos() {
+  try { const r = await registroSW(); const s = await r.pushManager.getSubscription(); if (s) await s.unsubscribe(); } catch (e) {}
+  try { await postBeta('/v1/baja', { dispositivo: idDispositivo() }); } catch (e) {}
+}
+const TEXTO_ERROR_AVISOS = {
+  'ios-sin-instalar': 'En iPhone los avisos solo funcionan con la app añadida a la pantalla de inicio (Safari → Compartir → «Añadir a pantalla de inicio»). Ábrela desde ahí y actívalos.',
+  'no-soportado': 'Este navegador no admite avisos.',
+  'sin-permiso': 'No has dado permiso para avisos. Puedes darlo en los ajustes del navegador.',
+  'bloqueado': 'Los avisos están bloqueados para esta web en los ajustes del navegador.',
+  'servidor': 'No se ha podido conectar con el servidor. Prueba en un rato.',
+};
+async function pintarBloqueAvisos() {
+  const el = document.getElementById('bloque-avisos');
+  if (!el) return;
+  const est = await estadoAvisos();
+  const btn = (id, txt, color = '#4db8ff') => `<button type="button" id="${id}" style="flex:1;padding:10px;border-radius:12px;border:1px solid ${color}66;background:${color}1a;color:${color};font-size:13px;font-weight:600;cursor:pointer;">${txt}</button>`;
+  el.innerHTML = `
+    <div style="font-size:14px;font-weight:700;margin-bottom:2px;">Avisos</div>
+    <div style="font-size:12px;color:#8899aa;margin-bottom:10px;">Cuando valores una sesión con 7 o más, te avisamos si el mar previsto vuelve a parecerse en esa playa.</div>
+    <div style="display:flex;gap:8px;">${est === 'activados' ? btn('av-probar', 'Probar aviso') + btn('av-off', 'Desactivar', '#8899aa') : btn('av-on', 'Activar avisos')}</div>
+    <div id="av-estado" style="font-size:12px;color:#8899aa;margin-top:8px;">${TEXTO_ERROR_AVISOS[est] && est !== 'no-soportado' ? TEXTO_ERROR_AVISOS[est] : (est === 'activados' ? 'Activados en este dispositivo.' : '')}</div>`;
+  const estado = t => { const e = document.getElementById('av-estado'); if (e) e.textContent = t; };
+  document.getElementById('av-on')?.addEventListener('click', async () => {
+    estado('Activando...');
+    try { await activarAvisos(); await pintarBloqueAvisos(); estado('Activados. Pulsa «Probar aviso» para comprobarlo.'); }
+    catch (e) { estado(TEXTO_ERROR_AVISOS[e.message] || 'No se han podido activar.'); }
+  });
+  document.getElementById('av-off')?.addEventListener('click', async () => { await desactivarAvisos(); await pintarBloqueAvisos(); estado('Desactivados.'); });
+  document.getElementById('av-probar')?.addEventListener('click', async () => {
+    estado('Enviando aviso de prueba...');
+    try {
+      const r = await fetch(API_BETA + '/v1/probar-aviso', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dispositivo: idDispositivo() }) });
+      const j = await r.json();
+      estado(j.ok ? `Enviado. Debería llegarte en unos segundos${j.avisos_repeticion ? ' (y otro: se repite un mar que te gustó)' : ''}.` : (j.error || 'No se ha podido enviar.'));
+    } catch (e) { estado('No se ha podido conectar con el servidor.'); }
+  });
+}
+
 function cerrarValoracion() {
   const f = document.getElementById('valoracion-overlay');
   if (f) f.style.display = 'none';
@@ -1959,6 +2040,9 @@ function toggleFavorita() {
 }
 
 function iniciarPlayaFavorita() {
+  const deAviso = new URLSearchParams(location.search).get('playa');
+  const pa = deAviso && todasLasPlayas().find(p => p.nombre === deAviso);
+  if (pa) { playaActiva = pa; return; }
   const favId = localStorage.getItem('salitre_favorita');
   if (favId) {
     const fav = todasLasPlayas().find(p => p.nombre === favId);
@@ -2353,6 +2437,7 @@ async function cargarInicio() {
       motor: estado.v1 ? estado.v1.motor : 'v0', modelo: marine._v0 ? 'auto (playa)' : MODELO_OLEAJE,
       nota: estado.score, hb: estado.v1?.hb ?? null, confianza: estado.v1?.confianza ?? null,
       datos: datosAhora ?? { hTotal: altura, tTotal: periodo, dirTotal: dirSwell, vientoVel: velViento, vientoDir: dirViento },
+      coords: { mar: (({ lat, lon }) => ({ lat, lon }))(coordsOleaje(playaActiva)), viento: { lat: playaActiva.lat, lon: playaActiva.lon } },
     };
     window.ultimoDirSwell = dirSwell;
     const etViento    = etiquetaViento(dirViento, velViento, playaActiva);
