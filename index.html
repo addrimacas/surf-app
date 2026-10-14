@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Salitre" />
-  <meta name="theme-color" content="#0c3240" />
+  <meta name="theme-color" content="#07111f" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <title>Salitre</title>
@@ -16,14 +16,14 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    html { background:#0c3240; }
-    body { font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#fcf8f2; min-height:100vh; padding-bottom:70px; background:#0c3240; }
+    html { background:#07111f; }
+    body { font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; color:#fff; min-height:100vh; padding-bottom:70px; background:#07111f; }
     #fondo-canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
     .pantalla { position:relative; z-index:1; display:none; padding:20px; padding-bottom:calc(20px + 65px + env(safe-area-inset-bottom)); }
     .pantalla.activa { display:block; }
-    .nav-bar { position:fixed; bottom:0; left:0; right:0; height:calc(65px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom); padding-bottom:env(safe-area-inset-bottom); background:linear-gradient(135deg,#0d2137cc,#0a3050cc); backdrop-filter:blur(12px); border-top:1px solid #2a7088; display:flex; z-index:1000; }
-    .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; color:#76a2af; font-size:10px; font-weight:600; letter-spacing:0.3px; border:none; background:none; transition:color 0.2s; }
-    .nav-item.activo { color:#f4bebb; }
+    .nav-bar { position:fixed; bottom:0; left:0; right:0; height:calc(65px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom); padding-bottom:env(safe-area-inset-bottom); background:linear-gradient(135deg,#0d2137cc,#0a3050cc); backdrop-filter:blur(12px); border-top:1px solid #1a4a6e; display:flex; z-index:1000; }
+    .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; color:#4a7a9b; font-size:10px; font-weight:600; letter-spacing:0.3px; border:none; background:none; transition:color 0.2s; }
+    .nav-item.activo { color:#4db8ff; }
     .nav-item .icono { font-size:22px; }
     .app-header {
       display: flex;
@@ -50,7 +50,7 @@
       /* Borde suave del alpha sobre el canvas */
       filter: drop-shadow(0 0 0.5px rgba(7, 17, 31, 0.9));
     }
-    .etiqueta-beta { align-self:flex-start; margin-top:4px; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#f4bebb; border:1px solid rgba(244,190,187,0.6); border-radius:6px; padding:1px 5px; flex-shrink:0; }
+    .etiqueta-beta { align-self:flex-start; margin-top:4px; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#ffb347; border:1px solid rgba(255,179,71,0.55); border-radius:6px; padding:1px 5px; flex-shrink:0; }
     .logo-wordmark {
       font-size: clamp(1.85rem, 11vw, 3.35rem);
       font-weight: 700;
@@ -66,48 +66,48 @@
       .logo-wordmark { font-size: clamp(1.65rem, 10.5vw, 2.85rem); }
     }
     .datos-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:420px; margin:0 auto 20px; align-items:stretch; }
-    .dato-card { background:rgba(20,74,92,0.55); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
-    .dato-card .label { font-size:11px; color:#a9c4cc; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+    .dato-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px; }
+    .dato-card .label { font-size:11px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
     .dato-card .valor { font-size:24px; font-weight:700; }
-    .dato-card .sub { font-size:12px; color:#a9c4cc; margin-top:3px; }
-    .semaforo { display:flex; align-items:center; justify-content:center; gap:12px; margin:24px auto; background:rgba(20,74,92,0.55); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px 28px; max-width:420px; }
+    .dato-card .sub { font-size:12px; color:#8899aa; margin-top:3px; }
+    .semaforo { display:flex; align-items:center; justify-content:center; gap:12px; margin:24px auto; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:20px 28px; max-width:420px; }
     .semaforo-circulo { width:52px; height:52px; border-radius:50%; flex-shrink:0; }
     .semaforo-texto h2 { font-size:22px; font-weight:700; }
-    .semaforo-texto p { font-size:13px; color:#a9c4cc; margin-top:2px; }
-    .resumen { background:rgba(20,74,92,0.55); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px 20px; max-width:420px; margin:0 auto 20px; font-size:15px; line-height:1.6; color:#fcf8f2; font-style:italic; }
+    .semaforo-texto p { font-size:13px; color:#8899aa; margin-top:2px; }
+    .resumen { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:18px 20px; max-width:420px; margin:0 auto 20px; font-size:15px; line-height:1.6; color:#cce0ff; font-style:italic; }
     .prevision { max-width:420px; margin:0 auto 24px; }
-    .prevision-titulo { font-size:12px; color:#a9c4cc; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px; }
+    .prevision-titulo { font-size:12px; color:#8899aa; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px; }
     .prev-tabs { display:flex; gap:8px; margin-bottom:14px; }
-    .prev-tab { flex:1; padding:8px; border-radius:10px; border:1px solid #2a7088; background:transparent; color:#76a2af; font-size:13px; cursor:pointer; transition:all 0.2s; }
-    .prev-tab.activo { background:#0a3050; border-color:#f4bebb; color:#f4bebb; }
+    .prev-tab { flex:1; padding:8px; border-radius:10px; border:1px solid #1a4a6e; background:transparent; color:#4a7a9b; font-size:13px; cursor:pointer; transition:all 0.2s; }
+    .prev-tab.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
     .prev-hoy { overflow-x:auto; padding-bottom:8px; }
     .prev-hoy-inner { display:flex; gap:8px; width:max-content; }
     .prev-card { width:78px; background:rgba(255,255,255,0.04); border-radius:12px; padding:10px 6px; text-align:center; border:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
-    .prev-card.actual { background:rgba(30,80,140,0.4); border:2px solid #f4bebb; }
-    .prev-card .pc-fecha { font-size:10px; color:#8fb3bd; margin-bottom:6px; line-height:1.4; }
+    .prev-card.actual { background:rgba(30,80,140,0.4); border:2px solid #4db8ff; }
+    .prev-card .pc-fecha { font-size:10px; color:#6688aa; margin-bottom:6px; line-height:1.4; }
     .prev-card.actual .pc-fecha { color:#aaccff; }
     .prev-card .pc-semaforo { width:10px; height:10px; border-radius:50%; margin:0 auto 6px; }
-    .prev-card .pc-altura { font-size:14px; font-weight:700; color:#f4bebb; }
-    .prev-card .pc-detalle { font-size:10px; color:#8fb3bd; margin-top:3px; }
+    .prev-card .pc-altura { font-size:14px; font-weight:700; color:#4db8ff; }
+    .prev-card .pc-detalle { font-size:10px; color:#6688aa; margin-top:3px; }
     .prev-dias { display:flex; flex-direction:column; gap:8px; }
     .prev-dia-bloque { background:rgba(255,255,255,0.04); border-radius:12px; border:1px solid rgba(255,255,255,0.06); overflow:hidden; }
     .prev-dia-header { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:12px; font-weight:600; color:#aabbcc; }
     .prev-dia-franjas { display:flex; }
     .prev-franja { flex:1; padding:10px 6px; text-align:center; border-right:1px solid rgba(255,255,255,0.06); }
     .prev-franja:last-child { border-right:none; }
-    .prev-franja .pf-label { font-size:10px; color:#8fb3bd; margin-bottom:4px; }
+    .prev-franja .pf-label { font-size:10px; color:#6688aa; margin-bottom:4px; }
     .prev-franja .pf-semaforo { width:8px; height:8px; border-radius:50%; margin:0 auto 4px; }
-    .prev-franja .pf-altura { font-size:13px; font-weight:700; color:#f4bebb; }
-    .prev-franja .pf-detalle { font-size:10px; color:#8fb3bd; margin-top:2px; }
+    .prev-franja .pf-altura { font-size:13px; font-weight:700; color:#4db8ff; }
+    .prev-franja .pf-detalle { font-size:10px; color:#6688aa; margin-top:2px; }
     .prev-lista { display:flex; flex-direction:column; gap:6px; }
     .prev-fila { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 12px; border:1px solid rgba(255,255,255,0.06); }
     .prev-fila .pfi-dia { width:52px; font-size:12px; color:#aabbcc; font-weight:600; flex-shrink:0; }
     .prev-fila .pfi-semaforo { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-    .prev-fila .pfi-altura { font-size:14px; font-weight:700; color:#f4bebb; flex:1; }
-    .prev-fila .pfi-detalle { font-size:11px; color:#8fb3bd; width:60px; text-align:right; flex-shrink:0; }
+    .prev-fila .pfi-altura { font-size:14px; font-weight:700; color:#4db8ff; flex:1; }
+    .prev-fila .pfi-detalle { font-size:11px; color:#6688aa; width:60px; text-align:right; flex-shrink:0; }
     .prev-fila .pfi-estado { font-size:11px; font-weight:600; width:80px; text-align:right; flex-shrink:0; }
     footer { text-align:center; font-size:12px; color:rgba(255,255,255,0.25); padding:10px 0 20px; }
-    .actualizando { text-align:center; font-size:14px; color:#a9c4cc; padding:60px 20px; }
+    .actualizando { text-align:center; font-size:14px; color:#8899aa; padding:60px 20px; }
     /* Tipografía marca (estilo logo salitre): Comfortaa + degradado horizontal en azules */
     .titulo-marca-gradient {
       font-family: 'Comfortaa', 'Nunito', sans-serif;
@@ -115,11 +115,11 @@
       letter-spacing: -0.02em;
       background: linear-gradient(
         92deg,
-        #fcf8f2 0%,
-        #e9a9a6 22%,
-        #f4bebb 48%,
-        #f4bebb 78%,
-        #fcf8f2 100%
+        #1a4a72 0%,
+        #2366a8 22%,
+        #2d7fc4 48%,
+        #4db8ff 78%,
+        #8bd4f9 100%
       );
       -webkit-background-clip: text;
       background-clip: text;
@@ -137,11 +137,11 @@
     .nav-item.activo span.nav-txt-marca {
       background: linear-gradient(
         92deg,
-        #fcf8f2 0%,
-        #e9a9a6 22%,
-        #f4bebb 48%,
-        #f4bebb 78%,
-        #fcf8f2 100%
+        #1a4a72 0%,
+        #2366a8 22%,
+        #2d7fc4 48%,
+        #4db8ff 78%,
+        #8bd4f9 100%
       );
       -webkit-background-clip: text;
       background-clip: text;
@@ -167,93 +167,93 @@
       color: transparent;
     }
     .selector-estilo { display:flex; gap:10px; max-width:420px; margin:0 auto 16px; }
-    .btn-estilo { flex:1; padding:10px; border-radius:10px; border:1px solid #2a7088; background:rgba(20,74,92,0.55); color:#a9c4cc; font-size:13px; cursor:pointer; }
-    .btn-estilo.activo { background:#0a3050; border-color:#f4bebb; color:#f4bebb; }
+    .btn-estilo { flex:1; padding:10px; border-radius:10px; border:1px solid #1a4a6e; background:rgba(10,22,40,0.6); color:#8899aa; font-size:13px; cursor:pointer; }
+    .btn-estilo.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
     #mapa { height:420px; border-radius:16px; overflow:hidden; max-width:420px; margin:0 auto; }
-    .popup-playa { font-family:'Nunito',-apple-system,sans-serif; min-width:220px; color:#fcf8f2; }
-    .leaflet-popup-content-wrapper { background:#124454 !important; color:#fcf8f2 !important; border:1px solid rgba(255,255,255,0.12); border-radius:16px !important; box-shadow:0 10px 30px rgba(0,0,0,0.55) !important; }
-    .leaflet-popup-tip { background:#124454 !important; border:1px solid rgba(255,255,255,0.12); }
+    .popup-playa { font-family:'Nunito',-apple-system,sans-serif; min-width:220px; color:#e8f0f8; }
+    .leaflet-popup-content-wrapper { background:#0d1f35 !important; color:#e8f0f8 !important; border:1px solid rgba(255,255,255,0.12); border-radius:16px !important; box-shadow:0 10px 30px rgba(0,0,0,0.55) !important; }
+    .leaflet-popup-tip { background:#0d1f35 !important; border:1px solid rgba(255,255,255,0.12); }
     .leaflet-popup-content { margin:14px 14px 12px !important; }
-    .leaflet-container a.leaflet-popup-close-button { color:#a9c4cc !important; top:6px !important; right:6px !important; }
+    .leaflet-container a.leaflet-popup-close-button { color:#8899aa !important; top:6px !important; right:6px !important; }
     .pp-cab { display:flex; align-items:center; gap:10px; margin-bottom:8px; padding-right:14px; }
-    .pp-nota { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; color:#fcf8f2; flex-shrink:0; }
+    .pp-nota { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px; color:#fff; flex-shrink:0; }
     .pp-nombre { font-size:16px; font-weight:700; line-height:1.15; }
-    .pp-frase { font-size:12px; color:#a9c4cc; margin-top:2px; }
+    .pp-frase { font-size:12px; color:#8899aa; margin-top:2px; }
     .pp-datos { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin:8px 0 10px; }
     .pp-dato { background:rgba(255,255,255,0.05); border-radius:10px; padding:6px 4px; text-align:center; }
-    .pp-dato .pl { font-size:9px; color:#a9c4cc; text-transform:uppercase; letter-spacing:0.4px; }
+    .pp-dato .pl { font-size:9px; color:#8899aa; text-transform:uppercase; letter-spacing:0.4px; }
     .pp-dato .pv { font-size:13px; font-weight:700; margin-top:2px; }
     .pp-aviso { font-size:11px; color:#ff8844; margin-bottom:8px; }
-    .pp-marea { font-size:12px; color:#a9c4cc; margin:-2px 0 10px; }
-    .pp-btn { width:100%; padding:9px; border-radius:12px; border:none; background:#f4bebb; color:#0c3240; font-weight:700; font-size:13px; cursor:pointer; }
-    .popup-playa h3 { font-size:15px; font-weight:700; margin-bottom:8px; color:#0e3a4a; }
+    .pp-marea { font-size:12px; color:#8899aa; margin:-2px 0 10px; }
+    .pp-btn { width:100%; padding:9px; border-radius:12px; border:none; background:#4db8ff; color:#06182c; font-weight:700; font-size:13px; cursor:pointer; }
+    .popup-playa h3 { font-size:15px; font-weight:700; margin-bottom:8px; color:#0a1628; }
     .popup-playa .popup-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
     .popup-playa .popup-dato { background:#f0f4f8; border-radius:8px; padding:8px; text-align:center; }
     .popup-playa .popup-dato .pl { font-size:10px; color:#667788; text-transform:uppercase; }
-    .popup-playa .popup-dato .pv { font-size:16px; font-weight:700; color:#0e3a4a; }
+    .popup-playa .popup-dato .pv { font-size:16px; font-weight:700; color:#0a1628; }
     .popup-playa .popup-estado { margin-top:8px; text-align:center; font-size:13px; font-weight:600; padding:6px; border-radius:8px; }
 
     /* ── PANTALLA PLAYAS ── */
     #pantalla-playas { padding:0 0 90px; overflow-x:hidden; }
-    .pl-buscador-wrap { position:sticky; top:0; left:0; width:100%; z-index:100; background:linear-gradient(to bottom,#0c3240 80%,transparent); padding:calc(env(safe-area-inset-top) + 12px) 16px 8px; }
+    .pl-buscador-wrap { position:sticky; top:0; left:0; width:100%; z-index:100; background:linear-gradient(to bottom,#07111f 80%,transparent); padding:calc(env(safe-area-inset-top) + 12px) 16px 8px; }
     .pl-buscador-input-wrap { position:relative; }
-    .pl-buscador-input { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:11px 16px 11px 40px; color:#fcf8f2; font-size:15px; font-family:inherit; outline:none; }
-    .pl-buscador-input::placeholder { color:#86a8b2; }
+    .pl-buscador-input { width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:11px 16px 11px 40px; color:#fff; font-size:15px; font-family:inherit; outline:none; }
+    .pl-buscador-input::placeholder { color:#5a7a9a; }
     .pl-buscador-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; }
-    .pl-buscador-clear { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:#86a8b2; font-size:18px; cursor:pointer; display:none; }
-    .pl-dropdown { background:#124454; border:1px solid rgba(255,255,255,0.1); border-radius:14px; margin-top:6px; overflow-y:auto; max-height:320px; box-shadow:0 8px 32px rgba(0,0,0,0.6); display:none; scroll-behavior:smooth; }
-    .pl-dropdown-zona { padding:8px 14px 4px; font-size:10px; color:#76a2af; text-transform:uppercase; letter-spacing:0.8px; font-weight:600; }
+    .pl-buscador-clear { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:#5a7a9a; font-size:18px; cursor:pointer; display:none; }
+    .pl-dropdown { background:#0d1f35; border:1px solid rgba(255,255,255,0.1); border-radius:14px; margin-top:6px; overflow-y:auto; max-height:320px; box-shadow:0 8px 32px rgba(0,0,0,0.6); display:none; scroll-behavior:smooth; }
+    .pl-dropdown-zona { padding:8px 14px 4px; font-size:10px; color:#4a7a9b; text-transform:uppercase; letter-spacing:0.8px; font-weight:600; }
     .pl-dropdown-item { padding:11px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; border-top:1px solid rgba(255,255,255,0.04); }
-    .pl-dropdown-item:hover { background:rgba(244,190,187,0.08); }
+    .pl-dropdown-item:hover { background:rgba(77,184,255,0.08); }
     .pl-dropdown-item .pdi-nombre { font-size:14px; font-weight:600; }
-    .pl-dropdown-item .pdi-zona { font-size:11px; color:#86a8b2; margin-top:1px; }
-    .pl-dropdown-item .pdi-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#0c3240; flex-shrink:0; margin-left:auto; }
+    .pl-dropdown-item .pdi-zona { font-size:11px; color:#5a7a9a; margin-top:1px; }
+    .pl-dropdown-item .pdi-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#07111f; flex-shrink:0; margin-left:auto; }
     /* Foto placeholder */
     .pl-foto { margin:0 16px 14px; height:160px; border-radius:16px; display:flex; align-items:flex-end; justify-content:flex-start; padding:16px 18px; position:relative; overflow:hidden; }
     .pl-foto-map { position:absolute; inset:0; width:100%; height:100%; border:none; border-radius:16px; z-index:0; object-fit:cover; }
     .pl-foto-gradient { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.15) 55%,transparent 100%); z-index:1; }
-    .pl-foto-nombre { position:relative; z-index:2; font-size:22px; font-weight:800; letter-spacing:-0.5px; color:#fcf8f2; text-shadow:0 2px 8px rgba(0,0,0,0.7); }
+    .pl-foto-nombre { position:relative; z-index:2; font-size:22px; font-weight:800; letter-spacing:-0.5px; color:white; text-shadow:0 2px 8px rgba(0,0,0,0.7); }
     .pl-foto-zona { position:relative; z-index:2; font-size:11px; color:rgba(255,255,255,0.7); font-weight:500; margin-top:2px; }
     /* Semáforo actual */
-    .pl-semaforo { margin:0 16px 14px; background:rgba(20,74,92,0.55); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; }
+    .pl-semaforo { margin:0 16px 14px; background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; }
     .pl-sem-circulo { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; flex-shrink:0; }
     .pl-sem-estado { font-size:15px; font-weight:700; }
-    .pl-sem-desc { font-size:12px; color:#a9c4cc; margin-top:2px; line-height:1.4; }
+    .pl-sem-desc { font-size:12px; color:#8899aa; margin-top:2px; line-height:1.4; }
     /* Selector días */
     .pl-dias { display:flex; gap:8px; padding:0 16px 14px; overflow-x:auto; scrollbar-width:none; }
     .pl-dias::-webkit-scrollbar { display:none; }
-    .pl-dia-btn { flex-shrink:0; padding:7px 16px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:#86a8b2; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; transition:all 0.2s; }
-    .pl-dia-btn.activo { background:#f4bebb; border-color:#f4bebb; color:#0c3240; font-weight:700; }
+    .pl-dia-btn { flex-shrink:0; padding:7px 16px; border-radius:20px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:#5a7a9a; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; transition:all 0.2s; }
+    .pl-dia-btn.activo { background:#4db8ff; border-color:#4db8ff; color:#07111f; font-weight:700; }
     /* Tabla */
     .pl-tabla-wrap { overflow-x:auto; overflow-y:visible; scrollbar-width:none; -webkit-overflow-scrolling:touch; isolation:isolate; }
     .pl-tabla-wrap::-webkit-scrollbar { display:none; }
     .pl-tabla { min-width:max-content; padding:0 16px; }
-    .pl-fila-horas { display:flex; position:sticky; top:0; background:#0c3240; z-index:10; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:2px; }
-    .pl-hora-label { width:80px; flex-shrink:0; position:sticky; left:0; background:#0c3240; z-index:11; border-right:1px solid rgba(255,255,255,0.06); }
-    .pl-hora-cel { width:64px; flex-shrink:0; text-align:center; padding:10px 4px; font-size:12px; font-weight:600; color:#86a8b2; border-left:1px solid rgba(255,255,255,0.05); }
-    .pl-hora-cel.ahora { color:#f4bebb; }
+    .pl-fila-horas { display:flex; position:sticky; top:0; background:#07111f; z-index:10; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:2px; }
+    .pl-hora-label { width:80px; flex-shrink:0; position:sticky; left:0; background:#07111f; z-index:11; border-right:1px solid rgba(255,255,255,0.06); }
+    .pl-hora-cel { width:64px; flex-shrink:0; text-align:center; padding:10px 4px; font-size:12px; font-weight:600; color:#5a7a9a; border-left:1px solid rgba(255,255,255,0.05); }
+    .pl-hora-cel.ahora { color:#4db8ff; }
     .pl-seccion { display:flex; align-items:center; padding:10px 0 5px; }
-    .pl-seccion-label { width:80px; flex-shrink:0; font-size:9px; color:rgba(244,190,187,0.4); text-transform:uppercase; letter-spacing:0.8px; font-weight:700; position:sticky; left:0; background:#0c3240; z-index:5; padding-left:4px; }
+    .pl-seccion-label { width:80px; flex-shrink:0; font-size:9px; color:rgba(77,184,255,0.4); text-transform:uppercase; letter-spacing:0.8px; font-weight:700; position:sticky; left:0; background:#07111f; z-index:5; padding-left:4px; }
     .pl-seccion-linea { flex:1; height:1px; background:rgba(255,255,255,0.06); }
     .pl-fila { display:flex; align-items:stretch; border-bottom:1px solid rgba(255,255,255,0.05); }
     .pl-fila:last-child { border-bottom:none; }
-    .pl-fila-label { width:80px; flex-shrink:0; font-size:10px; color:#a9c4cc; text-transform:uppercase; letter-spacing:0.5px; padding:9px 10px 9px 4px; display:flex; align-items:center; justify-content:flex-end; text-align:right; font-weight:600; position:sticky; left:0; background:#0c3240; z-index:5; border-right:1px solid rgba(255,255,255,0.06); }
-    .pl-fila.ideal .pl-fila-label { color:rgba(61,220,132,0.7); background:#0c3240; }
+    .pl-fila-label { width:80px; flex-shrink:0; font-size:10px; color:#8899aa; text-transform:uppercase; letter-spacing:0.5px; padding:9px 10px 9px 4px; display:flex; align-items:center; justify-content:flex-end; text-align:right; font-weight:600; position:sticky; left:0; background:#07111f; z-index:5; border-right:1px solid rgba(255,255,255,0.06); }
+    .pl-fila.ideal .pl-fila-label { color:rgba(61,220,132,0.7); background:#07111f; }
     .pl-fila.ideal .pl-cel { background:rgba(61,220,132,0.03); }
     .pl-cel { width:64px; flex-shrink:0; padding:7px 3px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border-left:1px solid rgba(255,255,255,0.05); }
-    .pl-cel.ahora { background:rgba(244,190,187,0.06); border-left:1px solid rgba(244,190,187,0.2); }
-    .pl-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#0c3240; }
-    .pl-altura { font-size:14px; font-weight:700; color:#f4bebb; }
-    .pl-dir { font-size:10px; color:#86a8b2; }
+    .pl-cel.ahora { background:rgba(77,184,255,0.06); border-left:1px solid rgba(77,184,255,0.2); }
+    .pl-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#07111f; }
+    .pl-altura { font-size:14px; font-weight:700; color:#4db8ff; }
+    .pl-dir { font-size:10px; color:#5a7a9a; }
     .pl-periodo { font-size:13px; font-weight:600; }
-    .pl-energia { font-size:11px; color:#a9c4cc; font-family:monospace; }
+    .pl-energia { font-size:11px; color:#8899aa; font-family:monospace; }
     .pl-ideal-ok { font-size:10px; color:#3ddc84; font-weight:700; }
     .pl-ideal-no { font-size:10px; color:#ff5555; font-weight:700; }
     .pl-viento-vel { font-size:13px; font-weight:700; }
-    .pl-viento-dir { font-size:10px; color:#86a8b2; }
+    .pl-viento-dir { font-size:10px; color:#5a7a9a; }
     .pl-etiqueta { font-size:8px; font-weight:700; letter-spacing:0.3px; padding:2px 4px; border-radius:3px; text-transform:uppercase; }
-    .pl-marea-h { font-size:13px; font-weight:700; color:#f4bebb; }
-    .pl-marea-tipo { font-size:9px; color:#86a8b2; }
+    .pl-marea-h { font-size:13px; font-weight:700; color:#4db8ff; }
+    .pl-marea-tipo { font-size:9px; color:#5a7a9a; }
     .pl-cielo { font-size:16px; }
     .pl-temp { font-size:13px; font-weight:600; }
   .leaflet-control-attribution { font-size:8px !important; opacity:0.25 !important; background:transparent !important; color:rgba(255,255,255,0.3) !important; padding:0 3px !important; }
@@ -261,42 +261,42 @@
     .leaflet-control-attribution svg { display:none !important; }
 
     /* ── Selector de perfil ── */
-    .perfil-btn { width:40px; height:40px; border-radius:50%; background:rgba(244,190,187,0.12); border:2px solid rgba(244,190,187,0.25); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; color:#c8e8ff; user-select:none; transition:background 0.2s; }
-    .perfil-btn:active { background:rgba(244,190,187,0.25); }
+    .perfil-btn { width:40px; height:40px; border-radius:50%; background:rgba(77,184,255,0.12); border:2px solid rgba(77,184,255,0.25); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; color:#c8e8ff; user-select:none; transition:background 0.2s; }
+    .perfil-btn:active { background:rgba(77,184,255,0.25); }
     .perfil-spacer { width:40px; flex-shrink:0; }
     .perfil-modal-overlay { position:fixed; inset:0; z-index:12000; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s; overscroll-behavior:none; }
     .perfil-modal-overlay.visible { opacity:1; pointer-events:all; }
-    .perfil-modal { position:relative; background:#124454; border-radius:24px 24px 0 0; padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 32px); width:100%; max-width:480px; max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; transform:translateY(100%); transition:transform 0.3s cubic-bezier(.32,.72,0,1); }
+    .perfil-modal { position:relative; background:#0d1f35; border-radius:24px 24px 0 0; padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 32px); width:100%; max-width:480px; max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; transform:translateY(100%); transition:transform 0.3s cubic-bezier(.32,.72,0,1); }
     .perfil-modal-overlay.visible .perfil-modal { transform:translateY(0); }
     .perfil-handle { width:36px; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; margin:0 auto 20px; }
     .perfil-titulo { font-size:13px; font-weight:600; color:rgba(255,255,255,0.45); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:16px; }
     .perfil-opciones { display:flex; flex-direction:column; gap:10px; }
     .perfil-opcion { display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:14px; background:rgba(255,255,255,0.05); cursor:pointer; border:2px solid transparent; transition:all 0.2s; }
-    .perfil-opcion.activo { background:rgba(244,190,187,0.12); border-color:rgba(244,190,187,0.35); }
-    .perfil-opcion-icon { flex-shrink:0; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:#fcf8f2; }
+    .perfil-opcion.activo { background:rgba(77,184,255,0.12); border-color:rgba(77,184,255,0.35); }
+    .perfil-opcion-icon { flex-shrink:0; width:36px; height:36px; display:flex; align-items:center; justify-content:center; color:#ddeeff; }
     .perfil-opcion-icon svg { width:32px; height:32px; display:block; }
     .perfil-btn svg { width:22px; height:22px; display:block; }
     .perfil-opcion-info { flex:1; }
-    .perfil-opcion-nombre { font-size:16px; font-weight:700; color:#fcf8f2; }
+    .perfil-opcion-nombre { font-size:16px; font-weight:700; color:#fff; }
     .perfil-opcion-desc { font-size:12px; color:rgba(255,255,255,0.45); margin-top:2px; }
 
     /* ── Guía ── */
-    .guia-card { background:rgba(20,74,92,0.55); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.07); border-radius:16px; overflow:hidden; margin-bottom:12px; }
-    .guia-card-titulo { font-size:12px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; color:#76a2af; padding:14px 16px 0; }
+    .guia-card { background:rgba(10,22,40,0.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.07); border-radius:16px; overflow:hidden; margin-bottom:12px; }
+    .guia-card-titulo { font-size:12px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; color:#4a7a9b; padding:14px 16px 0; }
     .guia-card-cuerpo { padding:12px 16px 16px; }
     .guia-svg { width:100%; height:auto; display:block; margin-bottom:10px; }
-    .guia-desc { font-size:13px; color:#a9c4cc; line-height:1.6; margin:0; }
+    .guia-desc { font-size:13px; color:#8899aa; line-height:1.6; margin:0; }
     .guia-viento-row { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.05); }
     .guia-viento-svg-wrap { flex-shrink:0; width:80px; }
     .guia-viento-svg { width:80px; height:50px; display:block; }
     .guia-viento-info { flex:1; }
     .guia-viento-label { font-size:13px; font-weight:800; letter-spacing:0.5px; margin-bottom:2px; }
-    .guia-viento-desc { font-size:11px; color:#a9c4cc; line-height:1.4; }
+    .guia-viento-desc { font-size:11px; color:#8899aa; line-height:1.4; }
     .guia-factor-chip { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border-radius:10px; padding:10px 10px; }
     .guia-escala-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
     .guia-escala-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-    .guia-escala-rango { font-size:11px; font-weight:700; color:#fcf8f2; width:32px; flex-shrink:0; }
-    .guia-escala-txt { font-size:11px; color:#a9c4cc; }
+    .guia-escala-rango { font-size:11px; font-weight:700; color:#cce0ff; width:32px; flex-shrink:0; }
+    .guia-escala-txt { font-size:11px; color:#8899aa; }
     .guia-nivel-row { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; }
     .guia-nivel-icono { flex-shrink:0; width:36px; display:flex; align-items:center; justify-content:center; }
   </style>
@@ -317,11 +317,11 @@
   <p id="ultima-actualizacion" style="display:none;"></p>
   <div id="contenido-inicio"><p class="actualizando">Consultando el mar...</p></div>
   <footer style="max-width:420px;margin:18px auto 0;padding:0 16px;line-height:1.5;">
-    <div style="color:#a9c4cc;">Esta app no es una herramienta de seguridad: respeta siempre la bandera y las indicaciones del socorrista.</div>
+    <div style="color:#8899aa;">Esta app no es una herramienta de seguridad: respeta siempre la bandera y las indicaciones del socorrista.</div>
     <div style="margin-top:6px;">Oleaje y tiempo: <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:inherit;">Open-Meteo.com</a> (CC BY 4.0) · Mareas: Instituto Hidrográfico de la Marina · Costa: GSHHG · Mapas: © OpenStreetMap</div>
     <div id="pie-motor" style="margin-top:6px;"></div>
     <div style="margin-top:6px;">Beta: tus valoraciones y comentarios se envían de forma anónima (playa, día, nota y lo que escribas) para mejorar las previsiones. No se guarda tu nombre ni tu ubicación.</div>
-    <button type="button" onclick="abrirComentario()" style="margin:10px 0 4px;width:100%;background:rgba(252,248,242,0.06);border:1px solid rgba(252,248,242,0.35);border-radius:12px;padding:9px 12px;color:#fcf8f2;font-size:13px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
+    <button type="button" onclick="abrirComentario()" style="margin:10px 0 4px;width:100%;background:rgba(255,179,71,0.10);border:1px solid rgba(255,179,71,0.4);border-radius:12px;padding:9px 12px;color:#ffb347;font-size:13px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
   </footer>
 </div>
 <div id="pantalla-mapa" class="pantalla">
@@ -367,43 +367,43 @@
 
     <div style="margin-bottom:28px;">
       <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;">Guía Salitre</div>
-      <div style="font-size:13px;color:#86a8b2;">Todo lo que necesitas saber para leer el mar.</div>
+      <div style="font-size:13px;color:#5a7a9a;">Todo lo que necesitas saber para leer el mar.</div>
     </div>
 
-    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5b93a4;margin-bottom:14px;">El mar</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin-bottom:14px;">El mar</div>
 
     <div class="guia-card">
       <div class="guia-card-titulo">Swell</div>
       <div class="guia-card-cuerpo">
         <svg viewBox="0 0 220 90" class="guia-svg">
           <!-- Tormenta origen -->
-          <circle cx="16" cy="28" r="10" stroke="#86a8b2" stroke-width="1" fill="rgba(26,58,90,0.4)"/>
+          <circle cx="16" cy="28" r="10" stroke="#5a7a9a" stroke-width="1" fill="rgba(26,58,90,0.4)"/>
           <line x1="12" y1="26" x2="16" y2="22" stroke="#f0a500" stroke-width="1.2" stroke-linecap="round"/>
           <line x1="16" y1="22" x2="14" y2="28" stroke="#f0a500" stroke-width="1.2" stroke-linecap="round"/>
           <line x1="14" y1="28" x2="18" y2="24" stroke="#f0a500" stroke-width="1.2" stroke-linecap="round"/>
-          <text x="16" y="46" text-anchor="middle" fill="#86a8b2" font-size="6.5">tormenta</text>
+          <text x="16" y="46" text-anchor="middle" fill="#5a7a9a" font-size="6.5">tormenta</text>
 
           <!-- Olas organizadas viajando -->
-          <path d="M36 52 Q52 34 68 52 Q84 70 100 52 Q116 34 132 52 Q148 70 164 52 Q180 34 196 52 Q208 44 220 50" stroke="#f4bebb" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M36 60 Q52 48 68 60 Q84 72 100 60 Q116 48 132 60 Q148 72 164 60 Q180 48 196 60" stroke="#f4bebb" stroke-width="0.8" fill="none" opacity="0.25"/>
+          <path d="M36 52 Q52 34 68 52 Q84 70 100 52 Q116 34 132 52 Q148 70 164 52 Q180 34 196 52 Q208 44 220 50" stroke="#4db8ff" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M36 60 Q52 48 68 60 Q84 72 100 60 Q116 48 132 60 Q148 72 164 60 Q180 48 196 60" stroke="#4db8ff" stroke-width="0.8" fill="none" opacity="0.25"/>
 
           <!-- Flechas dirección de viaje -->
-          <line x1="42" y1="30" x2="62" y2="30" stroke="#f4bebb" stroke-width="1" opacity="0.45" stroke-dasharray="3,2"/>
-          <polygon points="62,30 57,27 57,33" fill="#f4bebb" opacity="0.45"/>
-          <line x1="110" y1="30" x2="130" y2="30" stroke="#f4bebb" stroke-width="1" opacity="0.45" stroke-dasharray="3,2"/>
-          <polygon points="130,30 125,27 125,33" fill="#f4bebb" opacity="0.45"/>
+          <line x1="42" y1="30" x2="62" y2="30" stroke="#4db8ff" stroke-width="1" opacity="0.45" stroke-dasharray="3,2"/>
+          <polygon points="62,30 57,27 57,33" fill="#4db8ff" opacity="0.45"/>
+          <line x1="110" y1="30" x2="130" y2="30" stroke="#4db8ff" stroke-width="1" opacity="0.45" stroke-dasharray="3,2"/>
+          <polygon points="130,30 125,27 125,33" fill="#4db8ff" opacity="0.45"/>
 
           <!-- Etiquetas -->
-          <text x="128" y="22" text-anchor="middle" fill="#f4bebb" font-size="6.5" opacity="0.8">viajan ordenadas →</text>
+          <text x="128" y="22" text-anchor="middle" fill="#4db8ff" font-size="6.5" opacity="0.8">viajan ordenadas →</text>
 
           <!-- Orilla -->
-          <rect x="0" y="74" width="220" height="16" fill="#114253" opacity="0.7" rx="0"/>
-          <path d="M0 74 Q40 70 80 74 Q120 78 160 74 Q190 72 220 74" fill="#1f5263" opacity="0.6"/>
-          <text x="110" y="85" text-anchor="middle" fill="#86a8b2" font-size="6.5">orilla</text>
+          <rect x="0" y="74" width="220" height="16" fill="#0d2137" opacity="0.7" rx="0"/>
+          <path d="M0 74 Q40 70 80 74 Q120 78 160 74 Q190 72 220 74" fill="#1a3a5a" opacity="0.6"/>
+          <text x="110" y="85" text-anchor="middle" fill="#5a7a9a" font-size="6.5">orilla</text>
 
           <!-- Distancia -->
-          <line x1="36" y1="67" x2="215" y2="67" stroke="#a9c4cc" stroke-width="0.7" opacity="0.4" stroke-dasharray="2,3"/>
-          <text x="126" y="73" text-anchor="middle" fill="#a9c4cc" font-size="6" opacity="0.6">miles de km recorridos</text>
+          <line x1="36" y1="67" x2="215" y2="67" stroke="#8899aa" stroke-width="0.7" opacity="0.4" stroke-dasharray="2,3"/>
+          <text x="126" y="73" text-anchor="middle" fill="#8899aa" font-size="6" opacity="0.6">miles de km recorridos</text>
         </svg>
         <p class="guia-desc">Olas generadas por una tormenta lejana. Viajan ordenadas y con energía durante días. Cuanto más lejos se formaron y más período tienen, más potentes y limpias llegan a la costa.</p>
       </div>
@@ -416,9 +416,9 @@
           <text x="50" y="10" text-anchor="middle" fill="#ff8844" font-size="7.5" font-weight="600">6–8s · Wind swell</text>
           <path d="M5 50 Q14 38 23 50 Q32 62 41 50 Q50 38 59 50 Q68 62 77 50 Q86 38 95 50" stroke="#ff8844" stroke-width="1.5" fill="none" opacity="0.8"/>
           <path d="M5 58 Q9 55 13 58 Q17 61 21 58 Q25 55 29 58" stroke="#ff8844" stroke-width="0.8" fill="none" opacity="0.4"/>
-          <line x1="110" y1="5" x2="110" y2="75" stroke="#2a7088" stroke-width="1" opacity="0.5"/>
-          <text x="162" y="10" text-anchor="middle" fill="#f4bebb" font-size="7.5" font-weight="600">12–16s · Ground swell</text>
-          <path d="M118 55 Q137 28 156 55 Q175 82 194 55 Q207 38 215 52" stroke="#f4bebb" stroke-width="1.8" fill="none"/>
+          <line x1="110" y1="5" x2="110" y2="75" stroke="#1a4a6e" stroke-width="1" opacity="0.5"/>
+          <text x="162" y="10" text-anchor="middle" fill="#4db8ff" font-size="7.5" font-weight="600">12–16s · Ground swell</text>
+          <path d="M118 55 Q137 28 156 55 Q175 82 194 55 Q207 38 215 52" stroke="#4db8ff" stroke-width="1.8" fill="none"/>
         </svg>
         <p class="guia-desc">Segundos entre dos olas. A más período, más energía y más forma. Con menos de 8s las olas son cortas y desordenadas. Con más de 12s, el mar lleva potencia real.</p>
       </div>
@@ -429,44 +429,44 @@
       <div class="guia-card-cuerpo">
         <svg viewBox="0 0 220 95" class="guia-svg">
           <!-- Label offshore -->
-          <text x="30" y="9" text-anchor="middle" fill="#a9c4cc" font-size="6.5">en mar abierto</text>
-          <text x="30" y="17" text-anchor="middle" fill="#f4bebb" font-size="7.5" font-weight="700">2m</text>
+          <text x="30" y="9" text-anchor="middle" fill="#8899aa" font-size="6.5">en mar abierto</text>
+          <text x="30" y="17" text-anchor="middle" fill="#4db8ff" font-size="7.5" font-weight="700">2m</text>
 
           <!-- Ola offshore grande -->
-          <path d="M4 50 Q18 28 32 50 Q46 72 60 50" stroke="#f4bebb" stroke-width="2" fill="none"/>
+          <path d="M4 50 Q18 28 32 50 Q46 72 60 50" stroke="#4db8ff" stroke-width="2" fill="none"/>
 
           <!-- Flecha → -->
-          <line x1="68" y1="48" x2="86" y2="48" stroke="#86a8b2" stroke-width="1.2" stroke-dasharray="3,2"/>
-          <polygon points="86,48 82,45 82,51" fill="#86a8b2"/>
+          <line x1="68" y1="48" x2="86" y2="48" stroke="#5a7a9a" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <polygon points="86,48 82,45 82,51" fill="#5a7a9a"/>
 
           <!-- Orilla continua en la base -->
-          <path d="M0 82 L220 82" stroke="#2a7088" stroke-width="1.5" opacity="0.5"/>
-          <rect x="0" y="83" width="220" height="12" fill="#114253" opacity="0.5"/>
-          <text x="110" y="91" text-anchor="middle" fill="#4d7f8e" font-size="6">orilla</text>
+          <path d="M0 82 L220 82" stroke="#1a4a6e" stroke-width="1.5" opacity="0.5"/>
+          <rect x="0" y="83" width="220" height="12" fill="#0d2137" opacity="0.5"/>
+          <text x="110" y="91" text-anchor="middle" fill="#3a5a7a" font-size="6">orilla</text>
 
           <!-- Playa expuesta -->
-          <text x="120" y="9" text-anchor="middle" fill="#f4bebb" font-size="6.5">playa expuesta</text>
-          <text x="120" y="17" text-anchor="middle" fill="#f4bebb" font-size="7.5" font-weight="700">1.8m</text>
-          <path d="M94 52 Q108 32 122 52 Q136 72 150 52" stroke="#f4bebb" stroke-width="2" fill="none"/>
+          <text x="120" y="9" text-anchor="middle" fill="#4db8ff" font-size="6.5">playa expuesta</text>
+          <text x="120" y="17" text-anchor="middle" fill="#4db8ff" font-size="7.5" font-weight="700">1.8m</text>
+          <path d="M94 52 Q108 32 122 52 Q136 72 150 52" stroke="#4db8ff" stroke-width="2" fill="none"/>
           <!-- Sin obstáculos -->
-          <line x1="94" y1="78" x2="150" y2="78" stroke="#f4bebb" stroke-width="0.8" opacity="0.3" stroke-dasharray="2,2"/>
+          <line x1="94" y1="78" x2="150" y2="78" stroke="#4db8ff" stroke-width="0.8" opacity="0.3" stroke-dasharray="2,2"/>
 
           <!-- Separador -->
-          <line x1="163" y1="5" x2="163" y2="80" stroke="#1f5263" stroke-width="1" opacity="0.4"/>
+          <line x1="163" y1="5" x2="163" y2="80" stroke="#1a3a5a" stroke-width="1" opacity="0.4"/>
 
           <!-- Playa protegida -->
           <text x="192" y="9" text-anchor="middle" fill="#8844ff" font-size="6.5">playa protegida</text>
           <text x="192" y="17" text-anchor="middle" fill="#8844ff" font-size="7.5" font-weight="700">0.4m</text>
           <path d="M168 70 Q177 64 186 70 Q195 76 204 70" stroke="#8844ff" stroke-width="1.5" fill="none" opacity="0.8"/>
           <!-- Obstáculo genérico (isla/punta/bahía) -->
-          <path d="M165 58 Q168 40 172 35 Q175 32 178 35 Q181 40 183 55" stroke="#86a8b2" stroke-width="1" fill="rgba(26,58,90,0.5)" opacity="0.7"/>
-          <text x="174" y="28" text-anchor="middle" fill="#86a8b2" font-size="6" opacity="0.8">obstáculo</text>
+          <path d="M165 58 Q168 40 172 35 Q175 32 178 35 Q181 40 183 55" stroke="#5a7a9a" stroke-width="1" fill="rgba(26,58,90,0.5)" opacity="0.7"/>
+          <text x="174" y="28" text-anchor="middle" fill="#5a7a9a" font-size="6" opacity="0.8">obstáculo</text>
         </svg>
         <p class="guia-desc">Los datos de ola miden el mar en abierto. Lo que llega a cada playa depende de lo que haya entre ella y el océano: islas, puntas, bahías o la propia geografía costera pueden reducir drásticamente la altura real.</p>
       </div>
     </div>
 
-    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5b93a4;margin:24px 0 14px;">El viento</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">El viento</div>
 
     <div class="guia-card">
       <div class="guia-card-titulo">Tipos de viento</div>
@@ -477,20 +477,20 @@
           <div class="guia-viento-svg-wrap">
             <svg viewBox="0 0 80 56" class="guia-viento-svg">
               <!-- Mar -->
-              <rect x="0" y="0" width="80" height="34" fill="#0e3746" opacity="0.6"/>
+              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
               <!-- Orilla -->
-              <rect x="0" y="34" width="80" height="3" fill="#f4bebb" opacity="0.35"/>
+              <rect x="0" y="34" width="80" height="3" fill="#4db8ff" opacity="0.35"/>
               <!-- Tierra -->
-              <rect x="0" y="37" width="80" height="19" fill="#114253" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2f6576" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#5b93a4" font-size="6">mar</text>
+              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
+              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
+              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
               <!-- Ola lisa -->
-              <path d="M5 24 Q20 18 35 24 Q50 30 65 24 Q72 21 78 24" stroke="#f4bebb" stroke-width="1.8" fill="none"/>
-              <path d="M5 28 Q20 25 35 28 Q50 31 65 28" stroke="#f4bebb" stroke-width="0.7" fill="none" opacity="0.3"/>
+              <path d="M5 24 Q20 18 35 24 Q50 30 65 24 Q72 21 78 24" stroke="#4db8ff" stroke-width="1.8" fill="none"/>
+              <path d="M5 28 Q20 25 35 28 Q50 31 65 28" stroke="#4db8ff" stroke-width="0.7" fill="none" opacity="0.3"/>
             </svg>
           </div>
           <div class="guia-viento-info">
-            <div class="guia-viento-label" style="color:#f4bebb;">GLASSY</div>
+            <div class="guia-viento-label" style="color:#4db8ff;">GLASSY</div>
             <div class="guia-viento-desc">Sin viento. Superficie de espejo, ola perfecta.</div>
           </div>
         </div>
@@ -499,11 +499,11 @@
         <div class="guia-viento-row">
           <div class="guia-viento-svg-wrap">
             <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#0e3746" opacity="0.6"/>
+              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
               <rect x="0" y="34" width="80" height="3" fill="#3ddc84" opacity="0.4"/>
-              <rect x="0" y="37" width="80" height="19" fill="#114253" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2f6576" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#5b93a4" font-size="6">mar</text>
+              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
+              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
+              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
               <!-- Ola bien formada con labio -->
               <path d="M8 22 Q22 6 36 22 Q46 34 56 22 Q64 14 74 20" stroke="#3ddc84" stroke-width="1.8" fill="none"/>
               <!-- Spray offshore -->
@@ -528,11 +528,11 @@
         <div class="guia-viento-row">
           <div class="guia-viento-svg-wrap">
             <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#0e3746" opacity="0.6"/>
+              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
               <rect x="0" y="34" width="80" height="3" fill="#88cc44" opacity="0.35"/>
-              <rect x="0" y="37" width="80" height="19" fill="#114253" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2f6576" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#5b93a4" font-size="6">mar</text>
+              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
+              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
+              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
               <!-- Ola aceptable -->
               <path d="M8 24 Q22 12 36 24 Q50 36 64 24 Q71 18 78 22" stroke="#88cc44" stroke-width="1.8" fill="none"/>
               <!-- Flechas diagonal: de tierra+lateral → mar diagonal -->
@@ -552,11 +552,11 @@
         <div class="guia-viento-row">
           <div class="guia-viento-svg-wrap">
             <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#0e3746" opacity="0.6"/>
+              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
               <rect x="0" y="34" width="80" height="3" fill="#ffaa44" opacity="0.35"/>
-              <rect x="0" y="37" width="80" height="19" fill="#114253" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2f6576" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#5b93a4" font-size="6">mar</text>
+              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
+              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
+              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
               <!-- Ola pierde forma -->
               <path d="M8 24 Q20 16 32 24 Q42 30 54 22 Q64 16 76 22" stroke="#ffaa44" stroke-width="1.8" fill="none" opacity="0.9"/>
               <!-- Flechas lateral puro: de izquierda a derecha -->
@@ -576,11 +576,11 @@
         <div class="guia-viento-row" style="border-bottom:none;">
           <div class="guia-viento-svg-wrap">
             <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#0e3746" opacity="0.6"/>
+              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
               <rect x="0" y="34" width="80" height="3" fill="#ff5555" opacity="0.35"/>
-              <rect x="0" y="37" width="80" height="19" fill="#114253" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2f6576" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#5b93a4" font-size="6">mar</text>
+              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
+              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
+              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
               <!-- Ola rota, fea -->
               <path d="M5 22 Q14 18 22 22 Q28 26 36 20 Q44 14 52 20 Q60 26 70 20" stroke="#ff5555" stroke-width="1.5" fill="none" opacity="0.8"/>
               <!-- Espuma desordenada -->
@@ -602,7 +602,7 @@
       </div>
     </div>
 
-    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5b93a4;margin:24px 0 14px;">El semáforo</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">El semáforo</div>
 
     <div class="guia-card">
       <div class="guia-card-titulo">Cómo se calcula la puntuación</div>
@@ -610,24 +610,24 @@
         <p class="guia-desc" style="margin-bottom:14px;">El semáforo combina varios factores y los pondera según tu perfil. Nunca es una garantía, es una previsión.</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><circle cx="16" cy="16" r="12" stroke="#f4bebb" stroke-width="1.2" fill="none"/><line x1="16" y1="4" x2="16" y2="16" stroke="#f4bebb" stroke-width="1.5"/><polygon points="16,4 13,10 19,10" fill="#f4bebb"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#fcf8f2;">Dirección</div><div style="font-size:10px;color:#a9c4cc;">¿Entra bien?</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26"><circle cx="16" cy="16" r="12" stroke="#4db8ff" stroke-width="1.2" fill="none"/><line x1="16" y1="4" x2="16" y2="16" stroke="#4db8ff" stroke-width="1.5"/><polygon points="16,4 13,10 19,10" fill="#4db8ff"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Dirección</div><div style="font-size:10px;color:#8899aa;">¿Entra bien?</div></div>
           </div>
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 10 16 22 Q22 34 28 22" stroke="#f4bebb" stroke-width="1.5" fill="none"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#fcf8f2;">Altura</div><div style="font-size:10px;color:#a9c4cc;">¿Para tu nivel?</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 10 16 22 Q22 34 28 22" stroke="#4db8ff" stroke-width="1.5" fill="none"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Altura</div><div style="font-size:10px;color:#8899aa;">¿Para tu nivel?</div></div>
           </div>
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 20 Q10 8 16 20 Q22 32 28 20" stroke="#f4bebb" stroke-width="1.5" fill="none"/><path d="M4 25 Q7 21 10 25" stroke="#f4bebb" stroke-width="0.8" fill="none" opacity="0.5"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#fcf8f2;">Período</div><div style="font-size:10px;color:#a9c4cc;">Calidad de la ola</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 20 Q10 8 16 20 Q22 32 28 20" stroke="#4db8ff" stroke-width="1.5" fill="none"/><path d="M4 25 Q7 21 10 25" stroke="#4db8ff" stroke-width="0.8" fill="none" opacity="0.5"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Período</div><div style="font-size:10px;color:#8899aa;">Calidad de la ola</div></div>
           </div>
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 14 16 22 Q22 30 28 22" stroke="#f4bebb" stroke-width="1.5" fill="none"/><line x1="20" y1="8" x2="28" y2="15" stroke="#3ddc84" stroke-width="1.2"/><polygon points="28,15 23,13 25,19" fill="#3ddc84"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#fcf8f2;">Viento</div><div style="font-size:10px;color:#a9c4cc;">Dirección y fuerza</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 14 16 22 Q22 30 28 22" stroke="#4db8ff" stroke-width="1.5" fill="none"/><line x1="20" y1="8" x2="28" y2="15" stroke="#3ddc84" stroke-width="1.2"/><polygon points="28,15 23,13 25,19" fill="#3ddc84"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Viento</div><div style="font-size:10px;color:#8899aa;">Dirección y fuerza</div></div>
           </div>
         </div>
         <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px;">
-          <div style="font-size:10px;color:#86a8b2;margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">Escala</div>
+          <div style="font-size:10px;color:#5a7a9a;margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">Escala</div>
           <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#ff4444;"></div><span class="guia-escala-rango">1–3</span><span class="guia-escala-txt">Condiciones desfavorables</span></div>
           <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#FF6B00;"></div><span class="guia-escala-rango">4–5</span><span class="guia-escala-txt">Aceptable, puede no valer</span></div>
           <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#f0a500;"></div><span class="guia-escala-rango">6–7</span><span class="guia-escala-txt">Bastante bueno</span></div>
@@ -636,7 +636,7 @@
       </div>
     </div>
 
-    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5b93a4;margin:24px 0 14px;">Brújula de tu playa</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">Brújula de tu playa</div>
 
     <div class="guia-card">
       <div class="guia-card-titulo" id="guia-brujula-titulo">Cargando...</div>
@@ -646,56 +646,56 @@
         <div style="position:relative;width:100%;padding-bottom:100%;margin-bottom:16px;">
           <svg id="guia-brujula-svg" viewBox="0 0 240 240" style="position:absolute;inset:0;width:100%;height:100%;">
             <!-- Fondo mar -->
-            <circle cx="120" cy="120" r="112" fill="#0e3746" opacity="0.7"/>
+            <circle cx="120" cy="120" r="112" fill="#071828" opacity="0.7"/>
 
             <!-- Anillos de referencia -->
-            <circle cx="120" cy="120" r="112" stroke="#2a7088" stroke-width="1" fill="none"/>
-            <circle cx="120" cy="120" r="85" stroke="#2a7088" stroke-width="0.5" fill="none" opacity="0.4"/>
-            <circle cx="120" cy="120" r="55" stroke="#2a7088" stroke-width="0.5" fill="none" opacity="0.3"/>
+            <circle cx="120" cy="120" r="112" stroke="#1a4a6e" stroke-width="1" fill="none"/>
+            <circle cx="120" cy="120" r="85" stroke="#1a4a6e" stroke-width="0.5" fill="none" opacity="0.4"/>
+            <circle cx="120" cy="120" r="55" stroke="#1a4a6e" stroke-width="0.5" fill="none" opacity="0.3"/>
 
             <!-- Líneas cardinales -->
-            <line x1="120" y1="8" x2="120" y2="28" stroke="#2f6a7d" stroke-width="1.2"/>
-            <line x1="120" y1="212" x2="120" y2="232" stroke="#2f6a7d" stroke-width="1.2"/>
-            <line x1="8" y1="120" x2="28" y2="120" stroke="#2f6a7d" stroke-width="1.2"/>
-            <line x1="212" y1="120" x2="232" y2="120" stroke="#2f6a7d" stroke-width="1.2"/>
+            <line x1="120" y1="8" x2="120" y2="28" stroke="#2a5a7a" stroke-width="1.2"/>
+            <line x1="120" y1="212" x2="120" y2="232" stroke="#2a5a7a" stroke-width="1.2"/>
+            <line x1="8" y1="120" x2="28" y2="120" stroke="#2a5a7a" stroke-width="1.2"/>
+            <line x1="212" y1="120" x2="232" y2="120" stroke="#2a5a7a" stroke-width="1.2"/>
             <!-- Líneas intercardinales -->
-            <line x1="40" y1="40" x2="52" y2="52" stroke="#2a7088" stroke-width="0.8" opacity="0.5"/>
-            <line x1="200" y1="40" x2="188" y2="52" stroke="#2a7088" stroke-width="0.8" opacity="0.5"/>
-            <line x1="40" y1="200" x2="52" y2="188" stroke="#2a7088" stroke-width="0.8" opacity="0.5"/>
-            <line x1="200" y1="200" x2="188" y2="188" stroke="#2a7088" stroke-width="0.8" opacity="0.5"/>
+            <line x1="40" y1="40" x2="52" y2="52" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
+            <line x1="200" y1="40" x2="188" y2="52" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
+            <line x1="40" y1="200" x2="52" y2="188" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
+            <line x1="200" y1="200" x2="188" y2="188" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
 
             <!-- Etiquetas cardinales -->
-            <text x="120" y="6" text-anchor="middle" fill="#f4bebb" font-size="13" font-weight="700">N</text>
-            <text x="120" y="238" text-anchor="middle" fill="#86a8b2" font-size="11" font-weight="600">S</text>
-            <text x="236" y="124" text-anchor="middle" fill="#86a8b2" font-size="11" font-weight="600">E</text>
-            <text x="4" y="124" text-anchor="middle" fill="#86a8b2" font-size="11" font-weight="600">O</text>
+            <text x="120" y="6" text-anchor="middle" fill="#4db8ff" font-size="13" font-weight="700">N</text>
+            <text x="120" y="238" text-anchor="middle" fill="#5a7a9a" font-size="11" font-weight="600">S</text>
+            <text x="236" y="124" text-anchor="middle" fill="#5a7a9a" font-size="11" font-weight="600">E</text>
+            <text x="4" y="124" text-anchor="middle" fill="#5a7a9a" font-size="11" font-weight="600">O</text>
             <!-- Intercardinales -->
-            <text x="198" y="28" text-anchor="middle" fill="#4d7f8e" font-size="8">NE</text>
-            <text x="28" y="28" text-anchor="middle" fill="#4d7f8e" font-size="8">NO</text>
-            <text x="198" y="218" text-anchor="middle" fill="#4d7f8e" font-size="8">SE</text>
-            <text x="28" y="218" text-anchor="middle" fill="#4d7f8e" font-size="8">SO</text>
+            <text x="198" y="28" text-anchor="middle" fill="#3a5a7a" font-size="8">NE</text>
+            <text x="28" y="28" text-anchor="middle" fill="#3a5a7a" font-size="8">NO</text>
+            <text x="198" y="218" text-anchor="middle" fill="#3a5a7a" font-size="8">SE</text>
+            <text x="28" y="218" text-anchor="middle" fill="#3a5a7a" font-size="8">SO</text>
 
             <!-- Arco de exposición óptima de la playa -->
-            <path id="guia-arco-exposicion" d="" stroke="#f4bebb" stroke-width="10" fill="none" opacity="0.18" stroke-linecap="round"/>
+            <path id="guia-arco-exposicion" d="" stroke="#4db8ff" stroke-width="10" fill="none" opacity="0.18" stroke-linecap="round"/>
             <!-- Borde del arco más visible -->
-            <path id="guia-arco-borde" d="" stroke="#f4bebb" stroke-width="1.5" fill="none" opacity="0.6" stroke-linecap="round"/>
+            <path id="guia-arco-borde" d="" stroke="#4db8ff" stroke-width="1.5" fill="none" opacity="0.6" stroke-linecap="round"/>
 
             <!-- Aguja orientación ideal playa (blanca discontinua, más fina) -->
             <line id="guia-aguja-playa" x1="120" y1="120" x2="120" y2="38" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,4" opacity="0.5"/>
             <circle id="guia-punto-playa" cx="120" cy="38" r="4" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
 
             <!-- Aguja swell actual (sólida, azul) -->
-            <line id="guia-aguja-swell" x1="120" y1="120" x2="120" y2="32" stroke="#f4bebb" stroke-width="3" stroke-linecap="round"/>
+            <line id="guia-aguja-swell" x1="120" y1="120" x2="120" y2="32" stroke="#4db8ff" stroke-width="3" stroke-linecap="round"/>
             <!-- Cabeza de flecha swell -->
-            <polygon id="guia-flecha-swell" points="120,28 114,40 126,40" fill="#f4bebb"/>
+            <polygon id="guia-flecha-swell" points="120,28 114,40 126,40" fill="#4db8ff"/>
 
             <!-- Centro -->
-            <circle cx="120" cy="120" r="6" fill="#114253" stroke="#f4bebb" stroke-width="1.5"/>
-            <circle cx="120" cy="120" r="2.5" fill="#f4bebb"/>
+            <circle cx="120" cy="120" r="6" fill="#0d2137" stroke="#4db8ff" stroke-width="1.5"/>
+            <circle cx="120" cy="120" r="2.5" fill="#4db8ff"/>
 
             <!-- Datos en el centro inferior -->
-            <text id="guia-txt-swell-dir" x="120" y="158" text-anchor="middle" fill="#f4bebb" font-size="11" font-weight="700">—</text>
-            <text x="120" y="170" text-anchor="middle" fill="#86a8b2" font-size="8">swell actual</text>
+            <text id="guia-txt-swell-dir" x="120" y="158" text-anchor="middle" fill="#4db8ff" font-size="11" font-weight="700">—</text>
+            <text x="120" y="170" text-anchor="middle" fill="#5a7a9a" font-size="8">swell actual</text>
             <text id="guia-txt-playa-dir" x="120" y="183" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="9">ideal: —</text>
           </svg>
         </div>
@@ -703,16 +703,16 @@
         <!-- Leyenda horizontal -->
         <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">
           <div style="display:flex;align-items:center;gap:6px;">
-            <svg width="22" height="10"><line x1="0" y1="5" x2="16" y2="5" stroke="#f4bebb" stroke-width="2.5" stroke-linecap="round"/><polygon points="16,5 11,2 11,8" fill="#f4bebb"/></svg>
-            <span style="font-size:11px;color:#a9c4cc;" id="guia-leyenda-swell">Swell actual</span>
+            <svg width="22" height="10"><line x1="0" y1="5" x2="16" y2="5" stroke="#4db8ff" stroke-width="2.5" stroke-linecap="round"/><polygon points="16,5 11,2 11,8" fill="#4db8ff"/></svg>
+            <span style="font-size:11px;color:#8899aa;" id="guia-leyenda-swell">Swell actual</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round"/></svg>
-            <span style="font-size:11px;color:#a9c4cc;" id="guia-leyenda-playa">Orientación ideal</span>
+            <span style="font-size:11px;color:#8899aa;" id="guia-leyenda-playa">Orientación ideal</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
-            <div style="width:18px;height:8px;background:rgba(244,190,187,0.25);border:1px solid rgba(244,190,187,0.4);border-radius:2px;"></div>
-            <span style="font-size:11px;color:#a9c4cc;">Arco óptimo</span>
+            <div style="width:18px;height:8px;background:rgba(77,184,255,0.25);border:1px solid rgba(77,184,255,0.4);border-radius:2px;"></div>
+            <span style="font-size:11px;color:#8899aa;">Arco óptimo</span>
           </div>
         </div>
 
@@ -725,45 +725,45 @@
       <div class="guia-card-cuerpo">
         <svg viewBox="0 0 220 100" class="guia-svg">
           <!-- Fondo marino -->
-          <path d="M0 90 Q40 85 80 90 Q120 95 160 90 Q190 87 220 90 L220 100 L0 100 Z" fill="#124454" opacity="0.6"/>
+          <path d="M0 90 Q40 85 80 90 Q120 95 160 90 Q190 87 220 90 L220 100 L0 100 Z" fill="#0d1f35" opacity="0.6"/>
 
           <!-- BAJAMAR -->
           <text x="36" y="10" text-anchor="middle" fill="#f0a500" font-size="7.5" font-weight="600">Bajamar</text>
           <!-- Nivel agua bajo -->
-          <path d="M0 72 Q18 68 36 72 Q54 76 72 72" stroke="#f4bebb" stroke-width="1" fill="none" opacity="0.5"/>
+          <path d="M0 72 Q18 68 36 72 Q54 76 72 72" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
           <!-- Ola rompiendo lejos -->
           <path d="M5 65 Q15 52 25 65 Q35 78 45 65" stroke="#f0a500" stroke-width="1.8" fill="none"/>
           <!-- Banco de arena -->
-          <path d="M0 82 Q20 78 40 80 Q60 82 72 80" fill="#1f5263" opacity="0.5"/>
+          <path d="M0 82 Q20 78 40 80 Q60 82 72 80" fill="#1a3a5a" opacity="0.5"/>
           <text x="36" y="88" text-anchor="middle" fill="#f0a500" font-size="6" opacity="0.8">banco expuesto</text>
           <!-- Etiqueta problema -->
           <text x="36" y="98" text-anchor="middle" fill="#f0a500" font-size="6">closeout posible</text>
 
           <!-- Separador -->
-          <line x1="78" y1="5" x2="78" y2="95" stroke="#2a7088" stroke-width="0.8" opacity="0.5"/>
+          <line x1="78" y1="5" x2="78" y2="95" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
 
           <!-- MAREA MEDIA -->
           <text x="114" y="10" text-anchor="middle" fill="#3ddc84" font-size="7.5" font-weight="600">Marea media</text>
-          <path d="M82 62 Q100 58 118 62 Q136 66 154 62" stroke="#f4bebb" stroke-width="1" fill="none" opacity="0.5"/>
+          <path d="M82 62 Q100 58 118 62 Q136 66 154 62" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
           <!-- Ola bien formada -->
           <path d="M85 55 Q100 36 115 55 Q125 68 140 55" stroke="#3ddc84" stroke-width="1.8" fill="none"/>
           <!-- Banco cubierto justo -->
-          <path d="M82 76 Q102 73 122 75 Q142 77 154 75" fill="#1f5263" opacity="0.4"/>
+          <path d="M82 76 Q102 73 122 75 Q142 77 154 75" fill="#1a3a5a" opacity="0.4"/>
           <text x="118" y="88" text-anchor="middle" fill="#3ddc84" font-size="6" opacity="0.8">banco cubierto justo</text>
           <text x="118" y="98" text-anchor="middle" fill="#3ddc84" font-size="6">ola con forma</text>
 
           <!-- Separador -->
-          <line x1="158" y1="5" x2="158" y2="95" stroke="#2a7088" stroke-width="0.8" opacity="0.5"/>
+          <line x1="158" y1="5" x2="158" y2="95" stroke="#1a4a6e" stroke-width="0.8" opacity="0.5"/>
 
           <!-- PLEAMAR -->
-          <text x="190" y="10" text-anchor="middle" fill="#a9c4cc" font-size="7.5" font-weight="600">Pleamar</text>
-          <path d="M162 52 Q176 48 190 52 Q204 56 218 52" stroke="#f4bebb" stroke-width="1" fill="none" opacity="0.5"/>
+          <text x="190" y="10" text-anchor="middle" fill="#8899aa" font-size="7.5" font-weight="600">Pleamar</text>
+          <path d="M162 52 Q176 48 190 52 Q204 56 218 52" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
           <!-- Ola chata, no rompe bien -->
-          <path d="M164 50 Q174 44 184 50 Q192 56 202 50" stroke="#a9c4cc" stroke-width="1.5" fill="none" opacity="0.7"/>
+          <path d="M164 50 Q174 44 184 50 Q192 56 202 50" stroke="#8899aa" stroke-width="1.5" fill="none" opacity="0.7"/>
           <!-- Banco enterrado -->
-          <path d="M162 80 Q182 77 202 79 Q214 80 218 79" fill="#1f5263" opacity="0.3"/>
-          <text x="190" y="88" text-anchor="middle" fill="#a9c4cc" font-size="6" opacity="0.8">banco muy cubierto</text>
-          <text x="190" y="98" text-anchor="middle" fill="#a9c4cc" font-size="6">ola no rompe bien</text>
+          <path d="M162 80 Q182 77 202 79 Q214 80 218 79" fill="#1a3a5a" opacity="0.3"/>
+          <text x="190" y="88" text-anchor="middle" fill="#8899aa" font-size="6" opacity="0.8">banco muy cubierto</text>
+          <text x="190" y="98" text-anchor="middle" fill="#8899aa" font-size="6">ola no rompe bien</text>
         </svg>
         <p class="guia-desc">La marea sube y baja durante el día. La mayoría de playas de arena funcionan mejor con marea media-baja, cuando el banco de arena está cubierto justo y la ola puede formar bien antes de romper.</p>
       </div>
@@ -775,82 +775,82 @@
           <div style="flex-shrink:0;width:36px;text-align:center;">
             <svg viewBox="0 0 36 36" width="34" height="34">
               <path d="M4 28 Q10 18 18 22 Q26 26 32 18" stroke="#f0a500" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-              <path d="M4 32 Q10 29 18 31 Q26 33 32 30" stroke="#f4bebb" stroke-width="1" fill="none" opacity="0.5"/>
+              <path d="M4 32 Q10 29 18 31 Q26 33 32 30" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
               <text x="18" y="12" text-anchor="middle" fill="#f0a500" font-size="8" font-weight="700">↓</text>
             </svg>
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Bajamar</div>
-            <div style="font-size:11px;color:#a9c4cc;line-height:1.5;">El banco de arena queda expuesto o muy poco cubierto. Con mar grande puede haber closeouts — la ola cierra de golpe sin sección.</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">El banco de arena queda expuesto o muy poco cubierto. Con mar grande puede haber closeouts — la ola cierra de golpe sin sección.</div>
           </div>
         </div>
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
           <div style="flex-shrink:0;width:36px;text-align:center;">
             <svg viewBox="0 0 36 36" width="34" height="34">
               <path d="M4 26 Q10 14 18 20 Q26 24 32 16" stroke="#3ddc84" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-              <path d="M4 30 Q12 27 20 29 Q28 31 32 28" stroke="#f4bebb" stroke-width="1" fill="none" opacity="0.5"/>
+              <path d="M4 30 Q12 27 20 29 Q28 31 32 28" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
               <text x="18" y="10" text-anchor="middle" fill="#3ddc84" font-size="7" font-weight="600">~</text>
             </svg>
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Marea media</div>
-            <div style="font-size:11px;color:#a9c4cc;line-height:1.5;">La mejor para la mayoría de playas de arena en Galicia. El banco está cubierto lo justo para que la ola forme bien antes de romper.</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">La mejor para la mayoría de playas de arena en Galicia. El banco está cubierto lo justo para que la ola forme bien antes de romper.</div>
           </div>
         </div>
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
           <div style="flex-shrink:0;width:36px;text-align:center;">
             <svg viewBox="0 0 36 36" width="34" height="34">
-              <path d="M4 22 Q10 18 18 20 Q26 22 32 18" stroke="#a9c4cc" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-              <path d="M4 28 Q12 25 20 27 Q28 29 32 26" stroke="#f4bebb" stroke-width="1" fill="none" opacity="0.5"/>
-              <text x="18" y="12" text-anchor="middle" fill="#a9c4cc" font-size="8" font-weight="700">↑</text>
+              <path d="M4 22 Q10 18 18 20 Q26 22 32 18" stroke="#8899aa" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+              <path d="M4 28 Q12 25 20 27 Q28 29 32 26" stroke="#4db8ff" stroke-width="1" fill="none" opacity="0.5"/>
+              <text x="18" y="12" text-anchor="middle" fill="#8899aa" font-size="8" font-weight="700">↑</text>
             </svg>
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Pleamar</div>
-            <div style="font-size:11px;color:#a9c4cc;line-height:1.5;">El agua cubre demasiado los bancos de arena. La ola puede no romper bien o hacerlo sin forma. Los reefs y puntas suelen aguantar mejor.</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">El agua cubre demasiado los bancos de arena. La ola puede no romper bien o hacerlo sin forma. Los reefs y puntas suelen aguantar mejor.</div>
           </div>
         </div>
         <div class="guia-nivel-row">
           <div style="flex-shrink:0;width:36px;text-align:center;">
             <svg viewBox="0 0 36 36" width="34" height="34">
-              <path d="M4 20 Q9 14 14 20 Q19 26 24 20 Q29 14 34 20" stroke="#f4bebb" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-              <line x1="4" y1="28" x2="34" y2="28" stroke="#f4bebb" stroke-width="0.8" opacity="0.3"/>
-              <line x1="4" y1="12" x2="8" y2="12" stroke="#f4bebb" stroke-width="0.8" opacity="0.4"/>
-              <line x1="4" y1="28" x2="8" y2="28" stroke="#f4bebb" stroke-width="0.8" opacity="0.4"/>
+              <path d="M4 20 Q9 14 14 20 Q19 26 24 20 Q29 14 34 20" stroke="#4db8ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <line x1="4" y1="28" x2="34" y2="28" stroke="#4db8ff" stroke-width="0.8" opacity="0.3"/>
+              <line x1="4" y1="12" x2="8" y2="12" stroke="#4db8ff" stroke-width="0.8" opacity="0.4"/>
+              <line x1="4" y1="28" x2="8" y2="28" stroke="#4db8ff" stroke-width="0.8" opacity="0.4"/>
             </svg>
           </div>
           <div style="flex:1;">
             <div style="font-size:13px;font-weight:700;margin-bottom:2px;">Subiendo o bajando</div>
-            <div style="font-size:11px;color:#a9c4cc;line-height:1.5;">La dirección de la marea también importa. La marea bajando activa los bancos progresivamente. La marea subiendo los va apagando.</div>
+            <div style="font-size:11px;color:#8899aa;line-height:1.5;">La dirección de la marea también importa. La marea bajando activa los bancos progresivamente. La marea subiendo los va apagando.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#5b93a4;margin:24px 0 14px;">Condiciones por nivel</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">Condiciones por nivel</div>
 
     <div class="guia-card">
       <div class="guia-card-cuerpo" style="padding:0;">
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><circle cx="18" cy="11" r="5" stroke="#f4bebb" stroke-width="1.4" fill="none"/><path d="M10 28 Q14 20 18 20 Q22 20 26 28" stroke="#f4bebb" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Bañista</div><div style="font-size:11px;color:#a9c4cc;line-height:1.5;">Mar tranquilo, viento suave (&lt;15 km/h), agua y aire cálidos. El viento importa más que las olas.</div></div>
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><circle cx="18" cy="11" r="5" stroke="#4db8ff" stroke-width="1.4" fill="none"/><path d="M10 28 Q14 20 18 20 Q22 20 26 28" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Bañista</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">Mar tranquilo, viento suave (&lt;15 km/h), agua y aire cálidos. El viento importa más que las olas.</div></div>
         </div>
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M8 28 Q14 18 20 22 Q26 26 30 20" stroke="#f4bebb" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 22 L20 30" stroke="#f4bebb" stroke-width="1.2" stroke-linecap="round"/><circle cx="20" cy="10" r="3.5" stroke="#f4bebb" stroke-width="1.2" fill="none"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Principiante</div><div style="font-size:11px;color:#a9c4cc;line-height:1.5;">0.3–0.8m efectivos, viento suave u offshore, olas ordenadas (período &gt;8s).</div></div>
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M8 28 Q14 18 20 22 Q26 26 30 20" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 22 L20 30" stroke="#4db8ff" stroke-width="1.2" stroke-linecap="round"/><circle cx="20" cy="10" r="3.5" stroke="#4db8ff" stroke-width="1.2" fill="none"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Principiante</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">0.3–0.8m efectivos, viento suave u offshore, olas ordenadas (período &gt;8s).</div></div>
         </div>
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M5 26 Q12 14 18 20 Q22 24 26 18 Q30 12 34 20" stroke="#f4bebb" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 20 L19 29" stroke="#f4bebb" stroke-width="1.2" stroke-linecap="round"/><circle cx="19" cy="10" r="3.5" stroke="#f4bebb" stroke-width="1.2" fill="none"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Intermedio</div><div style="font-size:11px;color:#a9c4cc;line-height:1.5;">0.6–1.5m efectivos, buena dirección, período &gt;9s. Tolera algo de viento cruzado.</div></div>
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M5 26 Q12 14 18 20 Q22 24 26 18 Q30 12 34 20" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 20 L19 29" stroke="#4db8ff" stroke-width="1.2" stroke-linecap="round"/><circle cx="19" cy="10" r="3.5" stroke="#4db8ff" stroke-width="1.2" fill="none"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Intermedio</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">0.6–1.5m efectivos, buena dirección, período &gt;9s. Tolera algo de viento cruzado.</div></div>
         </div>
         <div class="guia-nivel-row">
-          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M3 24 Q8 10 14 16 Q18 20 22 12 Q26 4 30 14 Q33 20 36 16" stroke="#f4bebb" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M14 16 L15 28" stroke="#f4bebb" stroke-width="1.3" stroke-linecap="round"/><circle cx="15" cy="8" r="3.5" stroke="#f4bebb" stroke-width="1.3" fill="none"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Pro</div><div style="font-size:11px;color:#a9c4cc;line-height:1.5;">1m+ efectivos, período &gt;12s, dirección perfecta. El viento importa menos si el swell es de calidad.</div></div>
+          <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M3 24 Q8 10 14 16 Q18 20 22 12 Q26 4 30 14 Q33 20 36 16" stroke="#4db8ff" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M14 16 L15 28" stroke="#4db8ff" stroke-width="1.3" stroke-linecap="round"/><circle cx="15" cy="8" r="3.5" stroke="#4db8ff" stroke-width="1.3" fill="none"/></svg></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Pro</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">1m+ efectivos, período &gt;12s, dirección perfecta. El viento importa menos si el swell es de calidad.</div></div>
         </div>
       </div>
     </div>
 
-    <div style="text-align:center;margin-top:24px;font-size:11px;color:#5b93a4;line-height:1.6;">
+    <div style="text-align:center;margin-top:24px;font-size:11px;color:#3a6a8a;line-height:1.6;">
       Datos: Open-Meteo Marine · Mareas: IHM España<br>
       Las previsiones son orientativas. El mar siempre tiene la última palabra.
     </div>
@@ -896,7 +896,7 @@
 <div class="perfil-modal-overlay" id="perfil-overlay">
   <div class="perfil-modal">
     <div class="perfil-handle"></div>
-    <button type="button" id="perfil-cerrar" aria-label="Cerrar" style="position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#f1ece4;font-size:20px;line-height:1;cursor:pointer;">×</button>
+    <button type="button" id="perfil-cerrar" aria-label="Cerrar" style="position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#ccddee;font-size:20px;line-height:1;cursor:pointer;">×</button>
     <div class="perfil-titulo">¿Cómo vas al agua?</div>
     <div class="perfil-opciones">
       <div class="perfil-opcion" data-perfil="banista">
@@ -929,16 +929,16 @@
       </div>
     </div>
     <div style="margin-top:16px;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:2px;">Tu nombre o alias <span style="font-weight:500;color:#a9c4cc;font-size:12px;">(opcional)</span></div>
-      <div style="font-size:12px;color:#a9c4cc;margin-bottom:6px;">Se envía junto a tus valoraciones y comentarios para saber de quién son. Sin correo ni contraseña.</div>
-      <input id="input-alias" maxlength="60" placeholder="Tu nombre o apodo" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fcf8f2;padding:9px 10px;font:inherit;font-size:14px;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:2px;">Tu nombre o alias <span style="font-weight:500;color:#8899aa;font-size:12px;">(opcional)</span></div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:6px;">Se envía junto a tus valoraciones y comentarios para saber de quién son. Sin correo ni contraseña.</div>
+      <input id="input-alias" maxlength="60" placeholder="Tu nombre o apodo" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:9px 10px;font:inherit;font-size:14px;">
     </div>
     <div id="bloque-avisos" style="margin-top:16px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"></div>
-    <button type="button" id="perfil-listo" style="margin-top:14px;width:100%;background:#f4bebb;border:none;border-radius:12px;padding:12px;color:#0c3240;font-size:15px;font-weight:700;cursor:pointer;">Listo</button>
-    <button type="button" id="btn-menu-comentario" style="margin-top:14px;width:100%;background:rgba(252,248,242,0.06);border:1px solid rgba(252,248,242,0.35);border-radius:12px;padding:11px 12px;color:#fcf8f2;font-size:14px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
+    <button type="button" id="perfil-listo" style="margin-top:14px;width:100%;background:#4db8ff;border:none;border-radius:12px;padding:12px;color:#06182c;font-size:15px;font-weight:700;cursor:pointer;">Listo</button>
+    <button type="button" id="btn-menu-comentario" style="margin-top:14px;width:100%;background:rgba(255,179,71,0.10);border:1px solid rgba(255,179,71,0.4);border-radius:12px;padding:11px 12px;color:#ffb347;font-size:14px;font-weight:600;cursor:pointer;">Enviar un comentario o un error</button>
   </div>
 </div>
-<div id="dropdown-playas" style="display:none;position:fixed;background:#124454;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
+<div id="dropdown-playas" style="display:none;position:fixed;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 0;z-index:9999;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.6);max-height:70vh;overflow-y:auto;"></div>
 <script src="beach-data.js"></script>
 <script src="atlas-playas.js"></script>
 <script src="calibracion-nota.js"></script>
@@ -956,8 +956,8 @@ function iconoPorHora(h) {
 
 const canvas = document.getElementById('fondo-canvas');
 const ctx = canvas.getContext('2d');
-let fondoConfig = { colorTop:'#0e3a4a', colorMid:'#114253', colorBot:'#0a2a36', velocidad:0.008, amplitud:30 };
-let colorOla = '#1a5d74';
+let fondoConfig = { colorTop:'#0a1628', colorMid:'#0d2137', colorBot:'#061020', velocidad:0.008, amplitud:30 };
+let colorOla = '#1a6faa';
 let t = 0;
 const olas = [
   {offset:0,speed:1.0,amp:1.0,y:0.55,alpha:0.18},
@@ -967,11 +967,11 @@ const olas = [
 ];
 function resize() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
 function actualizarFondo(altura) {
-  if (altura<0.5)      {fondoConfig={colorTop:'#123a47',colorMid:'#1a4855',colorBot:'#0d2f3b',velocidad:0.003,amplitud:10};colorOla='#2d5a68';}
-  else if (altura<0.8) {fondoConfig={colorTop:'#0f3c4c',colorMid:'#12485a',colorBot:'#0a2c38',velocidad:0.005,amplitud:18};colorOla='#1d6680';}
-  else if (altura<1.5) {fondoConfig={colorTop:'#0e3a4a',colorMid:'#134c5f',colorBot:'#0a2a36',velocidad:0.008,amplitud:30};colorOla='#22718a';}
-  else if (altura<2.5) {fondoConfig={colorTop:'#0b3443',colorMid:'#11475a',colorBot:'#082430',velocidad:0.014,amplitud:45};colorOla='#2a7f99';}
-  else                 {fondoConfig={colorTop:'#09283a',colorMid:'#0e3746',colorBot:'#071f29',velocidad:0.022,amplitud:60};colorOla='#1f6a82';}
+  if (altura<0.5)      {fondoConfig={colorTop:'#1a1a2e',colorMid:'#2a2a3e',colorBot:'#0f0f1e',velocidad:0.003,amplitud:10};colorOla='#334466';}
+  else if (altura<0.8) {fondoConfig={colorTop:'#0a1a2e',colorMid:'#0d2540',colorBot:'#061525',velocidad:0.005,amplitud:18};colorOla='#1a5a88';}
+  else if (altura<1.5) {fondoConfig={colorTop:'#0a1628',colorMid:'#0d2a4a',colorBot:'#061020',velocidad:0.008,amplitud:30};colorOla='#1a7aaa';}
+  else if (altura<2.5) {fondoConfig={colorTop:'#051528',colorMid:'#0a2545',colorBot:'#030d18',velocidad:0.014,amplitud:45};colorOla='#0a8acc';}
+  else                 {fondoConfig={colorTop:'#030d1f',colorMid:'#071828',colorBot:'#020a14',velocidad:0.022,amplitud:60};colorOla='#0a6aaa';}
 }
 function dibujar() {
   if (document.hidden) return;
@@ -1550,9 +1550,9 @@ function renderParticiones(parts) {
     return `
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#a9c4cc;font-weight:500;">${nombre[k]}</span>
-              <span style="font-size:13px;color:#fcf8f2;font-weight:600;display:flex;align-items:center;gap:6px;">
-                ${fmt(p.h)} m · ${rnd(p.T)} s · ${flechaDireccion(p.dir, '#f4bebb', 16)}${dirTxt(p.dir)}${entra != null ? ` <span style="color:#a9c4cc;font-weight:500;">· entra ${entra} %</span>` : ''}
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">${nombre[k]}</span>
+              <span style="font-size:13px;color:white;font-weight:600;display:flex;align-items:center;gap:6px;">
+                ${fmt(p.h)} m · ${rnd(p.T)} s · ${flechaDireccion(p.dir, '#4db8ff', 16)}${dirTxt(p.dir)}${entra != null ? ` <span style="color:#8899aa;font-weight:500;">· entra ${entra} %</span>` : ''}
               </span>
             </div>`;
   }).join('');
@@ -1571,9 +1571,9 @@ function resumenV1(r) {
 // seguridad más importante. El detalle (ola en la playa, energía) va en la tarjeta de swell.
 function renderExplicacionV1(r) {
   if (!r) return '';
-  const confColor = r.confianza === 'alta' ? '#44cc88' : r.confianza === 'media' ? '#e6a817' : '#a9c4cc';
+  const confColor = r.confianza === 'alta' ? '#44cc88' : r.confianza === 'media' ? '#e6a817' : '#8899aa';
   const aviso = (r.avisos || [])[0];
-  return `<div style="font-size:12px;margin-top:6px;color:#a9c4cc;line-height:1.45;">
+  return `<div style="font-size:12px;margin-top:6px;color:#8899aa;line-height:1.45;">
       ${MotorV1.titular(r).detalle} · confianza <span style="color:${confColor};font-weight:600;">${r.confianza}</span>
       ${aviso ? `<div style="color:#ff8844;margin-top:3px;">⚠ ${aviso}</div>` : ''}
     </div>`;
@@ -1634,7 +1634,7 @@ function vientoFavorable(dir, playa) {
 // Etiqueta del viento: misma clasificación que el motor (una sola definición de viento de tierra)
 function etiquetaViento(dirViento, velViento, playa) {
   if (velViento == null || Number.isNaN(velViento) || !playa || dirViento == null)
-    return { label:'—', desc:'', color:'#a9c4cc' };
+    return { label:'—', desc:'', color:'#8899aa' };
   if (velViento < 8)
     return { label:'GLASSY', desc:'Sin apenas viento', color:'#44cc44' };
   const c = MotorV1.clasificarViento(dirViento, playa, atlasDe(playa));
@@ -1687,9 +1687,9 @@ function svgLuna(s, conNube = false, fecha = new Date()) {
   const bordeInt = (k > 0) === creciente ? 0 : 1;
   const luz = f < 0.02 || f > 0.98 ? ''
     : `<path d="M${cx} ${cy - r} A${r} ${r} 0 0 ${bordeExt} ${cx} ${cy + r} A${rx.toFixed(2)} ${r} 0 0 ${bordeInt} ${cx} ${cy - r}Z" fill="#e8eef8"/>`;
-  const disco = `<circle cx="${cx}" cy="${cy}" r="${r}" stroke="#fcf8f2" stroke-opacity="0.35" stroke-width="1.5"/>`;
+  const disco = `<circle cx="${cx}" cy="${cy}" r="${r}" stroke="#cfe0ff" stroke-opacity="0.35" stroke-width="1.5"/>`;
   const nube = conNube
-    ? `<path d="M15 31 L31 31 C34.5 31 36 28 34 25.5 C32.5 23.5 29.5 23.5 28 24.5 C27 21.5 23.5 20 20.5 21.5 C18 22.7 17.5 25 17.8 26.2 C15.5 26 13 27.5 13 29 C13 30.2 13.8 31 15 31Z" fill="#114253" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>`
+    ? `<path d="M15 31 L31 31 C34.5 31 36 28 34 25.5 C32.5 23.5 29.5 23.5 28 24.5 C27 21.5 23.5 20 20.5 21.5 C18 22.7 17.5 25 17.8 26.2 C15.5 26 13 27.5 13 29 C13 30.2 13.8 31 15 31Z" fill="#0d2137" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>`
     : '';
   return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none">${disco}${luz}${nube}</svg>`;
 }
@@ -1741,14 +1741,14 @@ function renderDesglose(componentes, perfil) {
   const partes = [];
   if (mejor && mejor.desv > 1.5) {
     const et = ETIQUETAS[mejor.key]?.pos;
-    if (et) partes.push(`<span style="color:#f4bebb;">${et}</span>`);
+    if (et) partes.push(`<span style="color:#4db8ff;">${et}</span>`);
   }
   if (peor && peor.desv < -1.5) {
     const et = ETIQUETAS[peor.key]?.neg;
     if (et) partes.push(`<span style="color:#ff8844;">${et}</span>`);
   }
   if (!partes.length) return '';
-  return `<div style="font-size:12px;margin-top:6px;color:#a9c4cc;">${partes.join(' &middot; ')}</div>`;
+  return `<div style="font-size:12px;margin-top:6px;color:#8899aa;">${partes.join(' &middot; ')}</div>`;
 }
 
 function scoreRanking(score, consistencia) {
@@ -1759,29 +1759,29 @@ function renderCabecera(playa, estado) {
   const favId = localStorage.getItem('salitre_favorita');
   const esFav = favId === playa.nombre;
   return `
-    <div style="background:rgba(20,74,92,0.55);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:16px 18px;max-width:420px;margin:12px auto 16px;">
+    <div style="background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:16px 18px;max-width:420px;margin:12px auto 16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <button onclick="toggleSelector()" id="btn-selector"
           style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
-          <span style="font-size:11px;color:#a9c4cc;font-weight:400;">España · Galicia</span>
+          <span style="font-size:11px;color:#8899aa;font-weight:400;">España · Galicia</span>
           &nbsp;${playa.nombre}
         </button>
         <button onclick="toggleFavorita()" id="btn-estrella"
-          style="background:none;border:none;font-size:22px;cursor:pointer;color:${esFav ? '#ffcc00' : '#5d7f89'};">
+          style="background:none;border:none;font-size:22px;cursor:pointer;color:${esFav ? '#ffcc00' : '#445566'};">
           ${esFav ? '★' : '☆'}
         </button>
       </div>
       <div style="display:flex;align-items:center;gap:14px;">
         <div style="width:52px;height:52px;border-radius:50%;background:${estado.color};box-shadow:0 0 20px ${estado.color}99;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <span style="font-size:22px;font-weight:800;color:#fcf8f2;">${estado.score}</span>
+          <span style="font-size:22px;font-weight:800;color:white;">${estado.score}</span>
         </div>
         <div>
           <div style="font-size:20px;font-weight:700;">${estado.texto}</div>
-          <div style="font-size:13px;color:#a9c4cc;margin-top:2px;" id="resumen-texto"></div>
+          <div style="font-size:13px;color:#8899aa;margin-top:2px;" id="resumen-texto"></div>
           <div id="desglose-factores"></div>
         </div>
       </div>
-      <button onclick="abrirValoracion()" style="margin-top:12px;width:100%;background:rgba(244,190,187,0.10);border:1px solid rgba(244,190,187,0.30);border-radius:12px;padding:9px 12px;color:#f4bebb;font-size:13px;font-weight:600;cursor:pointer;">
+      <button onclick="abrirValoracion()" style="margin-top:12px;width:100%;background:rgba(77,184,255,0.10);border:1px solid rgba(77,184,255,0.30);border-radius:12px;padding:9px 12px;color:#4db8ff;font-size:13px;font-weight:600;cursor:pointer;">
         Valorar mi sesión de hoy
       </button>
     </div>`;
@@ -1815,33 +1815,33 @@ function abrirValoracion() {
     document.body.appendChild(fondo);
   }
   const botonesNota = Array.from({ length: 10 }, (_, i) => i + 1).map(n =>
-    `<button data-nota="${n}" class="val-nota" style="flex:1;min-width:0;padding:10px 0;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#fcf8f2;font-weight:700;font-size:14px;cursor:pointer;">${n}</button>`).join('');
+    `<button data-nota="${n}" class="val-nota" style="flex:1;min-width:0;padding:10px 0;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:white;font-weight:700;font-size:14px;cursor:pointer;">${n}</button>`).join('');
   const botonesCoinc = [['si', 'Sí'], ['mas_grande', 'Más grande'], ['mas_pequena', 'Más pequeña']].map(([v, t]) =>
-    `<button data-coinc="${v}" class="val-coinc" style="flex:1;padding:9px 4px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#f1ece4;font-size:13px;cursor:pointer;">${t}</button>`).join('');
+    `<button data-coinc="${v}" class="val-coinc" style="flex:1;padding:9px 4px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#ccddee;font-size:13px;cursor:pointer;">${t}</button>`).join('');
   fondo.innerHTML = `
-    <div style="width:100%;max-width:440px;background:#124454;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:18px 16px 24px;">
+    <div style="width:100%;max-width:440px;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:18px 16px 24px;">
       <div style="font-size:16px;font-weight:700;margin-bottom:2px;">¿Qué tal la sesión en ${ev.playa}?</div>
-      <div style="font-size:12px;color:#a9c4cc;margin-bottom:14px;">La previsión daba un ${ev.nota}${ev.hb != null ? ' con ~' + ev.hb.toFixed(1) + ' m en la playa' : ''}. Tu valoración ayuda a afinar esta playa.${previa ? ' Ya valoraste hoy: se sustituirá.' : ''}</div>
+      <div style="font-size:12px;color:#8899aa;margin-bottom:14px;">La previsión daba un ${ev.nota}${ev.hb != null ? ' con ~' + ev.hb.toFixed(1) + ' m en la playa' : ''}. Tu valoración ayuda a afinar esta playa.${previa ? ' Ya valoraste hoy: se sustituirá.' : ''}</div>
       <div style="display:flex;gap:4px;margin-bottom:16px;">${botonesNota}</div>
-      <div style="font-size:13px;color:#f1ece4;margin-bottom:8px;">¿El tamaño coincidió con la previsión?</div>
+      <div style="font-size:13px;color:#ccddee;margin-bottom:8px;">¿El tamaño coincidió con la previsión?</div>
       <div style="display:flex;gap:6px;margin-bottom:12px;">${botonesCoinc}</div>
-      <textarea id="val-comentario" maxlength="2000" rows="2" placeholder="Comentario (opcional): cómo estaba el mar, qué falló..." style="width:100%;box-sizing:border-box;margin-bottom:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fcf8f2;padding:8px 10px;font:inherit;font-size:13px;resize:vertical;">${previa?.comentario ? previa.comentario.replace(/</g, '&lt;') : ''}</textarea>
+      <textarea id="val-comentario" maxlength="2000" rows="2" placeholder="Comentario (opcional): cómo estaba el mar, qué falló..." style="width:100%;box-sizing:border-box;margin-bottom:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:8px 10px;font:inherit;font-size:13px;resize:vertical;">${previa?.comentario ? previa.comentario.replace(/</g, '&lt;') : ''}</textarea>
       <div style="display:flex;gap:8px;">
-        <button onclick="cerrarValoracion()" style="flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:none;color:#a9c4cc;font-size:14px;cursor:pointer;">Cancelar</button>
-        <button id="val-guardar" disabled style="flex:2;padding:11px;border-radius:12px;border:none;background:#f4bebb;color:#0c3240;font-size:14px;font-weight:700;cursor:pointer;opacity:0.4;">Guardar</button>
+        <button onclick="cerrarValoracion()" style="flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:none;color:#8899aa;font-size:14px;cursor:pointer;">Cancelar</button>
+        <button id="val-guardar" disabled style="flex:2;padding:11px;border-radius:12px;border:none;background:#4db8ff;color:#06182c;font-size:14px;font-weight:700;cursor:pointer;opacity:0.4;">Guardar</button>
       </div>
-      <div id="val-estado" style="font-size:12px;color:#a9c4cc;margin-top:10px;text-align:center;"></div>
+      <div id="val-estado" style="font-size:12px;color:#8899aa;margin-top:10px;text-align:center;"></div>
     </div>`;
   let nota = previa?.nota ?? null, coinc = previa?.coincidio ?? null;
   const marcar = () => {
     fondo.querySelectorAll('.val-nota').forEach(b => {
       const on = +b.dataset.nota === nota;
-      b.style.background = on ? '#f4bebb' : 'rgba(255,255,255,0.05)';
-      b.style.color = on ? '#0c3240' : 'white';
+      b.style.background = on ? '#4db8ff' : 'rgba(255,255,255,0.05)';
+      b.style.color = on ? '#06182c' : 'white';
     });
     fondo.querySelectorAll('.val-coinc').forEach(b => {
       const on = b.dataset.coinc === coinc;
-      b.style.background = on ? 'rgba(244,190,187,0.25)' : 'rgba(255,255,255,0.05)';
+      b.style.background = on ? 'rgba(77,184,255,0.25)' : 'rgba(255,255,255,0.05)';
     });
     const g = document.getElementById('val-guardar');
     g.disabled = nota == null;
@@ -1868,7 +1868,7 @@ function abrirValoracion() {
       estadoAvisos().then(est => {
         if (est !== 'desactivados') { setTimeout(cerrarValoracion, 900); return; }
         const e = document.getElementById('val-estado');
-        e.innerHTML = 'Guardada. ¿Te avisamos cuando se repita un mar parecido aquí? <button type="button" id="val-avisos" style="margin-top:8px;width:100%;padding:10px;border-radius:12px;border:none;background:#f4bebb;color:#0c3240;font-weight:700;cursor:pointer;">Sí, avisarme</button>';
+        e.innerHTML = 'Guardada. ¿Te avisamos cuando se repita un mar parecido aquí? <button type="button" id="val-avisos" style="margin-top:8px;width:100%;padding:10px;border-radius:12px;border:none;background:#4db8ff;color:#06182c;font-weight:700;cursor:pointer;">Sí, avisarme</button>';
         document.getElementById('val-avisos').addEventListener('click', async () => {
           try { await activarAvisos(); e.textContent = 'Avisos activados.'; }
           catch (err) { e.textContent = TEXTO_ERROR_AVISOS[err.message] || 'No se han podido activar.'; }
@@ -1926,16 +1926,16 @@ function abrirComentario() {
   }
   const playa = typeof playaActiva !== 'undefined' && playaActiva ? playaActiva.nombre : null;
   fondo.innerHTML = `
-    <div style="width:100%;max-width:440px;background:#124454;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:18px 16px 24px;">
+    <div style="width:100%;max-width:440px;background:#0d1f35;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:18px 16px 24px;">
       <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Comentario o error</div>
-      <div style="font-size:12px;color:#a9c4cc;margin-bottom:12px;">Qué no te cuadra, qué echas en falta o qué falla. Se envía de forma anónima${playa ? ' con la playa que estás viendo (' + playa + ')' : ''}.</div>
-      <textarea id="com-texto" maxlength="4000" rows="5" placeholder="Escribe aquí..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fcf8f2;padding:10px;font:inherit;font-size:14px;resize:vertical;"></textarea>
-      <input id="com-contacto" maxlength="200" placeholder="Contacto (opcional, solo si quieres respuesta)" style="width:100%;box-sizing:border-box;margin-top:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fcf8f2;padding:9px 10px;font:inherit;font-size:13px;">
+      <div style="font-size:12px;color:#8899aa;margin-bottom:12px;">Qué no te cuadra, qué echas en falta o qué falla. Se envía de forma anónima${playa ? ' con la playa que estás viendo (' + playa + ')' : ''}.</div>
+      <textarea id="com-texto" maxlength="4000" rows="5" placeholder="Escribe aquí..." style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:10px;font:inherit;font-size:14px;resize:vertical;"></textarea>
+      <input id="com-contacto" maxlength="200" placeholder="Contacto (opcional, solo si quieres respuesta)" style="width:100%;box-sizing:border-box;margin-top:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:white;padding:9px 10px;font:inherit;font-size:13px;">
       <div style="display:flex;gap:8px;margin-top:14px;">
-        <button id="com-cancelar" style="flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:none;color:#a9c4cc;font-size:14px;cursor:pointer;">Cancelar</button>
-        <button id="com-enviar" style="flex:2;padding:11px;border-radius:12px;border:none;background:#f4bebb;color:#0c3240;font-size:14px;font-weight:700;cursor:pointer;">Enviar</button>
+        <button id="com-cancelar" style="flex:1;padding:11px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:none;color:#8899aa;font-size:14px;cursor:pointer;">Cancelar</button>
+        <button id="com-enviar" style="flex:2;padding:11px;border-radius:12px;border:none;background:#ffb347;color:#1a1000;font-size:14px;font-weight:700;cursor:pointer;">Enviar</button>
       </div>
-      <div id="com-estado" style="font-size:12px;color:#a9c4cc;margin-top:10px;text-align:center;"></div>
+      <div id="com-estado" style="font-size:12px;color:#8899aa;margin-top:10px;text-align:center;"></div>
     </div>`;
   document.getElementById('com-cancelar').addEventListener('click', () => { fondo.style.display = 'none'; });
   document.getElementById('com-enviar').addEventListener('click', async () => {
@@ -2000,12 +2000,12 @@ async function pintarBloqueAvisos() {
   const el = document.getElementById('bloque-avisos');
   if (!el) return;
   const est = await estadoAvisos();
-  const btn = (id, txt, color = '#f4bebb') => `<button type="button" id="${id}" style="flex:1;padding:10px;border-radius:12px;border:1px solid ${color}66;background:${color}1a;color:${color};font-size:13px;font-weight:600;cursor:pointer;">${txt}</button>`;
+  const btn = (id, txt, color = '#4db8ff') => `<button type="button" id="${id}" style="flex:1;padding:10px;border-radius:12px;border:1px solid ${color}66;background:${color}1a;color:${color};font-size:13px;font-weight:600;cursor:pointer;">${txt}</button>`;
   el.innerHTML = `
     <div style="font-size:14px;font-weight:700;margin-bottom:2px;">Avisos</div>
-    <div style="font-size:12px;color:#a9c4cc;margin-bottom:10px;">Cuando valores una sesión con 7 o más, te avisamos si el mar previsto vuelve a parecerse en esa playa.</div>
-    <div style="display:flex;gap:8px;">${est === 'activados' ? btn('av-probar', 'Probar aviso') + btn('av-off', 'Desactivar', '#a9c4cc') : est === 'desactivados' ? btn('av-on', 'Activar avisos') : ''}</div>
-    <div id="av-estado" style="font-size:12px;color:#a9c4cc;margin-top:8px;">${TEXTO_ERROR_AVISOS[est] || (est === 'activados' ? 'Activados en este dispositivo.' : '')}</div>`;
+    <div style="font-size:12px;color:#8899aa;margin-bottom:10px;">Cuando valores una sesión con 7 o más, te avisamos si el mar previsto vuelve a parecerse en esa playa.</div>
+    <div style="display:flex;gap:8px;">${est === 'activados' ? btn('av-probar', 'Probar aviso') + btn('av-off', 'Desactivar', '#8899aa') : est === 'desactivados' ? btn('av-on', 'Activar avisos') : ''}</div>
+    <div id="av-estado" style="font-size:12px;color:#8899aa;margin-top:8px;">${TEXTO_ERROR_AVISOS[est] || (est === 'activados' ? 'Activados en este dispositivo.' : '')}</div>`;
   const estado = t => { const e = document.getElementById('av-estado'); if (e) e.textContent = t; };
   document.getElementById('av-on')?.addEventListener('click', async () => {
     estado('Activando...');
@@ -2062,7 +2062,7 @@ function toggleFavorita() {
   if (favActual === playaActiva.nombre) {
     localStorage.removeItem('salitre_favorita');
     btn.textContent = '☆';
-    btn.style.color = '#5d7f89';
+    btn.style.color = '#445566';
   } else {
     localStorage.setItem('salitre_favorita', playaActiva.nombre);
     btn.textContent = '★';
@@ -2263,7 +2263,7 @@ async function htmlMareas(playa, tempAgua) {
       <div class="label" style="margin-bottom:2px;">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
       <div style="text-align:center;font-size:16px;font-weight:700;color:#44ddaa;margin-bottom:0px;">
         ${alturaActual.toFixed(1)}m ${subiendo?'↑':'↓'}
-        <span style="font-size:11px;font-weight:400;color:#a9c4cc;">${subiendo?'subiendo':'bajando'}</span>
+        <span style="font-size:11px;font-weight:400;color:#8899aa;">${subiendo?'subiendo':'bajando'}</span>
       </div>
       <svg width="100%" viewBox="0 0 ${W} ${H}" style="margin:0;overflow:hidden;display:block;">
         <defs>
@@ -2293,18 +2293,18 @@ async function htmlMareas(playa, tempAgua) {
         ${etiqX.map((e,i) => `<text x="${e.x.toFixed(0)}" y="${H-mB+13}" fill="#7799aa" font-size="10" font-family="sans-serif" text-anchor="${i===0?'start':'middle'}">${e.label}</text>`).join('')}
       </svg>
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:0px;">
-        <div style="color:#a9c4cc;">
+        <div style="color:#8899aa;">
           <div>${labelAnt}</div>
           <div style="white-space:nowrap;">${minToHora(anterior?.min??0)} · ${hAnt.toFixed(1)}m</div>
         </div>
-        <div style="color:#a9c4cc;text-align:right;">
+        <div style="color:#8899aa;text-align:right;">
           <div>${labelSig}</div>
           <div style="white-space:nowrap;">${minToHora(siguiente?.min??0)} · ${hSig.toFixed(1)}m</div>
         </div>
       </div>`;
   } catch(e) {
     return `<div class="label">Marea · ${tempAgua?.toFixed(1)??'--'}°C agua</div>
-      <div style="color:#a9c4cc;font-size:13px;text-align:center;padding:12px;">Sin datos de marea</div>`;
+      <div style="color:#8899aa;font-size:13px;text-align:center;padding:12px;">Sin datos de marea</div>`;
   }
 }
 
@@ -2322,7 +2322,7 @@ function barrasSwellContexto(altura, dirSwell, periodo, playa) {
     return `
       <div style="margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-          <span style="font-size:10px;color:#a9c4cc;text-transform:uppercase;letter-spacing:0.4px;">${label}</span>
+          <span style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.4px;">${label}</span>
           <span style="font-size:12px;font-weight:700;color:${color};">${valorActual != null ? valorActual+unidad : '—'}</span>
         </div>
         <div style="position:relative;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:visible;">
@@ -2332,9 +2332,9 @@ function barrasSwellContexto(altura, dirSwell, periodo, playa) {
           <div style="position:absolute;top:-3px;left:calc(${pActual}% - 5px);width:10px;height:12px;background:${color};border-radius:2px;box-shadow:0 0 6px ${color}88;"></div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:3px;">
-          <span style="font-size:9px;color:#5d7f89;">${minEscala}${unidad}</span>
+          <span style="font-size:9px;color:#445566;">${minEscala}${unidad}</span>
           <span style="font-size:9px;color:#44cc8888;">▓ ideal ${minIdeal}–${maxIdeal}${unidad}</span>
-          <span style="font-size:9px;color:#5d7f89;">${maxEscala}${unidad}</span>
+          <span style="font-size:9px;color:#445566;">${maxEscala}${unidad}</span>
         </div>
       </div>`;
   }
@@ -2352,7 +2352,7 @@ function barrasSwellContexto(altura, dirSwell, periodo, playa) {
     return `
       <div style="margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-          <span style="font-size:10px;color:#a9c4cc;text-transform:uppercase;letter-spacing:0.4px;">Dirección</span>
+          <span style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.4px;">Dirección</span>
           <span style="font-size:12px;font-weight:700;color:${color};">${dirActual!=null?dirTxt(dirActual)+' · '+Math.round(diff)+'° desv.':'—'}</span>
         </div>
         <div style="position:relative;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:visible;">
@@ -2361,15 +2361,15 @@ function barrasSwellContexto(altura, dirSwell, periodo, playa) {
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:3px;">
           <span style="font-size:9px;color:#44cc8888;">▓ 0–${tol}° desviación</span>
-          <span style="font-size:9px;color:#5d7f89;">${tol+30}°</span>
+          <span style="font-size:9px;color:#445566;">${tol+30}°</span>
         </div>
       </div>`;
   }
 
   return `<div style="padding-top:4px;">
-    ${barra('Altura', altura!=null?parseFloat(altura.toFixed(1)):null, playa.hMin, playa.hMax, 0, Math.max(4, playa.hMax*1.5), 'm', '#f4bebb')}
+    ${barra('Altura', altura!=null?parseFloat(altura.toFixed(1)):null, playa.hMin, playa.hMax, 0, Math.max(4, playa.hMax*1.5), 'm', '#4db8ff')}
     ${barraDireccion(dirSwell, playa)}
-    ${barra('Período', periodo!=null?Math.round(periodo):null, playa.pMin, playa.pMin+4, 4, 20, 's', '#f4bebb')}
+    ${barra('Período', periodo!=null?Math.round(periodo):null, playa.pMin, playa.pMin+4, 4, 20, 's', '#4db8ff')}
   </div>`;
 }
 
@@ -2440,7 +2440,7 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
   const circulo = `
     <circle cx="${cx}" cy="${cy}" r="${rCircle}" fill="#0d1b2a" stroke="white" stroke-width="1.5"/>
     ${velViento != null ? `<text x="${cx}" y="${cy+2}" fill="white" font-size="14" font-weight="800" text-anchor="middle">${Math.round(velViento)}</text>
-    <text x="${cx}" y="${cy+13}" fill="#a9c4cc" font-size="7" text-anchor="middle">km/h</text>` : ''}`;
+    <text x="${cx}" y="${cy+13}" fill="#8899aa" font-size="7" text-anchor="middle">km/h</text>` : ''}`;
 
   return `<svg width="${cx*2}" height="${cy*2}" viewBox="0 0 ${cx*2} ${cy*2}" style="overflow:visible;flex-shrink:0;">
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="#ffffff06"/>
@@ -2508,43 +2508,43 @@ async function cargarInicio() {
           <div class="label">Swell</div>
           <div style="flex:1;margin-top:4px;">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Altura</span>
-              <span style="font-size:13px;color:#f4bebb;font-weight:600;">${fmt(altura)} m</span>
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Altura</span>
+              <span style="font-size:13px;color:#4db8ff;font-weight:600;">${fmt(altura)} m</span>
             </div>
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Dirección</span>
-              <span style="font-size:13px;color:#fcf8f2;font-weight:600;display:flex;align-items:center;gap:6px;">
-                ${flechaDireccion(dirSwell, '#f4bebb', 20)}${dirTxt(dirSwell)} · ${rnd(dirSwell)}°
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Dirección</span>
+              <span style="font-size:13px;color:white;font-weight:600;display:flex;align-items:center;gap:6px;">
+                ${flechaDireccion(dirSwell, '#4db8ff', 20)}${dirTxt(dirSwell)} · ${rnd(dirSwell)}°
               </span>
             </div>
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Período</span>
-              <span style="font-size:13px;color:#fcf8f2;font-weight:600;">${rnd(periodo)} s</span>
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Período</span>
+              <span style="font-size:13px;color:white;font-weight:600;">${rnd(periodo)} s</span>
             </div>
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Energía${estado.v1 ? ' mar abierto' : ''}</span>
-              <span style="font-size:13px;color:#fcf8f2;font-weight:600;">${energia ?? '—'} kJ</span>
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía${estado.v1 ? ' mar abierto' : ''}</span>
+              <span style="font-size:13px;color:white;font-weight:600;">${energia ?? '—'} kJ</span>
             </div>
             ${estado.v1 ? renderParticiones(estado.v1.particiones) : ''}            ${estado.v1 ? `
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Ola en la playa (estimada)</span>
-              <span style="font-size:13px;color:#f4bebb;font-weight:600;">~${fmt(estado.v1.hb)} m</span>
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Ola en la playa (estimada)</span>
+              <span style="font-size:13px;color:#4db8ff;font-weight:600;">~${fmt(estado.v1.hb)} m</span>
             </div>
             <div style="height:0.5px;background:#ffffff15;"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-              <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Energía que llega</span>
-              <span style="font-size:13px;color:#fcf8f2;font-weight:600;">${energiaKJ(estado.v1.hLocal, estado.v1.periodoLocal) ?? '—'} kJ</span>
+              <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía que llega</span>
+              <span style="font-size:13px;color:white;font-weight:600;">${energiaKJ(estado.v1.hLocal, estado.v1.periodoLocal) ?? '—'} kJ</span>
             </div>` : ''}
             <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-              <div style="font-size:9px;color:#a9c4cc;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
+              <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
               <div style="display:flex;align-items:center;gap:8px;">
-                ${flechaDireccion(playaActiva.orient, '#f4bebb', 20)}
-                <span style="font-size:13px;font-weight:600;color:#f4bebb;">${playaActiva.swell}</span>
-                <span style="font-size:12px;color:#a9c4cc;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
+                ${flechaDireccion(playaActiva.orient, '#4db8ff', 20)}
+                <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
+                <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
               </div>
             </div>
           </div>
@@ -2557,28 +2557,28 @@ async function cargarInicio() {
             <div style="flex:1;">
               <!-- Fila velocidad -->
               <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Velocidad</span>
-                <span style="font-size:13px;color:#fcf8f2;font-weight:600;">${rnd(velViento)} km/h</span>
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Velocidad</span>
+                <span style="font-size:13px;color:white;font-weight:600;">${rnd(velViento)} km/h</span>
               </div>
               <div style="height:0.5px;background:#ffffff15;"></div>
               <!-- Fila dirección -->
               <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Dirección</span>
-                <span style="font-size:13px;color:#fcf8f2;font-weight:600;">${dirTxt(dirViento)} · ${rnd(dirViento)}°</span>
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Dirección</span>
+                <span style="font-size:13px;color:white;font-weight:600;">${dirTxt(dirViento)} · ${rnd(dirViento)}°</span>
               </div>
               <div style="height:0.5px;background:#ffffff15;"></div>
               <!-- Fila estado -->
               <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
-                <span style="font-size:13px;color:#a9c4cc;font-weight:500;">Estado</span>
+                <span style="font-size:13px;color:#8899aa;font-weight:500;">Estado</span>
                 <span style="font-size:13px;color:${etViento.color};font-weight:700;">${etViento.label}</span>
               </div>
               <!-- Cajetín ideal -->
               <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-                <div style="font-size:9px;color:#a9c4cc;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Viento ideal</div>
+                <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Viento ideal</div>
                 <div style="display:flex;align-items:center;gap:8px;">
                   ${flechaDireccion((playaActiva.orient+180)%360, '#44cc44', 28)}
                   <span style="font-size:13px;font-weight:600;color:#44cc44;">${playaActiva.viento}</span>
-                  <span style="font-size:12px;color:#a9c4cc;">· < 28 km/h</span>
+                  <span style="font-size:12px;color:#8899aa;">· < 28 km/h</span>
                 </div>
               </div>
             </div>
@@ -2593,7 +2593,7 @@ async function cargarInicio() {
         <div class="dato-card" style="padding:10px 16px 12px;display:flex;flex-direction:column;justify-content:space-between;">
           <div class="label">Cielo · ${tempAire?.toFixed(1) ?? '--'}°C aire</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 8px;">
-            <div style="font-size:38px;font-weight:800;color:#fcf8f2;line-height:1;">${fmt(tempAire, 0)}°</div>
+            <div style="font-size:38px;font-weight:800;color:white;line-height:1;">${fmt(tempAire, 0)}°</div>
             <div>${iconoCielo(codigoCielo, 52, atmo.daily?.sunrise?.[0], atmo.daily?.sunset?.[0], a.is_day)}</div>
           </div>
           <div style="font-size:15px;font-weight:600;color:${cieloActual.textColor};margin-bottom:4px;">${cieloActual.texto}</div>
@@ -2622,17 +2622,17 @@ async function cargarInicio() {
     cargarMejoresOlas();
     document.getElementById('dropdown-playas').innerHTML =
       Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
-        <div style="padding:6px 16px 4px;font-size:10px;color:#76a2af;text-transform:uppercase;letter-spacing:0.8px;border-bottom:0.5px solid rgba(255,255,255,0.05);">— ${zona} —</div>
+        <div style="padding:6px 16px 4px;font-size:10px;color:#4a7a9b;text-transform:uppercase;letter-spacing:0.8px;border-bottom:0.5px solid rgba(255,255,255,0.05);">— ${zona} —</div>
         ${playas.map(p => `
           <div onclick='seleccionarPlayaPorNombre(${JSON.stringify(p.nombre)})'
-            style="padding:10px 16px;font-size:14px;color:${p.nombre === playaActiva.nombre ? '#f4bebb' : '#f1ece4'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+            style="padding:10px 16px;font-size:14px;color:${p.nombre === playaActiva.nombre ? '#4db8ff' : '#ccddee'};cursor:pointer;border-bottom:0.5px solid rgba(255,255,255,0.05);">
             ${p.nombre}
           </div>`).join('')}`).join('');
   } catch(e) {
     console.error(e);
     document.getElementById('ultima-actualizacion').textContent = 'Error de conexión · reintentando en 10 min';
     document.getElementById('contenido-inicio').innerHTML =
-      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudieron cargar los datos.<br><span style="color:#a9c4cc;font-size:13px;">Revisa tu conexión.</span></p>`;
+      `<p style="text-align:center;color:#ff6b6b;padding:40px;">No se pudieron cargar los datos.<br><span style="color:#8899aa;font-size:13px;">Revisa tu conexión.</span></p>`;
   }
 }
 
@@ -2789,8 +2789,8 @@ function renderPrevision(marine, atmo, ahora, mareaEn = () => null) {
       <div id="prev-3d" class="prev-dias" style="display:none;">${tresItems}</div>
       <div id="prev-10d" class="prev-lista" style="display:none;">${diezItems}</div>
     </div>
-    <div style="max-width:420px;margin:16px auto 0;background:rgba(20,74,92,0.55);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;">
-      <div style="font-size:11px;color:#a9c4cc;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">¿Dónde vamos?</div>
+    <div style="max-width:420px;margin:16px auto 0;background:rgba(10,22,40,0.6);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:14px 16px;">
+      <div style="font-size:11px;color:#8899aa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">¿Dónde vamos?</div>
       <div id="mejores-olas"></div>
     </div>`;
 }
@@ -2906,15 +2906,15 @@ async function cargarMejoresOlas() {
   const contenedor = document.getElementById('mejores-olas');
   if (!contenedor) return;
   const o = origenDonde();
-  const tab = (id, txt) => `<button type="button" onclick="cambiarDondeDia('${id}')" style="flex:1;padding:7px;border-radius:10px;border:1px solid ${_dondeDia === id ? '#f4bebb' : 'rgba(255,255,255,0.12)'};background:${_dondeDia === id ? 'rgba(244,190,187,0.15)' : 'none'};color:${_dondeDia === id ? '#f4bebb' : '#a9c4cc'};font-size:13px;font-weight:600;cursor:pointer;">${txt}</button>`;
+  const tab = (id, txt) => `<button type="button" onclick="cambiarDondeDia('${id}')" style="flex:1;padding:7px;border-radius:10px;border:1px solid ${_dondeDia === id ? '#4db8ff' : 'rgba(255,255,255,0.12)'};background:${_dondeDia === id ? 'rgba(77,184,255,0.15)' : 'none'};color:${_dondeDia === id ? '#4db8ff' : '#8899aa'};font-size:13px;font-weight:600;cursor:pointer;">${txt}</button>`;
   const cabecera = `
     <div style="display:flex;gap:6px;margin-bottom:8px;">${tab('hoy', 'Hoy')}${tab('manana', 'Mañana')}</div>
-    <div style="font-size:12px;color:#a9c4cc;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px;align-items:center;">
+    <div style="font-size:12px;color:#8899aa;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px;align-items:center;">
       <span>Cerca de ${o.nombre} · para nivel ${perfilActivo === 'banista' ? 'bañista' : perfilActivo}</span>
-      ${_dondeOrigen ? '' : '<button type="button" onclick="usarMiUbicacion()" style="background:none;border:none;color:#f4bebb;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0;">Usar mi ubicación</button>'}
+      ${_dondeOrigen ? '' : '<button type="button" onclick="usarMiUbicacion()" style="background:none;border:none;color:#4db8ff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0;">Usar mi ubicación</button>'}
     </div>
-    <div id="donde-estado" style="font-size:12px;color:#a9c4cc;"></div>`;
-  contenedor.innerHTML = cabecera + `<div style="font-size:12px;color:#a9c4cc;text-align:center;padding:8px;">Buscando dónde está mejor...</div>`;
+    <div id="donde-estado" style="font-size:12px;color:#8899aa;"></div>`;
+  contenedor.innerHTML = cabecera + `<div style="font-size:12px;color:#8899aa;text-align:center;padding:8px;">Buscando dónde está mejor...</div>`;
 
   // Las 15 playas más cercanas (incluida la que estás viendo)
   const cercanas = todasLasPlayas()
@@ -2933,11 +2933,11 @@ async function cargarMejoresOlas() {
   filas = filas.slice(0, 6);
 
   if (!filas.length) {
-    contenedor.innerHTML = cabecera + `<div style="font-size:12px;color:#a9c4cc;text-align:center;padding:12px;">No se han podido cargar las playas cercanas. Prueba en un rato.</div>`;
+    contenedor.innerHTML = cabecera + `<div style="font-size:12px;color:#8899aa;text-align:center;padding:12px;">No se han podido cargar las playas cercanas. Prueba en un rato.</div>`;
     return;
   }
   const pocoUtil = filas[0].f.estado.score <= 3;
-  contenedor.innerHTML = cabecera + (pocoUtil ? `<div style="font-size:12px;color:#a9c4cc;padding:6px 0;">${_dondeDia === 'hoy' ? 'Hoy' : 'Mañana'} no parece buen día en ninguna playa cercana para tu nivel. Estas son las menos malas:</div>` : '') +
+  contenedor.innerHTML = cabecera + (pocoUtil ? `<div style="font-size:12px;color:#8899aa;padding:6px 0;">${_dondeDia === 'hoy' ? 'Hoy' : 'Mañana'} no parece buen día en ninguna playa cercana para tu nivel. Estas son las menos malas:</div>` : '') +
     filas.map(({ r, f, km }) => {
       const e = f.estado, v1 = e.v1;
       const tl = v1 ? MotorV1.titular(v1) : { titulo: e.texto, detalle: '' };
@@ -2949,12 +2949,12 @@ async function cargarMejoresOlas() {
       <div onclick='seleccionarPlayaPorNombre(${JSON.stringify(r.playa.nombre)})'
         style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
         <div style="width:38px;height:38px;border-radius:50%;background:${e.color};box-shadow:0 0 10px ${e.color}88;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <span style="font-size:15px;font-weight:800;color:#fcf8f2;">${e.score}</span>
+          <span style="font-size:15px;font-weight:800;color:white;">${e.score}</span>
         </div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${r.playa.nombre}${r.playa.nombre === playaActiva.nombre ? ' <span style="font-size:10px;color:#a9c4cc;font-weight:500;">(la que ves)</span>' : ''} ${badge}</div>
-          <div style="font-size:12px;color:#f1ece4;margin-top:2px;">Mejor de ${f.desde} a ${f.hasta} h · ${frase}</div>
-          <div style="font-size:11px;color:#a9c4cc;margin-top:1px;">${km} km${veredicto ? ' · ' + veredicto : ''}${v1?.hb != null ? ' · ~' + fmt(v1.hb) + ' m en la orilla' : ''}</div>
+          <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${r.playa.nombre}${r.playa.nombre === playaActiva.nombre ? ' <span style="font-size:10px;color:#8899aa;font-weight:500;">(la que ves)</span>' : ''} ${badge}</div>
+          <div style="font-size:12px;color:#ccddee;margin-top:2px;">Mejor de ${f.desde} a ${f.hasta} h · ${frase}</div>
+          <div style="font-size:11px;color:#8899aa;margin-top:1px;">${km} km${veredicto ? ' · ' + veredicto : ''}${v1?.hb != null ? ' · ~' + fmt(v1.hb) + ' m en la orilla' : ''}</div>
           ${aviso ? `<div style="font-size:11px;color:#ff8844;margin-top:2px;">⚠ ${aviso}</div>` : ''}
         </div>
       </div>`;
@@ -3096,7 +3096,7 @@ function renderMarcador(playa, r){
           <div><div class="pp-nombre">${playa.nombre}</div><div class="pp-frase">${frase}${veredicto ? ' · ' + veredicto : ''}</div></div>
         </div>
         <div class="pp-datos">
-          <div class="pp-dato"><div class="pl">En la orilla</div><div class="pv" style="color:#f4bebb">${v1?.hb != null ? '~' + fmt(v1.hb) + ' m' : '—'}</div></div>
+          <div class="pp-dato"><div class="pl">En la orilla</div><div class="pv" style="color:#4db8ff">${v1?.hb != null ? '~' + fmt(v1.hb) + ' m' : '—'}</div></div>
           <div class="pp-dato"><div class="pl">Mar fuera</div><div class="pv">${fmt(c?.wave_height)} m · ${rnd(periodoDe(c || {}, null))} s</div></div>
           <div class="pp-dato"><div class="pl">Viento</div><div class="pv">${w.vel != null ? rnd(w.vel) + ' ' + dirTxt(w.dir) : '—'}</div></div>
         </div>
@@ -3259,7 +3259,7 @@ function plBuscar(q) {
       }
     });
   } else {
-    html = '<div style="padding:14px 16px;font-size:13px;color:#86a8b2;">Sin resultados</div>';
+    html = '<div style="padding:14px 16px;font-size:13px;color:#5a7a9a;">Sin resultados</div>';
   }
 
   dd.innerHTML = html;
@@ -3284,8 +3284,8 @@ function plDropdownItem(p, zona) {
   return `<div class="pl-dropdown-item" onclick='plSeleccionarPlaya(${JSON.stringify(p.nombre)})'>
     <div class="pdi-nombre">${p.nombre}</div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
-      <span style="font-size:10px;color:#86a8b2;">${zona}</span>
-      <span style="font-size:14px;color:#f4bebb;">›</span>
+      <span style="font-size:10px;color:#5a7a9a;">${zona}</span>
+      <span style="font-size:14px;color:#4db8ff;">›</span>
     </div>
   </div>`;
 }
@@ -3362,7 +3362,7 @@ async function plCargarTabla() {
       plDatosCache[cacheKey] = { marine, atmosfera };
       data = plDatosCache[cacheKey];
     } catch(e) {
-      document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#86a8b2;text-align:center;">Error cargando datos</div>';
+      document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#5a7a9a;text-align:center;">Error cargando datos</div>';
       return;
     }
   }
@@ -3401,7 +3401,7 @@ async function plCargarTabla() {
   }
 
   if (horas.length === 0) {
-    document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#86a8b2;text-align:center;">Sin datos para este día</div>';
+    document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#5a7a9a;text-align:center;">Sin datos para este día</div>';
     return;
   }
 
@@ -3457,7 +3457,7 @@ async function plCargarTabla() {
     html += `<div class="pl-fila"><div class="pl-fila-label">En playa</div>`;
     horas.forEach((h, i) => {
       const e = clasificar(heights[i], dirs[i], p, periods[i], vdirs[i], vels[i], null, null, null, null, null, null, datosV1[i]);
-      html += cel(`<div class="pl-altura" style="color:#f4bebb;">~${e.v1 ? fmt(e.v1.hb) : '—'}m</div>`, esAhoraH(h));
+      html += cel(`<div class="pl-altura" style="color:#4db8ff;">~${e.v1 ? fmt(e.v1.hb) : '—'}m</div>`, esAhoraH(h));
     });
     html += `</div>`;
   }
@@ -3492,7 +3492,7 @@ async function plCargarTabla() {
     const vd = vdirs[i];
     html += cel(
       vd != null
-        ? `<div class="pl-dir" style="font-size:11px;color:#f1ece4;font-weight:700;">${plFlechaDir(vd)}</div><div class="pl-viento-dir">${dirTxt(vd)} · ${rnd(vd)}°</div>`
+        ? `<div class="pl-dir" style="font-size:11px;color:#ccddee;font-weight:700;">${plFlechaDir(vd)}</div><div class="pl-viento-dir">${dirTxt(vd)} · ${rnd(vd)}°</div>`
         : `<div class="pl-dir">—</div>`,
       esAhoraH(h)
     );
@@ -3502,7 +3502,7 @@ async function plCargarTabla() {
   // Estado viento
   html += `<div class="pl-fila"><div class="pl-fila-label">Estado</div>`;
   horas.forEach((h, i) => {
-    const et = vels[i] != null ? plEtiquetaViento(vels[i], vdirs[i], p) : { txt:'—', color:'#86a8b2' };
+    const et = vels[i] != null ? plEtiquetaViento(vels[i], vdirs[i], p) : { txt:'—', color:'#5a7a9a' };
     html += cel(`<span class="pl-etiqueta" style="background:${et.color}22;color:${et.color};">${et.txt}</span>`, esAhoraH(h));
   });
   html += `</div>`;
@@ -3540,7 +3540,7 @@ async function plCargarTabla() {
   html += `<div class="pl-fila" style="border-bottom:none;"><div class="pl-fila-label">Temp.</div>`;
   horas.forEach((h, i) => {
     const t = temps[i] != null ? Math.round(temps[i]) : null;
-    const c = t != null ? (t > 18 ? '#ffaa44' : '#88aacc') : '#86a8b2';
+    const c = t != null ? (t > 18 ? '#ffaa44' : '#88aacc') : '#5a7a9a';
     html += cel(`<span class="pl-temp" style="color:${c};">${t != null ? t+'°' : '—'}</span>`, esAhoraH(h));
   });
   html += `</div>`;
