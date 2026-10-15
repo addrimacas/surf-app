@@ -209,7 +209,8 @@
     .pl-dropdown-item .pdi-zona { font-size:11px; color:#5a7a9a; margin-top:1px; }
     .pl-dropdown-item .pdi-score { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#07111f; flex-shrink:0; margin-left:auto; }
     /* Foto placeholder */
-    .pl-foto { margin:0 16px 14px; height:160px; border-radius:16px; display:flex; align-items:flex-end; justify-content:flex-start; padding:16px 18px; position:relative; overflow:hidden; }
+    .pl-foto { margin:0 16px 14px; height:160px; border-radius:16px; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; padding:16px 18px; position:relative; overflow:hidden;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 160' preserveAspectRatio='none'%3E%3Cpath d='M0 70 C60 55 110 85 170 70 S290 55 400 72 V160 H0Z' fill='%23123a5c'/%3E%3Cpath d='M0 98 C70 84 120 112 190 98 S320 84 400 100 V160 H0Z' fill='%230f2f4b'/%3E%3Cpath d='M0 126 C80 114 140 138 210 126 S340 114 400 128 V160 H0Z' fill='%23d9c08a' fill-opacity='0.35'/%3E%3C/svg%3E") center/cover no-repeat, linear-gradient(180deg,#1b4a72,#0b2238); }
     .pl-foto-map { position:absolute; inset:0; width:100%; height:100%; border:none; border-radius:16px; z-index:0; object-fit:cover; }
     .pl-foto-gradient { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.15) 55%,transparent 100%); z-index:1; }
     .pl-foto-nombre { position:relative; z-index:2; font-size:22px; font-weight:800; letter-spacing:-0.5px; color:white; text-shadow:0 2px 8px rgba(0,0,0,0.7); }
@@ -326,7 +327,7 @@
 </div>
 <div id="pantalla-mapa" class="pantalla">
   <div class="mapa-header">
-    <h1 class="mapa-header-titulo"><span class="titulo-marca-gradient">playas</span></h1>
+    <h1 class="mapa-header-titulo"><span class="titulo-marca-gradient">mapa</span></h1>
     <p class="mapa-header-sub">Condiciones en tiempo real</p>
   </div>
   <div id="mapa"></div>
@@ -343,7 +344,7 @@
   </div>
   <!-- FOTO -->
   <div class="pl-foto" id="pl-foto">
-    <img id="pl-foto-map" class="pl-foto-map" src="" alt="" loading="lazy">
+    <img id="pl-foto-map" class="pl-foto-map" alt="" loading="lazy">
     <div class="pl-foto-gradient"></div>
     <div style="position:relative;z-index:2;">
       <div class="pl-foto-nombre" id="pl-foto-nombre">—</div>
@@ -605,33 +606,43 @@
     <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#3a6a8a;margin:24px 0 14px;">El semáforo</div>
 
     <div class="guia-card">
-      <div class="guia-card-titulo">Cómo se calcula la puntuación</div>
+      <div class="guia-card-titulo">Cómo se calcula la nota</div>
       <div class="guia-card-cuerpo">
-        <p class="guia-desc" style="margin-bottom:14px;">El semáforo combina varios factores y los pondera según tu perfil. Nunca es una garantía, es una previsión.</p>
+        <p class="guia-desc" style="margin-bottom:14px;">Primero se calcula qué ola llega a la orilla: el oleaje en mar abierto pasa por la costa (islas, cabos, rías) y por el fondo marino, que lo concentra o lo dispersa. Después se valoran cinco cosas, igual en todas las playas. Es una previsión, no una garantía.</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><circle cx="16" cy="16" r="12" stroke="#4db8ff" stroke-width="1.2" fill="none"/><line x1="16" y1="4" x2="16" y2="16" stroke="#4db8ff" stroke-width="1.5"/><polygon points="16,4 13,10 19,10" fill="#4db8ff"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Dirección</div><div style="font-size:10px;color:#8899aa;">¿Entra bien?</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none"><path d="M2 8 C6 6 9 6 12 8" stroke="#4db8ff" stroke-width="1.4" stroke-linecap="round"/><path d="M2 28 C8 28 12 24 18 22 C23 20 26 16 30 10" stroke="#e6a817" stroke-width="1.4" stroke-linecap="round"/><path d="M8 12 C14 12 18 13 22 16" stroke="#4db8ff" stroke-width="1.1" stroke-dasharray="2 2" stroke-linecap="round"/><path d="M8 17 C13 17 16 18 19 20" stroke="#4db8ff" stroke-width="1.1" stroke-dasharray="2 2" stroke-linecap="round"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Costa y fondo</div><div style="font-size:10px;color:#8899aa;">Cuánta ola llega</div></div>
           </div>
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 10 16 22 Q22 34 28 22" stroke="#4db8ff" stroke-width="1.5" fill="none"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Altura</div><div style="font-size:10px;color:#8899aa;">¿Para tu nivel?</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none"><path d="M3 24 C8 24 9 12 15 10 C20 8.5 23 13 21 16 C19.5 18 17 17 17.5 15" stroke="#4db8ff" stroke-width="1.6" stroke-linecap="round"/><path d="M3 28 H29" stroke="#4db8ff" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/><path d="M26 9 V25 M24 11 L26 9 L28 11 M24 23 L26 25 L28 23" stroke="#3ddc84" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Tamaño</div><div style="font-size:10px;color:#8899aa;">La ola en la orilla, para tu nivel</div></div>
           </div>
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 20 Q10 8 16 20 Q22 32 28 20" stroke="#4db8ff" stroke-width="1.5" fill="none"/><path d="M4 25 Q7 21 10 25" stroke="#4db8ff" stroke-width="0.8" fill="none" opacity="0.5"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Período</div><div style="font-size:10px;color:#8899aa;">Calidad de la ola</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none"><path d="M3 27 H29" stroke="#4db8ff" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/><path d="M5 22 C10 22 12 12 18 11 C23 10 25 15 22 17" stroke="#4db8ff" stroke-width="1.6" stroke-linecap="round"/><path d="M16 22 L27 14" stroke="#3ddc84" stroke-width="1.2" stroke-dasharray="2 2" stroke-linecap="round"/><path d="M8 7 L13 11" stroke="#8899aa" stroke-width="1.2" stroke-linecap="round"/><path d="M13 11 L12.6 8.2 M13 11 L10.3 11.5" stroke="#8899aa" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Forma</div><div style="font-size:10px;color:#8899aa;">Si abre o cierra</div></div>
           </div>
           <div class="guia-factor-chip">
-            <svg viewBox="0 0 32 32" width="26" height="26"><path d="M4 22 Q10 14 16 22 Q22 30 28 22" stroke="#4db8ff" stroke-width="1.5" fill="none"/><line x1="20" y1="8" x2="28" y2="15" stroke="#3ddc84" stroke-width="1.2"/><polygon points="28,15 23,13 25,19" fill="#3ddc84"/></svg>
-            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Viento</div><div style="font-size:10px;color:#8899aa;">Dirección y fuerza</div></div>
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none"><path d="M3 20 C8 16 12 16 16 20 C20 24 24 24 29 20" stroke="#4db8ff" stroke-width="1.6" stroke-linecap="round"/><path d="M4 9 H17 C20 9 20 5 17.5 5" stroke="#3ddc84" stroke-width="1.2" stroke-linecap="round"/><path d="M4 13 H23 C26 13 26 17 23.5 17" stroke="#3ddc84" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Limpieza</div><div style="font-size:10px;color:#8899aa;">Viento y mar revuelto</div></div>
+          </div>
+          <div class="guia-factor-chip">
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none"><path d="M2 18 C6 8 10 8 14 18 C18 28 22 28 26 18 C27.5 14 29 12 30 12" stroke="#4db8ff" stroke-width="1.6" stroke-linecap="round"/><path d="M6 6 H22" stroke="#8899aa" stroke-width="1" stroke-linecap="round"/><path d="M6 4.5 V7.5 M22 4.5 V7.5" stroke="#8899aa" stroke-width="1" stroke-linecap="round"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Fuerza</div><div style="font-size:10px;color:#8899aa;">Período: empuje de la ola</div></div>
+          </div>
+          <div class="guia-factor-chip">
+            <svg viewBox="0 0 32 32" width="26" height="26" fill="none"><path d="M3 22 C7 19 10 19 14 22 C18 25 21 25 25 22 C26.5 21 28 20.5 29 20.5" stroke="#4db8ff" stroke-width="1.6" stroke-linecap="round"/><path d="M3 27 C7 24 10 24 14 27 C18 30 21 30 25 27" stroke="#4db8ff" stroke-width="1" opacity="0.5" stroke-linecap="round"/><path d="M16 4 V15 M12.5 7.5 L16 4 L19.5 7.5 M12.5 11.5 L16 15 L19.5 11.5" stroke="#3ddc84" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div><div style="font-size:11px;font-weight:700;color:#cce0ff;">Marea</div><div style="font-size:10px;color:#8899aa;">Si acompaña a esa hora</div></div>
           </div>
         </div>
+        <p class="guia-desc" style="margin-bottom:12px;font-size:12px;">Lo que falla manda: si un factor está mal, la nota baja aunque el resto sea bueno. Con viento de mar la nota no pasa de 6 (y de 4 si sopla fuerte).</p>
         <div style="background:rgba(0,0,0,0.2);border-radius:10px;padding:12px;">
           <div style="font-size:10px;color:#5a7a9a;margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">Escala</div>
-          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#ff4444;"></div><span class="guia-escala-rango">1–3</span><span class="guia-escala-txt">Condiciones desfavorables</span></div>
-          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#FF6B00;"></div><span class="guia-escala-rango">4–5</span><span class="guia-escala-txt">Aceptable, puede no valer</span></div>
-          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#f0a500;"></div><span class="guia-escala-rango">6–7</span><span class="guia-escala-txt">Bastante bueno</span></div>
-          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#00cc88;"></div><span class="guia-escala-rango">8–9.5</span><span class="guia-escala-txt">Muy buenas condiciones</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#ff4444;"></div><span class="guia-escala-rango">1–3</span><span class="guia-escala-txt">No merece la pena</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#FF6B00;"></div><span class="guia-escala-rango">4–5</span><span class="guia-escala-txt">Flojo: algo hay, con pegas</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#e6a817;"></div><span class="guia-escala-rango">6–7</span><span class="guia-escala-txt">Buena sesión</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#00cc88;"></div><span class="guia-escala-rango">8–9</span><span class="guia-escala-txt">Muy bueno: casi todo a favor</span></div>
+          <div class="guia-escala-row"><div class="guia-escala-dot" style="background:#00cc88;box-shadow:0 0 6px #00cc88;"></div><span class="guia-escala-rango">10</span><span class="guia-escala-txt">Perfecto: tamaño, forma, viento, fuerza y marea a la vez</span></div>
         </div>
       </div>
     </div>
@@ -676,6 +687,8 @@
             <text x="28" y="218" text-anchor="middle" fill="#3a5a7a" font-size="8">SO</text>
 
             <!-- Arco de exposición óptima de la playa -->
+            <!-- Rosa de la ventana de swell (calculada: costa + fondo + forma de rotura) -->
+            <path id="guia-rosa" d="" fill="#4db8ff" fill-opacity="0.16" stroke="#4db8ff" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round"/>
             <path id="guia-arco-exposicion" d="" stroke="#4db8ff" stroke-width="10" fill="none" opacity="0.18" stroke-linecap="round"/>
             <!-- Borde del arco más visible -->
             <path id="guia-arco-borde" d="" stroke="#4db8ff" stroke-width="1.5" fill="none" opacity="0.6" stroke-linecap="round"/>
@@ -708,11 +721,11 @@
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <svg width="22" height="10"><line x1="0" y1="5" x2="18" y2="5" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round"/></svg>
-            <span style="font-size:11px;color:#8899aa;" id="guia-leyenda-playa">Orientación ideal</span>
+            <span style="font-size:11px;color:#8899aa;" id="guia-leyenda-playa">Mejor dirección (calculada)</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
             <div style="width:18px;height:8px;background:rgba(77,184,255,0.25);border:1px solid rgba(77,184,255,0.4);border-radius:2px;"></div>
-            <span style="font-size:11px;color:#8899aa;">Arco óptimo</span>
+            <span style="font-size:11px;color:#8899aa;">Ventana de swell: costa + fondo + forma de la ola</span>
           </div>
         </div>
 
@@ -837,15 +850,15 @@
         </div>
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
           <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M8 28 Q14 18 20 22 Q26 26 30 20" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 22 L20 30" stroke="#4db8ff" stroke-width="1.2" stroke-linecap="round"/><circle cx="20" cy="10" r="3.5" stroke="#4db8ff" stroke-width="1.2" fill="none"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Principiante</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">0.3–0.8m efectivos, viento suave u offshore, olas ordenadas (período &gt;8s).</div></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Principiante</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">Ola de 0,4–0,8 m en la orilla (hasta 1,2 m como mucho), viento flojo o de tierra y sin mar de fondo largo que meta series.</div></div>
         </div>
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
           <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M5 26 Q12 14 18 20 Q22 24 26 18 Q30 12 34 20" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 20 L19 29" stroke="#4db8ff" stroke-width="1.2" stroke-linecap="round"/><circle cx="19" cy="10" r="3.5" stroke="#4db8ff" stroke-width="1.2" fill="none"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Intermedio</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">0.6–1.5m efectivos, buena dirección, período &gt;9s. Tolera algo de viento cruzado.</div></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Intermedio</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">Ola de 0,8–1,8 m en la orilla (aguanta hasta 2,5 m), que abra bien y con período medio o largo.</div></div>
         </div>
         <div class="guia-nivel-row">
           <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M3 24 Q8 10 14 16 Q18 20 22 12 Q26 4 30 14 Q33 20 36 16" stroke="#4db8ff" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M14 16 L15 28" stroke="#4db8ff" stroke-width="1.3" stroke-linecap="round"/><circle cx="15" cy="8" r="3.5" stroke="#4db8ff" stroke-width="1.3" fill="none"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Pro</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">1m+ efectivos, período &gt;12s, dirección perfecta. El viento importa menos si el swell es de calidad.</div></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Pro</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">Ola de 1,5–3,5 m en la orilla, período largo y forma limpia. Por debajo de 0,8 m no puntúa.</div></div>
         </div>
       </div>
     </div>
@@ -1035,50 +1048,8 @@ let perfilActivo = (() => {
   try { return localStorage.getItem('salitre_perfil') || 'intermedio'; } catch (e) { return 'intermedio'; }
 })();
 
-function perfilMultHMin(playa) { return PERFILES[perfilActivo]?.hMinMult ?? 1.0; }
-function perfilMultHMax(playa) { return PERFILES[perfilActivo]?.hMaxMult ?? 1.0; }
 
-function aplicarPerfil(playa) {
-  if (!playa) return playa;
-  const p = PERFILES[perfilActivo];
-  if (!p) return playa;
-  return {
-    ...playa,
-    hMin: playa.hMin * p.hMinMult || playa.hMin,
-    hMax: playa.hMax * p.hMaxMult,
-  };
-}
 
-function textoPerfilScore(score, h, playa) {
-  const hEf = h * (playa?.exposicion ?? 0.5);
-  const hMinPerfil = (playa?.hMin ?? 0.8) * perfilMultHMin();
-  const hMaxPerfil = (playa?.hMax ?? 2.5) * perfilMultHMax();
-
-  if (perfilActivo === 'banista') {
-    if (score <= 3) return 'El mar puede estar movido hoy';
-    if (score <= 6) return 'Condiciones aceptables para el baño';
-    return 'Buen día para darse un baño';
-  }
-  if (perfilActivo === 'principiante') {
-    if (hEf > hMaxPerfil * 1.1) return 'El mar puede estar demasiado grande para tu nivel';
-    if (hEf < hMinPerfil * 0.7) return 'Puede que el mar esté algo flojo hoy';
-    if (score >= 7) return 'Puede que encuentres buenas olas para practicar';
-    if (score >= 5) return 'Condiciones que pueden venir bien para aprender';
-    return 'Hoy puede que no sea el mejor día para salir';
-  }
-  if (perfilActivo === 'intermedio') {
-    if (hEf > hMaxPerfil * 1.2) return 'Las olas pueden estar grandes hoy';
-    if (hEf < hMinPerfil * 0.7) return 'Las condiciones apuntan a poco mar';
-    if (score >= 8) return 'Puede que sea una muy buena sesión';
-    if (score >= 6) return 'Las condiciones apuntan bien para salir';
-    return 'Hoy puede que no valga mucho la pena';
-  }
-  // pro
-  if (hEf < hMinPerfil * 0.6) return 'Las condiciones pueden quedarse cortas';
-  if (score >= 8) return 'Las condiciones apuntan a un mar interesante';
-  if (score >= 6) return 'Puede que merezca la pena salir';
-  return 'Hoy puede que no valga mucho la pena';
-}
 
 // UI del modal de perfil
 function initPerfilUI() {
@@ -1142,261 +1113,12 @@ function angleDiff(a, b) {
   return d > 180 ? 360 - d : d;
 }
 
-/** Ángulo swell dentro del arco [orientArcMin, orientArcMax] (permite cruce 350°→10°). Sin arco → null. */
-function anguloEnArco(grados, minA, maxA) {
-  if (minA == null || maxA == null) return null;
-  const x = ((grados % 360) + 360) % 360;
-  const a = ((minA % 360) + 360) % 360;
-  const b = ((maxA % 360) + 360) % 360;
-  if (a <= b) return x >= a && x <= b;
-  return x >= a || x <= b;
-}
 
-/**
- * Desviación swell vs playa: distancia al centro del arco si está dentro;
- * fuera del arco penalización gradual (no binaria).
- */
-function diffSwellRespectoPlaya(direccion, playa) {
-  if (direccion == null || Number.isNaN(direccion) || !playa) return 999;
-  const enArco = anguloEnArco(direccion, playa.orientArcMin, playa.orientArcMax);
-  if (enArco === null) return angleDiff(direccion, playa.orient ?? 0);
-  // Si está dentro del arco: devuelve distancia al centro del arco (0 = perfecto)
-  if (enArco) {
-    const apertura = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
-    const centro = (playa.orientArcMin + apertura / 2 + 360) % 360;
-    return angleDiff(direccion, centro);
-  }
-  // Fuera del arco: distancia al borde más cercano del arco, escalada
-  const dMin = angleDiff(direccion, playa.orientArcMin);
-  const dMax = angleDiff(direccion, playa.orientArcMax);
-  const distBorde = Math.min(dMin, dMax);
-  // Penalización gradual: 1° fuera = leve, 45°+ fuera = eliminatorio
-  return (playa.tol ?? 45) + distBorde * 1.5;
-}
 
-function calcularPuntuacion(h, direccion, periodo, playa, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax) {
-  if (h == null || Number.isNaN(h)) return { score: 1, componentes: {} };
 
-  const exp  = playa?.exposicion ?? 0.5;
-  const hEf  = h * exp;
-  const hMin = playa?.hMin ?? 0.8;
-  const hMax = playa?.hMax ?? 2.5;
-  const per  = periodo ?? 8;
-
-  function _lerp(x, x0, x1, y0, y1) {
-    const t = Math.max(0, Math.min(1, (x - x0) / (x1 - x0)));
-    return y0 + (y1 - y0) * t;
-  }
-
-  function _swellDirScore() {
-    if (direccion == null || Number.isNaN(direccion) || !playa?.orientArcMin) return 5;
-    const arcMin = playa.orientArcMin, arcMax = playa.orientArcMax;
-    const half   = arcMin <= arcMax ? (arcMax - arcMin) / 2 : (arcMax + 360 - arcMin) / 2;
-    const center = arcMin <= arcMax ? (arcMin + arcMax) / 2 : ((arcMin + arcMax + 360) / 2) % 360;
-    const inside = arcMin <= arcMax ? (direccion >= arcMin && direccion <= arcMax)
-                                    : (direccion >= arcMin || direccion <= arcMax);
-    let dev = Math.abs(direccion - center) % 360;
-    if (dev > 180) dev = 360 - dev;
-    if (inside) return 10 - (dev / half) * 3;
-    const over = dev - half;
-    if (over < 15)  return _lerp(over, 0, 15, 7, 4);
-    if (over < 35)  return _lerp(over, 15, 35, 4, 1);
-    return 0;
-  }
-
-  function _alturaScore() {
-    // Mínimo efectivo por perfil — ignorar el hMin de la playa para perfiles bajos
-    const hMinEfectivo = perfilActivo === 'banista'      ? 0   // sin mínimo
-                       : perfilActivo === 'principiante' ? 0.1 // mínimo muy bajo
-                       : perfilActivo === 'intermedio'   ? hMin * 0.5
-                       : hMin * 0.65; // pro: gating estricto
-    if (hEf < hMinEfectivo) return 0.5;
-    const rangos = {
-      banista:      { lo:0,    i0:0,    i1:0.30, hi:0.60 },
-      principiante: { lo:0.10, i0:0.20, i1:0.85, hi:1.30 },
-      intermedio:   { lo:0.20, i0:0.40, i1:1.80, hi:2.80 },
-      pro:          { lo:0.40, i0:0.80, i1:2.80, hi:4.50 },
-    };
-    const r = rangos[perfilActivo] ?? rangos.pro;
-    if (hEf <= r.lo)  return 0;
-    if (hEf <= r.i0)  return _lerp(hEf, r.lo, r.i0, 1, 10);
-    if (hEf <= r.i1)  return 10;
-    if (hEf <= r.hi)  return _lerp(hEf, r.i1, r.hi, 10, 2.5);
-    const pen = perfilActivo === 'principiante' ? 4.0 : perfilActivo === 'intermedio' ? 2.0 : 1.0;
-    return Math.max(0, 2.5 - (hEf - r.hi) * pen);
-  }
-
-  function _periodoScore() {
-    if (hEf < hMin * 0.65) return 0.5;
-    // Período mínimo de la playa: si no llega, penalizar
-    if (per < playa?.pMin * 0.7) return _lerp(per, 0, playa?.pMin * 0.7, 0, 2);
-    // Escala base
-    let base;
-    if (per < 6)   base = 0;
-    else if (per < 8)  base = _lerp(per, 6, 8, 0.5, 3);
-    else if (per < 9)  base = _lerp(per, 8, 9, 3, 5);
-    else if (per < 11) base = _lerp(per, 9, 11, 5, 7.5);
-    else if (per < 13) base = _lerp(per, 11, 13, 7.5, 9);
-    else if (per < 16) base = _lerp(per, 13, 16, 9, 10);
-    else               base = 10;
-    // Principiante y bañista: el período importa menos (olas cortas también sirven)
-    // Pero el wind swell sigue penalizando porque da olas desordenadas
-    if ((perfilActivo === 'principiante' || perfilActivo === 'banista') && per >= 8) {
-      // Escalar hacia arriba: para principiante, 9s ya es suficientemente bueno
-      return Math.min(10, base * 1.25);
-    }
-    return base;
-  }
-
-  function _vientoScore() {
-    if (dirViento == null || Number.isNaN(dirViento)) return 6.5;
-    const vel   = velViento ?? 0;
-    const racha = velRacha  ?? vel;
-    const factorRacha = racha > vel * 1.8 ? 0.75
-                      : racha > vel * 1.5 ? 0.85
-                      : racha > vel * 1.3 ? 0.93
-                      : 1.0;
-
-    if (perfilActivo === 'banista') {
-      let s;
-      if (vel < 8)       s = 10;
-      else if (vel < 18) s = _lerp(vel, 8, 18, 10, 5);
-      else if (vel < 30) s = _lerp(vel, 18, 30, 5, 1);
-      else               s = 0;
-      const esNordes = dirViento >= 315 || dirViento <= 75;
-      if (esNordes && vel > 10) s *= 0.6;
-      return Math.max(0, s) * factorRacha;
-    }
-
-    const offDeg = MotorV1.direccionOffshore(playa, atlasDe(playa));
-    let diff = Math.abs(dirViento - offDeg) % 360;
-    if (diff > 180) diff = 360 - diff;
-    let dirFactor;
-    if (diff < 20)       dirFactor = 1.12;
-    else if (diff < 45)  dirFactor = 1.00;
-    else if (diff < 75)  dirFactor = 0.82;
-    else if (diff < 110) dirFactor = 0.55;
-    else if (diff < 145) dirFactor = 0.30;
-    else                 dirFactor = 0.15;
-
-    let speedS;
-    if (vel < 5)         speedS = 8.5;
-    else if (vel < 12)   speedS = 10;
-    else if (vel < 22)   speedS = _lerp(vel, 12, 22, 10, 7);
-    else if (vel < 35)   speedS = _lerp(vel, 22, 35, 7, 3);
-    else if (vel < 50)   speedS = _lerp(vel, 35, 50, 3, 0.5);
-    else                 speedS = 0;
-
-    if (dirFactor < 0.4 && vel > 25) speedS = Math.max(0, speedS * 0.6);
-    if (dirFactor < 0.2 && vel > 35) speedS = 0;
-    return Math.min(10, speedS * dirFactor) * factorRacha;
-  }
-
-  function _ordenMarFactor() {
-    const sH = swellH ?? h;
-    const wH = windH  ?? 0;
-    if (sH < 0.1) return 1.0;
-    const ratio = wH / (sH + 0.01);
-    if (ratio < 0.3) return 1.00;
-    if (ratio < 0.6) return 0.92;
-    if (ratio < 0.9) return 0.82;
-    if (ratio < 1.3) return 0.70;
-    return 0.55;
-  }
-
-  function _mareaFactor() {
-    if (tideH == null || tideMin == null || tideMax == null) return 1.0;
-    const range = tideMax - tideMin;
-    if (range < 0.1) return 1.0;
-    const frac = Math.max(0, Math.min(1, (tideH - tideMin) / range));
-    const esArena = playa?.mareaOptima !== 'media-alta';
-    if (esArena && frac < 0.15 && hEf > hMax * 0.85) return 0.68;
-    if (frac > 0.90 && hEf < hMin * 1.1)             return 0.72;
-    const opt = playa?.mareaOptima;
-    if (!opt || opt === 'cualquiera') return 1.0;
-    const targets = { 'media-baja':0.25, 'media':0.50, 'media-alta':0.75 };
-    const dev = Math.abs(frac - targets[opt]);
-    if (dev < 0.12) return 1.05;
-    if (dev < 0.25) return 1.00;
-    if (dev < 0.40) return 0.93;
-    return 0.85;
-  }
-
-  function _energiaKJ() {
-    return (1025 * 9.81 * 9.81 * per * hEf * hEf) / (64 * Math.PI * 1000);
-  }
-
-  const PESOS = {
-    banista:      { vie:0.45, alt:0.20, per:0.05, dir:0.05, mar:0.10 },
-    principiante: { alt:0.35, vie:0.28, per:0.17, dir:0.12, mar:0.08 },
-    intermedio:   { dir:0.26, alt:0.24, per:0.26, vie:0.18, mar:0.06 },
-    pro:          { dir:0.28, per:0.32, alt:0.24, vie:0.16, mar:0.00 },
-  };
-  const pw = PESOS[perfilActivo] ?? PESOS.pro;
-
-  const componentes = {
-    dir: _swellDirScore(),
-    alt: _alturaScore(),
-    per: _periodoScore(),
-    vie: _vientoScore(),
-  };
-
-  const scoreBase = componentes.dir * (pw.dir ?? 0)
-                  + componentes.alt * (pw.alt ?? 0)
-                  + componentes.per * (pw.per ?? 0)
-                  + componentes.vie * (pw.vie ?? 0);
-
-  const fMarea = (pw.mar ?? 0) > 0 ? _mareaFactor() : 1.0;
-  const fOrden = _ordenMarFactor();
-
-  const energiaKJ = _energiaKJ();
-  let fEnergia = 1.0;
-  // Umbrales calibrados con hEf real (no offshore):
-  // <0.3 kJ = plano total (0.3m 8s), limitar mucho
-  // <0.8 kJ = casi plano (0.5m 8s), limitar algo
-  // >=0.8 kJ = algo surfable, no limitar por energía
-  if (energiaKJ < 0.3)                 fEnergia = 0.45;
-  else if (energiaKJ < 0.8)            fEnergia = _lerp(energiaKJ, 0.3, 0.8, 0.45, 0.80);
-  // Si hay buena energía pero el scoreBase parece inflado (ej: dir perfecta pero flat):
-  // no aplicar porque el gating de altura ya lo controla
-
-  // Gating por altura: si la altura es 0 o casi 0, el score no puede ser alto
-  // aunque el período y dirección sean perfectos
-  const altS = componentes.alt;
-  let fAltGating = 1.0;
-  // Solo limitar cuando la altura es realmente insuficiente para el perfil
-  // altS ya refleja si la altura es buena para el perfil activo
-  if (altS < 0.5)       fAltGating = 0.15; // sin ola: máximo ~1
-  else if (altS < 1.0)  fAltGating = _lerp(altS, 0.5, 1.0, 0.20, 0.50);
-  else if (altS < 2.0)  fAltGating = _lerp(altS, 1.0, 2.0, 0.50, 0.80);
-  // altS >= 2: sin gating por altura — la ola existe y tiene potencial
-
-  // El viento onshore muy fuerte tiene que poder hundir el score aunque todo lo demás sea bueno
-  // Si vie < 1, es blown out: limitar score máximo
-  let fVientoGating = 1.0;
-  if (componentes.vie < 1.0) fVientoGating = 0.30; // blown out total
-  else if (componentes.vie < 2.5) fVientoGating = _lerp(componentes.vie, 1, 2.5, 0.35, 0.65);
-
-  const raw   = scoreBase * fMarea * fOrden * fEnergia * fAltGating * fVientoGating;
-  const score = Math.round(Math.min(9.5, Math.max(1, raw)) * 10) / 10;
-
-  return { score, componentes };
-}
-
-// ── Motor v1.1 y capa de datos (consulta multi-IA, oct 2026) ───────────────────
-// Interruptor: abrir la app con ?motor=v0 vuelve al motor antiguo (se recuerda en este
-// navegador); ?motor=v1 lo reactiva. Si falta motor-v1.js o el atlas, se usa el antiguo.
-const MOTOR_ACTIVO = (() => {
-  const hayV1 = typeof MotorV1 !== 'undefined' && typeof ATLAS_PLAYAS !== 'undefined';
-  let pref = 'v1';
-  try {
-    const q = new URLSearchParams(location.search).get('motor');
-    // ?motor=v0 solo para depurar en esa carga; nunca se guarda (antes se guardaba y dejaba el motor antiguo fijo)
-    localStorage.removeItem('salitre_motor');
-    if (q === 'v0') pref = 'v0';
-  } catch (e) {}
-  return pref === 'v1' && hayV1 ? 'v1' : 'v0';
-})();
+// ── Motor y capa de datos ─────────────────────────────────────────────────────
+// Un solo motor (motor-v1.js) para toda la app: pantalla principal, lista, mapa, «¿Dónde vamos?»,
+// previsión y avisos. No hay motor alternativo ni puntuación de reserva.
 const MODELO_OLEAJE = 'meteofrance_wave';   // modelo fijado (spec v1.1, punto 2)
 // Energía en kJ con la misma fórmula que Surf-Forecast: E = ρ·g²·H²·T² / (16π) ≈ 1,96·H²·T².
 // Deducida de su tabla de Playa de Patos (14-oct-2026, 23 horas): las 23 filas cuadran dentro del
@@ -1413,10 +1135,7 @@ function periodoDe(o, i) {
 }
 document.addEventListener('DOMContentLoaded', () => {
   const pie = document.getElementById('pie-motor');
-  if (!pie) return;
-  pie.innerHTML = MOTOR_ACTIVO === 'v1'
-    ? 'Cálculo: motor nuevo (v1.1) · <a href="?motor=v0" style="color:inherit;">usar el anterior</a>'
-    : 'Cálculo: motor anterior · <a href="?motor=v1" style="color:inherit;">probar el nuevo</a>';
+  if (pie) pie.textContent = `Cálculo: motor ${MotorV1.VERSION} · física de olas con línea de costa (GSHHG) y fondo marino (EMODnet)`;
 });
 const VARS_OLEAJE_V1 = [
   'wave_height','wave_period','wave_direction',
@@ -1424,62 +1143,45 @@ const VARS_OLEAJE_V1 = [
   'secondary_swell_wave_height','secondary_swell_wave_period','secondary_swell_wave_direction',
   'wind_wave_height','wind_wave_period','wind_wave_peak_period','wind_wave_direction',
 ].join(',');
-const VARS_OLEAJE_V0 = 'wave_height,wave_period,wave_direction,swell_wave_height,wind_wave_height';
 
 function atlasDe(playa) {
   return (typeof ATLAS_PLAYAS !== 'undefined') ? ATLAS_PLAYAS.playas?.[playa?.nombre] ?? null : null;
 }
-// Coordenadas donde pedir el oleaje: punto offshore del atlas (v1) o la propia playa (v0)
+// Coordenadas donde pedir el oleaje: punto en mar abierto del atlas (o la propia playa si no lo hay)
 function coordsOleaje(playa) {
-  const off = MOTOR_ACTIVO === 'v1' ? atlasDe(playa)?.offshore : null;
+  const off = atlasDe(playa)?.offshore;
   return off ? { lat: off[0], lon: off[1], offshore: true } : { lat: playa.lat, lon: playa.lon, offshore: false };
 }
 
 /**
  * Pide el oleaje de una playa. opciones: { current, hourly, forecastDays, pastDays, extraCurrent, timezone }
- * Con el motor v1 pide todas las particiones en el punto offshore con el modelo fijado; si esa
- * petición falla, repite la antigua (coordenadas de la playa, sin modelo) y marca _v0 = true.
+ * Todas las particiones en el punto en mar abierto con el modelo fijado. Si falla se reintenta;
+ * sin datos no hay nota (nunca se puntúa con otra fuente).
  */
 async function pedirOleaje(playa, opciones = {}) {
   const { current = true, hourly = true, forecastDays = 10, pastDays = 0, extraCurrent = '', timezone = '' } = opciones;
-  const construir = v1 => {
-    const c = v1 ? coordsOleaje(playa) : { lat: playa.lat, lon: playa.lon };
-    const vars = v1 ? VARS_OLEAJE_V1 : VARS_OLEAJE_V0;
-    let u = `https://marine-api.open-meteo.com/v1/marine?latitude=${c.lat}&longitude=${c.lon}&timeformat=unixtime`;
-    if (current) u += `&current=${vars}${extraCurrent ? ',' + extraCurrent : ''}`;
-    if (hourly) u += `&hourly=${vars}&forecast_days=${forecastDays}${pastDays ? '&past_days=' + pastDays : ''}`;
-    if (timezone) u += `&timezone=${timezone}`;
-    if (v1) u += `&models=${MODELO_OLEAJE}`;
-    return u;
-  };
-  if (MOTOR_ACTIVO === 'v1') {
-    // Un solo motor para todo: si la petición falla se reintenta, pero nunca se puntúa con el antiguo
-    let ultimo = null;
-    for (let intento = 0; intento < 3; intento++) {
-      try {
-        const r = await fetch(construir(true));
-        const j = await r.json();
-        if (r.ok && !j.error && (j.current || j.hourly)) { j._v0 = false; return j; }
-        ultimo = new Error(j?.reason ?? 'HTTP ' + r.status);
-      } catch (e) { ultimo = e; }
-      await new Promise(res => setTimeout(res, 800 * (intento + 1)));
-    }
-    console.warn('[Salitre] sin datos de oleaje:', ultimo);
-    throw ultimo || new Error('Sin datos de oleaje');
+  const c = coordsOleaje(playa);
+  let u = `https://marine-api.open-meteo.com/v1/marine?latitude=${c.lat}&longitude=${c.lon}&timeformat=unixtime&models=${MODELO_OLEAJE}`;
+  if (current) u += `&current=${VARS_OLEAJE_V1}${extraCurrent ? ',' + extraCurrent : ''}`;
+  if (hourly) u += `&hourly=${VARS_OLEAJE_V1}&forecast_days=${forecastDays}${pastDays ? '&past_days=' + pastDays : ''}`;
+  if (timezone) u += `&timezone=${timezone}`;
+  let ultimo = null;
+  for (let intento = 0; intento < 3; intento++) {
+    try {
+      const r = await fetch(u);
+      const j = await r.json();
+      if (r.ok && !j.error && (j.current || j.hourly)) return j;
+      ultimo = new Error(j?.reason ?? 'HTTP ' + r.status);
+    } catch (e) { ultimo = e; }
+    if (intento < 2) await new Promise(res => setTimeout(res, 800 * (intento + 1)));
   }
-  const r = await fetch(construir(false));
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const j = await r.json();
-  j._v0 = true;
-  // Datos de la petición antigua (coordenadas de la playa): el motor v1 no debe usarlos
-  if (j.current) j.current._v0 = true;
-  if (j.hourly) j.hourly._v0 = true;
-  return j;
+  console.warn('[Salitre] sin datos de oleaje:', ultimo);
+  throw ultimo || new Error('Sin datos de oleaje');
 }
 
 // Datos de una hora (o del "current" si i es null) en el formato que espera MotorV1.evaluar
 function datosMotor(fuente, i, viento = {}, extra = {}) {
-  if (!fuente || fuente._v0) return null;   // sin datos offshore: se usa el motor antiguo
+  if (!fuente) return null;
   const g = k => i == null ? fuente?.[k] : fuente?.[k]?.[i];
   return {
     hTotal: g('wave_height'), tTotal: g('wave_period'), dirTotal: g('wave_direction'),
@@ -1493,56 +1195,19 @@ function datosMotor(fuente, i, viento = {}, extra = {}) {
 }
 const diasDesdeAhora = ts => Math.max(0, (ts * 1000 - Date.now()) / 86400000);
 
+// Color de la nota: una sola escala para toda la app (círculos, tablas, mapa)
+function colorNota(score) {
+  if (!score) return '#888';
+  return score <= 3 ? '#ff4444' : score <= 5 ? '#FF6B00' : score <= 7 ? '#e6a817' : '#00cc88';
+}
+
+// Estado de una hora: siempre con el motor. Sin datos del motor no hay nota.
+// (Los argumentos sueltos se conservan por compatibilidad de las llamadas; solo cuentan h y datosV1.)
 function clasificar(h, direccion, playa, periodo, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax, datosV1) {
-  if (h == null || Number.isNaN(h)) return { color:'#888', texto:'Sin datos', bg:'#eeeeee', score:0, componentes:{} };
-  let score, componentes, v1 = null;
-  if (MOTOR_ACTIVO === 'v1' && datosV1) {
-    v1 = MotorV1.evaluar(datosV1, playa, perfilActivo, atlasDe(playa));
-    score = v1.nota;
-    componentes = {};
-  } else {
-    ({ score, componentes } = calcularPuntuacion(h, direccion, periodo ?? 8, playa, dirViento, velViento, velRacha, swellH, windH, tideH, tideMin, tideMax));
-  }
-
-  const TEXTOS = {
-    banista: {
-      bajo:  'Hoy el viento o el mar no acompañan para el baño.',
-      medio: 'Puede haber momentos aceptables, aunque con algo de viento.',
-      bien:  'Buen día para estar en el agua.',
-      bueno: 'Las condiciones apuntan a una buena jornada de playa.',
-      top:   'Difícil encontrar un día mejor para el baño.',
-    },
-    principiante: {
-      bajo:  'El mar no está para aprender hoy.',
-      medio: 'Algo puede haber, pero no es el mejor día.',
-      bien:  'Las condiciones apuntan bien para practicar.',
-      bueno: 'Buen momento para coger olas y progresar.',
-      top:   'Condiciones ideales para aprender. Pocas veces mejor.',
-    },
-    intermedio: {
-      bajo:  'Poca cosa hoy. Puede que no valga el desplazamiento.',
-      medio: 'Hay algo, pero las condiciones no son las mejores.',
-      bien:  'Puede salir una sesión decente si se elige el momento.',
-      bueno: 'El mar apunta bien hoy. Merece asomarse.',
-      top:   'Las condiciones se alinean. Puede ser una buena sesión.',
-    },
-    pro: {
-      bajo:  'Sin interés técnico hoy.',
-      medio: 'Condiciones marginales. Poco potencial.',
-      bien:  'Hay opciones. El mar sugiere algo aprovechable.',
-      bueno: 'Condiciones sólidas. Vale la pena ir.',
-      top:   'Todo apunta bien. No es un día cualquiera.',
-    },
-  };
-
-  const nivel = score <= 3 ? 'bajo' : score <= 5 ? 'medio' : score <= 7 ? 'bien' : score < 9.5 ? 'bueno' : 'top';
-  const perfil = (typeof perfilActivo !== 'undefined' ? perfilActivo : null) ?? 'pro';
-  // Motor v1: frase concreta generada con los datos (tamaño y viento); el veredicto por nivel va debajo
-  const texto  = (v1 && MotorV1.titular(v1).titulo) || (TEXTOS[perfil] ?? TEXTOS.pro)[nivel];
-  const color  = score <= 3 ? '#ff4444' : score <= 5 ? '#FF6B00' : score <= 7 ? '#e6a817' : '#00cc88';
-  const bg     = score <= 3 ? '#fff0f0' : score <= 5 ? '#fff4ee' : score <= 7 ? '#fffbee' : '#f0fff8';
-
-  return { color, texto, bg, score, componentes, v1 };
+  if (h == null || Number.isNaN(h) || !datosV1 || !playa) return { color: '#888', texto: 'Sin datos', bg: '#eeeeee', score: 0, v1: null };
+  const v1 = MotorV1.evaluar(datosV1, playa, perfilActivo, atlasDe(playa));
+  const score = v1.nota;
+  return { color: colorNota(score), texto: MotorV1.titular(v1).titulo, bg: '#f0f4f8', score, v1 };
 }
 
 // Oleaje por componentes. El modelo etiqueta «primario» y «secundario» por energía en mar abierto y
@@ -1592,33 +1257,16 @@ function renderExplicacionV1(r) {
 }
 
 
+function dir16(g) {
+  if (g == null || Number.isNaN(g)) return '—';
+  return ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'][Math.round((((g % 360) + 360) % 360) / 22.5) % 16];
+}
 function dirTxt(g) {
   if (g == null || Number.isNaN(g)) return '—';
   const i = ((Math.round(g / 45) % 8) + 8) % 8;
   return ['N','NE','E','SE','S','SO','O','NO'][i];
 }
 
-function resumen(h, p, d, playa) {
-  const dir = dirTxt(d);
-  if (playa && d != null && !Number.isNaN(d)) {
-    const en = anguloEnArco(d, playa.orientArcMin, playa.orientArcMax);
-    if (en === false || (en === null && playa.orient != null && angleDiff(d, playa.orient) > playa.tol)) {
-      return 'Swell del ' + dir + ' fuera del ángulo óptimo para ' + playa.nombre + '.';
-    }
-  }
-  if (h == null || Number.isNaN(h)) return 'Sin datos del mar ahora mismo.';
-  const hEf = h * (playa?.exposicion ?? 0.5);
-  const pp = p || 8;
-  const energia = (1025 * 9.81 * 9.81 * pp * hEf * hEf) / (64 * Math.PI * 1000);
-  if (hEf < 0.25) return 'El mar está en calma. Sin olas.';
-  if (hEf < 0.5)  return 'Olas de ' + hEf.toFixed(1) + 'm en playa, período ' + Math.round(pp) + 's.';
-  if (pp >= 14)   return hEf.toFixed(1) + 'm con ' + Math.round(pp) + 's de período — ground swell de calidad.';
-  if (pp >= 11)   return hEf.toFixed(1) + 'm, ' + Math.round(pp) + 's. Swell organizado del ' + dir + '.';
-  if (pp < 8)     return hEf.toFixed(1) + 'm pero período de ' + Math.round(pp) + 's — olas de viento, poco organizadas.';
-  // energia está en kW/m: los umbrales anteriores (80/300/800) eran de otra escala y casi siempre daba "suave"
-  const enStr = energia < 5 ? 'suave' : energia < 15 ? 'moderado' : energia < 40 ? 'potente' : 'muy potente';
-  return hEf.toFixed(1) + 'm en playa, ' + Math.round(pp) + 's, mar ' + enStr + '.';
-}
 
 function fmtFecha(ts) {
   const d = new Date(ts * 1000);
@@ -1647,17 +1295,17 @@ function vientoFavorable(dir, playa) {
 function etiquetaViento(dirViento, velViento, playa) {
   if (velViento == null || Number.isNaN(velViento) || !playa || dirViento == null)
     return { label:'—', desc:'', color:'#8899aa' };
-  if (velViento < 8)
-    return { label:'GLASSY', desc:'Sin apenas viento', color:'#44cc44' };
+  if (velViento < 6)
+    return { label:'CALMA', desc:'Sin apenas viento', color:'#44cc44' };
   const c = MotorV1.clasificarViento(dirViento, playa, atlasDe(playa));
-  const DESC = {
-    'OFFSHORE':  ['Viento de tierra',            '#44cc44'],
-    'CROSS-OFF': ['Cruzado, tirando a tierra',   '#44cc44'],
-    'CROSS':     ['Viento cruzado',              '#FF6B00'],
-    'CROSS-ON':  ['Cruzado, tirando a mar',      '#ff4444'],
-    'ONSHORE':   ['Viento de mar',               '#ff4444'],
+  const [label, desc, color] = {
+    'OFFSHORE':  ['TIERRA',         'Viento de tierra',           '#44cc44'],
+    'CROSS-OFF': ['CRUZADO-TIERRA', 'Cruzado, tirando a tierra',  '#44cc44'],
+    'CROSS':     ['CRUZADO',        'Viento cruzado',             '#FF6B00'],
+    'CROSS-ON':  ['CRUZADO-MAR',    'Cruzado, tirando a mar',     '#ff4444'],
+    'ONSHORE':   ['DE MAR',         'Viento de mar',              '#ff4444'],
   }[c.etiqueta];
-  return { label: c.etiqueta, desc: DESC[0], color: DESC[1] };
+  return { label, desc, color };
 }
 
 function cielo(codigo) {
@@ -1701,72 +1349,47 @@ function svgLuna(s, conNube = false, fecha = new Date()) {
     : `<path d="M${cx} ${cy - r} A${r} ${r} 0 0 ${bordeExt} ${cx} ${cy + r} A${rx.toFixed(2)} ${r} 0 0 ${bordeInt} ${cx} ${cy - r}Z" fill="#e8eef8"/>`;
   const disco = `<circle cx="${cx}" cy="${cy}" r="${r}" stroke="#cfe0ff" stroke-opacity="0.35" stroke-width="1.5"/>`;
   const nube = conNube
-    ? `<path d="M15 31 L31 31 C34.5 31 36 28 34 25.5 C32.5 23.5 29.5 23.5 28 24.5 C27 21.5 23.5 20 20.5 21.5 C18 22.7 17.5 25 17.8 26.2 C15.5 26 13 27.5 13 29 C13 30.2 13.8 31 15 31Z" fill="#0d2137" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>`
+    ? `<path d="M15 32 H31 C33.5 32 35.2 30 34.6 27.6 C34.1 25.6 32 24.4 30 25 C29.3 21.8 26.3 20 23.2 20.8 C20.8 21.4 19.2 23.3 19.1 25.4 C16.3 25.3 13.4 27.2 13.8 30 C14 31.2 14.4 32 15 32Z" fill="#eef3f9"/>`
     : '';
   return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none">${disco}${luz}${nube}</svg>`;
 }
 
+// Iconos del cielo (códigos WMO de Open-Meteo): una sola familia de trazo, sol/luna según la hora.
+// De noche la luna se dibuja con su fase real (svgLuna).
 function iconoCielo(codigo, size = 36, sunrise, sunset, isDay) {
   const noche = (isDay !== undefined && isDay !== null) ? (isDay == 0) : esNoche(sunrise, sunset);
-  const c = codigo == null || codigo <= 1 ? '#FFD700'
-          : codigo <= 3  ? '#88aacc'
-          : codigo <= 48 ? '#99aabb'
-          : codigo <= 67 ? '#6699ff'
-          : codigo <= 77 ? '#aaddff'
-          : codigo <= 82 ? '#5588ee'
-          : '#aa77ff';
-  const s = size;
-  if (codigo == null || codigo <= 1) return noche ? svgLuna(s) : `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="7" stroke="${c}" stroke-width="1.5"/><line x1="20" y1="7" x2="20" y2="10" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="30" x2="20" y2="33" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="20" x2="10" y2="20" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="30" y1="20" x2="33" y2="20" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="11" x2="13" y2="13" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="27" x2="29" y2="29" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="29" y1="11" x2="27" y2="13" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="29" x2="13" y2="27" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-  if (codigo <= 3 && noche) return svgLuna(s, true);
-  if (codigo <= 3)  return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><circle cx="13" cy="13" r="5" stroke="#FFD700" stroke-width="1.5"/><line x1="13" y1="4" x2="13" y2="6" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="13" x2="6" y2="13" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="6" x2="8" y2="8" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="6" x2="18" y2="8" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/><path d="M19 15 C19 15 14 15 12 17 C9 19 10 27 14 27 L30 27 C34 27 36 23 33 20 C31 17 27 17 25 18 C24 15 22 13 19 15Z" stroke="white" stroke-width="1.5" fill="white" fill-opacity="0.9"/></svg>`;
-  if (codigo <= 48) return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><path d="M8 20 C8 20 6 22 8 24 C10 26 12 24 14 25 C16 26 16 28 18 28 L32 28 C35 28 36 25 34 23 C32 21 29 22 28 20 C27 18 24 16 21 18 C19 14 14 14 12 17 C10 15 7 16 8 20Z" stroke="${c}" stroke-width="1.5" fill="none"/><line x1="16" y1="31" x2="15" y2="34" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="22" y1="31" x2="21" y2="34" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="28" y1="31" x2="27" y2="34" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-  if (codigo <= 67) return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><path d="M8 18 C8 18 6 20 8 22 C10 24 12 22 14 23 C16 24 16 26 18 26 L32 26 C35 26 36 23 34 21 C32 19 29 20 28 18 C27 16 24 14 21 16 C19 12 14 12 12 15 C10 13 7 14 8 18Z" stroke="${c}" stroke-width="1.5" fill="none"/><line x1="15" y1="30" x2="13" y2="35" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="21" y1="30" x2="19" y2="35" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="30" x2="25" y2="35" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-  if (codigo <= 82) return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><path d="M8 16 C8 16 6 18 8 20 C10 22 12 20 14 21 C16 22 16 24 18 24 L32 24 C35 24 36 21 34 19 C32 17 29 18 28 16 C27 14 24 12 21 14 C19 10 14 10 12 13 C10 11 7 12 8 16Z" stroke="${c}" stroke-width="1.5" fill="none"/><line x1="15" y1="28" x2="13" y2="33" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="21" y1="28" x2="19" y2="33" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><line x1="27" y1="28" x2="25" y2="33" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><circle cx="14" cy="35" r="1.5" fill="${c}"/><circle cx="20" cy="35" r="1.5" fill="${c}"/><circle cx="26" cy="35" r="1.5" fill="${c}"/></svg>`;
-  return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" fill="none"><path d="M8 16 C8 16 6 18 8 20 C10 22 12 20 14 21 C16 22 16 24 18 24 L32 24 C35 24 36 21 34 19 C32 17 29 18 28 16 C27 14 24 12 21 14 C19 10 14 10 12 13 C10 11 7 12 8 16Z" stroke="${c}" stroke-width="1.5" fill="none"/><path d="M18 28 L16 32 M20 28 L22 34 M26 28 L24 32" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><path d="M15 33 L17 37 M23 33 L21 37" stroke="#88aaff" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-}
-
-
-function renderDesglose(componentes, perfil) {
-  const ETIQUETAS = {
-    dir: { pos:'Dirección de swell buena', neg:'Dirección de swell mala' },
-    alt: { pos:'Altura adecuada',           neg:'Altura fuera de rango'   },
-    per: { pos:'Período largo',              neg:'Período corto'           },
-    vie: { pos:'Viento favorable',           neg:'Viento desfavorable'     },
+  const cod = codigo ?? 0;
+  const svg = cuerpo => `<svg width="${size}" height="${size}" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round">${cuerpo}</svg>`;
+  const sol = (cx, cy, r) => {
+    let rayos = '';
+    for (let k = 0; k < 8; k++) {
+      const a = k * Math.PI / 4, r1 = r + 3, r2 = r + 6;
+      rayos += `<line x1="${(cx + r1 * Math.cos(a)).toFixed(1)}" y1="${(cy + r1 * Math.sin(a)).toFixed(1)}" x2="${(cx + r2 * Math.cos(a)).toFixed(1)}" y2="${(cy + r2 * Math.sin(a)).toFixed(1)}" stroke="#FFD54A" stroke-width="1.6"/>`;
+    }
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#FFD54A"/>${rayos}`;
   };
-  if (!componentes || !Object.keys(componentes).length) return '';
-  const PESOS = {
-    banista:      { vie:0.45, alt:0.15 },
-    principiante: { alt:0.35, vie:0.25, per:0.15, dir:0.15 },
-    intermedio:   { dir:0.25, alt:0.25, per:0.25, vie:0.20 },
-    pro:          { dir:0.30, per:0.30, alt:0.25, vie:0.15 },
+  // Nube: (x,y) esquina inferior izquierda, w ancho; claro = blanca, oscuro = gris azulado
+  const nube = (x, y, w, tono = 'claro') => {
+    const k = w / 24, P = (a, b) => `${(x + a * k).toFixed(1)} ${(y - b * k).toFixed(1)}`;
+    const fill = tono === 'claro' ? '#eef3f9' : tono === 'medio' ? '#c3d0de' : '#8ea3ba';
+    return `<path d="M${P(4, 0)} H${(x + 20 * k).toFixed(1)} C${P(23, 0)} ${P(25, 3)} ${P(24, 6)} C${P(23.4, 8.5)} ${P(21, 9.6)} ${P(18.8, 9)} C${P(18, 13)} ${P(14.5, 15)} ${P(11, 14)} C${P(8, 13.2)} ${P(6.4, 11)} ${P(6.3, 8.6)} C${P(3, 8.8)} ${P(0, 6.5)} ${P(0.5, 3.5)} C${P(0.9, 1.4)} ${P(2.4, 0)} ${P(4, 0)}Z" fill="${fill}"/>`;
   };
-  const pw = PESOS[perfil] ?? PESOS.pro;
-  const scoreTotal = Object.keys(componentes).reduce(
-    (s, k) => s + (componentes[k] ?? 5) * (pw[k] ?? 0), 0
-  );
-  const items = Object.keys(componentes).map(k => ({
-    key: k, val: componentes[k] ?? 5, desv: (componentes[k] ?? 5) - scoreTotal
-  })).sort((a, b) => b.desv - a.desv);
+  const gotas = (xs, y, color = '#6fb6ff', largo = 5) => xs.map(x => `<line x1="${x}" y1="${y}" x2="${x - 1.6}" y2="${y + largo}" stroke="${color}" stroke-width="1.8"/>`).join('');
+  const copos = (xs, y) => xs.map((x, j) => { const yy = y + (j % 2) * 3; return `<path d="M${x - 2} ${yy} H${x + 2} M${x} ${yy - 2} V${yy + 2} M${x - 1.4} ${yy - 1.4} L${x + 1.4} ${yy + 1.4} M${x + 1.4} ${yy - 1.4} L${x - 1.4} ${yy + 1.4}" stroke="#e8f2ff" stroke-width="1"/>`; }).join('');
 
-  const mejor = items[0];
-  const peor  = items[items.length - 1];
-  const partes = [];
-  if (mejor && mejor.desv > 1.5) {
-    const et = ETIQUETAS[mejor.key]?.pos;
-    if (et) partes.push(`<span style="color:#4db8ff;">${et}</span>`);
-  }
-  if (peor && peor.desv < -1.5) {
-    const et = ETIQUETAS[peor.key]?.neg;
-    if (et) partes.push(`<span style="color:#ff8844;">${et}</span>`);
-  }
-  if (!partes.length) return '';
-  return `<div style="font-size:12px;margin-top:6px;color:#8899aa;">${partes.join(' &middot; ')}</div>`;
+  if (cod <= 1) return noche ? svgLuna(size) : svg(sol(20, 20, 7));
+  if (cod === 2) return noche ? svgLuna(size, true) : svg(sol(14, 14, 5.5) + nube(9, 31, 26, 'claro'));
+  if (cod === 3) return svg(nube(5, 23, 20, 'medio') + nube(10, 31, 26, 'claro'));
+  if (cod <= 48) return svg(nube(7, 21, 26, 'medio') + [26, 30.5, 35].map((y, j) => `<line x1="${7 + j * 2}" y1="${y}" x2="${33 - j * 2}" y2="${y}" stroke="#aebdcc" stroke-width="1.8"/>`).join(''));
+  if (cod <= 57) return svg(nube(7, 24, 26, 'medio') + gotas([14, 21, 28], 28, '#8ec8ff', 3));
+  if (cod <= 67) return svg(nube(7, 24, 26, 'oscuro') + gotas([13, 19.5, 26, 32.5], 27.5));
+  if (cod <= 77 || cod === 85 || cod === 86) return svg(nube(7, 24, 26, 'medio') + copos([13, 20, 27, 33], 30));
+  if (cod <= 82) return svg((noche ? '' : sol(28, 11, 4.5)) + nube(5, 25, 26, 'oscuro') + gotas([12, 18.5, 25], 28.5));
+  return svg(nube(7, 23, 26, 'oscuro') + `<path d="M21 24 L16.5 31.5 H20.5 L18 38 L25.5 28.5 H21.2 L23.5 24Z" fill="#FFD54A"/>` + gotas([11, 30], 27, '#6fb6ff', 4));
 }
 
-function scoreRanking(score, consistencia) {
-  const bonusRareza = score >= 7 ? (1 - (consistencia ?? 0.33)) * 0.3 : 0;
-  return score + bonusRareza;
-}
+
+
 function renderCabecera(playa, estado) {
   const favId = localStorage.getItem('salitre_favorita');
   const esFav = favId === playa.nombre;
@@ -2217,8 +1840,9 @@ async function htmlMareas(playa, tempAgua) {
     // Escala Y: de 0 hasta el máximo pleamar del día + margen
     const maxH = Math.max(...puntos.map(p => p.h)) + 0.3;
 
-    const W = 300, H = 210;
-    const mL = 24, mR = 2, mT = 4, mB = 20; // márgenes
+    // Tamaño pensado para la tarjeta (~150 px de ancho): el texto se lee a tamaño real
+    const W = 160, H = 108;
+    const mL = 17, mR = 3, mT = 6, mB = 13; // márgenes
     const xDeMin = T => mL + ((T - inicioMin) / ventanaMin) * (W - mL - mR);
     const yDeH   = h  => mT + (1 - h / maxH) * (H - mT - mB);
 
@@ -2240,7 +1864,7 @@ async function htmlMareas(playa, tempAgua) {
     const primeraMarca = Math.ceil(inicioMin / 60) * 60;
     for (let T = primeraMarca; T <= finMin; T += 60) {
       const m = ((T % 1440) + 1440) % 1440;
-      etiqX.push({ x: xDeMin(T), label: String(Math.floor(m/60)) });
+      if (Math.floor(m / 60) % 2 === 0) etiqX.push({ x: xDeMin(T), label: String(Math.floor(m/60)) + 'h' });
     }
 
     // Etiquetas Y: 0m, 1m, 2m, 3m...
@@ -2296,17 +1920,19 @@ async function htmlMareas(playa, tempAgua) {
         <!-- Eje X -->
         <line x1="${mL}" y1="${H-mB}" x2="${W-mR}" y2="${H-mB}" stroke="#ffffff30" stroke-width="1"/>
         <!-- Area bajo curva -->
-        <path d="${areaD}" fill="#44ddaa" opacity="0.08" clip-path="url(#grafica-clip)"/>
+        <path d="${areaD}" fill="#44ddaa" opacity="0.12" clip-path="url(#grafica-clip)"/>
         <!-- Curva -->
-        <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#grafica-clip)"/>
+        <path d="${pathD}" fill="none" stroke="#44ddaa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#grafica-clip)"/>
         <!-- Línea vertical hora actual -->
         <line x1="${pxAhora.toFixed(1)}" y1="${pyAhora.toFixed(1)}" x2="${pxAhora.toFixed(1)}" y2="${H-mB}" stroke="#44ddaa" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
         <!-- Punto hora actual -->
-        <circle cx="${pxAhora.toFixed(1)}" cy="${pyAhora.toFixed(1)}" r="5" fill="#44ddaa" filter="drop-shadow(0 0 4px #44ddaa)"/>
+        <circle cx="${pxAhora.toFixed(1)}" cy="${pyAhora.toFixed(1)}" r="3.2" fill="#44ddaa" filter="drop-shadow(0 0 3px #44ddaa)"/>
+        <!-- Pleamares y bajamares dentro de la ventana -->
+        ${puntos.filter(q => q.min > inicioMin && q.min < finMin).map(q => `<circle cx="${xDeMin(q.min).toFixed(1)}" cy="${yDeH(q.h).toFixed(1)}" r="2" fill="#0d2137" stroke="#44ddaa" stroke-width="1"/>`).join('')}
         <!-- Etiquetas Y: a la izquierda de la línea Y, alineadas a la derecha -->
-        ${etiqY.map(e => `<text x="${mL-3}" y="${(e.y+3).toFixed(0)}" fill="#7799aa" font-size="10" font-family="sans-serif" text-anchor="end">${e.label}</text>`).join('')}
+        ${etiqY.map(e => `<text x="${mL-2}" y="${(e.y+2.5).toFixed(1)}" fill="#7f9bb3" font-size="7" font-family="sans-serif" text-anchor="end">${e.label}</text>`).join('')}
         <!-- Etiquetas X: debajo de la línea X -->
-        ${etiqX.map((e,i) => `<text x="${e.x.toFixed(0)}" y="${H-mB+13}" fill="#7799aa" font-size="10" font-family="sans-serif" text-anchor="${i===0?'start':'middle'}">${e.label}</text>`).join('')}
+        ${etiqX.map(e => `<text x="${e.x.toFixed(1)}" y="${H-mB+9}" fill="#7f9bb3" font-size="7" font-family="sans-serif" text-anchor="middle">${e.label}</text>`).join('')}
       </svg>
       <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:0px;">
         <div style="color:#8899aa;">
@@ -2324,70 +1950,6 @@ async function htmlMareas(playa, tempAgua) {
   }
 }
 
-function barrasSwellContexto(altura, dirSwell, periodo, playa) {
-  // Genera 3 barras: altura, dirección, período
-  // Cada barra: rango ideal en verde, valor actual como indicador
-  function barra(label, valorActual, minIdeal, maxIdeal, minEscala, maxEscala, unidad, colorActual) {
-    const rango = maxEscala - minEscala;
-    // Posición % del rango ideal y valor actual
-    const pIdealMin = Math.max(0, Math.min(100, (minIdeal - minEscala) / rango * 100));
-    const pIdealMax = Math.max(0, Math.min(100, (maxIdeal - minEscala) / rango * 100));
-    const pActual   = Math.max(2,  Math.min(98,  (valorActual  - minEscala) / rango * 100));
-    const dentroRango = valorActual >= minIdeal && valorActual <= maxIdeal;
-    const color = dentroRango ? '#44cc88' : '#ff6644';
-    return `
-      <div style="margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-          <span style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.4px;">${label}</span>
-          <span style="font-size:12px;font-weight:700;color:${color};">${valorActual != null ? valorActual+unidad : '—'}</span>
-        </div>
-        <div style="position:relative;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:visible;">
-          <!-- Rango ideal -->
-          <div style="position:absolute;top:0;left:${pIdealMin}%;width:${pIdealMax-pIdealMin}%;height:100%;background:#44cc8855;border-radius:3px;"></div>
-          <!-- Indicador actual -->
-          <div style="position:absolute;top:-3px;left:calc(${pActual}% - 5px);width:10px;height:12px;background:${color};border-radius:2px;box-shadow:0 0 6px ${color}88;"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-top:3px;">
-          <span style="font-size:9px;color:#445566;">${minEscala}${unidad}</span>
-          <span style="font-size:9px;color:#44cc8888;">▓ ideal ${minIdeal}–${maxIdeal}${unidad}</span>
-          <span style="font-size:9px;color:#445566;">${maxEscala}${unidad}</span>
-        </div>
-      </div>`;
-  }
-
-  // Barra dirección: diferencia angular con el ideal (0=perfecto, tol=límite); respeta orientArc* si existe
-  function barraDireccion(dirActual, playa) {
-    const orient = playa.orient;
-    const tol = playa.tol;
-    const diff = dirActual != null ? diffSwellRespectoPlaya(dirActual, playa) : null;
-    const pActual = diff != null ? Math.min(98, diff / (tol+30) * 100) : 50;
-    const pIdealMax = tol / (tol+30) * 100;
-    const dentroRango = diff != null && diff <= tol;
-    const color = dentroRango ? '#44cc88' : '#ff6644';
-    const label = diff != null ? (diff <= tol*0.6 ? 'perfecto' : diff <= tol ? 'aceptable' : 'fuera de rango') : '—';
-    return `
-      <div style="margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
-          <span style="font-size:10px;color:#8899aa;text-transform:uppercase;letter-spacing:0.4px;">Dirección</span>
-          <span style="font-size:12px;font-weight:700;color:${color};">${dirActual!=null?dirTxt(dirActual)+' · '+Math.round(diff)+'° desv.':'—'}</span>
-        </div>
-        <div style="position:relative;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:visible;">
-          <div style="position:absolute;top:0;left:0;width:${pIdealMax}%;height:100%;background:#44cc8855;border-radius:3px;"></div>
-          <div style="position:absolute;top:-3px;left:calc(${pActual}% - 5px);width:10px;height:12px;background:${color};border-radius:2px;box-shadow:0 0 6px ${color}88;"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-top:3px;">
-          <span style="font-size:9px;color:#44cc8888;">▓ 0–${tol}° desviación</span>
-          <span style="font-size:9px;color:#445566;">${tol+30}°</span>
-        </div>
-      </div>`;
-  }
-
-  return `<div style="padding-top:4px;">
-    ${barra('Altura', altura!=null?parseFloat(altura.toFixed(1)):null, playa.hMin, playa.hMax, 0, Math.max(4, playa.hMax*1.5), 'm', '#4db8ff')}
-    ${barraDireccion(dirSwell, playa)}
-    ${barra('Período', periodo!=null?Math.round(periodo):null, playa.pMin, playa.pMin+4, 4, 20, 's', '#4db8ff')}
-  </div>`;
-}
 
 function flechaDireccion(grados, color, size = 36) {
   if (grados == null || Number.isNaN(grados)) return '';
@@ -2415,18 +1977,20 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
   const py = (a, rr) => cy + rr * Math.sin(toRad(a));
 
   // Quesitos
-  const offshoreDir = (playa.orient + 180) % 360;
+  const offshoreDir = MotorV1.direccionOffshore(playa, atlasDe(playa));
   const sector = (a1, a2, color, op) => {
     const d1 = (offshoreDir + a1 + 360) % 360;
     const d2 = (offshoreDir + a2 + 360) % 360;
     const large = ((a2 - a1 + 360) % 360) > 180 ? 1 : 0;
     return `<path d="M${cx},${cy} L${px(d1,r).toFixed(1)},${py(d1,r).toFixed(1)} A${r},${r} 0 ${large},1 ${px(d2,r).toFixed(1)},${py(d2,r).toFixed(1)} Z" fill="${color}" opacity="${op}"/>`;
   };
+  // Mismos umbrales que el motor (clasificarViento): tierra ≤20°, cruzado-tierra ≤55°, cruzado ≤100°,
+  // cruzado-mar ≤140°, mar el resto. Colores de la escala de la nota.
   const zonas = [
-    sector(-20,20,'#44ddaa',0.55),sector(20,55,'#88ddaa',0.40),sector(-55,-20,'#88ddaa',0.40),
-    sector(55,100,'#ffcc00',0.35),sector(-100,-55,'#ffcc00',0.35),
-    sector(100,140,'#ff7722',0.35),sector(-140,-100,'#ff7722',0.35),
-    sector(140,180,'#ff3333',0.35),sector(-180,-140,'#ff3333',0.35),
+    sector(-20,20,'#00cc88',0.55),sector(20,55,'#00cc88',0.32),sector(-55,-20,'#00cc88',0.32),
+    sector(55,100,'#e6a817',0.30),sector(-100,-55,'#e6a817',0.30),
+    sector(100,140,'#FF6B00',0.32),sector(-140,-100,'#FF6B00',0.32),
+    sector(140,180,'#ff4444',0.38),sector(-180,-140,'#ff4444',0.38),
   ].join('');
 
   // Marcas + cardinales
@@ -2439,17 +2003,18 @@ function brujulaViento(dirViento, velViento, playa, etViento) {
     if (isCard) marcas += `<text x="${px(a,r-22).toFixed(0)}" y="${(py(a,r-22)+4).toFixed(0)}" fill="white" font-size="11" font-weight="700" text-anchor="middle">${cardMap[a]}</text>`;
   }
 
-  // Aguja: apunta de donde VIENE el viento, termina en punto
+  // Aguja: nace donde VIENE el viento (punto en el borde) y la punta de flecha indica hacia dónde sopla
   let aguja = '';
   const rCircle = 18;
   if (dirViento != null) {
-    const tipX = px(dirViento, r-12), tipY = py(dirViento, r-12);
-    const tailX = px((dirViento+180)%360, 20), tailY = py((dirViento+180)%360, 20);
-    const startX = cx + rCircle * Math.cos(toRad(dirViento));
-    const startY = cy + rCircle * Math.sin(toRad(dirViento));
+    const ox = px(dirViento, r - 8), oy = py(dirViento, r - 8);
+    const ex = cx + (rCircle + 3) * Math.cos(toRad(dirViento)), ey = cy + (rCircle + 3) * Math.sin(toRad(dirViento));
+    const a = toRad(dirViento), w = 4.5, L = 8;
+    const bx = ex + L * Math.cos(a), by = ey + L * Math.sin(a);
     aguja = `
-      <line x1="${startX.toFixed(1)}" y1="${startY.toFixed(1)}" x2="${tipX.toFixed(1)}" y2="${tipY.toFixed(1)}" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="${tipX.toFixed(1)}" cy="${tipY.toFixed(1)}" r="4" fill="white"/>
+      <line x1="${ox.toFixed(1)}" y1="${oy.toFixed(1)}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+      <polygon points="${ex.toFixed(1)},${ey.toFixed(1)} ${(bx + w * Math.sin(a)).toFixed(1)},${(by - w * Math.cos(a)).toFixed(1)} ${(bx - w * Math.sin(a)).toFixed(1)},${(by + w * Math.cos(a)).toFixed(1)}" fill="white"/>
+      <circle cx="${ox.toFixed(1)}" cy="${oy.toFixed(1)}" r="3.5" fill="white"/>
 `;
   }
 
@@ -2500,8 +2065,8 @@ async function cargarInicio() {
     const estado      = clasificar(altura, dirSwell, playaActiva, periodo, dirViento, velViento, velRacha, swellH, windH, null, null, null, datosAhora);
     window.ultimaEvaluacion = {
       playa: playaActiva.nombre, perfil: perfilActivo, ts: Date.now(),
-      motor: estado.v1 ? estado.v1.motor : 'v0', modelo: marine._v0 ? 'auto (playa)' : MODELO_OLEAJE,
-      nota: estado.score, hb: estado.v1?.hb ?? null, confianza: estado.v1?.confianza ?? null,
+      motor: estado.v1 ? estado.v1.motor : null, modelo: MODELO_OLEAJE,
+      nota: estado.score, hb: estado.v1?.hb ?? null, tp: estado.v1?.tpDominante ?? null, confianza: estado.v1?.confianza ?? null,
       datos: datosAhora ?? { hTotal: altura, tTotal: periodo, dirTotal: dirSwell, vientoVel: velViento, vientoDir: dirViento },
       coords: { mar: (({ lat, lon }) => ({ lat, lon }))(coordsOleaje(playaActiva)), viento: { lat: playaActiva.lat, lon: playaActiva.lon } },
     };
@@ -2555,14 +2120,22 @@ async function cargarInicio() {
               <span style="font-size:13px;color:#8899aa;font-weight:500;">Energía que llega</span>
               <span style="font-size:13px;color:white;font-weight:600;">${energiaKJ(estado.v1.hLocal, estado.v1.periodoLocal) ?? '—'} kJ</span>
             </div>` : ''}
-            <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-              <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal</div>
+            ${(() => {
+              // Calculado con la costa y el fondo de esta playa (no son datos puestos a mano)
+              const v = MotorV1.ventanaSwell(playaActiva, atlasDe(playaActiva), estado.v1?.tpDominante ?? 12);
+              const n = MotorV1.NIVELES[perfilActivo] ?? MotorV1.NIVELES.intermedio;
+              if (!v) return '';
+              return `<div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
+              <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Swell ideal (calculado para esta playa)</div>
               <div style="display:flex;align-items:center;gap:8px;">
-                ${flechaDireccion(playaActiva.orient, '#4db8ff', 20)}
-                <span style="font-size:13px;font-weight:600;color:#4db8ff;">${playaActiva.swell}</span>
-                <span style="font-size:12px;color:#8899aa;">· ${playaActiva.hMin}–${playaActiva.hMax}m · >${playaActiva.pMin}s</span>
+                ${flechaDireccion(v.mejor, '#4db8ff', 22)}
+                <div style="line-height:1.35;">
+                  <div style="font-size:13px;font-weight:600;color:#4db8ff;">Del ${dir16(v.mejor)} <span style="font-weight:500;color:#8899aa;font-size:12px;">· funciona de ${dir16(v.desde)} a ${dir16(v.hasta)}</span></div>
+                  ${perfilActivo !== 'banista' ? `<div style="font-size:12px;color:#8899aa;">Para tu nivel: ola de ${fmt(n.idealMin)}–${fmt(n.idealMax)} m en la orilla</div>` : ''}
+                </div>
               </div>
-            </div>
+            </div>`;
+            })()}
           </div>
         </div>
       </div>
@@ -2592,9 +2165,9 @@ async function cargarInicio() {
               <div style="margin-top:8px;padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
                 <div style="font-size:9px;color:#8899aa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Viento ideal</div>
                 <div style="display:flex;align-items:center;gap:8px;">
-                  ${flechaDireccion((playaActiva.orient+180)%360, '#44cc44', 28)}
-                  <span style="font-size:13px;font-weight:600;color:#44cc44;">${playaActiva.viento}</span>
-                  <span style="font-size:12px;color:#8899aa;">· < 28 km/h</span>
+                  ${(() => { const off = MotorV1.direccionOffshore(playaActiva, atlasDe(playaActiva)); return `${flechaDireccion(off, '#44cc44', 28)}
+                  <span style="font-size:13px;font-weight:600;color:#44cc44;">${dir16(off)}</span>
+                  <span style="font-size:12px;color:#8899aa;">· de tierra, flojo o moderado</span>`; })()}
                 </div>
               </div>
             </div>
@@ -2626,15 +2199,9 @@ async function cargarInicio() {
         </div>
       </div>
       ${prevHtml}`;
-    document.getElementById('resumen-texto').textContent = estado.v1 ? '' : resumen(altura, periodo, dirSwell, playaActiva);
+    document.getElementById('resumen-texto').textContent = estado.v1 ? '' : 'Sin datos del mar ahora mismo.';
     const desgloseEl = document.getElementById('desglose-factores');
-    if (desgloseEl) desgloseEl.innerHTML = estado.v1 ? renderExplicacionV1(estado.v1) : renderDesglose(estado.componentes, perfilActivo ?? 'pro');
-    // Badge día poco habitual
-    const cons = playaActiva?.consistencia ?? 0.33;
-    if (cons < 0.25 && estado.score >= 7) {
-      const resEl = document.getElementById('resumen-texto');
-      if (resEl) resEl.textContent += ' · Día poco habitual en esta playa.';
-    }
+    if (desgloseEl) desgloseEl.innerHTML = estado.v1 ? renderExplicacionV1(estado.v1) : '';
     cargarMejoresOlas();
     document.getElementById('dropdown-playas').innerHTML =
       Object.entries(SPOTS['España']['Galicia']).map(([zona, playas]) => `
@@ -3007,84 +2574,52 @@ function seleccionarPlayaPorNombre(nombre) {
 function actualizarBrujulaGuia() {
   const playa = typeof playaActiva !== 'undefined' ? playaActiva : null;
   if (!playa) return;
-
   const cx = 120, cy = 120, r = 95;
-  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
-
-  function angPunto(grados, radio) {
+  const angPunto = (grados, radio) => {
     const rad = (grados - 90) * Math.PI / 180;
     return { x: cx + radio * Math.cos(rad), y: cy + radio * Math.sin(rad) };
+  };
+  const $ = id => document.getElementById(id);
+  if ($('guia-brujula-titulo')) $('guia-brujula-titulo').textContent = playa.nombre;
+
+  // Ventana de swell calculada con el período de hoy (o 12 s): rosa polar + arco donde funciona
+  const T = window.ultimaEvaluacion?.tp ?? 12;
+  const v = MotorV1.ventanaSwell(playa, atlasDe(playa), T);
+  if (v) {
+    const pts = v.dirs.map(x => angPunto(x.d, 18 + (r - 22) * Math.max(0, x.q)));
+    $('guia-rosa')?.setAttribute('d', 'M' + pts.map(p => p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' L') + ' Z');
+    const p1 = angPunto(v.desde, r), p2 = angPunto(v.hasta, r);
+    const ap = ((v.hasta - v.desde) + 360) % 360;
+    const d = `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A ${r} ${r} 0 ${ap > 180 ? 1 : 0} 1 ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+    $('guia-arco-exposicion')?.setAttribute('d', d);
+    $('guia-arco-borde')?.setAttribute('d', d);
+    const p = angPunto(v.mejor, r - 10);
+    $('guia-aguja-playa')?.setAttribute('x2', p.x.toFixed(1));
+    $('guia-aguja-playa')?.setAttribute('y2', p.y.toFixed(1));
+    if ($('guia-punto-playa')) { $('guia-punto-playa').setAttribute('cx', p.x.toFixed(1)); $('guia-punto-playa').setAttribute('cy', p.y.toFixed(1)); }
+    if ($('guia-txt-playa-dir')) $('guia-txt-playa-dir').textContent = 'mejor: ' + dir16(v.mejor) + ' ' + Math.round(v.mejor) + '°';
   }
 
-  // Título
-  const titulo = document.getElementById('guia-brujula-titulo');
-  if (titulo) titulo.textContent = playa.nombre;
-
-  // Arco de exposición
-  const arcEl   = document.getElementById('guia-arco-exposicion');
-  const arcBord = document.getElementById('guia-arco-borde');
-  if (arcEl && playa.orientArcMin != null) {
-    const p1 = angPunto(playa.orientArcMin, r);
-    const p2 = angPunto(playa.orientArcMax, r);
-    const ap  = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
-    const lg  = ap > 180 ? 1 : 0;
-    const d   = `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} A ${r} ${r} 0 ${lg} 1 ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
-    arcEl.setAttribute('d', d);
-    if (arcBord) arcBord.setAttribute('d', d);
-  }
-
-  // Aguja orientación ideal de la playa
-  const agujaP = document.getElementById('guia-aguja-playa');
-  const puntoP = document.getElementById('guia-punto-playa');
-  const txtP   = document.getElementById('guia-txt-playa-dir');
-  if (agujaP && playa.orient != null) {
-    const p = angPunto(playa.orient, r - 10);
-    agujaP.setAttribute('x2', p.x.toFixed(1));
-    agujaP.setAttribute('y2', p.y.toFixed(1));
-    if (puntoP) { puntoP.setAttribute('cx', p.x.toFixed(1)); puntoP.setAttribute('cy', p.y.toFixed(1)); }
-    const dirIdx = Math.round(((playa.orient % 360) + 360) % 360 / 22.5) % 16;
-    if (txtP) txtP.textContent = 'ideal: ' + dirs[dirIdx] + ' ' + Math.round(playa.orient) + '°';
-  }
-
-  // Aguja swell actual
-  const agujaS  = document.getElementById('guia-aguja-swell');
-  const flechaS = document.getElementById('guia-flecha-swell');
-  const txtSD   = document.getElementById('guia-txt-swell-dir');
-  const leyS    = document.getElementById('guia-leyenda-swell');
-  const desc    = document.getElementById('guia-brujula-desc');
+  // Swell actual
   const dir = typeof ultimoDirSwell !== 'undefined' ? ultimoDirSwell : null;
-
+  const desc = $('guia-brujula-desc');
   if (dir != null && !Number.isNaN(dir)) {
-    const p  = angPunto(dir, r - 10);
-    const p2 = angPunto(dir, r - 22); // punta de flecha
-    if (agujaS) { agujaS.setAttribute('x2', p.x.toFixed(1)); agujaS.setAttribute('y2', p.y.toFixed(1)); }
-    if (flechaS) {
-      // Triángulo apuntando en la dirección del swell
-      const rad    = (dir - 90) * Math.PI / 180;
-      const radL   = (dir - 90 - 25) * Math.PI / 180;
-      const radR   = (dir - 90 + 25) * Math.PI / 180;
-      const tip    = { x: cx + (r-8) * Math.cos(rad),  y: cy + (r-8) * Math.sin(rad)  };
-      const left   = { x: cx + (r-22) * Math.cos(radL), y: cy + (r-22) * Math.sin(radL) };
-      const right  = { x: cx + (r-22) * Math.cos(radR), y: cy + (r-22) * Math.sin(radR) };
-      flechaS.setAttribute('points', `${tip.x.toFixed(1)},${tip.y.toFixed(1)} ${left.x.toFixed(1)},${left.y.toFixed(1)} ${right.x.toFixed(1)},${right.y.toFixed(1)}`);
-    }
-    const dirIdx = Math.round(((dir % 360) + 360) % 360 / 22.5) % 16;
-    const dirTxt = dirs[dirIdx];
-    if (txtSD) txtSD.textContent = dirTxt + ' · ' + Math.round(dir) + '°';
-    if (leyS)  leyS.textContent  = 'Swell actual: ' + dirTxt;
-
-    // Evaluar si el swell entra bien en el arco
-    if (playa.orientArcMin != null) {
-      const inArc = playa.orientArcMin <= playa.orientArcMax
-        ? dir >= playa.orientArcMin && dir <= playa.orientArcMax
-        : dir >= playa.orientArcMin || dir <= playa.orientArcMax;
-      if (desc) desc.textContent = inArc
-        ? 'El swell de hoy entra dentro del arco óptimo de ' + playa.nombre + '.'
-        : 'El swell de hoy está fuera del ángulo ideal de ' + playa.nombre + '.';
+    const p = angPunto(dir, r - 10);
+    $('guia-aguja-swell')?.setAttribute('x2', p.x.toFixed(1));
+    $('guia-aguja-swell')?.setAttribute('y2', p.y.toFixed(1));
+    const tip = angPunto(dir, r - 8), izq = angPunto(dir - 12, r - 24), der = angPunto(dir + 12, r - 24);
+    $('guia-flecha-swell')?.setAttribute('points', [tip, izq, der].map(q => q.x.toFixed(1) + ',' + q.y.toFixed(1)).join(' '));
+    if ($('guia-txt-swell-dir')) $('guia-txt-swell-dir').textContent = dir16(dir) + ' · ' + Math.round(dir) + '°';
+    if ($('guia-leyenda-swell')) $('guia-leyenda-swell').textContent = 'Swell actual: ' + dir16(dir);
+    if (desc && v) {
+      const q = v.dirs[Math.round((((dir % 360) + 360) % 360) / 5) % v.dirs.length]?.q ?? 0;
+      desc.textContent = q >= 0.7 ? `El swell de hoy (${dir16(dir)}) entra por la mejor ventana de ${playa.nombre}.`
+        : q >= 0.35 ? `El swell de hoy (${dir16(dir)}) llega a ${playa.nombre}, pero no por su mejor ventana (${dir16(v.desde)}–${dir16(v.hasta)}).`
+        : `El swell de hoy (${dir16(dir)}) apenas entra en ${playa.nombre}: su ventana es ${dir16(v.desde)}–${dir16(v.hasta)}.`;
     }
   } else {
-    if (txtSD) txtSD.textContent = '—';
-    if (desc)  desc.textContent  = 'Carga la app con conexión para ver el swell en tiempo real.';
+    if ($('guia-txt-swell-dir')) $('guia-txt-swell-dir').textContent = '—';
+    if (desc) desc.textContent = 'Carga la app con conexión para ver el swell en tiempo real.';
   }
 }
 let mapa=null,mapaIniciado=false,capaActual=null,capaMarcadores=null;
@@ -3205,22 +2740,19 @@ let plPlayaActiva = null;
 let plDiaSeleccionado = 0; // 0 = hoy
 let plDatosCache = {}; // cache por playa+dia
 
-function plScoreColor(score) {
-  if (score >= 7) return '#3ddc84';
-  if (score >= 4) return '#ffaa44';
-  return '#ff5555';
-}
 
+// Etiqueta corta del viento para la tabla: la misma clasificación que usa el motor (atlas de costa)
 function plEtiquetaViento(velKmh, dirGrados, playa) {
-  if (velKmh < 5) return { txt:'GLASSY', color:'#aaddff' };
-  const _apertPL = ((playa.orientArcMax - playa.orientArcMin) + 360) % 360;
-  const _centroPL = (playa.orientArcMin + _apertPL / 2 + 360) % 360;
-  const diff = angleDiff(dirGrados, (_centroPL + 180) % 360);
-  if (diff <= 20)  return { txt:'OFF', color:'#3ddc84' };
-  if (diff <= 55)  return { txt:'C-OFF', color:'#88cc44' };
-  if (diff <= 100) return { txt:'CROSS', color:'#ffaa44' };
-  if (diff <= 140) return { txt:'C-ON', color:'#ff8844' };
-  return { txt:'ON', color:'#ff5555' };
+  if (velKmh == null || dirGrados == null) return { txt: '—', color: '#5a7a9a', ok: false };
+  if (velKmh < 6) return { txt: 'CALMA', color: '#aaddff', ok: true };
+  const c = MotorV1.clasificarViento(dirGrados, playa, atlasDe(playa));
+  return {
+    'OFFSHORE':  { txt: 'TIERRA',   color: '#3ddc84', ok: true },
+    'CROSS-OFF': { txt: 'T-CRUZ',   color: '#88cc44', ok: true },
+    'CROSS':     { txt: 'CRUZADO',  color: '#ffaa44', ok: false },
+    'CROSS-ON':  { txt: 'M-CRUZ',   color: '#ff8844', ok: false },
+    'ONSHORE':   { txt: 'MAR',      color: '#ff5555', ok: false },
+  }[c.etiqueta];
 }
 
 function plFlechaDir(grados) {
@@ -3344,11 +2876,15 @@ async function plCargarTabla() {
   if (fNombre) fNombre.textContent = p.nombre;
   if (fZona)   fZona.textContent   = zonaPlaya + ' · Galicia';
   if (fMap && p.lat && p.lon) {
-    // Imagen estática satélite via ArcGIS/Esri — sin controles, sin textos, sin flechas
-    // Tamaño: 800x320 px, zoom 14, centrado en coordenadas exactas de la playa
-    const w = 800, h = 320, zoom = 14;
-    fMap.src = `https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export?bbox=${p.lon-0.018},${p.lat-0.010},${p.lon+0.018},${p.lat+0.010}&bboxSR=4326&imageSR=4326&size=${w},${h}&format=png&f=image`;
+    // Imagen satélite estática (Esri), centrada en la playa y sin deformar: el recuadro en grados
+    // respeta la proporción de la imagen (800×320) a esta latitud
+    const w = 800, h = 320, dLon = 0.02;
+    const dLat = dLon * Math.cos(p.lat * Math.PI / 180) * h / w;
+    fMap.style.display = '';
+    fMap.onerror = () => { fMap.style.display = 'none'; };   // sin imagen: queda el fondo de mar dibujado
+    fMap.src = `https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/export?bbox=${p.lon-dLon},${p.lat-dLat},${p.lon+dLon},${p.lat+dLat}&bboxSR=4326&imageSR=4326&size=${w},${h}&format=png&f=image`;
   }
+
 
   // Generar selector de días
   const diasDiv = document.getElementById('pl-dias');
@@ -3481,7 +3017,7 @@ async function plCargarTabla() {
   html += `</div>`;
 
   // Ola estimada en la playa (motor v1)
-  if (MOTOR_ACTIVO === 'v1' && !marine._v0) {
+  {
     html += `<div class="pl-fila"><div class="pl-fila-label">En playa</div>`;
     horas.forEach((h, i) => {
       const e = clasificar(heights[i], dirs[i], p, periods[i], vdirs[i], vels[i], null, null, null, null, null, null, datosV1[i]);
@@ -3540,7 +3076,7 @@ async function plCargarTabla() {
   horas.forEach((h, i) => {
     if (vels[i] == null) { html += cel('—', esAhoraH(h)); return; }
     const et = plEtiquetaViento(vels[i], vdirs[i], p);
-    const ok = et.txt === 'OFF' || et.txt === 'C-OFF' || et.txt === 'GLASSY';
+    const ok = et.ok;
     html += cel(ok ? `<span class="pl-ideal-ok">✓</span>` : `<span class="pl-ideal-no">✗</span>`, esAhoraH(h));
   });
   html += `</div>`;

@@ -237,3 +237,20 @@ test('titular: con nota baja manda lo que la hunde, nunca «Sin apenas viento» 
     if (r.nota <= 6) assert.notStrictEqual(t.titulo, 'Sin apenas viento', `${n} ${h} m ${dir}°: nota ${r.nota}`);
   }
 });
+
+test('la guía usa los mismos rangos de tamaño que el motor', () => {
+  const html = require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8');
+  const c = v => String(v).replace('.', ',');
+  for (const [nivel, n] of Object.entries(M.NIVELES)) {
+    assert.ok(html.includes(`${c(n.idealMin)}–${c(n.idealMax)} m en la orilla`), `${nivel}: ${c(n.idealMin)}–${c(n.idealMax)}`);
+  }
+});
+
+test('ventana de swell calculada: coherente para playas conocidas', () => {
+  const v = (n, T = 12) => M.ventanaSwell(PLAYAS[n], ATLAS.playas[n], T);
+  // Pantín (Ferrol, abierta al NO) funciona con NO; Patos (Vigo, abierta al O) con O
+  const dentro = (w, d) => { const a = (d - w.desde + 360) % 360, b = (w.hasta - w.desde + 360) % 360; return a <= b; };
+  assert.ok(dentro(v('Pantín'), 315), 'Pantín con NO');
+  assert.ok(dentro(v('Patos'), 270), 'Patos con O');
+  assert.ok(!dentro(v('Patos'), 90), 'Patos no con E');
+});

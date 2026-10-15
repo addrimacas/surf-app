@@ -265,6 +265,26 @@
     const arena = !playa?.tipoRompiente || playa.tipoRompiente === 'beach' || playa.tipoRompiente === 'abierta';
     return arena ? f : 1 - (1 - f) * 0.4;
   }
+  // Ventana de swell de una playa, calculada (sin datos a mano): para cada dirección de procedencia,
+  // la fracción de altura que llega (exposición de la costa × refracción sobre el fondo) por la forma
+  // con la que rompe (ángulo de llegada). Da la mejor dirección y el arco donde funciona (q ≥ 70 % del máximo).
+  function ventanaSwell(playa, atlasPlaya, T = 12) {
+    const dirs = [];
+    for (let d = 0; d < 360; d += 5) {
+      const K = transmision(atlasPlaya, d, T, 'swell');
+      const k = K == null ? null : K * factorBatimetria(playa?.nombre, d, T, 'swell');
+      dirs.push({ d, k, forma: factorForma(anguloLlegada(d, T, atlasPlaya, playa), playa) });
+    }
+    const kmax = Math.max(0, ...dirs.map(x => x.k ?? 0));
+    if (!kmax) return null;
+    dirs.forEach(x => { x.q = ((x.k ?? 0) / kmax) * x.forma; });
+    const mejor = dirs.reduce((m, x) => x.q > m.q ? x : m, dirs[0]);
+    const umbral = 0.7 * mejor.q, n = dirs.length, i0 = dirs.indexOf(mejor);
+    let a = i0, b = i0;
+    while (dirs[(a - 1 + n) % n].q >= umbral && (i0 - a) < n / 2) a--;
+    while (dirs[(b + 1) % n].q >= umbral && (b - i0) < n / 2) b++;
+    return { dirs, mejor: mejor.d, desde: dirs[(a + n) % n].d, hasta: dirs[b % n].d, kmax };
+  }
   // Pendiente del oleaje s = Hs/L0p: mar joven y con bultos aunque el modelo lo llame mar de fondo
   function factorPendiente(hs, tp) {
     if (!valido(hs) || !valido(tp) || tp <= 0) return 1;
@@ -469,7 +489,8 @@
       else texto = `Podría estar grande ${paraNivel}`;
     } else if (clave === 'superficie') {
       const peor = Math.min(f.viento, f.limpieza, f.pendiente, f.cruce);
-      if (peor === f.viento) texto = ev.viento.tipo === 'off' ? 'Viento de tierra fuerte' : `Viento ${ev.viento.etiqueta.toLowerCase()} que podría estropear la ola`;
+      if (peor === f.viento) texto = ev.viento.tipo === 'off' ? 'Viento de tierra fuerte'
+        : `${{ 'CROSS': 'Viento cruzado', 'CROSS-ON': 'Viento cruzado de mar', 'ONSHORE': 'Viento de mar' }[ev.viento.etiqueta] ?? 'Viento'} que podría estropear la ola`;
       else if (peor === f.cruce) texto = 'Dos mares cruzados: picos que podrían estar desordenados';
       else if (peor === f.pendiente) texto = 'Mar todavía revuelto (ola corta y con bultos), aunque haya poco viento';
       else texto = 'Mucho mar de viento: las olas podrían estar desordenadas';
@@ -629,7 +650,7 @@
 
   const API = {
     VERSION, PERIODOS, NIVELES, CAPACIDAD_TIPO,
-    evaluar, evaluarBano, transmision, factorBatimetria, friccionBatimetria, calidadQ: (d, playa, nivel, atlas) => evaluarSurf(d, playa, nivel, atlas).Q, factorFuerza, factorForma, factorPendiente, anguloLlegada, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
+    evaluar, evaluarBano, transmision, factorBatimetria, friccionBatimetria, ventanaSwell, calidadQ: (d, playa, nivel, atlas) => evaluarSurf(d, playa, nivel, atlas).Q, factorFuerza, factorForma, factorPendiente, anguloLlegada, alturaRompiente, potencia, factorTamano, factorViento, factorCruce, factorMarea,
     clasificarViento, direccionOffshore, prepararParticiones, frase, titular, tallaTexto,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
