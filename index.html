@@ -1388,8 +1388,9 @@ const MOTOR_ACTIVO = (() => {
   let pref = 'v1';
   try {
     const q = new URLSearchParams(location.search).get('motor');
-    if (q === 'v0' || q === 'v1') localStorage.setItem('salitre_motor', q);
-    pref = localStorage.getItem('salitre_motor') || 'v1';
+    // ?motor=v0 solo para depurar en esa carga; nunca se guarda (antes se guardaba y dejaba el motor antiguo fijo)
+    localStorage.removeItem('salitre_motor');
+    if (q === 'v0') pref = 'v0';
   } catch (e) {}
   return pref === 'v1' && hayV1 ? 'v1' : 'v0';
 })();
@@ -1449,12 +1450,19 @@ async function pedirOleaje(playa, opciones = {}) {
     return u;
   };
   if (MOTOR_ACTIVO === 'v1') {
-    try {
-      const r = await fetch(construir(true));
-      const j = await r.json();
-      if (r.ok && !j.error && (j.current || j.hourly)) { j._v0 = false; return j; }
-      console.warn('[Salitre] petición v1 rechazada, se usa la antigua:', j?.reason ?? r.status);
-    } catch (e) { console.warn('[Salitre] petición v1 fallida, se usa la antigua:', e); }
+    // Un solo motor para todo: si la petición falla se reintenta, pero nunca se puntúa con el antiguo
+    let ultimo = null;
+    for (let intento = 0; intento < 3; intento++) {
+      try {
+        const r = await fetch(construir(true));
+        const j = await r.json();
+        if (r.ok && !j.error && (j.current || j.hourly)) { j._v0 = false; return j; }
+        ultimo = new Error(j?.reason ?? 'HTTP ' + r.status);
+      } catch (e) { ultimo = e; }
+      await new Promise(res => setTimeout(res, 800 * (intento + 1)));
+    }
+    console.warn('[Salitre] sin datos de oleaje:', ultimo);
+    throw ultimo || new Error('Sin datos de oleaje');
   }
   const r = await fetch(construir(false));
   if (!r.ok) throw new Error('HTTP ' + r.status);

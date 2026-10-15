@@ -15,7 +15,7 @@
 (function (global) {
   'use strict';
 
-  const VERSION = 'v2.2.0';
+  const VERSION = 'v2.3.0';
   const G = 9.81;
   const PERIODOS = [6, 8, 10, 12, 14, 16, 18];
 
@@ -194,7 +194,7 @@
 
   function factorViento(vel, dir, hb, playa, atlasPlaya) {
     if (!valido(vel) || !valido(dir)) return { f: 0.85, etiqueta: '—', tipo: null };
-    if (vel < 8) return { f: 1, etiqueta: 'GLASSY', tipo: 'glassy' };
+    if (vel < 6) return { f: 1, etiqueta: 'GLASSY', tipo: 'glassy' };
     const c = clasificarViento(dir, playa, atlasPlaya);
     let f;
     if (c.tipo === 'off') {
@@ -203,9 +203,10 @@
       f = vel <= umbral ? 1 : lerp(vel, umbral, umbral + 25, 1, 0.55);
       f *= c.base;
     } else {
-      // penalización creciente con la velocidad: nada a 8 km/h, la base a 25 km/h y más allá peor;
-      // por encima de 30 km/h cualquier viento que no sea de tierra estropea el mar
-      const s = Math.max(0, (vel - 8) / 17);
+      // penalización creciente con la velocidad: nada por debajo de 6 km/h (rizado capilar), la base a
+      // 18 km/h (≈10 nudos, donde la superficie ya está picada) y más allá peor; por encima de 30 km/h
+      // cualquier viento que no sea de tierra estropea el mar
+      const s = Math.max(0, (vel - 6) / 12);
       f = 1 - (1 - c.base) * Math.min(s, 1.6);
       if (vel > 30) f *= lerp(vel, 30, 50, 1, 0.4);
     }
@@ -390,7 +391,13 @@
     // todos los componentes ≥ 0,95. Un 9, todos ≥ 0,85. La calibración ordena; esto pone el listón absoluto.
     const peor = Math.min(tamano, forma, limpieza, fuerza, marea);
     const techo = peor >= 0.95 ? 10 : peor >= 0.85 ? 9.49 : 8.49;
-    const bruto = Math.min(notaDesdeQ(Q, nivel), minimo < 0.6 ? 1 + 6 * minimo : 10, techo);
+    // Techo por viento, igual para todos los niveles y playas: con viento de mar (o cruzado-de-mar) la
+    // superficie está picada y la sesión no puede ser buena aunque el oleaje lo sea. Velocidad efectiva
+    // = la mayor entre la media y el 60 % de la racha.
+    const vEf = Math.max(d.vientoVel ?? 0, 0.6 * (d.vientoRacha ?? 0));
+    const techoViento = viento.tipo === 'on' ? (vEf >= 25 ? 3.49 : vEf >= 15 ? 4.49 : vEf >= 10 ? 6.49 : 10)
+      : viento.tipo === 'cross' ? (vEf >= 25 ? 5.49 : vEf >= 15 ? 7.49 : vEf >= 10 ? 8.49 : 10) : 10;
+    const bruto = Math.min(notaDesdeQ(Q, nivel), minimo < 0.6 ? 1 + 6 * minimo : 10, techo, techoViento);
 
     // Período para los topes: el máximo de las particiones con altura local relevante
     const tpTopes = parts.filter(p => p.hLocal >= 0.3).reduce((m, p) => Math.max(m, p.T), 0);
