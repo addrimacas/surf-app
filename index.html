@@ -757,7 +757,7 @@
       <div class="guia-card-cuerpo" style="padding:0;">
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
           <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><circle cx="18" cy="11" r="5" stroke="#4db8ff" stroke-width="1.4" fill="none"/><path d="M10 28 Q14 20 18 20 Q22 20 26 28" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div>
-          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Bañista</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">Mar tranquilo, viento suave (&lt;15 km/h), agua y aire cálidos. El viento importa más que las olas.</div></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;margin-bottom:2px;">Bañista</div><div style="font-size:11px;color:#8899aa;line-height:1.5;">Mar tranquilo (con más de 1 m de ola en la orilla la nota no pasa de 2), poco viento y agua templada. Avisa del mar de fondo largo y del viento de tierra que arrastra flotadores.</div></div>
         </div>
         <div class="guia-nivel-row" style="border-bottom:1px solid rgba(255,255,255,0.05);">
           <div class="guia-nivel-icono"><svg viewBox="0 0 36 36" width="34" height="34"><path d="M8 28 Q14 18 20 22 Q26 26 30 20" stroke="#4db8ff" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M18 22 L20 30" stroke="#4db8ff" stroke-width="1.2" stroke-linecap="round"/><circle cx="20" cy="10" r="3.5" stroke="#4db8ff" stroke-width="1.2" fill="none"/></svg></div>
@@ -963,6 +963,13 @@ let perfilActivo = (() => {
 
 
 // UI del modal de perfil
+// Los iconos de nivel de la guía son los mismos que los del menú (una sola familia de dibujos)
+document.addEventListener('DOMContentLoaded', () => {
+  const svgs = [SVG_PERFIL_BANISTA, SVG_PERFIL_PRINCIPIANTE, SVG_PERFIL_INTERMEDIO, SVG_PERFIL_PRO];
+  document.querySelectorAll('.guia-nivel-row .guia-nivel-icono').forEach((el, i) => {
+    if (svgs[i]) el.innerHTML = `<div style="width:34px;height:34px;color:#4db8ff;">${svgs[i]}</div>`;
+  });
+});
 function initPerfilUI() {
   const btn = document.getElementById('perfil-btn');
   const overlay = document.getElementById('perfil-overlay');
