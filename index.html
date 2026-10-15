@@ -473,131 +473,49 @@
       <div class="guia-card-titulo">Tipos de viento</div>
       <div class="guia-card-cuerpo" style="padding:0;">
 
-        <!-- GLASSY -->
         <div class="guia-viento-row">
           <div class="guia-viento-svg-wrap">
-            <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <!-- Mar -->
-              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
-              <!-- Orilla -->
-              <rect x="0" y="34" width="80" height="3" fill="#4db8ff" opacity="0.35"/>
-              <!-- Tierra -->
-              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
-              <!-- Ola lisa -->
-              <path d="M5 24 Q20 18 35 24 Q50 30 65 24 Q72 21 78 24" stroke="#4db8ff" stroke-width="1.8" fill="none"/>
-              <path d="M5 28 Q20 25 35 28 Q50 31 65 28" stroke="#4db8ff" stroke-width="0.7" fill="none" opacity="0.3"/>
-            </svg>
+            <svg viewBox="0 0 80 56" class="guia-viento-svg" aria-hidden="true"><defs><linearGradient id="gv-mar-0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2a46"/><stop offset="1" stop-color="#123d63"/></linearGradient></defs><rect x="0" y="0" width="80" height="42" fill="url(#gv-mar-0)"/><polyline points="0,12.0 4,13.0 8,13.6 12,13.5 16,12.7 20,11.7 24,10.8 28,10.4 32,10.7 36,11.6 40,12.6 44,13.4 48,13.6 52,13.1 56,12.1 60,11.1 64,10.5 68,10.5 72,11.1 76,12.2 80,13.1" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.90"/><polyline points="0,22.3 4,22.6 8,22.2 12,21.2 16,20.2 20,19.5 24,19.5 28,20.1 32,21.1 36,22.1 40,22.6 44,22.4 48,21.7 52,20.6 56,19.7 60,19.4 64,19.7 68,20.6 72,21.7 76,22.4 80,22.6" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.70"/><polyline points="0,31.5 4,30.7 8,29.7 12,28.8 16,28.4 20,28.7 24,29.6 28,30.6 32,31.4 36,31.6 40,31.1 44,30.1 48,29.1 52,28.5 56,28.5 60,29.1 64,30.2 68,31.1 72,31.6 76,31.4 80,30.6" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.50"/><path d="M0 42 C20 39 40 44 60 41 C68 40 74 41 80 42 V56 H0Z" fill="#d9c08a" opacity="0.55"/><text x="76" y="52" text-anchor="end" fill="#3b2f16" font-size="6" font-weight="700" opacity="0.7">tierra</text></svg>
           </div>
           <div class="guia-viento-info">
-            <div class="guia-viento-label" style="color:#4db8ff;">GLASSY</div>
-            <div class="guia-viento-desc">Sin viento. Superficie de espejo, ola perfecta.</div>
+            <div class="guia-viento-label" style="color:#4db8ff;">CALMA <span style="font-size:10px;font-weight:600;color:#6f8aa3;letter-spacing:0.3px;">(glassy)</span></div>
+            <div class="guia-viento-desc">Sin viento (menos de 6 km/h): superficie lisa. La ola sale ordenada.</div>
           </div>
         </div>
-
-        <!-- OFFSHORE -->
         <div class="guia-viento-row">
           <div class="guia-viento-svg-wrap">
-            <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
-              <rect x="0" y="34" width="80" height="3" fill="#3ddc84" opacity="0.4"/>
-              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
-              <!-- Ola bien formada con labio -->
-              <path d="M8 22 Q22 6 36 22 Q46 34 56 22 Q64 14 74 20" stroke="#3ddc84" stroke-width="1.8" fill="none"/>
-              <!-- Spray offshore -->
-              <path d="M36 10 Q42 5 48 3" stroke="#3ddc84" stroke-width="1" opacity="0.7" stroke-linecap="round"/>
-              <path d="M36 14 Q43 10 50 8" stroke="#3ddc84" stroke-width="0.8" opacity="0.4" stroke-linecap="round"/>
-              <!-- Flechas viento: de tierra→mar (de abajo hacia arriba) -->
-              <line x1="15" y1="44" x2="15" y2="29" stroke="#3ddc84" stroke-width="1.3"/>
-              <polygon points="15,28 12,33 18,33" fill="#3ddc84"/>
-              <line x1="40" y1="44" x2="40" y2="29" stroke="#3ddc84" stroke-width="1.3"/>
-              <polygon points="40,28 37,33 43,33" fill="#3ddc84"/>
-              <line x1="65" y1="44" x2="65" y2="29" stroke="#3ddc84" stroke-width="1.3"/>
-              <polygon points="65,28 62,33 68,33" fill="#3ddc84"/>
-            </svg>
+            <svg viewBox="0 0 80 56" class="guia-viento-svg" aria-hidden="true"><defs><linearGradient id="gv-mar-1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2a46"/><stop offset="1" stop-color="#123d63"/></linearGradient></defs><rect x="0" y="0" width="80" height="42" fill="url(#gv-mar-1)"/><polyline points="0,12.0 4,13.0 8,13.6 12,13.5 16,12.7 20,11.7 24,10.8 28,10.4 32,10.7 36,11.6 40,12.6 44,13.4 48,13.6 52,13.1 56,12.1 60,11.1 64,10.5 68,10.5 72,11.1 76,12.2 80,13.1" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.90"/><polyline points="0,22.3 4,22.6 8,22.2 12,21.2 16,20.2 20,19.5 24,19.5 28,20.1 32,21.1 36,22.1 40,22.6 44,22.4 48,21.7 52,20.6 56,19.7 60,19.4 64,19.7 68,20.6 72,21.7 76,22.4 80,22.6" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.70"/><polyline points="0,31.5 4,30.7 8,29.7 12,28.8 16,28.4 20,28.7 24,29.6 28,30.6 32,31.4 36,31.6 40,31.1 44,30.1 48,29.1 52,28.5 56,28.5 60,29.1 64,30.2 68,31.1 72,31.6 76,31.4 80,30.6" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.50"/><path d="M0 42 C20 39 40 44 60 41 C68 40 74 41 80 42 V56 H0Z" fill="#d9c08a" opacity="0.55"/><text x="76" y="52" text-anchor="end" fill="#3b2f16" font-size="6" font-weight="700" opacity="0.7">tierra</text><line x1="18.0" y1="33.0" x2="18.0" y2="16.0" stroke="#3ddc84" stroke-width="1.8" stroke-linecap="round"/><polygon points="18.0,11.0 14.8,16.0 21.2,16.0" fill="#3ddc84"/><line x1="40.0" y1="33.0" x2="40.0" y2="16.0" stroke="#3ddc84" stroke-width="1.8" stroke-linecap="round"/><polygon points="40.0,11.0 36.8,16.0 43.2,16.0" fill="#3ddc84"/><line x1="62.0" y1="33.0" x2="62.0" y2="16.0" stroke="#3ddc84" stroke-width="1.8" stroke-linecap="round"/><polygon points="62.0,11.0 58.8,16.0 65.2,16.0" fill="#3ddc84"/></svg>
           </div>
           <div class="guia-viento-info">
-            <div class="guia-viento-label" style="color:#3ddc84;">OFFSHORE</div>
-            <div class="guia-viento-desc">De tierra al mar. Alisa la ola y levanta el labio. Ideal.</div>
+            <div class="guia-viento-label" style="color:#3ddc84;">DE TIERRA <span style="font-size:10px;font-weight:600;color:#6f8aa3;letter-spacing:0.3px;">(offshore)</span></div>
+            <div class="guia-viento-desc">Sopla de tierra al mar: sujeta la ola y la deja limpia. Lo mejor, si no es muy fuerte.</div>
           </div>
         </div>
-
-        <!-- CROSS-OFF -->
         <div class="guia-viento-row">
           <div class="guia-viento-svg-wrap">
-            <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
-              <rect x="0" y="34" width="80" height="3" fill="#88cc44" opacity="0.35"/>
-              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
-              <!-- Ola aceptable -->
-              <path d="M8 24 Q22 12 36 24 Q50 36 64 24 Q71 18 78 22" stroke="#88cc44" stroke-width="1.8" fill="none"/>
-              <!-- Flechas diagonal: de tierra+lateral → mar diagonal -->
-              <line x1="10" y1="46" x2="28" y2="28" stroke="#88cc44" stroke-width="1.3"/>
-              <polygon points="28,28 22,30 26,36" fill="#88cc44"/>
-              <line x1="42" y1="46" x2="60" y2="28" stroke="#88cc44" stroke-width="1.3"/>
-              <polygon points="60,28 54,30 58,36" fill="#88cc44"/>
-            </svg>
+            <svg viewBox="0 0 80 56" class="guia-viento-svg" aria-hidden="true"><defs><linearGradient id="gv-mar-2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2a46"/><stop offset="1" stop-color="#123d63"/></linearGradient></defs><rect x="0" y="0" width="80" height="42" fill="url(#gv-mar-2)"/><polyline points="0,12.0 4,13.1 8,14.0 12,13.6 16,13.2 20,11.7 24,10.9 28,10.3 32,10.3 36,11.4 40,12.1 44,13.4 48,13.4 52,13.3 56,12.4 60,11.4 64,10.9 68,10.5 72,11.3 76,11.9 80,12.9" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.90"/><polyline points="0,22.5 4,22.3 8,22.1 12,20.8 16,19.9 20,19.3 24,19.3 28,20.3 32,21.1 36,22.5 40,22.8 44,22.7 48,21.8 52,20.4 56,19.7 60,18.9 64,19.6 68,20.3 72,21.6 76,22.6 80,22.7" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.70"/><polyline points="0,31.5 4,30.7 8,30.0 12,29.1 16,28.6 20,29.1 24,29.5 28,30.7 32,31.1 36,31.3 40,30.8 44,29.8 48,29.2 52,28.4 56,28.8 60,29.4 64,30.5 68,31.4 72,31.6 76,31.5 80,30.2" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.50"/><path d="M0 42 C20 39 40 44 60 41 C68 40 74 41 80 42 V56 H0Z" fill="#d9c08a" opacity="0.55"/><text x="76" y="52" text-anchor="end" fill="#3b2f16" font-size="6" font-weight="700" opacity="0.7">tierra</text><line x1="10.9" y1="30.4" x2="21.9" y2="17.4" stroke="#88cc44" stroke-width="1.8" stroke-linecap="round"/><polygon points="25.1,13.6 19.4,15.3 24.3,19.5" fill="#88cc44"/><line x1="32.9" y1="30.4" x2="43.9" y2="17.4" stroke="#88cc44" stroke-width="1.8" stroke-linecap="round"/><polygon points="47.1,13.6 41.4,15.3 46.3,19.5" fill="#88cc44"/><line x1="54.9" y1="30.4" x2="65.9" y2="17.4" stroke="#88cc44" stroke-width="1.8" stroke-linecap="round"/><polygon points="69.1,13.6 63.4,15.3 68.3,19.5" fill="#88cc44"/></svg>
           </div>
           <div class="guia-viento-info">
-            <div class="guia-viento-label" style="color:#88cc44;">CROSS-OFF</div>
-            <div class="guia-viento-desc">Cruzado tirando a offshore. Aceptable.</div>
+            <div class="guia-viento-label" style="color:#88cc44;">CRUZADO-TIERRA <span style="font-size:10px;font-weight:600;color:#6f8aa3;letter-spacing:0.3px;">(cross-off)</span></div>
+            <div class="guia-viento-desc">Cruzado, tirando a tierra. Casi tan bueno como el de tierra.</div>
           </div>
         </div>
-
-        <!-- CROSS -->
         <div class="guia-viento-row">
           <div class="guia-viento-svg-wrap">
-            <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
-              <rect x="0" y="34" width="80" height="3" fill="#ffaa44" opacity="0.35"/>
-              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
-              <!-- Ola pierde forma -->
-              <path d="M8 24 Q20 16 32 24 Q42 30 54 22 Q64 16 76 22" stroke="#ffaa44" stroke-width="1.8" fill="none" opacity="0.9"/>
-              <!-- Flechas lateral puro: de izquierda a derecha -->
-              <line x1="4" y1="14" x2="20" y2="14" stroke="#ffaa44" stroke-width="1.3"/>
-              <polygon points="20,14 16,11 16,17" fill="#ffaa44"/>
-              <line x1="30" y1="20" x2="46" y2="20" stroke="#ffaa44" stroke-width="1.3"/>
-              <polygon points="46,20 42,17 42,23" fill="#ffaa44"/>
-            </svg>
+            <svg viewBox="0 0 80 56" class="guia-viento-svg" aria-hidden="true"><defs><linearGradient id="gv-mar-3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2a46"/><stop offset="1" stop-color="#123d63"/></linearGradient></defs><rect x="0" y="0" width="80" height="42" fill="url(#gv-mar-3)"/><polyline points="0,12.0 4,13.2 8,14.8 12,13.9 16,14.1 20,11.8 24,11.0 28,10.0 32,9.6 36,11.0 40,11.2 44,13.3 48,13.1 52,13.7 56,13.0 60,11.8 64,11.9 68,10.5 72,11.8 76,11.4 80,12.5" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.90"/><polyline points="0,22.9 4,21.7 8,21.9 12,19.9 16,19.4 20,19.0 24,19.0 28,20.9 32,21.3 36,23.5 40,23.2 44,23.2 48,22.0 52,20.0 56,19.5 60,17.9 64,19.3 68,19.6 72,21.5 76,22.8 80,22.9" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.70"/><polyline points="0,31.7 4,30.6 8,30.5 12,29.9 16,29.0 20,29.9 24,29.3 28,30.9 32,30.4 36,30.7 40,30.3 44,29.0 48,29.3 52,28.1 56,29.6 60,29.8 64,31.2 68,32.1 72,31.6 76,31.8 80,29.5" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.50"/><path d="M0 42 C20 39 40 44 60 41 C68 40 74 41 80 42 V56 H0Z" fill="#d9c08a" opacity="0.55"/><text x="76" y="52" text-anchor="end" fill="#3b2f16" font-size="6" font-weight="700" opacity="0.7">tierra</text><line x1="12" y1="15" x2="31" y2="15" stroke="#e6a817" stroke-width="1.8" stroke-linecap="round"/><polygon points="36,15 31,11.8 31,18.2" fill="#e6a817"/><line x1="44" y1="29" x2="63" y2="29" stroke="#e6a817" stroke-width="1.8" stroke-linecap="round"/><polygon points="68,29 63,25.8 63,32.2" fill="#e6a817"/></svg>
           </div>
           <div class="guia-viento-info">
-            <div class="guia-viento-label" style="color:#ffaa44;">CROSS</div>
-            <div class="guia-viento-desc">Perpendicular a la costa. La ola pierde forma.</div>
+            <div class="guia-viento-label" style="color:#e6a817;">CRUZADO <span style="font-size:10px;font-weight:600;color:#6f8aa3;letter-spacing:0.3px;">(cross)</span></div>
+            <div class="guia-viento-desc">Paralelo a la costa: la ola pierde forma. Con 15 km/h o más, la nota no pasa de 7.</div>
           </div>
         </div>
-
-        <!-- ONSHORE -->
         <div class="guia-viento-row" style="border-bottom:none;">
           <div class="guia-viento-svg-wrap">
-            <svg viewBox="0 0 80 56" class="guia-viento-svg">
-              <rect x="0" y="0" width="80" height="34" fill="#071828" opacity="0.6"/>
-              <rect x="0" y="34" width="80" height="3" fill="#ff5555" opacity="0.35"/>
-              <rect x="0" y="37" width="80" height="19" fill="#0d2137" opacity="0.8"/>
-              <text x="40" y="48" text-anchor="middle" fill="#2a4a6a" font-size="6">tierra</text>
-              <text x="40" y="9" text-anchor="middle" fill="#3a6a8a" font-size="6">mar</text>
-              <!-- Ola rota, fea -->
-              <path d="M5 22 Q14 18 22 22 Q28 26 36 20 Q44 14 52 20 Q60 26 70 20" stroke="#ff5555" stroke-width="1.5" fill="none" opacity="0.8"/>
-              <!-- Espuma desordenada -->
-              <path d="M6 27 Q10 25 14 27 Q18 29 22 27" stroke="#ff5555" stroke-width="0.8" fill="none" opacity="0.5" stroke-dasharray="1,2"/>
-              <!-- Flechas: del mar → tierra (de arriba hacia abajo) -->
-              <line x1="15" y1="4" x2="15" y2="29" stroke="#ff5555" stroke-width="1.3"/>
-              <polygon points="15,30 12,25 18,25" fill="#ff5555"/>
-              <line x1="40" y1="4" x2="40" y2="29" stroke="#ff5555" stroke-width="1.3"/>
-              <polygon points="40,30 37,25 43,25" fill="#ff5555"/>
-              <line x1="65" y1="4" x2="65" y2="29" stroke="#ff5555" stroke-width="1.3"/>
-              <polygon points="65,30 62,25 68,25" fill="#ff5555"/>
-            </svg>
+            <svg viewBox="0 0 80 56" class="guia-viento-svg" aria-hidden="true"><defs><linearGradient id="gv-mar-4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2a46"/><stop offset="1" stop-color="#123d63"/></linearGradient></defs><rect x="0" y="0" width="80" height="42" fill="url(#gv-mar-4)"/><polyline points="0,12.0 4,13.5 8,16.1 12,14.4 16,15.5 20,11.9 24,11.3 28,9.6 32,8.5 36,10.5 40,9.7 44,13.3 48,12.7 52,14.3 56,13.9 60,12.5 64,13.2 68,10.6 72,12.4 76,10.7 80,11.8" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.90"/><polyline points="0,23.5 4,20.8 8,21.6 12,18.5 16,18.7 20,18.4 24,18.5 28,21.7 32,21.5 36,25.0 40,23.8 44,24.0 48,22.3 52,19.4 56,19.3 60,16.4 64,18.8 68,18.6 72,21.3 76,23.2 80,23.2" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.70"/><polyline points="0,31.9 4,30.5 8,31.3 12,30.9 16,29.6 20,31.2 24,29.1 28,31.2 32,29.5 36,29.9 40,29.5 44,27.9 48,29.4 52,27.7 56,30.6 60,30.4 64,32.2 68,33.1 72,31.6 76,32.2 80,28.4" fill="none" stroke="#9fd4ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.50"/><path d="M0 42 C20 39 40 44 60 41 C68 40 74 41 80 42 V56 H0Z" fill="#d9c08a" opacity="0.55"/><text x="76" y="52" text-anchor="end" fill="#3b2f16" font-size="6" font-weight="700" opacity="0.7">tierra</text><line x1="18.0" y1="11.0" x2="18.0" y2="28.0" stroke="#ff5555" stroke-width="1.8" stroke-linecap="round"/><polygon points="18.0,33.0 21.2,28.0 14.8,28.0" fill="#ff5555"/><line x1="40.0" y1="11.0" x2="40.0" y2="28.0" stroke="#ff5555" stroke-width="1.8" stroke-linecap="round"/><polygon points="40.0,33.0 43.2,28.0 36.8,28.0" fill="#ff5555"/><line x1="62.0" y1="11.0" x2="62.0" y2="28.0" stroke="#ff5555" stroke-width="1.8" stroke-linecap="round"/><polygon points="62.0,33.0 65.2,28.0 58.8,28.0" fill="#ff5555"/></svg>
           </div>
           <div class="guia-viento-info">
-            <div class="guia-viento-label" style="color:#ff5555;">ONSHORE</div>
-            <div class="guia-viento-desc">Del mar a tierra. Destroza la ola antes de que forme.</div>
+            <div class="guia-viento-label" style="color:#ff5555;">DE MAR <span style="font-size:10px;font-weight:600;color:#6f8aa3;letter-spacing:0.3px;">(onshore)</span></div>
+            <div class="guia-viento-desc">Sopla del mar a tierra: rompe la ola antes de tiempo. Con 10 km/h o más, la nota no pasa de 6.</div>
           </div>
         </div>
       </div>
@@ -2765,13 +2683,15 @@ function plEtiquetaViento(velKmh, dirGrados, playa) {
   if (velKmh == null || dirGrados == null) return { txt: '—', color: '#5a7a9a', ok: false };
   if (velKmh < 6) return { txt: 'CALMA', color: '#aaddff', ok: true };
   const c = MotorV1.clasificarViento(dirGrados, playa, atlasDe(playa));
-  return {
+  const flojo = velKmh < 10;   // por debajo de 10 km/h apenas resta: color apagado, no de alarma
+  const r = {
     'OFFSHORE':  { txt: 'TIERRA',   color: '#3ddc84', ok: true },
     'CROSS-OFF': { txt: 'T-CRUZ',   color: '#88cc44', ok: true },
     'CROSS':     { txt: 'CRUZADO',  color: '#ffaa44', ok: false },
     'CROSS-ON':  { txt: 'M-CRUZ',   color: '#ff8844', ok: false },
     'ONSHORE':   { txt: 'MAR',      color: '#ff5555', ok: false },
   }[c.etiqueta];
+  return flojo && !r.ok ? { ...r, color: '#b9a27a', ok: true } : r;
 }
 
 function plFlechaDir(grados) {
