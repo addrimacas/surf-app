@@ -2109,15 +2109,16 @@ function pedirMareaDia(port, yyyymmdd) {
  * Curva de marea de ayer, hoy y mañana (hora local española, como la devuelve el IHM).
  * Devuelve fracEn(fecha): 0 = bajamar, 1 = pleamar, según el ciclo en curso; null fuera de rango.
  */
-async function curvaMarea(playa) {
+async function curvaMarea(playa, centro = 0) {
   const port = playa.portIHM || 'coruna';
   const hoy = new Date();
   const f = d => d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-  const dias = [-1, 0, 1].map(o => new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + o));
+  // tres días centrados en «centro» (0 = hoy); los minutos se cuentan siempre desde la medianoche de hoy
+  const dias = [centro - 1, centro, centro + 1].map(o => new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + o));
   const datos = await Promise.all(dias.map(d => pedirMareaDia(port, f(d))));
   const toMin = m => { const [h, mm] = m.hora.split(':').map(Number); return h * 60 + mm; };
   const puntos = datos.flatMap((d, k) => (d?.mareas?.datos?.marea ?? [])
-    .map(m => ({ min: toMin(m) + (k - 1) * 1440, h: parseFloat(m.altura) })))
+    .map(m => ({ min: toMin(m) + (centro + k - 1) * 1440, h: parseFloat(m.altura) })))
     .filter(p => p.h > 0.05).sort((a, b) => a.min - b.min);
   if (puntos.length < 3) return null;
   const medianoche = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()).getTime();
@@ -2150,10 +2151,10 @@ async function curvaMarea(playa) {
 }
 // Curvas de marea por puerto (varias playas comparten puerto)
 const _curvasPuerto = new Map();
-function curvaMareaPuerto(playa) {
-  const port = playa.portIHM || 'coruna';
-  if (!_curvasPuerto.has(port)) _curvasPuerto.set(port, curvaMarea(playa).catch(() => null));
-  return _curvasPuerto.get(port);
+function curvaMareaPuerto(playa, centro = 0) {
+  const k = (playa.portIHM || 'coruna') + ':' + centro;
+  if (!_curvasPuerto.has(k)) _curvasPuerto.set(k, curvaMarea(playa, centro).catch(() => null));
+  return _curvasPuerto.get(k);
 }
 const mareaDe = (curva, ts) => { const fr = curva?.fracEn(new Date(ts * 1000)); return fr == null ? null : { frac: fr }; };
 
@@ -2829,9 +2830,9 @@ const arrLote = x => Array.isArray(x) ? x : (x ? [x] : []);
 async function pedirLote(playas, { hourly = false, dias = 2 } = {}) {
   const VV = 'wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,is_day';
   const urlMar = cs => `https://marine-api.open-meteo.com/v1/marine?latitude=${cs.map(c => c.lat).join(',')}&longitude=${cs.map(c => c.lon).join(',')}`
-    + `&timeformat=unixtime&models=${MODELO_OLEAJE}` + (hourly ? `&hourly=${VARS_OLEAJE_V1}&forecast_days=${dias}` : `&current=${VARS_OLEAJE_V1}`);
+    + `&timeformat=unixtime&models=${MODELO_OLEAJE}` + `&current=${VARS_OLEAJE_V1}` + (hourly ? `&hourly=${VARS_OLEAJE_V1}&forecast_days=${dias}` : '');
   const urlViento = ps => `https://api.open-meteo.com/v1/forecast?latitude=${ps.map(p => p.lat).join(',')}&longitude=${ps.map(p => p.lon).join(',')}`
-    + `&timeformat=unixtime&wind_speed_unit=kmh` + (hourly ? `&hourly=${VV}&forecast_days=${dias}` : `&current=${VV}`);
+    + `&timeformat=unixtime&wind_speed_unit=kmh&current=${VV}` + (hourly ? `&hourly=${VV}&forecast_days=${dias}` : '');
   const pedir = async ps => {
     const [m, v] = await Promise.all([
       fetch(urlMar(ps.map(coordsOleaje))).then(r => r.json()),
@@ -2951,7 +2952,10 @@ async function cargarMejoresOlas() {
   const pocoUtil = filas[0].f.estado.score <= 3;
   contenedor.innerHTML = cabecera + (pocoUtil ? `<div style="font-size:12px;color:#8899aa;padding:6px 0;">${_dondeDia === 'hoy' ? 'Hoy' : 'Mañana'} no parece buen día en ninguna playa cercana para tu nivel. Estas son las menos malas:</div>` : '') +
     filas.map(({ r, f, km }) => {
-      const e = f.estado, v1 = e.v1;
+      // Hoy, el círculo es la nota de AHORA (la misma que se ve al abrir la playa); la mejor franja va en el texto
+      const ahoraE = _dondeDia === 'hoy' ? estadoAhora(r) : null;
+      const e = ahoraE && ahoraE.score ? ahoraE : f.estado, v1 = f.estado.v1;
+      const etiquetaCirculo = ahoraE && ahoraE.score ? 'ahora' : 'mejor';
       const tl = v1 ? MotorV1.titular(v1) : { titulo: e.texto, detalle: '' };
       const frase = tl.titulo, veredicto = tl.detalle;
       const aviso = v1?.avisos?.[0];
@@ -2960,12 +2964,15 @@ async function cargarMejoresOlas() {
       return `
       <div onclick='seleccionarPlayaPorNombre(${JSON.stringify(r.playa.nombre)})'
         style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:0.5px solid rgba(255,255,255,0.06);cursor:pointer;">
-        <div style="width:38px;height:38px;border-radius:50%;background:${e.color};box-shadow:0 0 10px ${e.color}88;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <span style="font-size:15px;font-weight:800;color:white;">${e.score}</span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;">
+          <div style="width:38px;height:38px;border-radius:50%;background:${e.color};box-shadow:0 0 10px ${e.color}88;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:15px;font-weight:800;color:white;">${e.score}</span>
+          </div>
+          <span style="font-size:9px;color:#8899aa;">${etiquetaCirculo}</span>
         </div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${r.playa.nombre}${r.playa.nombre === playaActiva.nombre ? ' <span style="font-size:10px;color:#8899aa;font-weight:500;">(la que ves)</span>' : ''} ${badge}</div>
-          <div style="font-size:12px;color:#ccddee;margin-top:2px;">Mejor de ${f.desde} a ${f.hasta} h · ${frase}</div>
+          <div style="font-size:12px;color:#ccddee;margin-top:2px;">Mejor: ${f.estado.score} de ${f.desde} a ${f.hasta} h · ${frase}</div>
           <div style="font-size:11px;color:#8899aa;margin-top:1px;">${km} km${veredicto ? ' · ' + veredicto : ''}${v1?.hb != null ? ' · ~' + fmt(v1.hb) + ' m en la orilla' : ''}</div>
           ${aviso ? `<div style="font-size:11px;color:#ff8844;margin-top:2px;">⚠ ${aviso}</div>` : ''}
         </div>
@@ -3384,9 +3391,9 @@ async function plCargarTabla() {
   ahora2.setDate(ahora2.getDate() + diaOffset);
   const diaStr = ahora2.toDateString();
 
-  const curvaT = await curvaMareaPuerto(p).catch(() => null);
+  const curvaT = await curvaMareaPuerto(p, diaOffset).catch(() => null);
   // Filtrar horas del día seleccionado, cada 2h
-  const horas = [], heights = [], periods = [], dirs = [], vels = [], vdirs = [], wcodes = [], temps = [], datosV1 = [];
+  const horas = [], tss = [], heights = [], periods = [], dirs = [], vels = [], vdirs = [], wcodes = [], temps = [], datosV1 = [];
   const ahoraTs = Date.now() / 1000;
 
   for (let i = 0; i < marine.hourly.time.length; i++) {
@@ -3398,7 +3405,7 @@ async function plCargarTabla() {
       const hAhora = new Date().getHours(), dh = d.getHours() - hAhora;
       if (dh < 0 || dh % 2 !== 0) continue;
     } else if (d.getHours() % 2 !== 0) continue;
-    horas.push(d.getHours());
+    horas.push(d.getHours()); tss.push(ts);
     heights.push(marine.hourly.wave_height[i]);
     periods.push(periodoDe(marine.hourly, i));
     dirs.push(marine.hourly.wave_direction[i]);
@@ -3536,8 +3543,10 @@ async function plCargarTabla() {
   // ── MAREA ──
   html += `<div class="pl-seccion"><div class="pl-seccion-label">Marea</div><div class="pl-seccion-linea"></div></div>`;
   html += `<div class="pl-fila"><div class="pl-fila-label">Altura</div>`;
-  horas.forEach((h) => {
-    html += cel(`<div class="pl-marea-h">—</div><div class="pl-marea-tipo">·</div>`, esAhoraH(h));
+  horas.forEach((h, i) => {
+    const m = curvaT?.infoEn(new Date(tss[i] * 1000));
+    html += cel(m ? `<div class="pl-marea-h">${m.h.toFixed(1)} m</div><div class="pl-marea-tipo">${m.subiendo ? '↑ sube' : '↓ baja'}</div>`
+                  : `<div class="pl-marea-h">—</div><div class="pl-marea-tipo">·</div>`, esAhoraH(h));
   });
   html += `</div>`;
 
