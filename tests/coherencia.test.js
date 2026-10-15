@@ -268,3 +268,10 @@ test('titular: viento de mar flojo no suena a alarma; fuerte sí y la nota baja'
   assert.match(M.frase(flojo), /flojo/);
   assert.ok(fuerte.nota <= 4, 'con 20 km/h de mar: ' + fuerte.nota);
 });
+
+test('un 9 exige todos los componentes ≥ 0,85 (barrido de playas y mares)', () => {
+  for (const n of Object.keys(PLAYAS)) for (const [h, T, d] of [[1.5, 12, 300], [2.2, 14, 320], [1.0, 10, 270]]) {
+    const r = ev(n, mar(h, T, d), 'pro'), f = r.factores;
+    if (r.nota >= 9) assert.ok(Math.min(f.tamano, f.forma, f.superficie, f.fuerza, f.marea) >= 0.85, `${n} ${h}/${T}/${d}: ${r.nota}`);
+  }
+});

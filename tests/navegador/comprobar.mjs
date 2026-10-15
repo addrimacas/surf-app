@@ -96,6 +96,7 @@ await caso('datos reales (registro del 15-oct, 12 h): notas repartidas y coheren
     assert.ok(distintas >= 5, `${nivel}: solo ${distintas} notas distintas`);
     for (const x of r) {
       assert.ok(x.s >= 1 && x.s <= 10, `${nivel} ${x.n}: ${x.s}`);
+      if (x.s >= 9 && x.f.tamano != null) assert.ok(Math.min(x.f.tamano, x.f.forma, x.f.superficie, x.f.fuerza, x.f.marea) >= 0.85, `${nivel} ${x.n}: 9 sin todo ≥ 0,85`);
       if (x.s === 10) assert.ok(Math.min(x.f.tamano, x.f.forma, x.f.superficie, x.f.fuerza, x.f.marea) >= 0.95, `${nivel} ${x.n}: 10 sin todo perfecto`);
     }
   }
