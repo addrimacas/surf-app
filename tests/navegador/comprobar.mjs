@@ -91,6 +91,7 @@ await caso('datos reales (registro del 15-oct, 12 h): notas repartidas y coheren
       return lote.map(x => { const e = estadoAhora(x); return { n: x.playa.nombre, s: e.score, f: e.v1?.factores }; });
     }, nivel);
     assert.equal(r.length, 60, nivel + ': playas ' + r.length);
+    if (nivel === 'principiante') assert.ok(/\d+\.\d°C agua/i.test(await pag.evaluate(() => document.body.innerText)), 'falta la temperatura del agua');
     const distintas = new Set(r.map(x => x.s)).size;
     assert.ok(distintas >= 5, `${nivel}: solo ${distintas} notas distintas`);
     for (const x of r) {

@@ -61,7 +61,9 @@ function desdeRegistro(u, tipo) {
     const ahora = (AHORA ?? Date.now()) / 1000;
     let iA = 0; t.forEach((x, i) => { if (Math.abs(x - ahora) < Math.abs(t[iA] - ahora)) iA = i; });
     const val = (v, i) => v === 'is_day' ? (new Date(t[i] * 1000).getHours() >= 8 && new Date(t[i] * 1000).getHours() < 20 ? 1 : 0)
-      : v === 'temperature_2m' ? 17 : (src[v]?.[i] ?? null);
+      : v === 'temperature_2m' ? 17
+      : v === 'sea_surface_temperature' && !u.searchParams.get('models') ? 16.5   // petición aparte, sin modelo
+      : (src[v]?.[i] ?? null);
     const o = { latitude: +lats[k], longitude: +lons[k] };
     const h = u.searchParams.get('hourly'); if (h) { o.hourly = { time: t.slice() }; h.split(',').forEach(v => o.hourly[v] = t.map((_, i) => val(v, i))); }
     const c = u.searchParams.get('current'); if (c) { o.current = { time: t[iA] }; c.split(',').forEach(v => o.current[v] = val(v, iA)); }

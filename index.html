@@ -1190,6 +1190,17 @@ async function pedirOleaje(playa, opciones = {}) {
   throw ultimo || new Error('Sin datos de oleaje');
 }
 
+async function pedirTempAgua(playa) {
+  const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  if (ctl) setTimeout(() => ctl.abort(), 5000);
+  try {
+    const r = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${playa.lat}&longitude=${playa.lon}&current=sea_surface_temperature`, ctl ? { signal: ctl.signal } : {});
+    const j = await r.json();
+    const t = j?.current?.sea_surface_temperature;
+    return typeof t === 'number' ? t : null;
+  } catch (e) { return null; }
+}
+
 // Datos de una hora (o del "current" si i es null) en el formato que espera MotorV1.evaluar
 function datosMotor(fuente, i, viento = {}, extra = {}) {
   if (!fuente) return null;
@@ -2061,7 +2072,9 @@ async function cargarInicio() {
     const altura      = c.wave_height;
     const periodo     = periodoDe(c, null);
     const dirSwell    = c.wave_direction;
-    const tempAgua    = c.sea_surface_temperature;
+    // El modelo de oleaje fijado (MFWAM) no trae temperatura del agua: se pide aparte, sin modelo,
+    // en la propia playa y con tope de tiempo (si no llega, la tarjeta pone «--»)
+    const tempAgua    = c.sea_surface_temperature ?? await pedirTempAgua(playaActiva);
     const tempAire    = a.temperature_2m;
     const velViento   = a.wind_speed_10m;
     const dirViento   = a.wind_direction_10m;
