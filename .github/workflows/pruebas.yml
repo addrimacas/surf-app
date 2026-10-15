@@ -1,0 +1,23 @@
+name: Pruebas (motor y app en navegador)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: npm ci || npm i
+      - name: Motor, coherencia y servicio beta
+        run: npm test
+      - name: Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+      - name: App en navegador (datos simulados)
+        run: npm run test:navegador

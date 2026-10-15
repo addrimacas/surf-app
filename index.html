@@ -82,13 +82,13 @@
     .prev-tab.activo { background:#0a3050; border-color:#4db8ff; color:#4db8ff; }
     .prev-hoy { overflow-x:auto; padding-bottom:8px; }
     .prev-hoy-inner { display:flex; gap:8px; width:max-content; }
-    .prev-card { width:78px; background:rgba(255,255,255,0.04); border-radius:12px; padding:10px 6px; text-align:center; border:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
+    .prev-card { width:86px; background:rgba(255,255,255,0.04); border-radius:12px; padding:10px 6px; text-align:center; border:1px solid rgba(255,255,255,0.06); flex-shrink:0; }
     .prev-card.actual { background:rgba(30,80,140,0.4); border:2px solid #4db8ff; }
     .prev-card .pc-fecha { font-size:10px; color:#6688aa; margin-bottom:6px; line-height:1.4; }
     .prev-card.actual .pc-fecha { color:#aaccff; }
     .prev-card .pc-semaforo { width:10px; height:10px; border-radius:50%; margin:0 auto 6px; }
     .prev-card .pc-altura { font-size:14px; font-weight:700; color:#4db8ff; }
-    .prev-card .pc-detalle { font-size:10px; color:#6688aa; margin-top:3px; }
+    .prev-card .pc-detalle { font-size:9.5px; color:#6688aa; margin-top:3px; white-space:nowrap; letter-spacing:-0.2px; }
     .prev-dias { display:flex; flex-direction:column; gap:8px; }
     .prev-dia-bloque { background:rgba(255,255,255,0.04); border-radius:12px; border:1px solid rgba(255,255,255,0.06); overflow:hidden; }
     .prev-dia-header { padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:12px; font-weight:600; color:#aabbcc; }
@@ -104,8 +104,8 @@
     .prev-fila .pfi-dia { width:52px; font-size:12px; color:#aabbcc; font-weight:600; flex-shrink:0; }
     .prev-fila .pfi-semaforo { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
     .prev-fila .pfi-altura { font-size:14px; font-weight:700; color:#4db8ff; flex:1; }
-    .prev-fila .pfi-detalle { font-size:11px; color:#6688aa; width:60px; text-align:right; flex-shrink:0; }
-    .prev-fila .pfi-estado { font-size:11px; font-weight:600; width:80px; text-align:right; flex-shrink:0; }
+    .prev-fila .pfi-detalle { font-size:11px; color:#6688aa; width:92px; text-align:right; flex-shrink:0; white-space:nowrap; }
+    .prev-fila .pfi-estado { font-size:11px; font-weight:600; width:64px; text-align:right; flex-shrink:0; }
     footer { text-align:center; font-size:12px; color:rgba(255,255,255,0.25); padding:10px 0 20px; }
     .actualizando { text-align:center; font-size:14px; color:#8899aa; padding:60px 20px; }
     /* Tipografía marca (estilo logo salitre): Comfortaa + degradado horizontal en azules */
@@ -1206,6 +1206,11 @@ function datosMotor(fuente, i, viento = {}, extra = {}) {
 }
 const diasDesdeAhora = ts => Math.max(0, (ts * 1000 - Date.now()) / 86400000);
 
+// Insignia redonda con la nota (misma pieza en previsión, listas y mapa)
+function notaBadge(score, t = 22) {
+  const c = colorNota(score);
+  return `<span style="display:inline-flex;align-items:center;justify-content:center;width:${t}px;height:${t}px;border-radius:50%;background:${c};box-shadow:0 0 6px ${c}88;color:white;font-weight:800;font-size:${Math.round(t * 0.52)}px;line-height:1;">${score ? Math.round(score) : '–'}</span>`;
+}
 // Color de la nota: una sola escala para toda la app (círculos, tablas, mapa)
 function colorNota(score) {
   if (!score) return '#888';
@@ -2273,16 +2278,9 @@ function renderPrevision(marine, atmo, ahora, mareaEn = () => null) {
     );
   }
 
-  // Frases cortas para la vista de 10 días
-  const FRASES = {
-    banista:      ['Mal día','Aceptable','Buen día','Muy bueno','Perfecto'],
-    principiante: ['No apto','Justo','Bueno','Muy bueno','Ideal'],
-    intermedio:   ['Sin olas','Flojo','Decente','Bueno','Muy bueno'],
-    pro:          ['Nada','Marginal','Funciona','Bueno','Destacado'],
-  };
+  // Frases cortas: las mismas palabras que la escala de la guía (1–3, 4–5, 6–7, 8–9, 10)
   function textoCorto(score) {
-    const idx = score <= 3 ? 0 : score <= 5 ? 1 : score <= 7 ? 2 : score < 9.5 ? 3 : 4;
-    return (FRASES[perfilActivo] ?? FRASES.pro)[idx];
+    return score <= 3 ? 'No merece' : score <= 5 ? 'Flojo' : score <= 7 ? 'Bueno' : score < 9.5 ? 'Muy bueno' : 'Perfecto';
   }
 
   // ── HOY ────────────────────────────────────────────────────────
@@ -2294,14 +2292,14 @@ function renderPrevision(marine, atmo, ahora, mareaEn = () => null) {
     if (hora < 6 || hora > 22 || hora % 2 !== 0) continue;
     if (diffH < -1 || diffH > 24) continue;
     const esActual = Math.abs(diffH) < 1;
-    const { score, color } = clasificarHorario(i);
+    const { score, v1 } = clasificarHorario(i);
     hoyItems.push(`
       <div class="prev-card ${esActual ? 'actual' : ''}">
         <div style="margin-bottom:4px;">${iconoPorHora(hora)}</div>
         <div class="pc-fecha">${fmtFecha(tiempos[i])}</div>
-        <div class="pc-semaforo" style="background:${color};box-shadow:0 0 6px ${color}88;"></div>
-        <div class="pc-altura">${fmt(alturas[i])}m</div>
-        <div class="pc-detalle">${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
+        <div style="margin:4px 0 2px;">${notaBadge(score, 24)}</div>
+        <div class="pc-altura">~${v1 ? fmt(v1.hb) : '—'}m</div>
+        <div class="pc-detalle">${fmt(alturas[i])}m · ${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
       </div>`);
   }
 
@@ -2317,14 +2315,14 @@ function renderPrevision(marine, atmo, ahora, mareaEn = () => null) {
     if (!diasMap[key]) diasMap[key] = { label: fmtDia(tiempos[i]), franjas: {} };
     const franja = hora === 8 ? 'Mañana' : hora === 14 ? 'Tarde' : 'Tarde-noche';
     const icono  = hora === 8 ? SVG_AMANECER : hora === 14 ? SVG_DIA : SVG_ATARDECER;
-    const { score, color } = clasificarHorario(i);
+    const { score, v1 } = clasificarHorario(i);
     diasMap[key].franjas[franja] = `
       <div class="prev-franja">
         <div style="margin-bottom:3px;">${icono}</div>
         <div class="pf-label">${franja}</div>
-        <div class="pf-semaforo" style="background:${color};"></div>
-        <div class="pf-altura">${fmt(alturas[i])}m</div>
-        <div class="pf-detalle">${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
+        <div style="margin:4px 0 2px;">${notaBadge(score, 22)}</div>
+        <div class="pf-altura">~${v1 ? fmt(v1.hb) : '—'}m</div>
+        <div class="pf-detalle">${fmt(alturas[i])}m · ${rnd(periodos[i])}s · ${dirTxt(dirs[i])}</div>
       </div>`;
   }
   const tresItems = Object.values(diasMap).map(dia => `
@@ -2345,29 +2343,22 @@ function renderPrevision(marine, atmo, ahora, mareaEn = () => null) {
     const key  = tt.toDateString();
     const diffD = (tt - ahora) / 86400000;
     if (diffD < 0 || diffD > 10) continue;
-    if (!diezMap[key]) diezMap[key] = { label: fmtDia(tiempos[i]), scores: [], maxH: 0, periodo: 0, dir: 0 };
-    if (hora >= 10 && hora <= 18) {
-      const { score } = clasificarHorario(i);
-      diezMap[key].scores.push(score);
-      if ((alturas[i] || 0) > diezMap[key].maxH) {
-        diezMap[key].maxH    = alturas[i];
-        diezMap[key].periodo = periodos[i];
-        diezMap[key].dir     = dirs[i];
-      }
+    if (!diezMap[key]) diezMap[key] = { label: fmtDia(tiempos[i]), mejor: null };
+    if (hora >= 8 && hora <= 20) {
+      const e = clasificarHorario(i);
+      const m = diezMap[key].mejor;
+      if (!m || e.score > m.score) diezMap[key].mejor = { score: e.score, hora, hb: e.v1?.hb, h: alturas[i], T: periodos[i], dir: dirs[i] };
     }
   }
-  const diezItems = Object.values(diezMap).map(dia => {
-    const sc = dia.scores.length
-      ? dia.scores.sort((a, b) => a - b)[Math.floor(dia.scores.length / 2)]
-      : 1;
-    const color = sc <= 3 ? '#ff4444' : sc <= 5 ? '#FF6B00' : sc <= 7 ? '#f0a500' : '#00cc88';
+  // Cada día, su mejor hora con luz (como «¿Dónde vamos?»)
+  const diezItems = Object.values(diezMap).filter(d => d.mejor).map(dia => {
+    const m = dia.mejor, color = colorNota(m.score);
     return `
       <div class="prev-fila">
         <div class="pfi-dia">${dia.label}</div>
-        <div class="pfi-semaforo" style="background:${color};box-shadow:0 0 6px ${color}88;"></div>
-        <div class="pfi-altura">${fmt(dia.maxH)}m</div>
-        <div class="pfi-detalle">${rnd(dia.periodo)}s · ${dirTxt(dia.dir)}</div>
-        <div class="pfi-estado" style="color:${color};">${textoCorto(sc)}</div>
+        <div>${notaBadge(m.score, 26)}</div>
+        <div class="pfi-altura" style="flex:1;min-width:0;">~${fmt(m.hb)}m<div style="font-size:10px;color:#8899aa;font-weight:500;white-space:nowrap;">a las ${m.hora} h · ${rnd(m.T)}s ${dirTxt(m.dir)}</div></div>
+        <div class="pfi-estado" style="color:${color};">${textoCorto(m.score)}</div>
       </div>`;
   }).join('');
 
