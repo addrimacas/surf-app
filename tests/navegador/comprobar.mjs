@@ -83,5 +83,22 @@ await caso('menú y ventanas se cierran con Escape', async ({ pag }) => {
   assert.equal(await pag.evaluate(() => document.getElementById('comentario-overlay').style.display), 'none');
 });
 
+await caso('datos reales (registro del 15-oct, 12 h): notas repartidas y coherentes', async ({ pag }) => {
+  for (const nivel of ['principiante', 'intermedio', 'pro']) {
+    const r = await pag.evaluate(async nivel => {
+      perfilActivo = nivel;
+      const lote = await pedirLote(todasLasPlayas(), { hourly: true, dias: 2 });
+      return lote.map(x => { const e = estadoAhora(x); return { n: x.playa.nombre, s: e.score, f: e.v1?.factores }; });
+    }, nivel);
+    assert.equal(r.length, 60, nivel + ': playas ' + r.length);
+    const distintas = new Set(r.map(x => x.s)).size;
+    assert.ok(distintas >= 5, `${nivel}: solo ${distintas} notas distintas`);
+    for (const x of r) {
+      assert.ok(x.s >= 1 && x.s <= 10, `${nivel} ${x.n}: ${x.s}`);
+      if (x.s === 10) assert.ok(Math.min(x.f.tamano, x.f.forma, x.f.superficie, x.f.fuerza, x.f.marea) >= 0.95, `${nivel} ${x.n}: 10 sin todo perfecto`);
+    }
+  }
+}, { REGISTRO: 'tests/datos/registro-2026-10-15.json.gz', HORA: '2026-10-15T12:00:00+02:00' });
+
 console.log(fallos.length ? `\n${fallos.length} caso(s) fallan` : '\ntodo bien');
 process.exit(fallos.length ? 1 : 0);
