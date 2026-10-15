@@ -12,7 +12,8 @@
     "registro": "node scripts/registrar-prevision.js",
     "test:app": "npm i --no-save jsdom@24 && node tests/app-sin-red.js . v1 && node tests/app-sin-red.js . rechazo && node tests/app-sin-red.js . v0",
     "panel:preparar": "node scripts/panel-ciego-preparar.js",
-    "panel:evaluar": "node scripts/panel-ciego-evaluar.js"
+    "panel:evaluar": "node scripts/panel-ciego-evaluar.js",
+    "test:navegador": "node tests/navegador/simular.mjs playas"
   },
   "repository": {
     "type": "git",

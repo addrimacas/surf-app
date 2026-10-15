@@ -2098,7 +2098,10 @@ const _cacheMareas = new Map();
 function pedirMareaDia(port, yyyymmdd) {
   const k = port + '_' + yyyymmdd;
   if (!_cacheMareas.has(k)) {
-    _cacheMareas.set(k, fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${yyyymmdd}`)
+    // Con tope de 6 s: si el servicio de mareas tarda, la app sigue sin marea en vez de quedarse cargando
+    const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    if (ctl) setTimeout(() => ctl.abort(), 6000);
+    _cacheMareas.set(k, fetch(`https://salitre-mareas.adrimacas.workers.dev/?port=${port}&date=${yyyymmdd}`, ctl ? { signal: ctl.signal } : {})
       .then(r => r.json())
       .catch(e => { _cacheMareas.delete(k); throw e; }));
   }
@@ -3381,7 +3384,9 @@ async function plCargarTabla() {
       plDatosCache[cacheKey] = { marine, atmosfera };
       data = plDatosCache[cacheKey];
     } catch(e) {
-      document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#5a7a9a;text-align:center;">Error cargando datos</div>';
+      document.getElementById('pl-tabla').innerHTML = '<div style="padding:20px;color:#5a7a9a;text-align:center;">No se han podido cargar los datos. Prueba en un rato.</div>';
+      const est = document.getElementById('pl-sem-estado'); if (est) est.textContent = 'Sin datos ahora mismo';
+      const circ = document.getElementById('pl-sem-circulo'); if (circ) circ.textContent = '—';
       return;
     }
   }
