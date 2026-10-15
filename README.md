@@ -33,7 +33,9 @@ reglas en las 60 playas: no hay correcciones a mano por playa.
 ```
 index.html           App completa (HTML + CSS + JS inline).
 beach-data.js        Catálogo de playas: nombre, coordenadas, zona, puerto de mareas y tipo de rompiente.
-                     (Los campos antiguos de orientación/ideales escritos a mano ya no se usan.)
+                     Los campos antiguos de orientación e «ideales» escritos a mano ya no se usan;
+                     queda uno: la marea preferida (`mareaOptima`), de peso pequeño en la nota,
+                     pendiente de sustituir por un cálculo con el fondo y las valoraciones.
 atlas-playas.js      GENERADO: punto offshore, normal y tabla K²(θ,T) de cada playa.
 motor-v1.js          Motor de evaluación (navegador y Node).
 atlas-batimetria.js  GENERADO: refracción y fricción por playa (scripts/batimetria/, workflow batimetria).
