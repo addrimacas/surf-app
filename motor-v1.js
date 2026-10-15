@@ -410,7 +410,9 @@
     // Un 10 exige que TODO sea perfecto a la vez (tamaño, dirección/forma, limpieza y viento, fuerza y marea):
     // todos los componentes ≥ 0,95. Un 9, todos ≥ 0,85. La calibración ordena; esto pone el listón absoluto.
     const peor = Math.min(tamano, forma, limpieza, fuerza, marea);
-    const techo = peor >= 0.95 ? 10 : peor >= 0.85 ? 9.49 : 8.49;
+    // Por debajo de 0,85 el techo baja de forma continua (un punto por cada 0,1 de componente),
+    // para que las notas altas no se amontonen en el 8
+    const techo = peor >= 0.95 ? 10 : peor >= 0.85 ? 9.49 : 9.49 - (0.85 - peor) * 10;
     // Techo por viento, igual para todos los niveles y playas: con viento de mar (o cruzado-de-mar) la
     // superficie está picada y la sesión no puede ser buena aunque el oleaje lo sea. Velocidad efectiva
     // = la mayor entre la media y el 60 % de la racha.

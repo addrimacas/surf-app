@@ -21,7 +21,7 @@ reglas en las 60 playas: no hay correcciones a mano por playa.
 5. **Nota 1–10**: Q = tamaño × forma^0,33 · limpieza^0,33 · fuerza^0,2 · marea^0,14, convertida en nota
    con umbrales de un año de climatología (`calibracion-nota.js`, se regenera solo en cada cambio del motor).
    - Lo que falla manda: un componente por debajo de 0,6 limita la nota.
-   - Un 10 exige todos los componentes ≥ 0,95; un 9, ≥ 0,85.
+   - Un 10 exige todos los componentes ≥ 0,95; un 9, ≥ 0,85; por debajo, el techo baja un punto por cada 0,1.
    - Techo por viento: con viento de mar ≥10 km/h máx. 6, ≥15 máx. 4, ≥25 máx. 3; cruzado ≥10 máx. 8.
    - Topes de seguridad por nivel (tamaño, mar de fondo largo, tormenta eléctrica).
 6. **Ventana de swell** de cada playa (`ventanaSwell`): calculada con la costa, el fondo y la forma de
