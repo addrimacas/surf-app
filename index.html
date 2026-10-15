@@ -1095,6 +1095,17 @@ function initPerfilUI() {
   });
   document.getElementById('perfil-cerrar')?.addEventListener('click', () => setPerfilOverlayAbierto(false));
   document.getElementById('perfil-listo')?.addEventListener('click', () => setPerfilOverlayAbierto(false));
+  // Escape cierra lo que esté abierto encima (menú, valoración, comentario, selector de playa)
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (overlay.classList.contains('visible')) return setPerfilOverlayAbierto(false);
+    const val = document.getElementById('valoracion-overlay');
+    if (val && val.style.display !== 'none') return cerrarValoracion();
+    const com = document.getElementById('comentario-overlay');
+    if (com && com.style.display !== 'none') { com.style.display = 'none'; return; }
+    const dd = document.getElementById('dropdown-playas');
+    if (dd && dd.style.display === 'block') dd.style.display = 'none';
+  });
   overlay.querySelectorAll('.perfil-opcion').forEach(el => {
     el.addEventListener('click', () => {
       perfilActivo = el.dataset.perfil;
@@ -2634,8 +2645,12 @@ function boundsTodasLasPlayas() {
   const lls = ps.map(p => [p.lat, p.lon]);
   return L.latLngBounds(lls).pad(0.035);
 }
-function crearIcono(color){
-  return L.divIcon({className:'',html:`<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5);"></div>`,iconSize:[22,22],iconAnchor:[11,11],popupAnchor:[0,-14]});
+// Marcador del mapa: círculo con el color y la nota (sin nota, punto gris pequeño)
+function crearIcono(color, score){
+  const n = score ? Math.round(score) : null;
+  const t = n ? 24 : 14;
+  return L.divIcon({className:'', iconSize:[t,t], iconAnchor:[t/2,t/2], popupAnchor:[0,-t/2-2],
+    html:`<div style="width:${t}px;height:${t}px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.9);box-shadow:0 1px 6px rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;font:800 12px/1 Nunito,system-ui,sans-serif;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.45);">${n ?? ''}</div>`});
 }
 function renderMarcador(playa, r){
   const estado = r ? estadoAhora(r) : clasificar(null);
@@ -2645,7 +2660,7 @@ function renderMarcador(playa, r){
   const frase = tl.titulo, veredicto = tl.detalle;
   const aviso = v1?.avisos?.[0];
   const nombreJS = JSON.stringify(playa.nombre).replace(/"/g, '&quot;');
-  return L.marker([playa.lat,playa.lon],{icon:crearIcono(estado.color)})
+  return L.marker([playa.lat,playa.lon],{icon:crearIcono(estado.color, estado.score), zIndexOffset: Math.round((estado.score || 0) * 100)})
     .bindPopup(`
       <div class="popup-playa">
         <div class="pp-cab">
@@ -2660,7 +2675,7 @@ function renderMarcador(playa, r){
         ${(() => { const m = r?.curva?.infoEn(new Date()); return m ? `<div class="pp-marea">Marea ${m.subiendo ? 'subiendo ↑' : 'bajando ↓'} · ${fmt(m.h)} m</div>` : ''; })()}
         ${aviso ? `<div class="pp-aviso">⚠ ${aviso}</div>` : ''}
         <button class="pp-btn" onclick="abrirPlayaDesdeMapa(${nombreJS})">Ver previsión</button>
-      </div>`,{maxWidth:280, minWidth:240});
+      </div>`,{maxWidth:250, minWidth:220, autoPanPaddingTopLeft:[52, 16], autoPanPaddingBottomRight:[12, 16]});
 }
 function abrirPlayaDesdeMapa(nombre){
   if (mapa) mapa.closePopup();
