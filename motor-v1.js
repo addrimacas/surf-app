@@ -391,7 +391,7 @@
     const angulo = anguloLlegada(dom.dir, dom.T, atlasPlaya, playa);
     const forma = factorForma(angulo, playa);
     // Limpieza: lo peor de viento, mar de viento, pendiente del oleaje y cruce
-    const viento = factorViento(d.vientoVel, d.vientoDir, hb, playa, atlasPlaya);
+    const viento = { ...factorViento(d.vientoVel, d.vientoDir, hb, playa, atlasPlaya), vel: d.vientoVel };
     const marViento = factorLimpieza(parts);
     const hsTot = valido(d.hTotal) ? d.hTotal : Math.sqrt(parts.reduce((s, p) => s + p.h * p.h, 0));
     const tpMar = parts.length ? parts.reduce((m, p) => (p.h > m.h ? p : m), parts[0]).T : null;
@@ -598,7 +598,7 @@
       motor: VERSION, nota, rango: null, confianza: playa?.validada ? 'media' : 'baja', hb, hLocal,
       particiones: parts, factores: { mar: fMar, viento: fV, agua: fAgua },
       periodoLocal: parts.reduce((m, p) => (p.T * p.hLocal * p.hLocal > m.e ? { e: p.T * p.hLocal * p.hLocal, T: p.T } : m), { e: -1, T: null }).T,
-      viento: { etiqueta: tipoV ?? 'GLASSY', tipo: tipoV },
+      viento: { etiqueta: tipoV ?? 'GLASSY', tipo: tipoV, vel },
       limitante: { clave: lim, texto: Math.min(fMar, fV, fAgua) >= 0.85 ? 'Ningún factor parece limitar mucho' : `Lo que más resta: ${lim}` },
       avisos, topeAplicado: null, potenciaMar: potencia(d.hTotal, d.tTotal), potenciaLlega: null,
       esBano: true,
@@ -634,8 +634,12 @@
   function frase(r) {
     if (!r) return '';
     const v = r.viento || {};
+    // Por debajo de 10 km/h el viento cruzado o de mar apenas resta: se dice «flojo» para que el
+    // titular no suene a alarma con una nota alta
+    const flojo = valido(v.vel) && v.vel < 10;
     let t = v.tipo === 'glassy' ? 'Sin apenas viento' : v.tipo === 'off' ? 'Viento de tierra'
-      : v.tipo === 'cross' ? 'Viento cruzado' : v.tipo === 'on' ? 'Viento de mar' : '';
+      : v.tipo === 'cross' ? (flojo ? 'Viento cruzado flojo' : 'Viento cruzado')
+      : v.tipo === 'on' ? (flojo ? 'Viento de mar flojo' : 'Viento de mar') : '';
     if (!r.esBano && r.factores?.limpieza != null && r.factores.limpieza < 0.7) t = t ? `${t}, mar desordenado` : 'Mar desordenado';
     return t || 'Sin datos de viento';
   }

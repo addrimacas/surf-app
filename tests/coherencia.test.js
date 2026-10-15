@@ -260,3 +260,11 @@ test('bañista: con viento flojo dice qué viento hay (no «sin datos»)', () =>
   assert.notEqual(MotorV1Frase(r), 'Sin datos de viento');
 });
 function MotorV1Frase(r) { return M.frase(r); }
+
+test('titular: viento de mar flojo no suena a alarma; fuerte sí y la nota baja', () => {
+  const dirOn = (M.direccionOffshore(PLAYAS['Razo'], ATLAS.playas['Razo']) + 180) % 360;
+  const flojo = ev('Razo', mar(1.8, 13, 330, { vientoVel: 7, vientoDir: dirOn }), 'pro');
+  const fuerte = ev('Razo', mar(1.8, 13, 330, { vientoVel: 20, vientoDir: dirOn }), 'pro');
+  assert.match(M.frase(flojo), /flojo/);
+  assert.ok(fuerte.nota <= 4, 'con 20 km/h de mar: ' + fuerte.nota);
+});
