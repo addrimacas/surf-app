@@ -254,3 +254,9 @@ test('ventana de swell calculada: coherente para playas conocidas', () => {
   assert.ok(dentro(v('Patos'), 270), 'Patos con O');
   assert.ok(!dentro(v('Patos'), 90), 'Patos no con E');
 });
+
+test('bañista: con viento flojo dice qué viento hay (no «sin datos»)', () => {
+  const r = ev('Patos', mar(0.5, 8, 280, { vientoVel: 7, vientoDir: 100 }), 'banista');
+  assert.notEqual(MotorV1Frase(r), 'Sin datos de viento');
+});
+function MotorV1Frase(r) { return M.frase(r); }

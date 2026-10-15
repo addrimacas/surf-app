@@ -574,10 +574,10 @@
     let fV = 1;
     const vel = d.vientoVel, dir = d.vientoDir;
     let tipoV = null;
-    if (valido(vel) && valido(dir) && vel >= 8) {
+    if (valido(vel) && vel < 6) tipoV = 'glassy';
+    else if (valido(vel) && valido(dir)) {
       tipoV = clasificarViento(dir, playa, atlasPlaya).tipo;
-      if (tipoV === 'off') fV = lerp(vel, 8, 25, 0.9, 0.45);
-      else fV = lerp(vel, 12, 35, 1, 0.4);
+      if (vel >= 8) fV = tipoV === 'off' ? lerp(vel, 8, 25, 0.9, 0.45) : lerp(vel, 12, 35, 1, 0.4);
     }
     // Agua: confort orientativo
     const ta = d.tempAgua;
@@ -597,6 +597,7 @@
     return {
       motor: VERSION, nota, rango: null, confianza: playa?.validada ? 'media' : 'baja', hb, hLocal,
       particiones: parts, factores: { mar: fMar, viento: fV, agua: fAgua },
+      periodoLocal: parts.reduce((m, p) => (p.T * p.hLocal * p.hLocal > m.e ? { e: p.T * p.hLocal * p.hLocal, T: p.T } : m), { e: -1, T: null }).T,
       viento: { etiqueta: tipoV ?? 'GLASSY', tipo: tipoV },
       limitante: { clave: lim, texto: Math.min(fMar, fV, fAgua) >= 0.85 ? 'Ningún factor parece limitar mucho' : `Lo que más resta: ${lim}` },
       avisos, topeAplicado: null, potenciaMar: potencia(d.hTotal, d.tTotal), potenciaLlega: null,
