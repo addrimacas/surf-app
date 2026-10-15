@@ -487,14 +487,9 @@
    *      codigoTiempo, esDeDia, marea:{frac}, diasVista }
    * nivel: 'principiante' | 'intermedio' | 'pro'
    */
-  // De noche la nota es 1 en todos los niveles (tope de seguridad: horas de luz)
+  // La nota describe el mar a cualquier hora; la app no comenta nada sobre surfear de noche
   function evaluar(d, playa, nivel, atlasPlaya) {
-    const r = evaluarNivel(d, playa, nivel, atlasPlaya);
-    if (d?.esDeDia === false) {
-      r.nota = 1; r.rango = null;
-      r.limitante = { clave: 'noche', texto: 'De noche: sin luz para entrar al agua' };
-    }
-    return r;
+    return evaluarNivel(d, playa, nivel, atlasPlaya);
   }
 
   function evaluarNivel(d, playa, nivel, atlasPlaya) {
@@ -524,7 +519,6 @@
 
     const lim = textoLimitante(ev, nivel, playa);
     const avisos = ts.map(t => t.motivo);
-    if (d.esDeDia === false) avisos.push('Fuera de horas de luz: no recomendado');
 
     return {
       motor: VERSION,
@@ -577,7 +571,6 @@
     if (tipoV === 'off' && vel > 30) cap(2, 'Viento de tierra fuerte: podría arrastrar flotadores mar adentro');
     else if (tipoV === 'off' && vel > 20) cap(4, 'Viento de tierra: podría arrastrar flotadores mar adentro');
     if (hb > 0.8) avisos.push('Con este mar podrían formarse corrientes de resaca');
-    if (d.esDeDia === false) avisos.push('Fuera de horas de luz: no recomendado');
     nota = clamp(nota, 1, 10);
     const lim = fMar <= Math.min(fV, fAgua) ? 'el estado del mar' : fV <= fAgua ? 'el viento' : 'la temperatura del agua';
     return {

@@ -3393,7 +3393,11 @@ async function plCargarTabla() {
     const ts = marine.hourly.time[i];
     const d = new Date(ts * 1000);
     if (d.toDateString() !== diaStr) continue;
-    if (d.getHours() % 2 !== 0) continue;
+    if (diaOffset === 0) {
+      // Hoy: la primera fila es la hora actual y luego cada 2 h; las horas pasadas no se muestran
+      const hAhora = new Date().getHours(), dh = d.getHours() - hAhora;
+      if (dh < 0 || dh % 2 !== 0) continue;
+    } else if (d.getHours() % 2 !== 0) continue;
     horas.push(d.getHours());
     heights.push(marine.hourly.wave_height[i]);
     periods.push(periodoDe(marine.hourly, i));
@@ -3435,13 +3439,13 @@ async function plCargarTabla() {
   // Fila horas
   let horasCels = `<div class="pl-hora-label"></div>`;
   horas.forEach(h => {
-    const esAhora = h === Math.floor(ahoraH/2)*2 && diaOffset === 0;
+    const esAhora = h === ahoraH && diaOffset === 0;
     horasCels += `<div class="pl-hora-cel${esAhora?' ahora':''}">${h}h</div>`;
   });
 
   // Helper para celda
   const cel = (contenido, esAhora) => `<div class="pl-cel${esAhora?' ahora':''}">${contenido}</div>`;
-  const esAhoraH = h => h === Math.floor(ahoraH/2)*2 && diaOffset === 0;
+  const esAhoraH = h => h === ahoraH && diaOffset === 0;
 
   // Filas
   let html = `<div class="pl-fila-horas">${horasCels}</div>`;

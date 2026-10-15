@@ -197,10 +197,11 @@ test('viento: el de tierra sale de la costa del atlas en las 60 playas y es opue
   }
 });
 
-test('noche: nota 1 en todos los niveles y playas', () => {
-  for (const n of Object.keys(PLAYAS)) for (const nivel of ['banista', 'principiante', 'intermedio', 'pro']) {
-    const r = ev(n, mar(1.5, 12, 300, { esDeDia: false }), nivel);
-    assert.strictEqual(r.nota, 1, `${n} ${nivel}`);
+test('noche: misma nota que de día y ningún texto sobre la noche', () => {
+  for (const n of ['Pantín', 'Razo', 'Samil']) for (const nivel of ['principiante', 'intermedio', 'pro']) {
+    const dia = ev(n, mar(1.5, 12, 300), nivel), noche = ev(n, mar(1.5, 12, 300, { esDeDia: false }), nivel);
+    assert.strictEqual(noche.nota, dia.nota, n + ' ' + nivel);
+    assert.ok(!JSON.stringify(noche).match(/noche|horas de luz/i), n + ' ' + nivel);
   }
 });
 
