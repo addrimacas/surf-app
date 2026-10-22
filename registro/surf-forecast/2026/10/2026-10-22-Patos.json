@@ -1,0 +1,368 @@
+{
+ "url": "https://www.surf-forecast.com/breaks/Playade-Patos/forecasts/latest",
+ "descargado_utc": "2026-10-22T11:59:02.299Z",
+ "filas": [
+  {
+   "fecha_texto": "Thursday 22  5 AM",
+   "trenes": [
+    {
+     "altura": 2.4,
+     "periodo": 12,
+     "letras": "NW",
+     "angulo": 126,
+     "energia": 1547
+    }
+   ],
+   "energia_total": 1547
+  },
+  {
+   "fecha_texto": "Thursday 22  8 AM",
+   "trenes": [
+    {
+     "altura": 2.4,
+     "periodo": 12,
+     "letras": "NW",
+     "angulo": 126,
+     "energia": 1495
+    }
+   ],
+   "energia_total": 1495
+  },
+  {
+   "fecha_texto": "Thursday 22 11 AM",
+   "trenes": [
+    {
+     "altura": 2.2,
+     "periodo": 12,
+     "letras": "NW",
+     "angulo": 126,
+     "energia": 1301
+    }
+   ],
+   "energia_total": 1301
+  },
+  {
+   "fecha_texto": "Thursday 22  2 PM",
+   "trenes": [
+    {
+     "altura": 2.2,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 122,
+     "energia": 1597
+    }
+   ],
+   "energia_total": 1597
+  },
+  {
+   "fecha_texto": "Thursday 22  5 PM",
+   "trenes": [
+    {
+     "altura": 2.2,
+     "periodo": 13,
+     "letras": "NW",
+     "angulo": 126,
+     "energia": 1659
+    },
+    {
+     "altura": -0.9,
+     "periodo": 4,
+     "letras": "SW",
+     "angulo": 41,
+     "energia": 28
+    }
+   ],
+   "energia_total": 1659
+  },
+  {
+   "fecha_texto": "Thursday 22  8 PM",
+   "trenes": [
+    {
+     "altura": 2.4,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 123,
+     "energia": 1885
+    },
+    {
+     "altura": -1,
+     "periodo": 4,
+     "letras": "SSW",
+     "angulo": 29,
+     "energia": 42
+    }
+   ],
+   "energia_total": 1885
+  },
+  {
+   "fecha_texto": "Thursday 22 11 PM",
+   "trenes": [
+    {
+     "altura": 2.5,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 118,
+     "energia": 2393
+    },
+    {
+     "altura": -1.3,
+     "periodo": 5,
+     "letras": "SW",
+     "angulo": 39,
+     "energia": 87
+    }
+   ],
+   "energia_total": 2393
+  },
+  {
+   "fecha_texto": "Friday 23  2 AM",
+   "trenes": [
+    {
+     "altura": 3,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 116,
+     "energia": 2831
+    }
+   ],
+   "energia_total": 2831
+  },
+  {
+   "fecha_texto": "Friday 23  5 AM",
+   "trenes": [
+    {
+     "altura": 3.5,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 121,
+     "energia": 4519
+    }
+   ],
+   "energia_total": 4519
+  },
+  {
+   "fecha_texto": "Friday 23  8 AM",
+   "trenes": [
+    {
+     "altura": 4,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 123,
+     "energia": 6175
+    }
+   ],
+   "energia_total": 6175
+  },
+  {
+   "fecha_texto": "Friday 23 11 AM",
+   "trenes": [
+    {
+     "altura": 4,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 122,
+     "energia": 5623
+    }
+   ],
+   "energia_total": 5623
+  },
+  {
+   "fecha_texto": "Friday 23  2 PM",
+   "trenes": [
+    {
+     "altura": 4,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 122,
+     "energia": 4865
+    }
+   ],
+   "energia_total": 4865
+  },
+  {
+   "fecha_texto": "Friday 23  5 PM",
+   "trenes": [
+    {
+     "altura": 3.5,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 123,
+     "energia": 3983
+    }
+   ],
+   "energia_total": 3983
+  },
+  {
+   "fecha_texto": "Friday 23  8 PM",
+   "trenes": [
+    {
+     "altura": 3,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 123,
+     "energia": 2863
+    },
+    {
+     "altura": 0.5,
+     "periodo": 4,
+     "letras": "NNW",
+     "angulo": 158,
+     "energia": 7
+    }
+   ],
+   "energia_total": 2870
+  },
+  {
+   "fecha_texto": "Friday 23 11 PM",
+   "trenes": [
+    {
+     "altura": 3,
+     "periodo": 12,
+     "letras": "NW",
+     "angulo": 124,
+     "energia": 2349
+    }
+   ],
+   "energia_total": 2349
+  },
+  {
+   "fecha_texto": "Saturday 24  2 AM",
+   "trenes": [
+    {
+     "altura": 2.5,
+     "periodo": 12,
+     "letras": "NW",
+     "angulo": 124,
+     "energia": 1936
+    }
+   ],
+   "energia_total": 1936
+  },
+  {
+   "fecha_texto": "Saturday 24  5 AM",
+   "trenes": [
+    {
+     "altura": 2.4,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 125,
+     "energia": 1492
+    },
+    {
+     "altura": 0.3,
+     "periodo": 15,
+     "letras": "NW",
+     "angulo": 135,
+     "energia": 33
+    }
+   ],
+   "energia_total": 1525
+  },
+  {
+   "fecha_texto": "Saturday 24  8 AM",
+   "trenes": [
+    {
+     "altura": 2.3,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 124,
+     "energia": 1257
+    },
+    {
+     "altura": 0.5,
+     "periodo": 13,
+     "letras": "NW",
+     "angulo": 143,
+     "energia": 88
+    }
+   ],
+   "energia_total": 1345
+  },
+  {
+   "fecha_texto": "Saturday 24 11 AM",
+   "trenes": [
+    {
+     "altura": 2.1,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 125,
+     "energia": 1027
+    },
+    {
+     "altura": 0.9,
+     "periodo": 15,
+     "letras": "NW",
+     "angulo": 131,
+     "energia": 360
+    }
+   ],
+   "energia_total": 1387
+  },
+  {
+   "fecha_texto": "Saturday 24  2 PM",
+   "trenes": [
+    {
+     "altura": 2.2,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 126,
+     "energia": 1170
+    },
+    {
+     "altura": 1.7,
+     "periodo": 13,
+     "letras": "NW",
+     "angulo": 135,
+     "energia": 999
+    }
+   ],
+   "energia_total": 2169
+  },
+  {
+   "fecha_texto": "Saturday 24  5 PM",
+   "trenes": [
+    {
+     "altura": 2.1,
+     "periodo": 13,
+     "letras": "NW",
+     "angulo": 127,
+     "energia": 1613
+    }
+   ],
+   "energia_total": 1613
+  },
+  {
+   "fecha_texto": "Saturday 24  8 PM",
+   "trenes": [
+    {
+     "altura": 2.1,
+     "periodo": 13,
+     "letras": "NW",
+     "angulo": 129,
+     "energia": 1474
+    }
+   ],
+   "energia_total": 1474
+  },
+  {
+   "fecha_texto": "Saturday 24 11 PM",
+   "trenes": [
+    {
+     "altura": 1.9,
+     "periodo": 13,
+     "letras": "NW",
+     "angulo": 129,
+     "energia": 1280
+    },
+    {
+     "altura": 0.3,
+     "periodo": 10,
+     "letras": "WNW",
+     "angulo": 108,
+     "energia": 19
+    }
+   ],
+   "energia_total": 1299
+  }
+ ]
+}
