@@ -1,0 +1,6427 @@
+{
+ "fecha": "2026-11-01",
+ "fuente": "https://ihthredds.ihcantabria.com/thredds · meteogaliciaswan/Galicia/Galicia_2026103100.nc",
+ "motor": "v2.3.0",
+ "playas": [
+  {
+   "nombre": "Patos",
+   "punto": {
+    "lat": 42.1566,
+    "lon": -8.827,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.84,
+     "salitre": 0.472,
+     "swan": 1.159
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.84,
+     "salitre": 0.472,
+     "swan": 1.135
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.84,
+     "salitre": 0.47,
+     "swan": 1.114
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.84,
+     "salitre": 0.47,
+     "swan": 1.093
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.8,
+     "salitre": 0.46,
+     "swan": 1.073
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.78,
+     "salitre": 0.455,
+     "swan": 1.053
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.74,
+     "salitre": 0.446,
+     "swan": 1.033
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.7,
+     "salitre": 0.436,
+     "swan": 1.013
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.68,
+     "salitre": 0.434,
+     "swan": 0.992
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.64,
+     "salitre": 0.424,
+     "swan": 0.973
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.62,
+     "salitre": 0.417,
+     "swan": 0.956
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 0.408,
+     "swan": 0.941
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.58,
+     "salitre": 0.402,
+     "swan": 0.928
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.56,
+     "salitre": 0.378,
+     "swan": 0.917
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.54,
+     "salitre": 0.377,
+     "swan": 0.909
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.37,
+     "swan": 0.902
+    }
+   ],
+   "ratioSwanSalitre": 2.326
+  },
+  {
+   "nombre": "Prado",
+   "punto": {
+    "lat": 42.16,
+    "lon": -8.8234,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.84,
+     "salitre": 0.483,
+     "swan": 1.009
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.84,
+     "salitre": 0.483,
+     "swan": 0.99
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.84,
+     "salitre": 0.481,
+     "swan": 0.969
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.84,
+     "salitre": 0.481,
+     "swan": 0.946
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.8,
+     "salitre": 0.471,
+     "swan": 0.922
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.78,
+     "salitre": 0.466,
+     "swan": 0.897
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.74,
+     "salitre": 0.455,
+     "swan": 0.874
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.7,
+     "salitre": 0.445,
+     "swan": 0.853
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.68,
+     "salitre": 0.441,
+     "swan": 0.834
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.64,
+     "salitre": 0.431,
+     "swan": 0.818
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.62,
+     "salitre": 0.424,
+     "swan": 0.807
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 0.414,
+     "swan": 0.798
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.58,
+     "salitre": 0.407,
+     "swan": 0.791
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.56,
+     "salitre": 0.401,
+     "swan": 0.785
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.54,
+     "salitre": 0.401,
+     "swan": 0.778
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.391,
+     "swan": 0.77
+    }
+   ],
+   "ratioSwanSalitre": 1.943
+  },
+  {
+   "nombre": "Vao",
+   "punto": {
+    "lat": 42.1964,
+    "lon": -8.7998,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.88,
+     "salitre": 0.22,
+     "swan": 1.408
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.88,
+     "salitre": 0.22,
+     "swan": 1.405
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.88,
+     "salitre": 0.215,
+     "swan": 1.381
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 0.215,
+     "swan": 1.338
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.211,
+     "swan": 1.266
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.82,
+     "salitre": 0.208,
+     "swan": 1.163
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.78,
+     "salitre": 0.204,
+     "swan": 1.038
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.74,
+     "salitre": 0.2,
+     "swan": 0.935
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.196,
+     "swan": 0.897
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.66,
+     "salitre": 0.192,
+     "swan": 0.936
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.64,
+     "salitre": 0.19,
+     "swan": 1.018
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.62,
+     "salitre": 0.183,
+     "swan": 1.093
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.6,
+     "salitre": 0.181,
+     "swan": 1.142
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.58,
+     "salitre": 0.175,
+     "swan": 1.156
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.58,
+     "salitre": 0.174,
+     "swan": 1.151
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.56,
+     "salitre": 0.167,
+     "swan": 1.141
+    }
+   ],
+   "ratioSwanSalitre": 6.223
+  },
+  {
+   "nombre": "Samil",
+   "punto": {
+    "lat": 42.2075,
+    "lon": -8.7808,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.84,
+     "salitre": 0.696,
+     "swan": 0.774
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.84,
+     "salitre": 0.696,
+     "swan": 0.762
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.84,
+     "salitre": 0.691,
+     "swan": 0.747
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.84,
+     "salitre": 0.691,
+     "swan": 0.728
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.8,
+     "salitre": 0.677,
+     "swan": 0.706
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.78,
+     "salitre": 0.669,
+     "swan": 0.683
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.74,
+     "salitre": 0.655,
+     "swan": 0.66
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.7,
+     "salitre": 0.64,
+     "swan": 0.64
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.68,
+     "salitre": 0.637,
+     "swan": 0.624
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.64,
+     "salitre": 0.622,
+     "swan": 0.613
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.62,
+     "salitre": 0.611,
+     "swan": 0.606
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 0.597,
+     "swan": 0.602
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.58,
+     "salitre": 0.587,
+     "swan": 0.6
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.56,
+     "salitre": 0.575,
+     "swan": 0.598
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.54,
+     "salitre": 0.576,
+     "swan": 0.593
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.287,
+     "swan": 0.586
+    }
+   ],
+   "ratioSwanSalitre": 1.03
+  },
+  {
+   "nombre": "Nerga",
+   "punto": {
+    "lat": 42.2555,
+    "lon": -8.8391,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.88,
+     "salitre": 0.243,
+     "swan": 0.695
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.88,
+     "salitre": 0.243,
+     "swan": 0.673
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.88,
+     "salitre": 0.237,
+     "swan": 0.657
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 0.237,
+     "swan": 0.648
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.232,
+     "swan": 0.643
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.82,
+     "salitre": 0.23,
+     "swan": 0.64
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.78,
+     "salitre": 0.225,
+     "swan": 0.636
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.74,
+     "salitre": 0.222,
+     "swan": 0.628
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.216,
+     "swan": 0.618
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.66,
+     "salitre": 0.214,
+     "swan": 0.605
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.64,
+     "salitre": 0.211,
+     "swan": 0.589
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.62,
+     "salitre": 0.204,
+     "swan": 0.572
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.6,
+     "salitre": 0.201,
+     "swan": 0.555
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.58,
+     "salitre": 0.194,
+     "swan": 0.54
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.58,
+     "salitre": 0.192,
+     "swan": 0.529
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.56,
+     "salitre": 0.184,
+     "swan": 0.523
+    }
+   ],
+   "ratioSwanSalitre": 2.791
+  },
+  {
+   "nombre": "Melide",
+   "punto": {
+    "lat": 42.2514,
+    "lon": -8.8709,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.82,
+     "salitre": 0.693,
+     "swan": 1.54
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.82,
+     "salitre": 0.693,
+     "swan": 1.508
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.8,
+     "salitre": 0.693,
+     "swan": 1.481
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.8,
+     "salitre": 0.693,
+     "swan": 1.458
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.76,
+     "salitre": 0.668,
+     "swan": 1.438
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.74,
+     "salitre": 0.642,
+     "swan": 1.419
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.7,
+     "salitre": 0.619,
+     "swan": 1.4
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.66,
+     "salitre": 0.611,
+     "swan": 1.378
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.62,
+     "salitre": 0.612,
+     "swan": 1.352
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 0.606,
+     "swan": 1.323
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.56,
+     "salitre": 0.598,
+     "swan": 1.294
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.54,
+     "salitre": 0.591,
+     "swan": 1.268
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.52,
+     "salitre": 0.583,
+     "swan": 1.248
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.5,
+     "salitre": 0.576,
+     "swan": 1.232
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.57,
+     "swan": 1.221
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.46,
+     "salitre": 0.563,
+     "swan": 1.212
+    }
+   ],
+   "ratioSwanSalitre": 2.164
+  },
+  {
+   "nombre": "Caneliñas",
+   "punto": {
+    "lat": 42.3893,
+    "lon": -8.8281,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.84,
+     "salitre": 0.013,
+     "swan": 0.756
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.84,
+     "salitre": 0.013,
+     "swan": 0.734
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.84,
+     "salitre": 0.012,
+     "swan": 0.715
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.84,
+     "salitre": 0.012,
+     "swan": 0.7
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.8,
+     "salitre": 0.012,
+     "swan": 0.688
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.78,
+     "salitre": 0.012,
+     "swan": 0.678
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.74,
+     "salitre": 0.012,
+     "swan": 0.667
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.7,
+     "salitre": 0.012,
+     "swan": 0.656
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.68,
+     "salitre": 0.013,
+     "swan": 0.645
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.64,
+     "salitre": 0.013,
+     "swan": 0.632
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.62,
+     "salitre": 0.013,
+     "swan": 0.619
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 0.016,
+     "swan": 0.604
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.58,
+     "salitre": 0.017,
+     "swan": 0.59
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.56,
+     "salitre": 0.017,
+     "swan": 0.577
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.54,
+     "salitre": 0.018,
+     "swan": 0.565
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.017,
+     "swan": 0.556
+    }
+   ],
+   "ratioSwanSalitre": null
+  },
+  {
+   "nombre": "Canelas",
+   "punto": {
+    "lat": 42.3826,
+    "lon": -8.8403,
+    "km": 1
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.82,
+     "salitre": 0.055,
+     "swan": 0.88
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.82,
+     "salitre": 0.055,
+     "swan": 0.858
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.8,
+     "salitre": 0.052,
+     "swan": 0.837
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.8,
+     "salitre": 0.053,
+     "swan": 0.816
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.76,
+     "salitre": 0.058,
+     "swan": 0.797
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.74,
+     "salitre": 0.065,
+     "swan": 0.779
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.7,
+     "salitre": 0.067,
+     "swan": 0.762
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.66,
+     "salitre": 0.065,
+     "swan": 0.747
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.62,
+     "salitre": 0.06,
+     "swan": 0.733
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 0.056,
+     "swan": 0.719
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.56,
+     "salitre": 0.053,
+     "swan": 0.706
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.54,
+     "salitre": 0.056,
+     "swan": 0.694
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.52,
+     "salitre": 0.054,
+     "swan": 0.682
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.5,
+     "salitre": 0.054,
+     "swan": 0.67
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.051,
+     "swan": 0.659
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.46,
+     "salitre": 0.048,
+     "swan": 0.648
+    }
+   ],
+   "ratioSwanSalitre": 12.839
+  },
+  {
+   "nombre": "Montalvo",
+   "punto": {
+    "lat": 42.3952,
+    "lon": -8.8515,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.94,
+     "salitre": 0.448,
+     "swan": 0.991
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.94,
+     "salitre": 0.448,
+     "swan": 0.962
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.92,
+     "salitre": 0.461,
+     "swan": 0.938
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.92,
+     "salitre": 0.461,
+     "swan": 0.919
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.88,
+     "salitre": 0.451,
+     "swan": 0.904
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.84,
+     "salitre": 0.42,
+     "swan": 0.892
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.8,
+     "salitre": 0.411,
+     "swan": 0.88
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.76,
+     "salitre": 0.403,
+     "swan": 0.867
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.74,
+     "salitre": 0.398,
+     "swan": 0.852
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.7,
+     "salitre": 0.39,
+     "swan": 0.833
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.68,
+     "salitre": 0.386,
+     "swan": 0.813
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.64,
+     "salitre": 0.37,
+     "swan": 0.792
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 0.367,
+     "swan": 0.772
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.6,
+     "salitre": 0.357,
+     "swan": 0.754
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 0.358,
+     "swan": 0.74
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.58,
+     "salitre": 0.348,
+     "swan": 0.729
+    }
+   ],
+   "ratioSwanSalitre": 2.124
+  },
+  {
+   "nombre": "Foxos",
+   "punto": {
+    "lat": 42.425,
+    "lon": -8.8777,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.9,
+     "salitre": 0.349,
+     "swan": 1.025
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.9,
+     "salitre": 0.342,
+     "swan": 0.994
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.88,
+     "salitre": 0.328,
+     "swan": 0.97
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 0.327,
+     "swan": 0.954
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.32,
+     "swan": 0.944
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 0.317,
+     "swan": 0.936
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.76,
+     "salitre": 0.31,
+     "swan": 0.914
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.72,
+     "salitre": 0.31,
+     "swan": 0.875
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.308,
+     "swan": 0.849
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.66,
+     "salitre": 0.309,
+     "swan": 0.851
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.64,
+     "salitre": 0.314,
+     "swan": 0.847
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 0.289,
+     "swan": 0.822
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.58,
+     "salitre": 0.29,
+     "swan": 0.792
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.58,
+     "salitre": 0.273,
+     "swan": 0.77
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.56,
+     "salitre": 0.268,
+     "swan": 0.754
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.56,
+     "salitre": 0.251,
+     "swan": 0.743
+    }
+   ],
+   "ratioSwanSalitre": 2.906
+  },
+  {
+   "nombre": "Lanzada",
+   "punto": {
+    "lat": 42.4392,
+    "lon": -8.8758,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.9,
+     "salitre": 0.417,
+     "swan": 0.759
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.9,
+     "salitre": 0.416,
+     "swan": 0.741
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.88,
+     "salitre": 0.405,
+     "swan": 0.723
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 0.404,
+     "swan": 0.706
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.396,
+     "swan": 0.69
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 0.385,
+     "swan": 0.674
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.76,
+     "salitre": 0.377,
+     "swan": 0.658
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.72,
+     "salitre": 0.371,
+     "swan": 0.643
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.368,
+     "swan": 0.626
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.66,
+     "salitre": 0.363,
+     "swan": 0.61
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.64,
+     "salitre": 0.366,
+     "swan": 0.595
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 0.335,
+     "swan": 0.583
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.58,
+     "salitre": 0.335,
+     "swan": 0.572
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.58,
+     "salitre": 0.326,
+     "swan": 0.562
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.56,
+     "salitre": 0.326,
+     "swan": 0.553
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.56,
+     "salitre": 0.316,
+     "swan": 0.544
+    }
+   ],
+   "ratioSwanSalitre": 1.74
+  },
+  {
+   "nombre": "Vilar",
+   "punto": {
+    "lat": 42.5518,
+    "lon": -9.0333,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.96,
+     "salitre": 0.461,
+     "swan": 1.272
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.96,
+     "salitre": 0.45,
+     "swan": 1.242
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.94,
+     "salitre": 0.417,
+     "swan": 1.214
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.94,
+     "salitre": 0.398,
+     "swan": 1.19
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.9,
+     "salitre": 0.392,
+     "swan": 1.168
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.84,
+     "salitre": 0.398,
+     "swan": 1.149
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.8,
+     "salitre": 0.392,
+     "swan": 1.132
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.76,
+     "salitre": 0.382,
+     "swan": 1.115
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.74,
+     "salitre": 0.365,
+     "swan": 1.097
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.7,
+     "salitre": 0.355,
+     "swan": 1.079
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.68,
+     "salitre": 0.356,
+     "swan": 1.06
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.66,
+     "salitre": 0.347,
+     "swan": 1.043
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.64,
+     "salitre": 0.332,
+     "swan": 1.028
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.64,
+     "salitre": 0.322,
+     "swan": 1.016
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.62,
+     "salitre": 0.318,
+     "swan": 1.006
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.62,
+     "salitre": 0.308,
+     "swan": 0.998
+    }
+   ],
+   "ratioSwanSalitre": 2.99
+  },
+  {
+   "nombre": "Ladeira",
+   "punto": {
+    "lat": 42.5755,
+    "lon": -9.0604,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.14,
+     "salitre": 0.043,
+     "swan": 1.021
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.14,
+     "salitre": 0.042,
+     "swan": 0.978
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.12,
+     "salitre": 0.037,
+     "swan": 0.951
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.12,
+     "salitre": 0.037,
+     "swan": 0.941
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.08,
+     "salitre": 0.037,
+     "swan": 0.943
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.02,
+     "salitre": 0.036,
+     "swan": 0.952
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.98,
+     "salitre": 0.035,
+     "swan": 0.962
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.94,
+     "salitre": 0.035,
+     "swan": 0.964
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.92,
+     "salitre": 0.039,
+     "swan": 0.955
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.88,
+     "salitre": 0.039,
+     "swan": 0.933
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.86,
+     "salitre": 0.038,
+     "swan": 0.9
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.86,
+     "salitre": 0.039,
+     "swan": 0.862
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.84,
+     "salitre": 0.037,
+     "swan": 0.826
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.84,
+     "salitre": 0.034,
+     "swan": 0.795
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.82,
+     "salitre": 0.032,
+     "swan": 0.776
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.82,
+     "salitre": 0.029,
+     "swan": 0.768
+    }
+   ],
+   "ratioSwanSalitre": null
+  },
+  {
+   "nombre": "Balieiros",
+   "punto": {
+    "lat": 42.5821,
+    "lon": -9.0853,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.94,
+     "salitre": 1.271,
+     "swan": 2.057
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.92,
+     "salitre": 1.273,
+     "swan": 2.01
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 1.257,
+     "swan": 1.971
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 1.21,
+     "swan": 1.941
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 1.186,
+     "swan": 1.913
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 1.151,
+     "swan": 1.885
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.76,
+     "salitre": 1.128,
+     "swan": 1.855
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.74,
+     "salitre": 1.151,
+     "swan": 1.823
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 1.145,
+     "swan": 1.793
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.68,
+     "salitre": 1.116,
+     "swan": 1.765
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.66,
+     "salitre": 1.104,
+     "swan": 1.737
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.64,
+     "salitre": 1.089,
+     "swan": 1.709
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 1.076,
+     "swan": 1.685
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.62,
+     "salitre": 1.022,
+     "swan": 1.667
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 1.018,
+     "swan": 1.659
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.6,
+     "salitre": 0.998,
+     "swan": 1.654
+    }
+   ],
+   "ratioSwanSalitre": 1.604
+  },
+  {
+   "nombre": "Seráns",
+   "punto": {
+    "lat": 42.6033,
+    "lon": -9.0657,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.94,
+     "salitre": 1.132,
+     "swan": 1.634
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.92,
+     "salitre": 1.136,
+     "swan": 1.602
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 1.126,
+     "swan": 1.574
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 1.09,
+     "swan": 1.547
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 1.068,
+     "swan": 1.519
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 1.033,
+     "swan": 1.489
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.76,
+     "salitre": 1.01,
+     "swan": 1.455
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.74,
+     "salitre": 1.02,
+     "swan": 1.422
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 1.01,
+     "swan": 1.394
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.68,
+     "salitre": 0.981,
+     "swan": 1.374
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.66,
+     "salitre": 0.971,
+     "swan": 1.358
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.64,
+     "salitre": 0.956,
+     "swan": 1.342
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 0.947,
+     "swan": 1.328
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.62,
+     "salitre": 0.906,
+     "swan": 1.318
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 0.904,
+     "swan": 1.316
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.6,
+     "salitre": 0.89,
+     "swan": 1.312
+    }
+   ],
+   "ratioSwanSalitre": 1.419
+  },
+  {
+   "nombre": "Furnas",
+   "punto": {
+    "lat": 42.6397,
+    "lon": -9.0428,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.94,
+     "salitre": 0.973,
+     "swan": 1.481
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.92,
+     "salitre": 0.973,
+     "swan": 1.452
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 0.966,
+     "swan": 1.426
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 0.91,
+     "swan": 1.4
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.892,
+     "swan": 1.371
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 0.864,
+     "swan": 1.339
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.76,
+     "salitre": 0.844,
+     "swan": 1.304
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.74,
+     "salitre": 0.875,
+     "swan": 1.27
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.864,
+     "swan": 1.24
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.68,
+     "salitre": 0.839,
+     "swan": 1.218
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.66,
+     "salitre": 0.83,
+     "swan": 1.202
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.64,
+     "salitre": 0.816,
+     "swan": 1.187
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 0.807,
+     "swan": 1.173
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.62,
+     "salitre": 0.757,
+     "swan": 1.166
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 0.756,
+     "swan": 1.164
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.6,
+     "salitre": 0.742,
+     "swan": 1.16
+    }
+   ],
+   "ratioSwanSalitre": 1.522
+  },
+  {
+   "nombre": "Río Sieira",
+   "punto": {
+    "lat": 42.6468,
+    "lon": -9.0401,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.94,
+     "salitre": 0.827,
+     "swan": 1.549
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.92,
+     "salitre": 0.825,
+     "swan": 1.512
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 0.816,
+     "swan": 1.482
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 0.757,
+     "swan": 1.458
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.742,
+     "swan": 1.438
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 0.725,
+     "swan": 1.418
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.76,
+     "salitre": 0.709,
+     "swan": 1.397
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.74,
+     "salitre": 0.746,
+     "swan": 1.374
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.737,
+     "swan": 1.349
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.68,
+     "salitre": 0.713,
+     "swan": 1.323
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.66,
+     "salitre": 0.705,
+     "swan": 1.296
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.64,
+     "salitre": 0.692,
+     "swan": 1.269
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 0.685,
+     "swan": 1.245
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.62,
+     "salitre": 0.632,
+     "swan": 1.228
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 0.632,
+     "swan": 1.218
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.6,
+     "salitre": 0.62,
+     "swan": 1.21
+    }
+   ],
+   "ratioSwanSalitre": 1.873
+  },
+  {
+   "nombre": "Queiruga",
+   "punto": {
+    "lat": 42.6757,
+    "lon": -9.0345,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.94,
+     "salitre": 0.724,
+     "swan": 1.416
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.92,
+     "salitre": 0.72,
+     "swan": 1.388
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 0.714,
+     "swan": 1.363
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 0.65,
+     "swan": 1.339
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.639,
+     "swan": 1.312
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 0.626,
+     "swan": 1.284
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.76,
+     "salitre": 0.615,
+     "swan": 1.254
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.74,
+     "salitre": 0.66,
+     "swan": 1.223
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.653,
+     "swan": 1.195
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.68,
+     "salitre": 0.634,
+     "swan": 1.173
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.66,
+     "salitre": 0.627,
+     "swan": 1.155
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.64,
+     "salitre": 0.614,
+     "swan": 1.139
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 0.607,
+     "swan": 1.125
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.62,
+     "salitre": 0.548,
+     "swan": 1.115
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 0.546,
+     "swan": 1.11
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.6,
+     "salitre": 0.532,
+     "swan": 1.103
+    }
+   ],
+   "ratioSwanSalitre": 1.956
+  },
+  {
+   "nombre": "Baroña",
+   "punto": {
+    "lat": 42.6905,
+    "lon": -9.0313,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.8,
+     "salitre": 0.627,
+     "swan": 1.582
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.78,
+     "salitre": 0.677,
+     "swan": 1.551
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.78,
+     "salitre": 0.788,
+     "swan": 1.523
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.76,
+     "salitre": 0.796,
+     "swan": 1.495
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.72,
+     "salitre": 0.701,
+     "swan": 1.465
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.68,
+     "salitre": 0.658,
+     "swan": 1.433
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.64,
+     "salitre": 0.628,
+     "swan": 1.399
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.62,
+     "salitre": 0.633,
+     "swan": 1.366
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.6,
+     "salitre": 0.669,
+     "swan": 1.336
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 0.648,
+     "swan": 1.31
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.56,
+     "salitre": 0.628,
+     "swan": 1.29
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.56,
+     "salitre": 0.618,
+     "swan": 1.272
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.54,
+     "salitre": 0.604,
+     "swan": 1.257
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.54,
+     "salitre": 0.597,
+     "swan": 1.246
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.52,
+     "salitre": 0.598,
+     "swan": 1.239
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.546,
+     "swan": 1.232
+    }
+   ],
+   "ratioSwanSalitre": 2.087
+  },
+  {
+   "nombre": "Fonforrón",
+   "punto": {
+    "lat": 42.7171,
+    "lon": -9.0117,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.8,
+     "salitre": 0.489,
+     "swan": 0.897
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.78,
+     "salitre": 0.488,
+     "swan": 0.879
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.78,
+     "salitre": 0.635,
+     "swan": 0.862
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.76,
+     "salitre": 0.643,
+     "swan": 0.846
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.72,
+     "salitre": 0.55,
+     "swan": 0.826
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.68,
+     "salitre": 0.472,
+     "swan": 0.803
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.64,
+     "salitre": 0.47,
+     "swan": 0.78
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.62,
+     "salitre": 0.519,
+     "swan": 0.758
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.6,
+     "salitre": 0.546,
+     "swan": 0.735
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 0.554,
+     "swan": 0.715
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.56,
+     "salitre": 0.528,
+     "swan": 0.698
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.56,
+     "salitre": 0.521,
+     "swan": 0.68
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.54,
+     "salitre": 0.489,
+     "swan": 0.668
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.54,
+     "salitre": 0.465,
+     "swan": 0.66
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.52,
+     "salitre": 0.45,
+     "swan": 0.655
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.406,
+     "swan": 0.655
+    }
+   ],
+   "ratioSwanSalitre": 1.456
+  },
+  {
+   "nombre": "Aguieira",
+   "punto": {
+    "lat": 42.7352,
+    "lon": -8.9981,
+    "km": 2
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.8,
+     "salitre": 0.064,
+     "swan": 0.765
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.78,
+     "salitre": 0.07,
+     "swan": 0.75
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.78,
+     "salitre": 0.092,
+     "swan": 0.739
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.76,
+     "salitre": 0.136,
+     "swan": 0.729
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.72,
+     "salitre": 0.131,
+     "swan": 0.713
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.68,
+     "salitre": 0.137,
+     "swan": 0.696
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.64,
+     "salitre": 0.133,
+     "swan": 0.68
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.62,
+     "salitre": 0.092,
+     "swan": 0.663
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.6,
+     "salitre": 0.074,
+     "swan": 0.64
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 0.079,
+     "swan": 0.615
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.56,
+     "salitre": 0.074,
+     "swan": 0.59
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.56,
+     "salitre": 0.073,
+     "swan": 0.571
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.54,
+     "salitre": 0.067,
+     "swan": 0.56
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.54,
+     "salitre": 0.063,
+     "swan": 0.552
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.52,
+     "salitre": 0.063,
+     "swan": 0.55
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.059,
+     "swan": 0.555
+    }
+   ],
+   "ratioSwanSalitre": 8.033
+  },
+  {
+   "nombre": "Ancoradoiro",
+   "punto": {
+    "lat": 42.7539,
+    "lon": -9.1033,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.8,
+     "salitre": 0.334,
+     "swan": 1.515
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.78,
+     "salitre": 0.373,
+     "swan": 1.467
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.78,
+     "salitre": 0.423,
+     "swan": 1.431
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.76,
+     "salitre": 0.445,
+     "swan": 1.406
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.72,
+     "salitre": 0.407,
+     "swan": 1.388
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.68,
+     "salitre": 0.384,
+     "swan": 1.378
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.64,
+     "salitre": 0.361,
+     "swan": 1.367
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.62,
+     "salitre": 0.348,
+     "swan": 1.353
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.6,
+     "salitre": 0.363,
+     "swan": 1.33
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 0.368,
+     "swan": 1.301
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.56,
+     "salitre": 0.35,
+     "swan": 1.268
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.56,
+     "salitre": 0.345,
+     "swan": 1.233
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.54,
+     "salitre": 0.33,
+     "swan": 1.2
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.54,
+     "salitre": 0.319,
+     "swan": 1.171
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.52,
+     "salitre": 0.32,
+     "swan": 1.151
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.303,
+     "swan": 1.138
+    }
+   ],
+   "ratioSwanSalitre": 3.636
+  },
+  {
+   "nombre": "Lariño",
+   "punto": {
+    "lat": 42.7682,
+    "lon": -9.1294,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.96,
+     "salitre": 1.07,
+     "swan": 1.458
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.94,
+     "salitre": 1.046,
+     "swan": 1.425
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.94,
+     "salitre": 1.057,
+     "swan": 1.396
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.92,
+     "salitre": 1.031,
+     "swan": 1.365
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.88,
+     "salitre": 1.012,
+     "swan": 1.326
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.84,
+     "salitre": 0.997,
+     "swan": 1.296
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.8,
+     "salitre": 0.979,
+     "swan": 1.275
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.78,
+     "salitre": 0.977,
+     "swan": 1.256
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.74,
+     "salitre": 0.929,
+     "swan": 1.236
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.72,
+     "salitre": 0.927,
+     "swan": 1.212
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.72,
+     "salitre": 0.916,
+     "swan": 1.187
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.7,
+     "salitre": 0.899,
+     "swan": 1.162
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.7,
+     "salitre": 0.888,
+     "swan": 1.14
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.7,
+     "salitre": 0.875,
+     "swan": 1.121
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.68,
+     "salitre": 0.863,
+     "swan": 1.11
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.68,
+     "salitre": 0.85,
+     "swan": 1.108
+    }
+   ],
+   "ratioSwanSalitre": 1.304
+  },
+  {
+   "nombre": "Carnota",
+   "punto": {
+    "lat": 42.8275,
+    "lon": -9.1121,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.9,
+     "salitre": 0.322,
+     "swan": 0.843
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.88,
+     "salitre": 0.284,
+     "swan": 0.824
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.86,
+     "salitre": 0.267,
+     "swan": 0.803
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.84,
+     "salitre": 0.248,
+     "swan": 0.778
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.8,
+     "salitre": 0.258,
+     "swan": 0.751
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.78,
+     "salitre": 0.274,
+     "swan": 0.725
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.74,
+     "salitre": 0.301,
+     "swan": 0.7
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.72,
+     "salitre": 0.3,
+     "swan": 0.682
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.7,
+     "salitre": 0.297,
+     "swan": 0.668
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.68,
+     "salitre": 0.295,
+     "swan": 0.655
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.68,
+     "salitre": 0.291,
+     "swan": 0.645
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.66,
+     "salitre": 0.278,
+     "swan": 0.636
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.66,
+     "salitre": 0.274,
+     "swan": 0.628
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.66,
+     "salitre": 0.258,
+     "swan": 0.619
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.64,
+     "salitre": 0.247,
+     "swan": 0.612
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.64,
+     "salitre": 0.235,
+     "swan": 0.601
+    }
+   ],
+   "ratioSwanSalitre": 2.478
+  },
+  {
+   "nombre": "Mar de Fora",
+   "punto": {
+    "lat": 42.9074,
+    "lon": -9.2781,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.26,
+     "salitre": 1.033,
+     "swan": 1.454
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.22,
+     "salitre": 1.012,
+     "swan": 1.435
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.2,
+     "salitre": 0.974,
+     "swan": 1.41
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.16,
+     "salitre": 0.953,
+     "swan": 1.378
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.12,
+     "salitre": 0.948,
+     "swan": 1.351
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.1,
+     "salitre": 0.943,
+     "swan": 1.327
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.06,
+     "salitre": 0.919,
+     "swan": 1.307
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.06,
+     "salitre": 0.908,
+     "swan": 1.289
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.06,
+     "salitre": 0.888,
+     "swan": 1.275
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.06,
+     "salitre": 0.88,
+     "swan": 1.269
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.06,
+     "salitre": 0.884,
+     "swan": 1.272
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.06,
+     "salitre": 0.875,
+     "swan": 1.275
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.06,
+     "salitre": 0.862,
+     "swan": 1.279
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.06,
+     "salitre": 0.848,
+     "swan": 1.281
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.04,
+     "salitre": 0.839,
+     "swan": 1.278
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.04,
+     "salitre": 0.826,
+     "swan": 1.267
+    }
+   ],
+   "ratioSwanSalitre": 1.442
+  },
+  {
+   "nombre": "Rostro",
+   "punto": {
+    "lat": 42.9709,
+    "lon": -9.2654,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.3,
+     "salitre": 1.567,
+     "swan": 2.104
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.28,
+     "salitre": 1.536,
+     "swan": 2.083
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.24,
+     "salitre": 1.49,
+     "swan": 2.05
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.22,
+     "salitre": 1.459,
+     "swan": 2.009
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.18,
+     "salitre": 1.429,
+     "swan": 1.957
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.14,
+     "salitre": 1.411,
+     "swan": 1.892
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.1,
+     "salitre": 1.415,
+     "swan": 1.823
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.1,
+     "salitre": 1.401,
+     "swan": 1.768
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.1,
+     "salitre": 1.351,
+     "swan": 1.742
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.1,
+     "salitre": 1.34,
+     "swan": 1.751
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.1,
+     "salitre": 1.342,
+     "swan": 1.787
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.12,
+     "salitre": 1.342,
+     "swan": 1.829
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.12,
+     "salitre": 1.345,
+     "swan": 1.859
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.12,
+     "salitre": 1.33,
+     "swan": 1.871
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.1,
+     "salitre": 1.331,
+     "swan": 1.866
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.1,
+     "salitre": 1.326,
+     "swan": 1.852
+    }
+   ],
+   "ratioSwanSalitre": 1.363
+  },
+  {
+   "nombre": "Nemiña",
+   "punto": {
+    "lat": 43.0082,
+    "lon": -9.2668,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.3,
+     "salitre": 0.404,
+     "swan": 1.666
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.28,
+     "salitre": 0.395,
+     "swan": 1.618
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.24,
+     "salitre": 0.365,
+     "swan": 1.583
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.22,
+     "salitre": 0.356,
+     "swan": 1.561
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.18,
+     "salitre": 0.364,
+     "swan": 1.549
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.14,
+     "salitre": 0.374,
+     "swan": 1.546
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.1,
+     "salitre": 0.414,
+     "swan": 1.547
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.1,
+     "salitre": 0.409,
+     "swan": 1.543
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.1,
+     "salitre": 0.355,
+     "swan": 1.532
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.1,
+     "salitre": 0.351,
+     "swan": 1.511
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.1,
+     "salitre": 0.352,
+     "swan": 1.482
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.12,
+     "salitre": 0.338,
+     "swan": 1.446
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.12,
+     "salitre": 0.34,
+     "swan": 1.412
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.12,
+     "salitre": 0.323,
+     "swan": 1.38
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.1,
+     "salitre": 0.325,
+     "swan": 1.357
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.1,
+     "salitre": 0.308,
+     "swan": 1.343
+    }
+   ],
+   "ratioSwanSalitre": 4.255
+  },
+  {
+   "nombre": "Traba",
+   "punto": {
+    "lat": 43.1959,
+    "lon": -9.0428,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.26,
+     "salitre": 1.332,
+     "swan": 1.829
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.22,
+     "salitre": 1.307,
+     "swan": 1.84
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.18,
+     "salitre": 1.266,
+     "swan": 1.831
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.14,
+     "salitre": 1.24,
+     "swan": 1.803
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.12,
+     "salitre": 1.214,
+     "swan": 1.747
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.12,
+     "salitre": 1.161,
+     "swan": 1.664
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.1,
+     "salitre": 1.14,
+     "swan": 1.569
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.1,
+     "salitre": 1.161,
+     "swan": 1.489
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.1,
+     "salitre": 1.157,
+     "swan": 1.456
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.1,
+     "salitre": 1.167,
+     "swan": 1.475
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.12,
+     "salitre": 1.179,
+     "swan": 1.542
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.12,
+     "salitre": 1.209,
+     "swan": 1.63
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.14,
+     "salitre": 1.225,
+     "swan": 1.711
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.14,
+     "salitre": 1.219,
+     "swan": 1.767
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.14,
+     "salitre": 1.22,
+     "swan": 1.795
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.14,
+     "salitre": 1.225,
+     "swan": 1.794
+    }
+   ],
+   "ratioSwanSalitre": 1.408
+  },
+  {
+   "nombre": "Soesto",
+   "punto": {
+    "lat": 43.216,
+    "lon": -9.0236,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.42,
+     "salitre": 1.562,
+     "swan": 2.14
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.38,
+     "salitre": 1.523,
+     "swan": 2.112
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.36,
+     "salitre": 1.496,
+     "swan": 2.086
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.32,
+     "salitre": 1.456,
+     "swan": 2.062
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.3,
+     "salitre": 1.418,
+     "swan": 2.038
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.3,
+     "salitre": 1.414,
+     "swan": 2.008
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.28,
+     "salitre": 1.381,
+     "swan": 1.961
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.3,
+     "salitre": 1.365,
+     "swan": 1.918
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.32,
+     "salitre": 1.381,
+     "swan": 1.897
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.34,
+     "salitre": 1.384,
+     "swan": 1.909
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.36,
+     "salitre": 1.402,
+     "swan": 1.943
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.38,
+     "salitre": 1.408,
+     "swan": 1.977
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.4,
+     "salitre": 1.426,
+     "swan": 1.988
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.38,
+     "salitre": 1.413,
+     "swan": 1.985
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.38,
+     "salitre": 1.413,
+     "swan": 1.981
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.36,
+     "salitre": 1.403,
+     "swan": 1.97
+    }
+   ],
+   "ratioSwanSalitre": 1.404
+  },
+  {
+   "nombre": "Seaia",
+   "punto": {
+    "lat": 43.333,
+    "lon": -8.8258,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.34,
+     "salitre": 1.021,
+     "swan": 2.094
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.3,
+     "salitre": 1.016,
+     "swan": 2.089
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.26,
+     "salitre": 0.998,
+     "swan": 2.067
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.22,
+     "salitre": 0.977,
+     "swan": 2.042
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.2,
+     "salitre": 0.963,
+     "swan": 2.019
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.2,
+     "salitre": 0.962,
+     "swan": 1.985
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.18,
+     "salitre": 0.954,
+     "swan": 1.956
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.2,
+     "salitre": 0.971,
+     "swan": 1.949
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.24,
+     "salitre": 0.99,
+     "swan": 1.964
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.26,
+     "salitre": 1.016,
+     "swan": 1.996
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.28,
+     "salitre": 1.032,
+     "swan": 2.059
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.32,
+     "salitre": 1.059,
+     "swan": 2.125
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.34,
+     "salitre": 1.076,
+     "swan": 2.176
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.32,
+     "salitre": 1.051,
+     "swan": 2.209
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.28,
+     "salitre": 1.041,
+     "swan": 2.217
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.26,
+     "salitre": 1.025,
+     "swan": 2.197
+    }
+   ],
+   "ratioSwanSalitre": 2.056
+  },
+  {
+   "nombre": "Malpica",
+   "punto": {
+    "lat": 43.3258,
+    "lon": -8.8138,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.96,
+     "salitre": 1.285,
+     "swan": 2.114
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.94,
+     "salitre": 1.258,
+     "swan": 2.113
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 1.084,
+     "swan": 2.093
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.88,
+     "salitre": 1.06,
+     "swan": 2.069
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.86,
+     "salitre": 1.046,
+     "swan": 2.047
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.86,
+     "salitre": 1.025,
+     "swan": 2.019
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.84,
+     "salitre": 1.022,
+     "swan": 1.996
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.86,
+     "salitre": 1.034,
+     "swan": 1.987
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.88,
+     "salitre": 1.044,
+     "swan": 1.998
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.9,
+     "salitre": 1.061,
+     "swan": 2.029
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.92,
+     "salitre": 1.072,
+     "swan": 2.095
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.94,
+     "salitre": 1.083,
+     "swan": 2.166
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.96,
+     "salitre": 1.093,
+     "swan": 2.212
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.94,
+     "salitre": 1.093,
+     "swan": 2.237
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.92,
+     "salitre": 1.256,
+     "swan": 2.242
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.9,
+     "salitre": 1.264,
+     "swan": 2.225
+    }
+   ],
+   "ratioSwanSalitre": 1.952
+  },
+  {
+   "nombre": "Razo",
+   "punto": {
+    "lat": 43.2963,
+    "lon": -8.7041,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.74,
+     "salitre": 1.076,
+     "swan": 1.638
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.72,
+     "salitre": 1.065,
+     "swan": 1.659
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.68,
+     "salitre": 1.043,
+     "swan": 1.658
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.66,
+     "salitre": 1.026,
+     "swan": 1.639
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.66,
+     "salitre": 1.004,
+     "swan": 1.608
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.64,
+     "salitre": 0.985,
+     "swan": 1.57
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.64,
+     "salitre": 0.98,
+     "swan": 1.529
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.66,
+     "salitre": 0.982,
+     "swan": 1.516
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.68,
+     "salitre": 1.001,
+     "swan": 1.552
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.7,
+     "salitre": 1.013,
+     "swan": 1.61
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.72,
+     "salitre": 1.021,
+     "swan": 1.65
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.74,
+     "salitre": 1.023,
+     "swan": 1.68
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.76,
+     "salitre": 1.032,
+     "swan": 1.72
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.74,
+     "salitre": 1.039,
+     "swan": 1.75
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.72,
+     "salitre": 1.04,
+     "swan": 1.768
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.7,
+     "salitre": 1.061,
+     "swan": 1.766
+    }
+   ],
+   "ratioSwanSalitre": 1.597
+  },
+  {
+   "nombre": "Baldaio",
+   "punto": {
+    "lat": 43.3029,
+    "lon": -8.6691,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.74,
+     "salitre": 1.192,
+     "swan": 1.908
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.72,
+     "salitre": 1.182,
+     "swan": 1.916
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.68,
+     "salitre": 1.17,
+     "swan": 1.909
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.66,
+     "salitre": 1.156,
+     "swan": 1.891
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.66,
+     "salitre": 1.145,
+     "swan": 1.866
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.64,
+     "salitre": 1.138,
+     "swan": 1.832
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.64,
+     "salitre": 1.134,
+     "swan": 1.786
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.66,
+     "salitre": 1.142,
+     "swan": 1.759
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.68,
+     "salitre": 1.157,
+     "swan": 1.775
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.7,
+     "salitre": 1.167,
+     "swan": 1.824
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.72,
+     "salitre": 1.17,
+     "swan": 1.88
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.74,
+     "salitre": 1.163,
+     "swan": 1.933
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.76,
+     "salitre": 1.164,
+     "swan": 1.978
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.74,
+     "salitre": 1.164,
+     "swan": 2.002
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.72,
+     "salitre": 1.208,
+     "swan": 2.014
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.7,
+     "salitre": 1.214,
+     "swan": 2.011
+    }
+   ],
+   "ratioSwanSalitre": 1.63
+  },
+  {
+   "nombre": "Caión",
+   "punto": {
+    "lat": 43.3205,
+    "lon": -8.6127,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.58,
+     "salitre": 1.034,
+     "swan": 1.721
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.56,
+     "salitre": 1.019,
+     "swan": 1.722
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.54,
+     "salitre": 1.02,
+     "swan": 1.712
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.52,
+     "salitre": 1.003,
+     "swan": 1.695
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.52,
+     "salitre": 0.997,
+     "swan": 1.677
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.5,
+     "salitre": 0.985,
+     "swan": 1.66
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.5,
+     "salitre": 0.983,
+     "swan": 1.645
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.52,
+     "salitre": 0.99,
+     "swan": 1.663
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.56,
+     "salitre": 1.003,
+     "swan": 1.718
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 1.011,
+     "swan": 1.785
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.6,
+     "salitre": 1.015,
+     "swan": 1.826
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 1.033,
+     "swan": 1.85
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 1.036,
+     "swan": 1.862
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.6,
+     "salitre": 1.028,
+     "swan": 1.858
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 1.044,
+     "swan": 1.853
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.58,
+     "salitre": 1.044,
+     "swan": 1.836
+    }
+   ],
+   "ratioSwanSalitre": 1.713
+  },
+  {
+   "nombre": "Barrañán",
+   "punto": {
+    "lat": 43.3135,
+    "lon": -8.5531,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.58,
+     "salitre": 0.664,
+     "swan": 1.51
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.56,
+     "salitre": 0.658,
+     "swan": 1.509
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.54,
+     "salitre": 0.666,
+     "swan": 1.503
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.52,
+     "salitre": 0.662,
+     "swan": 1.49
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.52,
+     "salitre": 0.668,
+     "swan": 1.479
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.5,
+     "salitre": 0.672,
+     "swan": 1.472
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.5,
+     "salitre": 0.682,
+     "swan": 1.467
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.52,
+     "salitre": 0.688,
+     "swan": 1.477
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.56,
+     "salitre": 0.7,
+     "swan": 1.522
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.58,
+     "salitre": 0.708,
+     "swan": 1.576
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.6,
+     "salitre": 0.704,
+     "swan": 1.619
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.6,
+     "salitre": 0.733,
+     "swan": 1.643
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.62,
+     "salitre": 0.728,
+     "swan": 1.654
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.6,
+     "salitre": 0.727,
+     "swan": 1.653
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.6,
+     "salitre": 0.745,
+     "swan": 1.651
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.58,
+     "salitre": 0.754,
+     "swan": 1.638
+    }
+   ],
+   "ratioSwanSalitre": 2.241
+  },
+  {
+   "nombre": "Valcovo",
+   "punto": {
+    "lat": 43.3183,
+    "lon": -8.5351,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.5,
+     "salitre": 1.151,
+     "swan": 1.935
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.48,
+     "salitre": 1.124,
+     "swan": 1.914
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.46,
+     "salitre": 1.115,
+     "swan": 1.894
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.44,
+     "salitre": 1.087,
+     "swan": 1.876
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.42,
+     "salitre": 1.061,
+     "swan": 1.865
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.42,
+     "salitre": 1.042,
+     "swan": 1.856
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.4,
+     "salitre": 1.013,
+     "swan": 1.838
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.42,
+     "salitre": 1.014,
+     "swan": 1.821
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.44,
+     "salitre": 1.019,
+     "swan": 1.831
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.46,
+     "salitre": 1.023,
+     "swan": 1.863
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.48,
+     "salitre": 1.035,
+     "swan": 1.908
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.5,
+     "salitre": 1.025,
+     "swan": 1.942
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.52,
+     "salitre": 1.038,
+     "swan": 1.957
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.5,
+     "salitre": 1.038,
+     "swan": 1.958
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 1.029,
+     "swan": 1.955
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.46,
+     "salitre": 1.026,
+     "swan": 1.949
+    }
+   ],
+   "ratioSwanSalitre": 1.814
+  },
+  {
+   "nombre": "Repibelo",
+   "punto": {
+    "lat": 43.3248,
+    "lon": -8.5236,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.5,
+     "salitre": 1.002,
+     "swan": 2.338
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.48,
+     "salitre": 0.978,
+     "swan": 2.314
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.46,
+     "salitre": 0.968,
+     "swan": 2.283
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.44,
+     "salitre": 0.945,
+     "swan": 2.255
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.42,
+     "salitre": 0.925,
+     "swan": 2.224
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.42,
+     "salitre": 0.911,
+     "swan": 2.17
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.4,
+     "salitre": 0.882,
+     "swan": 2.087
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.42,
+     "salitre": 0.883,
+     "swan": 2.006
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.44,
+     "salitre": 0.886,
+     "swan": 1.967
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.46,
+     "salitre": 0.888,
+     "swan": 1.985
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.48,
+     "salitre": 0.898,
+     "swan": 2.049
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.5,
+     "salitre": 0.894,
+     "swan": 2.131
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.52,
+     "salitre": 0.905,
+     "swan": 2.187
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.5,
+     "salitre": 0.904,
+     "swan": 2.206
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.902,
+     "swan": 2.206
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.46,
+     "salitre": 0.896,
+     "swan": 2.198
+    }
+   ],
+   "ratioSwanSalitre": 2.382
+  },
+  {
+   "nombre": "Sabón",
+   "punto": {
+    "lat": 43.33,
+    "lon": -8.512,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.5,
+     "salitre": 0.654,
+     "swan": 2.11
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.48,
+     "salitre": 0.64,
+     "swan": 2.08
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.46,
+     "salitre": 0.636,
+     "swan": 2.051
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.44,
+     "salitre": 0.624,
+     "swan": 2.026
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.42,
+     "salitre": 0.616,
+     "swan": 2.008
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.42,
+     "salitre": 0.615,
+     "swan": 1.996
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.4,
+     "salitre": 0.612,
+     "swan": 1.985
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.42,
+     "salitre": 0.618,
+     "swan": 1.977
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.44,
+     "salitre": 0.601,
+     "swan": 1.979
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.46,
+     "salitre": 0.602,
+     "swan": 2
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.48,
+     "salitre": 0.607,
+     "swan": 2.015
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.5,
+     "salitre": 0.602,
+     "swan": 2.018
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.52,
+     "salitre": 0.634,
+     "swan": 2.013
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.5,
+     "salitre": 0.626,
+     "swan": 2.007
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.612,
+     "swan": 2
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.46,
+     "salitre": 0.607,
+     "swan": 1.991
+    }
+   ],
+   "ratioSwanSalitre": 3.25
+  },
+  {
+   "nombre": "Orzán",
+   "punto": {
+    "lat": 43.3756,
+    "lon": -8.4061,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.96,
+     "salitre": 0.642,
+     "swan": 1.238
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.92,
+     "salitre": 0.627,
+     "swan": 1.229
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 0.604,
+     "swan": 1.213
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.86,
+     "salitre": 0.589,
+     "swan": 1.194
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.572,
+     "swan": 1.173
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.84,
+     "salitre": 0.549,
+     "swan": 1.149
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.82,
+     "salitre": 0.534,
+     "swan": 1.125
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.82,
+     "salitre": 0.535,
+     "swan": 1.105
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.84,
+     "salitre": 0.537,
+     "swan": 1.097
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.84,
+     "salitre": 0.539,
+     "swan": 1.103
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.86,
+     "salitre": 0.548,
+     "swan": 1.115
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.86,
+     "salitre": 0.549,
+     "swan": 1.127
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.88,
+     "salitre": 0.558,
+     "swan": 1.135
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.86,
+     "salitre": 0.553,
+     "swan": 1.139
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.86,
+     "salitre": 0.594,
+     "swan": 1.139
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.84,
+     "salitre": 0.585,
+     "swan": 1.138
+    }
+   ],
+   "ratioSwanSalitre": 2.043
+  },
+  {
+   "nombre": "Riazor",
+   "punto": {
+    "lat": 43.3708,
+    "lon": -8.4104,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.96,
+     "salitre": 0.668,
+     "swan": 1.045
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.92,
+     "salitre": 0.656,
+     "swan": 1.043
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.9,
+     "salitre": 0.621,
+     "swan": 1.035
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.86,
+     "salitre": 0.608,
+     "swan": 1.025
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.599,
+     "swan": 1.017
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.84,
+     "salitre": 0.577,
+     "swan": 1.008
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.82,
+     "salitre": 0.574,
+     "swan": 0.999
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.82,
+     "salitre": 0.579,
+     "swan": 0.992
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.84,
+     "salitre": 0.598,
+     "swan": 1.003
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.84,
+     "salitre": 0.607,
+     "swan": 1.035
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.86,
+     "salitre": 0.619,
+     "swan": 1.069
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.86,
+     "salitre": 0.616,
+     "swan": 1.09
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.88,
+     "salitre": 0.629,
+     "swan": 1.096
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.86,
+     "salitre": 0.619,
+     "swan": 1.087
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.86,
+     "salitre": 0.623,
+     "swan": 1.075
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.84,
+     "salitre": 0.612,
+     "swan": 1.068
+    }
+   ],
+   "ratioSwanSalitre": 1.726
+  },
+  {
+   "nombre": "Matadero",
+   "punto": {
+    "lat": 43.377,
+    "lon": -8.4066,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.02,
+     "salitre": 0.723,
+     "swan": 1.238
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.98,
+     "salitre": 0.705,
+     "swan": 1.229
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.96,
+     "salitre": 0.675,
+     "swan": 1.213
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.92,
+     "salitre": 0.657,
+     "swan": 1.194
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.9,
+     "salitre": 0.642,
+     "swan": 1.173
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.9,
+     "salitre": 0.622,
+     "swan": 1.149
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.88,
+     "salitre": 0.608,
+     "swan": 1.125
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.9,
+     "salitre": 0.608,
+     "swan": 1.105
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.9,
+     "salitre": 0.598,
+     "swan": 1.097
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.92,
+     "salitre": 0.6,
+     "swan": 1.103
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.94,
+     "salitre": 0.606,
+     "swan": 1.115
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.94,
+     "salitre": 0.615,
+     "swan": 1.127
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.96,
+     "salitre": 0.621,
+     "swan": 1.135
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.94,
+     "salitre": 0.615,
+     "swan": 1.139
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.94,
+     "salitre": 0.602,
+     "swan": 1.139
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.92,
+     "salitre": 0.596,
+     "swan": 1.138
+    }
+   ],
+   "ratioSwanSalitre": 1.834
+  },
+  {
+   "nombre": "Santa Cristina",
+   "punto": {
+    "lat": 43.342,
+    "lon": -8.3774,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.02,
+     "salitre": 0.35,
+     "swan": 0.495
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.98,
+     "salitre": 0.353,
+     "swan": 0.495
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.96,
+     "salitre": 0.358,
+     "swan": 0.495
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.92,
+     "salitre": 0.363,
+     "swan": 0.493
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.9,
+     "salitre": 0.365,
+     "swan": 0.494
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.9,
+     "salitre": 0.379,
+     "swan": 0.497
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.88,
+     "salitre": 0.341,
+     "swan": 0.5
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.88,
+     "salitre": 0.381,
+     "swan": 0.502
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.9,
+     "salitre": 0.386,
+     "swan": 0.511
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.9,
+     "salitre": 0.389,
+     "swan": 0.527
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.9,
+     "salitre": 0.39,
+     "swan": 0.554
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.92,
+     "salitre": 0.388,
+     "swan": 0.58
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.92,
+     "salitre": 0.383,
+     "swan": 0.587
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.9,
+     "salitre": 0.373,
+     "swan": 0.579
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.9,
+     "salitre": 0.371,
+     "swan": 0.563
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.88,
+     "salitre": 0.364,
+     "swan": 0.549
+    }
+   ],
+   "ratioSwanSalitre": 1.414
+  },
+  {
+   "nombre": "Bastiagueiro",
+   "punto": {
+    "lat": 43.3434,
+    "lon": -8.3643,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.92,
+     "salitre": 0.212,
+     "swan": 0.648
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.88,
+     "salitre": 0.21,
+     "swan": 0.647
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.86,
+     "salitre": 0.207,
+     "swan": 0.648
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.82,
+     "salitre": 0.206,
+     "swan": 0.646
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.8,
+     "salitre": 0.209,
+     "swan": 0.645
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.76,
+     "salitre": 0.21,
+     "swan": 0.646
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.74,
+     "salitre": 0.218,
+     "swan": 0.647
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.76,
+     "salitre": 0.222,
+     "swan": 0.649
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.76,
+     "salitre": 0.228,
+     "swan": 0.656
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.78,
+     "salitre": 0.217,
+     "swan": 0.669
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.78,
+     "salitre": 0.222,
+     "swan": 0.698
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.8,
+     "salitre": 0.217,
+     "swan": 0.723
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.8,
+     "salitre": 0.222,
+     "swan": 0.728
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.78,
+     "salitre": 0.223,
+     "swan": 0.719
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.78,
+     "salitre": 0.221,
+     "swan": 0.704
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.76,
+     "salitre": 0.215,
+     "swan": 0.692
+    }
+   ],
+   "ratioSwanSalitre": 3.13
+  },
+  {
+   "nombre": "Doniños",
+   "punto": {
+    "lat": 43.5009,
+    "lon": -8.3223,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.12,
+     "salitre": 1.393,
+     "swan": 2.329
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.08,
+     "salitre": 1.357,
+     "swan": 2.279
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.06,
+     "salitre": 1.35,
+     "swan": 2.235
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.02,
+     "salitre": 1.311,
+     "swan": 2.199
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.02,
+     "salitre": 1.267,
+     "swan": 2.17
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2,
+     "salitre": 1.242,
+     "swan": 2.149
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2,
+     "salitre": 1.227,
+     "swan": 2.132
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.02,
+     "salitre": 1.227,
+     "swan": 2.119
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.02,
+     "salitre": 1.217,
+     "swan": 2.109
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.04,
+     "salitre": 1.217,
+     "swan": 2.095
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.04,
+     "salitre": 1.246,
+     "swan": 2.075
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.06,
+     "salitre": 1.233,
+     "swan": 2.051
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.06,
+     "salitre": 1.232,
+     "swan": 2.029
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.04,
+     "salitre": 1.216,
+     "swan": 2.011
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.04,
+     "salitre": 1.199,
+     "swan": 1.998
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.02,
+     "salitre": 1.181,
+     "swan": 1.987
+    }
+   ],
+   "ratioSwanSalitre": 1.679
+  },
+  {
+   "nombre": "San Jorge",
+   "punto": {
+    "lat": 43.5328,
+    "lon": -8.3008,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.12,
+     "salitre": 0.956,
+     "swan": 1.616
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.08,
+     "salitre": 0.926,
+     "swan": 1.584
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.06,
+     "salitre": 0.932,
+     "swan": 1.556
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.02,
+     "salitre": 0.9,
+     "swan": 1.532
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.02,
+     "salitre": 0.852,
+     "swan": 1.511
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2,
+     "salitre": 0.831,
+     "swan": 1.49
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2,
+     "salitre": 0.817,
+     "swan": 1.456
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.02,
+     "salitre": 0.818,
+     "swan": 1.417
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.02,
+     "salitre": 0.813,
+     "swan": 1.388
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.04,
+     "salitre": 0.814,
+     "swan": 1.391
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.04,
+     "salitre": 0.849,
+     "swan": 1.413
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.06,
+     "salitre": 0.843,
+     "swan": 1.428
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.06,
+     "salitre": 0.846,
+     "swan": 1.427
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.04,
+     "salitre": 0.838,
+     "swan": 1.423
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.04,
+     "salitre": 0.831,
+     "swan": 1.418
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.02,
+     "salitre": 0.821,
+     "swan": 1.415
+    }
+   ],
+   "ratioSwanSalitre": 1.707
+  },
+  {
+   "nombre": "Santa Comba",
+   "punto": {
+    "lat": 43.5589,
+    "lon": -8.2911,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.02,
+     "salitre": 1.352,
+     "swan": 2.013
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.98,
+     "salitre": 1.333,
+     "swan": 2.001
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.94,
+     "salitre": 1.308,
+     "swan": 1.98
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.9,
+     "salitre": 1.295,
+     "swan": 1.958
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.9,
+     "salitre": 1.283,
+     "swan": 1.942
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.88,
+     "salitre": 1.258,
+     "swan": 1.923
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.88,
+     "salitre": 1.247,
+     "swan": 1.925
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.9,
+     "salitre": 1.253,
+     "swan": 1.976
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.9,
+     "salitre": 1.273,
+     "swan": 1.999
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.92,
+     "salitre": 1.274,
+     "swan": 1.988
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.92,
+     "salitre": 1.286,
+     "swan": 1.973
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.92,
+     "salitre": 1.272,
+     "swan": 1.969
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.92,
+     "salitre": 1.28,
+     "swan": 1.985
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.92,
+     "salitre": 1.29,
+     "swan": 2.008
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.9,
+     "salitre": 1.269,
+     "swan": 2.02
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.9,
+     "salitre": 1.281,
+     "swan": 2.014
+    }
+   ],
+   "ratioSwanSalitre": 1.548
+  },
+  {
+   "nombre": "Ponzos",
+   "punto": {
+    "lat": 43.5576,
+    "lon": -8.27,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.02,
+     "salitre": 1.27,
+     "swan": 1.943
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.98,
+     "salitre": 1.254,
+     "swan": 1.934
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.94,
+     "salitre": 1.226,
+     "swan": 1.913
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.9,
+     "salitre": 1.213,
+     "swan": 1.893
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.9,
+     "salitre": 1.2,
+     "swan": 1.869
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.88,
+     "salitre": 1.183,
+     "swan": 1.816
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.88,
+     "salitre": 1.169,
+     "swan": 1.738
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.9,
+     "salitre": 1.174,
+     "swan": 1.668
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.9,
+     "salitre": 1.193,
+     "swan": 1.636
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.92,
+     "salitre": 1.194,
+     "swan": 1.648
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.92,
+     "salitre": 1.196,
+     "swan": 1.702
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.92,
+     "salitre": 1.197,
+     "swan": 1.776
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.92,
+     "salitre": 1.197,
+     "swan": 1.843
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.92,
+     "salitre": 1.196,
+     "swan": 1.889
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.9,
+     "salitre": 1.18,
+     "swan": 1.909
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.9,
+     "salitre": 1.181,
+     "swan": 1.91
+    }
+   ],
+   "ratioSwanSalitre": 1.54
+  },
+  {
+   "nombre": "Campelo",
+   "punto": {
+    "lat": 43.5853,
+    "lon": -8.2177,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.02,
+     "salitre": 1.273,
+     "swan": 2.014
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.98,
+     "salitre": 1.248,
+     "swan": 1.975
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.94,
+     "salitre": 1.217,
+     "swan": 1.945
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.9,
+     "salitre": 1.192,
+     "swan": 1.929
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.9,
+     "salitre": 1.171,
+     "swan": 1.924
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.88,
+     "salitre": 1.158,
+     "swan": 1.918
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.88,
+     "salitre": 1.141,
+     "swan": 1.9
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.9,
+     "salitre": 1.146,
+     "swan": 1.876
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.9,
+     "salitre": 1.168,
+     "swan": 1.859
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.92,
+     "salitre": 1.177,
+     "swan": 1.859
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.92,
+     "salitre": 1.177,
+     "swan": 1.873
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.92,
+     "salitre": 1.182,
+     "swan": 1.883
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.92,
+     "salitre": 1.183,
+     "swan": 1.878
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.92,
+     "salitre": 1.187,
+     "swan": 1.869
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.9,
+     "salitre": 1.174,
+     "swan": 1.859
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.9,
+     "salitre": 1.178,
+     "swan": 1.853
+    }
+   ],
+   "ratioSwanSalitre": 1.592
+  },
+  {
+   "nombre": "Valdoviño",
+   "punto": {
+    "lat": 43.6174,
+    "lon": -8.1542,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.14,
+     "salitre": 1.318,
+     "swan": 1.88
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.12,
+     "salitre": 1.303,
+     "swan": 1.853
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.08,
+     "salitre": 1.276,
+     "swan": 1.833
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.06,
+     "salitre": 1.258,
+     "swan": 1.823
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.06,
+     "salitre": 1.248,
+     "swan": 1.817
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.06,
+     "salitre": 1.251,
+     "swan": 1.809
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.06,
+     "salitre": 1.241,
+     "swan": 1.807
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.08,
+     "salitre": 1.242,
+     "swan": 1.803
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.08,
+     "salitre": 1.255,
+     "swan": 1.797
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.1,
+     "salitre": 1.252,
+     "swan": 1.792
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.1,
+     "salitre": 1.243,
+     "swan": 1.794
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.12,
+     "salitre": 1.27,
+     "swan": 1.798
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.12,
+     "salitre": 1.266,
+     "swan": 1.803
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.12,
+     "salitre": 1.244,
+     "swan": 1.812
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.12,
+     "salitre": 1.233,
+     "swan": 1.813
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.12,
+     "salitre": 1.217,
+     "swan": 1.812
+    }
+   ],
+   "ratioSwanSalitre": 1.446
+  },
+  {
+   "nombre": "Pantín",
+   "punto": {
+    "lat": 43.6425,
+    "lon": -8.1148,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.12,
+     "salitre": 1.544,
+     "swan": 1.885
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.1,
+     "salitre": 1.513,
+     "swan": 1.859
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.06,
+     "salitre": 1.472,
+     "swan": 1.841
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.04,
+     "salitre": 1.443,
+     "swan": 1.832
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.04,
+     "salitre": 1.425,
+     "swan": 1.82
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.04,
+     "salitre": 1.423,
+     "swan": 1.812
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.04,
+     "salitre": 1.407,
+     "swan": 1.811
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.06,
+     "salitre": 1.406,
+     "swan": 1.813
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.06,
+     "salitre": 1.421,
+     "swan": 1.808
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.08,
+     "salitre": 1.416,
+     "swan": 1.8
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.08,
+     "salitre": 1.414,
+     "swan": 1.796
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.1,
+     "salitre": 1.46,
+     "swan": 1.792
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.1,
+     "salitre": 1.454,
+     "swan": 1.795
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.1,
+     "salitre": 1.445,
+     "swan": 1.802
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.12,
+     "salitre": 1.42,
+     "swan": 1.804
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.12,
+     "salitre": 1.411,
+     "swan": 1.804
+    }
+   ],
+   "ratioSwanSalitre": 1.27
+  },
+  {
+   "nombre": "Vilarrube",
+   "punto": {
+    "lat": 43.6473,
+    "lon": -8.0741,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.12,
+     "salitre": 0.232,
+     "swan": 1.404
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.1,
+     "salitre": 0.227,
+     "swan": 1.366
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.06,
+     "salitre": 0.222,
+     "swan": 1.341
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.04,
+     "salitre": 0.217,
+     "swan": 1.33
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.04,
+     "salitre": 0.224,
+     "swan": 1.327
+    },
+    {
+     "t": 1793530800,
+     "offshore": 2.04,
+     "salitre": 0.228,
+     "swan": 1.332
+    },
+    {
+     "t": 1793534400,
+     "offshore": 2.04,
+     "salitre": 0.243,
+     "swan": 1.339
+    },
+    {
+     "t": 1793538000,
+     "offshore": 2.06,
+     "salitre": 0.236,
+     "swan": 1.342
+    },
+    {
+     "t": 1793541600,
+     "offshore": 2.06,
+     "salitre": 0.243,
+     "swan": 1.34
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2.08,
+     "salitre": 0.239,
+     "swan": 1.331
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.08,
+     "salitre": 0.24,
+     "swan": 1.316
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.1,
+     "salitre": 0.241,
+     "swan": 1.298
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.1,
+     "salitre": 0.246,
+     "swan": 1.281
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.1,
+     "salitre": 0.245,
+     "swan": 1.268
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.12,
+     "salitre": 0.25,
+     "swan": 1.26
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.12,
+     "salitre": 0.249,
+     "swan": 1.257
+    }
+   ],
+   "ratioSwanSalitre": 5.569
+  },
+  {
+   "nombre": "A Concha",
+   "punto": {
+    "lat": 43.723,
+    "lon": -7.8108,
+    "km": 0.6
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.9,
+     "salitre": 0.225,
+     "swan": 1.197
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.86,
+     "salitre": 0.221,
+     "swan": 1.179
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.84,
+     "salitre": 0.219,
+     "swan": 1.166
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.8,
+     "salitre": 0.216,
+     "swan": 1.159
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.8,
+     "salitre": 0.214,
+     "swan": 1.158
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.8,
+     "salitre": 0.205,
+     "swan": 1.161
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.8,
+     "salitre": 0.203,
+     "swan": 1.167
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.8,
+     "salitre": 0.203,
+     "swan": 1.171
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.82,
+     "salitre": 0.213,
+     "swan": 1.171
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.82,
+     "salitre": 0.211,
+     "swan": 1.167
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.82,
+     "salitre": 0.219,
+     "swan": 1.159
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.84,
+     "salitre": 0.233,
+     "swan": 1.151
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.84,
+     "salitre": 0.241,
+     "swan": 1.147
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.86,
+     "salitre": 0.245,
+     "swan": 1.149
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.88,
+     "salitre": 0.239,
+     "swan": 1.154
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.9,
+     "salitre": 0.245,
+     "swan": 1.161
+    }
+   ],
+   "ratioSwanSalitre": 5.335
+  },
+  {
+   "nombre": "San Antón",
+   "punto": {
+    "lat": 43.726,
+    "lon": -7.8005,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.08,
+     "salitre": 0.74,
+     "swan": 1.465
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.04,
+     "salitre": 0.711,
+     "swan": 1.45
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2,
+     "salitre": 0.684,
+     "swan": 1.439
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.96,
+     "salitre": 0.666,
+     "swan": 1.433
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.96,
+     "salitre": 0.678,
+     "swan": 1.432
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.96,
+     "salitre": 0.688,
+     "swan": 1.432
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.96,
+     "salitre": 0.705,
+     "swan": 1.429
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.98,
+     "salitre": 0.709,
+     "swan": 1.423
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.98,
+     "salitre": 0.73,
+     "swan": 1.418
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2,
+     "salitre": 0.734,
+     "swan": 1.416
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.02,
+     "salitre": 0.737,
+     "swan": 1.416
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.02,
+     "salitre": 0.727,
+     "swan": 1.422
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.04,
+     "salitre": 0.729,
+     "swan": 1.433
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.06,
+     "salitre": 0.767,
+     "swan": 1.445
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.08,
+     "salitre": 0.779,
+     "swan": 1.458
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.1,
+     "salitre": 0.805,
+     "swan": 1.474
+    }
+   ],
+   "ratioSwanSalitre": 1.98
+  },
+  {
+   "nombre": "Sarridal",
+   "punto": {
+    "lat": 43.7364,
+    "lon": -7.78,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.08,
+     "salitre": 0.974,
+     "swan": 1.546
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.04,
+     "salitre": 0.946,
+     "swan": 1.54
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2,
+     "salitre": 0.913,
+     "swan": 1.534
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.96,
+     "salitre": 0.888,
+     "swan": 1.527
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.96,
+     "salitre": 0.894,
+     "swan": 1.523
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.96,
+     "salitre": 0.899,
+     "swan": 1.521
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.96,
+     "salitre": 0.911,
+     "swan": 1.522
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.98,
+     "salitre": 0.916,
+     "swan": 1.522
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.98,
+     "salitre": 0.944,
+     "swan": 1.524
+    },
+    {
+     "t": 1793545200,
+     "offshore": 2,
+     "salitre": 0.948,
+     "swan": 1.526
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2.02,
+     "salitre": 0.95,
+     "swan": 1.527
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.02,
+     "salitre": 0.949,
+     "swan": 1.535
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.04,
+     "salitre": 0.951,
+     "swan": 1.552
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.06,
+     "salitre": 0.965,
+     "swan": 1.57
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.08,
+     "salitre": 0.984,
+     "swan": 1.589
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.1,
+     "salitre": 1.006,
+     "swan": 1.605
+    }
+   ],
+   "ratioSwanSalitre": 1.628
+  },
+  {
+   "nombre": "Bares",
+   "punto": {
+    "lat": 43.7709,
+    "lon": -7.6721,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 2.16,
+     "salitre": 0.203,
+     "swan": 0.35
+    },
+    {
+     "t": 1793516400,
+     "offshore": 2.12,
+     "salitre": 0.229,
+     "swan": 0.354
+    },
+    {
+     "t": 1793520000,
+     "offshore": 2.1,
+     "salitre": 0.265,
+     "swan": 0.362
+    },
+    {
+     "t": 1793523600,
+     "offshore": 2.06,
+     "salitre": 0.29,
+     "swan": 0.391
+    },
+    {
+     "t": 1793527200,
+     "offshore": 2.02,
+     "salitre": 0.31,
+     "swan": 0.414
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.98,
+     "salitre": 0.319,
+     "swan": 0.43
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.94,
+     "salitre": 0.339,
+     "swan": 0.461
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.94,
+     "salitre": 0.333,
+     "swan": 0.489
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.96,
+     "salitre": 0.328,
+     "swan": 0.524
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.96,
+     "salitre": 0.327,
+     "swan": 0.557
+    },
+    {
+     "t": 1793548800,
+     "offshore": 2,
+     "salitre": 0.359,
+     "swan": 0.599
+    },
+    {
+     "t": 1793552400,
+     "offshore": 2.02,
+     "salitre": 0.397,
+     "swan": 0.649
+    },
+    {
+     "t": 1793556000,
+     "offshore": 2.06,
+     "salitre": 0.428,
+     "swan": 0.697
+    },
+    {
+     "t": 1793559600,
+     "offshore": 2.08,
+     "salitre": 0.455,
+     "swan": 0.75
+    },
+    {
+     "t": 1793563200,
+     "offshore": 2.08,
+     "salitre": 0.493,
+     "swan": 0.806
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2.1,
+     "salitre": 0.534,
+     "swan": 0.851
+    }
+   ],
+   "ratioSwanSalitre": 1.598
+  },
+  {
+   "nombre": "Esteiro",
+   "punto": {
+    "lat": 43.7135,
+    "lon": -7.56,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.98,
+     "salitre": 0.443,
+     "swan": 1.116
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.94,
+     "salitre": 0.492,
+     "swan": 1.115
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.88,
+     "salitre": 0.473,
+     "swan": 1.113
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.84,
+     "salitre": 0.463,
+     "swan": 1.11
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.84,
+     "salitre": 0.463,
+     "swan": 1.105
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.84,
+     "salitre": 0.467,
+     "swan": 1.1
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.84,
+     "salitre": 0.47,
+     "swan": 1.096
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.86,
+     "salitre": 0.483,
+     "swan": 1.092
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.86,
+     "salitre": 0.488,
+     "swan": 1.088
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.88,
+     "salitre": 0.496,
+     "swan": 1.087
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.9,
+     "salitre": 0.487,
+     "swan": 1.085
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.9,
+     "salitre": 0.481,
+     "swan": 1.088
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.92,
+     "salitre": 0.479,
+     "swan": 1.095
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.94,
+     "salitre": 0.504,
+     "swan": 1.105
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.98,
+     "salitre": 0.477,
+     "swan": 1.117
+    },
+    {
+     "t": 1793566800,
+     "offshore": 2,
+     "salitre": 0.499,
+     "swan": 1.131
+    }
+   ],
+   "ratioSwanSalitre": 2.286
+  },
+  {
+   "nombre": "Peizás",
+   "punto": {
+    "lat": 43.5906,
+    "lon": -7.2766,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.44,
+     "salitre": 0.581,
+     "swan": 0.968
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.42,
+     "salitre": 0.578,
+     "swan": 0.972
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.4,
+     "salitre": 0.565,
+     "swan": 0.978
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.38,
+     "salitre": 0.559,
+     "swan": 0.986
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.36,
+     "salitre": 0.565,
+     "swan": 0.994
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.34,
+     "salitre": 0.559,
+     "swan": 1.001
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.32,
+     "salitre": 0.556,
+     "swan": 1.019
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.34,
+     "salitre": 0.566,
+     "swan": 1.042
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.34,
+     "salitre": 0.582,
+     "swan": 1.057
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.36,
+     "salitre": 0.608,
+     "swan": 1.065
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.38,
+     "salitre": 0.621,
+     "swan": 1.071
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.4,
+     "salitre": 0.653,
+     "swan": 1.092
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.42,
+     "salitre": 0.67,
+     "swan": 1.129
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.46,
+     "salitre": 0.694,
+     "swan": 1.172
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.733,
+     "swan": 1.217
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.758,
+     "swan": 1.273
+    }
+   ],
+   "ratioSwanSalitre": 1.731
+  },
+  {
+   "nombre": "Rapadoira",
+   "punto": {
+    "lat": 43.5751,
+    "lon": -7.2451,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.44,
+     "salitre": 0.47,
+     "swan": 0.826
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.42,
+     "salitre": 0.466,
+     "swan": 0.834
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.4,
+     "salitre": 0.459,
+     "swan": 0.846
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.38,
+     "salitre": 0.455,
+     "swan": 0.86
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.36,
+     "salitre": 0.465,
+     "swan": 0.875
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.34,
+     "salitre": 0.471,
+     "swan": 0.892
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.32,
+     "salitre": 0.485,
+     "swan": 0.923
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.34,
+     "salitre": 0.505,
+     "swan": 0.956
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.34,
+     "salitre": 0.53,
+     "swan": 0.974
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.36,
+     "salitre": 0.562,
+     "swan": 0.982
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.38,
+     "salitre": 0.573,
+     "swan": 0.982
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.4,
+     "salitre": 0.604,
+     "swan": 0.992
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.42,
+     "salitre": 0.618,
+     "swan": 1.024
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.46,
+     "salitre": 0.64,
+     "swan": 1.067
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.679,
+     "swan": 1.116
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.703,
+     "swan": 1.172
+    }
+   ],
+   "ratioSwanSalitre": 1.79
+  },
+  {
+   "nombre": "San Cosme",
+   "punto": {
+    "lat": 43.5704,
+    "lon": -7.2411,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.44,
+     "salitre": 0.46,
+     "swan": 0.826
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.42,
+     "salitre": 0.456,
+     "swan": 0.834
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.4,
+     "salitre": 0.448,
+     "swan": 0.846
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.38,
+     "salitre": 0.444,
+     "swan": 0.86
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.36,
+     "salitre": 0.454,
+     "swan": 0.875
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.34,
+     "salitre": 0.458,
+     "swan": 0.892
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.32,
+     "salitre": 0.47,
+     "swan": 0.923
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.34,
+     "salitre": 0.488,
+     "swan": 0.956
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.34,
+     "salitre": 0.51,
+     "swan": 0.974
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.36,
+     "salitre": 0.538,
+     "swan": 0.982
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.38,
+     "salitre": 0.549,
+     "swan": 0.982
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.4,
+     "salitre": 0.576,
+     "swan": 0.992
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.42,
+     "salitre": 0.589,
+     "swan": 1.024
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.46,
+     "salitre": 0.609,
+     "swan": 1.067
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.644,
+     "swan": 1.116
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.665,
+     "swan": 1.172
+    }
+   ],
+   "ratioSwanSalitre": 1.829
+  },
+  {
+   "nombre": "Reinante",
+   "punto": {
+    "lat": 43.5596,
+    "lon": -7.1756,
+    "km": 0.3
+   },
+   "pares": [
+    {
+     "t": 1793512800,
+     "offshore": 1.44,
+     "salitre": 0.606,
+     "swan": 1.096
+    },
+    {
+     "t": 1793516400,
+     "offshore": 1.42,
+     "salitre": 0.598,
+     "swan": 1.09
+    },
+    {
+     "t": 1793520000,
+     "offshore": 1.4,
+     "salitre": 0.585,
+     "swan": 1.093
+    },
+    {
+     "t": 1793523600,
+     "offshore": 1.38,
+     "salitre": 0.579,
+     "swan": 1.106
+    },
+    {
+     "t": 1793527200,
+     "offshore": 1.36,
+     "salitre": 0.585,
+     "swan": 1.128
+    },
+    {
+     "t": 1793530800,
+     "offshore": 1.34,
+     "salitre": 0.586,
+     "swan": 1.161
+    },
+    {
+     "t": 1793534400,
+     "offshore": 1.32,
+     "salitre": 0.618,
+     "swan": 1.206
+    },
+    {
+     "t": 1793538000,
+     "offshore": 1.34,
+     "salitre": 0.633,
+     "swan": 1.235
+    },
+    {
+     "t": 1793541600,
+     "offshore": 1.34,
+     "salitre": 0.653,
+     "swan": 1.239
+    },
+    {
+     "t": 1793545200,
+     "offshore": 1.36,
+     "salitre": 0.677,
+     "swan": 1.245
+    },
+    {
+     "t": 1793548800,
+     "offshore": 1.38,
+     "salitre": 0.686,
+     "swan": 1.249
+    },
+    {
+     "t": 1793552400,
+     "offshore": 1.4,
+     "salitre": 0.695,
+     "swan": 1.242
+    },
+    {
+     "t": 1793556000,
+     "offshore": 1.42,
+     "salitre": 0.705,
+     "swan": 1.249
+    },
+    {
+     "t": 1793559600,
+     "offshore": 1.46,
+     "salitre": 0.723,
+     "swan": 1.274
+    },
+    {
+     "t": 1793563200,
+     "offshore": 1.48,
+     "salitre": 0.773,
+     "swan": 1.317
+    },
+    {
+     "t": 1793566800,
+     "offshore": 1.52,
+     "salitre": 0.791,
+     "swan": 1.373
+    }
+   ],
+   "ratioSwanSalitre": 1.839
+  }
+ ]
+}
