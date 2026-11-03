@@ -1,0 +1,675 @@
+{
+ "url": "https://www.surf-forecast.com/breaks/Playade-Patos/forecasts/latest",
+ "descargado_utc": "2026-11-03T14:23:36.561Z",
+ "filas": [
+  {
+   "fecha_texto": "Tuesday  3 10 AM",
+   "trenes": [
+    {
+     "altura": 0.5,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 127,
+     "energia": 59
+    },
+    {
+     "altura": 0.2,
+     "periodo": 18,
+     "letras": "W",
+     "angulo": 90,
+     "energia": 27
+    },
+    {
+     "altura": 0.1,
+     "periodo": 9,
+     "letras": "N",
+     "angulo": 180,
+     "energia": 2
+    },
+    {
+     "altura": 1,
+     "periodo": 4,
+     "letras": "NE",
+     "angulo": 217,
+     "energia": 35
+    }
+   ],
+   "energia_total": 123
+  },
+  {
+   "fecha_texto": "Tuesday  3  1 PM",
+   "trenes": [
+    {
+     "altura": 0.5,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 127,
+     "energia": 58
+    },
+    {
+     "altura": 0.3,
+     "periodo": 18,
+     "letras": "WNW",
+     "angulo": 108,
+     "energia": 62
+    },
+    {
+     "altura": 0.1,
+     "periodo": 7,
+     "letras": "W",
+     "angulo": 90,
+     "energia": 1
+    },
+    {
+     "altura": 0.6,
+     "periodo": 4,
+     "letras": "NE",
+     "angulo": 219,
+     "energia": 14
+    }
+   ],
+   "energia_total": 135
+  },
+  {
+   "fecha_texto": "Tuesday  3  4 PM",
+   "trenes": [
+    {
+     "altura": 0.5,
+     "periodo": 16,
+     "letras": "W",
+     "angulo": 101,
+     "energia": 134
+    },
+    {
+     "altura": 0.4,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 135,
+     "energia": 41
+    },
+    {
+     "altura": 0.1,
+     "periodo": 7,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 2
+    },
+    {
+     "altura": 0.4,
+     "periodo": 4,
+     "letras": "NNE",
+     "angulo": 207,
+     "energia": 5
+    }
+   ],
+   "energia_total": 182
+  },
+  {
+   "fecha_texto": "Tuesday  3  7 PM",
+   "trenes": [
+    {
+     "altura": 0.6,
+     "periodo": 16,
+     "letras": "W",
+     "angulo": 99,
+     "energia": 188
+    },
+    {
+     "altura": 0.4,
+     "periodo": 11,
+     "letras": "NW",
+     "angulo": 124,
+     "energia": 29
+    },
+    {
+     "altura": 0.1,
+     "periodo": 7,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 2
+    },
+    {
+     "altura": 0.8,
+     "periodo": 4,
+     "letras": "NNE",
+     "angulo": 203,
+     "energia": 14
+    }
+   ],
+   "energia_total": 233
+  },
+  {
+   "fecha_texto": "Tuesday  3 10 PM",
+   "trenes": [
+    {
+     "altura": 0.7,
+     "periodo": 15,
+     "letras": "W",
+     "angulo": 98,
+     "energia": 212
+    },
+    {
+     "altura": 0.4,
+     "periodo": 10,
+     "letras": "NW",
+     "angulo": 124,
+     "energia": 27
+    },
+    {
+     "altura": 0.1,
+     "periodo": 9,
+     "letras": "N",
+     "angulo": 180,
+     "energia": 2
+    },
+    {
+     "altura": 0.8,
+     "periodo": 4,
+     "letras": "NNE",
+     "angulo": 203,
+     "energia": 17
+    }
+   ],
+   "energia_total": 258
+  },
+  {
+   "fecha_texto": "Wednesday  4  1 AM",
+   "trenes": [
+    {
+     "altura": 0.8,
+     "periodo": 15,
+     "letras": "W",
+     "angulo": 97,
+     "energia": 272
+    },
+    {
+     "altura": 0.4,
+     "periodo": 4,
+     "letras": "NNW",
+     "angulo": 166,
+     "energia": 7
+    },
+    {
+     "altura": 0.4,
+     "periodo": 10,
+     "letras": "NW",
+     "angulo": 124,
+     "energia": 25
+    },
+    {
+     "altura": 0.4,
+     "periodo": 3,
+     "letras": "ENE",
+     "angulo": 243,
+     "energia": 4
+    }
+   ],
+   "energia_total": 308
+  },
+  {
+   "fecha_texto": "Wednesday  4  4 AM",
+   "trenes": [
+    {
+     "altura": 0.7,
+     "periodo": 14,
+     "letras": "W",
+     "angulo": 98,
+     "energia": 184
+    },
+    {
+     "altura": 0.3,
+     "periodo": 10,
+     "letras": "NW",
+     "angulo": 135,
+     "energia": 15
+    },
+    {
+     "altura": 0.1,
+     "periodo": 13,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 7
+    },
+    {
+     "altura": 0.5,
+     "periodo": 4,
+     "letras": "N",
+     "angulo": 191,
+     "energia": 6
+    }
+   ],
+   "energia_total": 212
+  },
+  {
+   "fecha_texto": "Wednesday  4  7 AM",
+   "trenes": [
+    {
+     "altura": 0.8,
+     "periodo": 13,
+     "letras": "W",
+     "angulo": 97,
+     "energia": 225
+    },
+    {
+     "altura": 0.3,
+     "periodo": 10,
+     "letras": "NW",
+     "angulo": 135,
+     "energia": 15
+    },
+    {
+     "altura": 0.1,
+     "periodo": 6,
+     "letras": "N",
+     "angulo": 180,
+     "energia": 1
+    },
+    {
+     "altura": 0.4,
+     "periodo": 5,
+     "letras": "NNE",
+     "angulo": 194,
+     "energia": 7
+    }
+   ],
+   "energia_total": 248
+  },
+  {
+   "fecha_texto": "Wednesday  4 10 AM",
+   "trenes": [
+    {
+     "altura": 0.8,
+     "periodo": 13,
+     "letras": "W",
+     "angulo": 97,
+     "energia": 222
+    },
+    {
+     "altura": 0.3,
+     "periodo": 6,
+     "letras": "N",
+     "angulo": 180,
+     "energia": 6
+    },
+    {
+     "altura": 0.2,
+     "periodo": 10,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 9
+    }
+   ],
+   "energia_total": 237
+  },
+  {
+   "fecha_texto": "Wednesday  4  1 PM",
+   "trenes": [
+    {
+     "altura": 0.7,
+     "periodo": 12,
+     "letras": "W",
+     "angulo": 98,
+     "energia": 151
+    },
+    {
+     "altura": 0.3,
+     "periodo": 5,
+     "letras": "NNW",
+     "angulo": 162,
+     "energia": 5
+    },
+    {
+     "altura": 0.2,
+     "periodo": 16,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 25
+    }
+   ],
+   "energia_total": 181
+  },
+  {
+   "fecha_texto": "Wednesday  4  4 PM",
+   "trenes": [
+    {
+     "altura": 0.7,
+     "periodo": 12,
+     "letras": "W",
+     "angulo": 90,
+     "energia": 141
+    },
+    {
+     "altura": 0.3,
+     "periodo": 15,
+     "letras": "WNW",
+     "angulo": 108,
+     "energia": 44
+    },
+    {
+     "altura": 0.3,
+     "periodo": 9,
+     "letras": "NW",
+     "angulo": 135,
+     "energia": 13
+    }
+   ],
+   "energia_total": 198
+  },
+  {
+   "fecha_texto": "Wednesday  4  7 PM",
+   "trenes": [
+    {
+     "altura": 0.7,
+     "periodo": 12,
+     "letras": "W",
+     "angulo": 98,
+     "energia": 139
+    },
+    {
+     "altura": 0.5,
+     "periodo": 15,
+     "letras": "WNW",
+     "angulo": 112,
+     "energia": 121
+    },
+    {
+     "altura": 0.2,
+     "periodo": 5,
+     "letras": "NNW",
+     "angulo": 153,
+     "energia": 3
+    }
+   ],
+   "energia_total": 263
+  },
+  {
+   "fecha_texto": "Wednesday  4 10 PM",
+   "trenes": [
+    {
+     "altura": 0.7,
+     "periodo": 12,
+     "letras": "W",
+     "angulo": 98,
+     "energia": 139
+    },
+    {
+     "altura": 0.5,
+     "periodo": 14,
+     "letras": "WNW",
+     "angulo": 112,
+     "energia": 120
+    },
+    {
+     "altura": 0.2,
+     "periodo": 5,
+     "letras": "NNW",
+     "angulo": 153,
+     "energia": 3
+    }
+   ],
+   "energia_total": 262
+  },
+  {
+   "fecha_texto": "Thursday  5  1 AM",
+   "trenes": [
+    {
+     "altura": 0.8,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 113,
+     "energia": 204
+    },
+    {
+     "altura": 0.7,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 106,
+     "energia": 137
+    },
+    {
+     "altura": 0.1,
+     "periodo": 13,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 7
+    }
+   ],
+   "energia_total": 348
+  },
+  {
+   "fecha_texto": "Thursday  5  4 AM",
+   "trenes": [
+    {
+     "altura": 0.7,
+     "periodo": 11,
+     "letras": "W",
+     "angulo": 98,
+     "energia": 125
+    },
+    {
+     "altura": 0.7,
+     "periodo": 14,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 163
+    },
+    {
+     "altura": 0.3,
+     "periodo": 4,
+     "letras": "NNW",
+     "angulo": 162,
+     "energia": 4
+    }
+   ],
+   "energia_total": 292
+  },
+  {
+   "fecha_texto": "Thursday  5  7 AM",
+   "trenes": [
+    {
+     "altura": 1.1,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 112,
+     "energia": 333
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 345
+  },
+  {
+   "fecha_texto": "Thursday  5 10 AM",
+   "trenes": [
+    {
+     "altura": 1.1,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 371
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 377
+  },
+  {
+   "fecha_texto": "Thursday  5  1 PM",
+   "trenes": [
+    {
+     "altura": 1.1,
+     "periodo": 13,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 402
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 408
+  },
+  {
+   "fecha_texto": "Thursday  5  4 PM",
+   "trenes": [
+    {
+     "altura": 1.1,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 371
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 377
+  },
+  {
+   "fecha_texto": "Thursday  5  7 PM",
+   "trenes": [
+    {
+     "altura": 1,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 119,
+     "energia": 294
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 300
+  },
+  {
+   "fecha_texto": "Thursday  5 10 PM",
+   "trenes": [
+    {
+     "altura": 0.9,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 218
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 224
+  },
+  {
+   "fecha_texto": "Friday  6  1 AM",
+   "trenes": [
+    {
+     "altura": 0.9,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 117,
+     "energia": 215
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    },
+    {
+     "altura": 0.2,
+     "periodo": 5,
+     "letras": "NNW",
+     "angulo": 153,
+     "energia": 2
+    }
+   ],
+   "energia_total": 223
+  },
+  {
+   "fecha_texto": "Friday  6  4 AM",
+   "trenes": [
+    {
+     "altura": 0.8,
+     "periodo": 12,
+     "letras": "WNW",
+     "angulo": 120,
+     "energia": 169
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 181
+  },
+  {
+   "fecha_texto": "Friday  6  7 AM",
+   "trenes": [
+    {
+     "altura": 0.8,
+     "periodo": 11,
+     "letras": "WNW",
+     "angulo": 120,
+     "energia": 151
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    },
+    {
+     "altura": 0.1,
+     "periodo": 12,
+     "letras": "SW",
+     "angulo": 45,
+     "energia": 6
+    }
+   ],
+   "energia_total": 163
+  }
+ ]
+}
